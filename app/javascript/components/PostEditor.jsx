@@ -43,7 +43,6 @@ class PostEditor extends Component {
 
 
     handleChange = (text, medium) => {
-        // console.log(text, medium)
         let unsavedChanges = false
         if (this.state.savedPost.body !== text) unsavedChanges = true
         this.setState({ editedPost: { ...this.state.editedPost, body: text }, unsavedChanges });
@@ -58,18 +57,18 @@ class PostEditor extends Component {
     }
 
     saveChanges = () => {
-        const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
+
 
         let post = this.state.editedPost
 
 
-        fetch(`http://localhost:3000/posts/${post.id}`, {
+        fetch(`${this.props.baseUrl}/posts/${post.id}`, {
             method: "PATCH",
             body: JSON.stringify({
                 post
             }),
             headers: {
-                "X-CSRF-Token": csrfToken,
+                "X-CSRF-Token": this.props.csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -85,11 +84,11 @@ class PostEditor extends Component {
     }
 
     deletePost = () => {
-        const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
-        fetch(`http://localhost:3000/posts/${this.state.savedPost.id}`, {
+
+        fetch(`${this.props.baseUrl}/posts/${this.state.savedPost.id}`, {
             method: "DELETE",
             headers: {
-                "X-CSRF-Token": csrfToken,
+                "X-CSRF-Token": this.props.csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -197,20 +196,17 @@ class PostEditor extends Component {
 
     uploadFiles = (acceptedFiles) => {
         this.setState({ featureImageLoading: true })
-
-        console.log(acceptedFiles)
         let formData = new FormData();
         formData.append('file', acceptedFiles[0])
 
-        const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
-        fetch(`http://localhost:3000/attach/posts/${this.state.savedPost.id}`, {
+        fetch(`${this.props.baseUrl}/attach/posts/${this.state.savedPost.id}`, {
             method: "POST",
             body: formData,
 
 
 
             headers: {
-                "X-CSRF-Token": csrfToken,
+                "X-CSRF-Token": this.props.csrfToken,
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
             }
@@ -236,7 +232,9 @@ class PostEditor extends Component {
 
 const mapStateToProps = (state) => ({
     posts: state.posts,
-    user: state.user
+    user: state.user,
+    baseUrl: state.baseUrl,
+    csrfToken: state.csrfToken
 })
 
 

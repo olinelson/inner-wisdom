@@ -6,18 +6,7 @@ import moment from "moment"
 
 export default function PostPreview(props) {
     let html = ReactHtmlParser(props.post.body)[0]
-
-    console.log(html)
-
-    // let sliced = html.slice(" ")
-
-    // console.log(sliced)
-
-
-
     let p = props.post
-
-    // console.log(firstImage)
 
     return (
 

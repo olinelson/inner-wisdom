@@ -99,14 +99,13 @@ function PostsList(props) {
 
 
     const createNewPost = () => {
-        const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
         let user = props.user
 
-        fetch(`http://localhost:3000/posts`, {
+        fetch(`${props.baseUrl}/posts`, {
             method: "POST",
             headers: {
-                "X-CSRF-Token": csrfToken,
+                "X-CSRF-Token": this.props.csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -165,6 +164,8 @@ const mapStateToProps = (state) => ({
     allPosts: state.posts,
     myAccountPanel: state.myAccountPanel,
     refreshMethod: state.refreshMethod,
+    baseUrl: state.baseUrl,
+    csrfToken: state.csrfToken
 })
 
 export default connect(mapStateToProps)(PostsList)

@@ -21,6 +21,8 @@ const initialState = {
     posts: [],
     myAccountPanel: "calendar",
     notifications: [],
+    baseUrl: null,
+    csrfToken: null,
 }
 
 
@@ -38,8 +40,16 @@ function reducer(state = initialState, action) {
             return { ...state, posts: action.value }
         case "SET_MY_ACCOUNT_PANEL":
             return { ...state, myAccountPanel: action.value }
-        case "REFRESH":
-            return { ...state, events: action.value.events, posts: action.value.posts, user: action.value.user }
+        case "SET_ALL":
+            return {
+                ...state,
+                events: action.value.events,
+                posts: action.value.posts,
+                user: action.value.user,
+                baseUrl: action.value.baseUrl,
+                csrfToken: action.value.csrfToken
+            }
+
 
         default:
             return state
@@ -48,36 +58,36 @@ function reducer(state = initialState, action) {
 
 const store = createStore(reducer);
 
-
-
+export const eventMapper = (e) => {
+    event = {
+        id: e.id,
+        title: e.title,
+        start: new Date(e.start_time),
+        end: new Date(e.end_time),
+        allDay: false,
+        attendees: e.attendees
+    }
+    return event
+}
 
 
 function App(props) {
-
-    console.log(props)
-
-    const eventMapper = (e) => {
-        // if (e.attendees !== null) return null
-
-        event = {
-            id: e.id,
-            title: e.title,
-            start: new Date(e.start_time),
-            end: new Date(e.end_time),
-            allDay: false,
-            attendees: e.attendees
-        }
-        return event
-    }
 
     const getEvents = () => {
         let result = props.events.map((e) => eventMapper(e))
         return result
     }
-    console.log("in app", props)
-    store.dispatch({ type: "SET_USER", value: props.user })
-    store.dispatch({ type: "SET_EVENTS", value: getEvents() })
-    store.dispatch({ type: "SET_POSTS", value: props.posts })
+
+    store.dispatch({
+        type: "SET_ALL", value: {
+            posts: props.posts,
+            events: getEvents(),
+            user: props.user,
+            baseUrl: props.baseUrl,
+            csrfToken: document.querySelectorAll('meta[name="csrf-token"]')[0].content
+        }
+
+    })
 
 
 

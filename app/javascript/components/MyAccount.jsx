@@ -80,7 +80,7 @@ class MyAccount extends Component {
             <h1>Account Details</h1>
             <h4>{this.props.user.first_name} {this.props.user.last_name}</h4>
             <h4>{this.props.user.email}</h4>
-            <a href={"http://localhost:3000/users/edit"}>Change Details</a>
+            <a href={`${this.props.baseUrl}/users/edit`}>Change Details</a>
         </div>
     }
 
@@ -106,7 +106,8 @@ class MyAccount extends Component {
 const mapStateToProps = (state) => ({
     events: state.events,
     user: state.user,
-    myAccountPanel: state.myAccountPanel
+    myAccountPanel: state.myAccountPanel,
+    baseUrl: state.baseUrl
 })
 
 export default connect(mapStateToProps)(MyAccount)

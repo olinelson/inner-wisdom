@@ -36,15 +36,15 @@ class Calendar extends React.Component {
   createAppointmentSlotHandeler = () => {
     this.setState({ creatingAppointmentSlot: false })
 
-    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
-    console.log(this.state.newAppointment)
-    fetch(`http://localhost:3000/create`, {
+
+
+    fetch(`${this.props.baseUrl}/create`, {
       method: "POST",
       body: JSON.stringify({
         event: this.state.newAppointment
       }),
       headers: {
-        "X-CSRF-Token": csrfToken,
+        "X-CSRF-Token": this.state.csrfToken,
         "Content-Type": "application/json",
         Accept: "application/json",
         "X-Requested-With": "XMLHttpRequest"
@@ -67,19 +67,19 @@ class Calendar extends React.Component {
   }
 
   bookAppointment = () => {
-    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
+
 
     let user = this.props.user
     let event = this.state.selectedEvent
 
-    fetch(`http://localhost:3000/edit`, {
+    fetch(`${this.props.baseUrl}/edit`, {
       method: "POST",
       body: JSON.stringify({
         event,
         user
       }),
       headers: {
-        "X-CSRF-Token": csrfToken,
+        "X-CSRF-Token": this.props.csrfToken,
         "Content-Type": "application/json",
         Accept: "application/json",
         "X-Requested-With": "XMLHttpRequest"
@@ -125,7 +125,7 @@ class Calendar extends React.Component {
         <Modal.Description>
           <Header>{this.state.selectedEvent ? this.state.selectedEvent.title : null}</Header>
 
-          <p>To Book an Appointment you must <a href="http://localhost:3000/users/sign_up">Create an Account</a></p>
+          <p>To Book an Appointment you must <a href={`${this.props.baseUrl}/users/sign_up`}>Create an Account</a></p>
 
         </Modal.Description>
       </Modal.Content>
@@ -157,7 +157,6 @@ class Calendar extends React.Component {
       let newEndTime = moment(timeOptions[i]).add(30, 'm')
       timeOptions.push(newEndTime)
     }
-    console.log(timeOptions)
 
     let formattedTimeOptions = timeOptions.map(op => {
 
@@ -168,7 +167,7 @@ class Calendar extends React.Component {
         value: op._d.toString(),
       }
     })
-    console.log(formattedTimeOptions)
+
 
     // return null
 
@@ -299,7 +298,9 @@ class Calendar extends React.Component {
   }
 }
 const mapStateToProps = (state) => ({
-  user: state.user
+  user: state.user,
+  baseUrl: state.baseUrl,
+  csrfToken: state.csrfToken
 })
 
 export default connect(mapStateToProps)(Calendar)

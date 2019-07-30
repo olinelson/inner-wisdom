@@ -34,22 +34,6 @@ function Nav(props) {
             <a href={`${props.baseUrl}/#/appointments`}>Book Appointment</a>
         </Menu.Item>
 
-        {/* <Menu.Menu position="right">
-            {props.user === null ?
-                <Menu.Item>
-                    <a href="http://localhost:3000/users/sign_in">Sign In</a>
-                </Menu.Item>
-                :
-                <>
-                    <Menu.Item>
-                        <a href="/myaccount">My Account</a>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <a style={{ cursor: "pointer" }} onClick={signOutHandeler}>Sign Out</a>
-                    </Menu.Item>
-                </>
-            }
-        </Menu.Menu> */}
     </Menu>
 
 }
