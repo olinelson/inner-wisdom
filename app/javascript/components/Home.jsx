@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import PostPreview from './PostPreview';
 import styled from "styled-components"
 
-const Jumbotron = styled.div`
+export const Jumbotron = styled.div`
     background-position: center !important;
     background-size: cover !important;
     background-repeat: no-repeat !important;
@@ -23,7 +23,7 @@ const Jumbotron = styled.div`
     justify-content: center;
 }
 `
-const JumboMessage = styled(Segment)`
+export const JumboMessage = styled(Segment)`
     background-color: rgba(0,0,0,0.3) !important;
 `
 

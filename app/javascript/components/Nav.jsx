@@ -71,7 +71,9 @@ function Nav(props) {
                 </Menu.Item>
                 :
                 <>
-                    <Menu.Item>
+                    <Menu.Item
+                        active={pathname === '/myaccount'}
+                    >
                         {/* <Icon name="user circle"></Icon> */}
                         <Link to="/myaccount">My Account</Link>
                     </Menu.Item>

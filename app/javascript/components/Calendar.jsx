@@ -4,6 +4,7 @@ import moment from 'moment'
 import { connect } from "react-redux"
 import { Button, Container, Modal, Header, Image, Dropdown, Divider } from "semantic-ui-react"
 import Checkout from './Checkout'
+import styled from "styled-components"
 
 
 
@@ -257,8 +258,19 @@ class Calendar extends React.Component {
 
     let allViews = Object.keys(Views).map(k => Views[k])
 
+    const CalendarContainer = styled.div`
+      grid-area: panel;
+      height: 100vh;
+    max-width: 60vw;
+    width: 100rem;
+    min-height: 50rem;
+    justify-self: center;
+
+}
+    `
+
     return <>
-      <div style={{ gridArea: "panel", height: "100rem", maxHeight: "80vh" }}>
+      <CalendarContainer >
         {this.state.showCheckout ? <Checkout onToken={this.bookAppointment} /> : null}
         <BigCalendar
           selectable
@@ -279,7 +291,7 @@ class Calendar extends React.Component {
 
         />
 
-      </div>
+      </CalendarContainer>
 
       {this.showAppropriateModal()}
 
