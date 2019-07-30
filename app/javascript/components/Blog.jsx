@@ -1,11 +1,14 @@
 import React from 'react'
 import PostsList from './PostsList';
-import { Container } from 'semantic-ui-react';
+import { Container, Divider } from 'semantic-ui-react';
 
 export default function Blog(props) {
-    return (
+    return <>
+
         <Container>
+            <h1>Blog</h1>
+            <Divider />
             <PostsList {...props} blogView />
         </Container>
-    )
+    </>
 }

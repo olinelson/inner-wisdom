@@ -13,7 +13,8 @@ const Jumbotron = styled.div`
     background-size: cover !important;
     background-repeat: no-repeat !important;
     height: 70vh !important;
-    margin: 0 !important;
+    margin: -2rem 0 0 0 !important;
+
     border: none !important;
     border-radius: 0 !important;
     margin-top: -1rem !important;
