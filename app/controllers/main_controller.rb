@@ -35,7 +35,7 @@ class MainController < ApplicationController
         # byebug
         newEvent = params["event"]
         event = @cal.create_event do |e|
-            e.title = 'Free Appointment Slot'
+            e.title = 'Free Time Slot'
             e.start_time = newEvent["slots"].first
             e.end_time = newEvent["slots"].second
             e.location= "609 W 135 St New York, New York"

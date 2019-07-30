@@ -6,14 +6,9 @@ import { Button, Container, Modal, Header, Image, Dropdown, Divider } from "sema
 import Checkout from './Checkout'
 
 
+
 const localizer = momentLocalizer(moment)
 
-// const ColoredDateCellWrapper = ({ children }) =>
-//   React.cloneElement(React.Children.only(children), {
-//     style: {
-//       backgroundColor: 'lightblue',
-//     },
-//   })
 
 
 
