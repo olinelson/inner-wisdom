@@ -25,12 +25,13 @@ import StaticNav from "components/StaticNav"
 
 
 
-
+import 'reset-css'
 import 'medium-editor/dist/css/medium-editor.css'
 import 'medium-editor/dist/css/themes/default.css'
 import "styled-components"
 import 'react-big-calendar/lib/sass/styles';
 import 'semantic-ui-css/semantic.min.css'
+
 
 
 
