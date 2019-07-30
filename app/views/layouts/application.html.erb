@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>InnerWisdom</title>
+    <%= csrf_meta_tags %>
+    <%# <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'"> %>
+    <%= csp_meta_tag %>
+
+ 
+    <%= javascript_pack_tag 'application' %>
+    <%= stylesheet_pack_tag 'application'%>
+  
+  </head>
+
+  <body>
+
+  
+  <% if notice %>
+    <%= react_component('Notification', type: "notice", message: notice) %>
+  <%end%>
+  <%if alert %>
+    <%= react_component('Notification', type: "alert", message: alert) %>
+  <%end%>
+  
+    <%= yield %>
+  </body>
+</html>
