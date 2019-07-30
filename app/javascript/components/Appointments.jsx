@@ -1,7 +1,8 @@
 import React from 'react'
-import { Container } from 'semantic-ui-react'
+import { Container, Divider } from 'semantic-ui-react'
 import Calendar from './Calendar';
 import { connect } from 'react-redux';
+import styled from "styled-components"
 
 
 function Appointments(props) {
@@ -10,12 +11,19 @@ function Appointments(props) {
         return result
     }
 
+    const AppointmentPageContainer = styled(Container)`
+        display: grid !Important;
+        grid-template-columns: 1fr;
+        grid-template-areas: "heading" "divider" "panel";
+        justify-content: center ;
+    `
 
     return (
-        <Container >
+        <AppointmentPageContainer>
             <h1>Available Appointments</h1>
+            <Divider style={{ gridArea: "divider" }} />
             <Calendar {...props} bookable events={availableAppointments()} />
-        </Container>
+        </AppointmentPageContainer>
     )
 }
 

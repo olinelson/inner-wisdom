@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { Menu, Header, Container, Card, Button, Segment, Icon } from "semantic-ui-react"
+import { Menu, Header, Container, Card, Button, Segment, Icon, Item, Image, Divider } from "semantic-ui-react"
 
 import { Link } from "react-router-dom"
 import PostViewer from './PostViewer';
@@ -24,15 +24,17 @@ export const Jumbotron = styled.div`
 }
 `
 export const JumboMessage = styled(Segment)`
-    background-color: rgba(0,0,0,0.3) !important;
+    background-color: rgba(0,0,0,0) !important;
+    border: none !important;
 `
 
-const ThreeColumnContainer = styled.div`
+const ThreeColumnContainer = styled(Container)`
     padding: 1rem;
-    display: grid;
-    grid-template-columns: repeat( auto-fit, minmax(20rem, 1fr)) ;
+    display: grid !important;
+    grid-template-columns: repeat( auto-fit, minmax(15rem, 1fr)) ;
     justify-items: center;
     grid-gap: 1rem;
+
 
 `
 
@@ -55,14 +57,12 @@ function Home(props) {
     return <>
         <Jumbotron style={{ backgroundImage: 'url("https://static.pexels.com/photos/52599/pexels-photo-52599.jpeg")' }}>
             <JumboMessage placeholder >
-                <Header as={"h1"} inverted>Inner Wisdom Psychology</Header>
-                <Segment.Inline>
-                    <Button inverted basic primary>Clear Query</Button>
-                    <Button inverted basic>Add Document</Button>
-                </Segment.Inline>
+                <Header style={{ fontSize: "4rem" }} size="huge" as={"h1"} inverted>Inner Wisdom Psychology</Header>
             </JumboMessage>
         </Jumbotron>
-        {/* <Container fluid> */}
+
+        <Divider hidden />
+
         <ThreeColumnContainer>
 
             <GridCard >
@@ -96,7 +96,49 @@ function Home(props) {
             </GridCard>
 
         </ThreeColumnContainer>
+
+        <Divider hidden />
+        <Divider />
+        <Divider hidden />
         {/* </Container> */}
+        <Container text>
+            {/* <Segment> */}
+            <Item.Group>
+                <Item>
+                    <Item.Image size='medium' src='https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500' />
+
+                    <Item.Content>
+                        <Item.Header as='a'>Sue Stephenson</Item.Header>
+                        <Item.Description>
+                            <p>
+
+                                Maiores in ducimus quia alias ea quos sequi dolorum. Quam doloribus veritatis in amet velit aut. Esse blanditiis molestiae quod ea quia. Qui magnam nulla rem nihil provident.
+
+                                Maxime autem iusto sed qui neque id odit recusandae. Quam ut odio veritatis. Et harum consequatur illum quis voluptas porro officia id.
+
+                                Qui vel quam et ad illo ab omnis. Doloremque excepturi vero adipisci ea placeat molestiae eligendi. Consequuntur mollitia voluptas molestias. Quia sit soluta commodi. Ullam voluptatibus deserunt nobis dolor est perspiciatis minima impedit.
+
+                                Dolores ut similique dolor voluptas est optio nihil est. Repellat cupiditate sunt harum aspernatur sint totam dolor dolorum. Repellat vel corporis id voluptas numquam.
+
+                                Est occaecati est voluptatum ut provident. Nobis voluptatum dolor rerum illo dolorum omnis. Minus doloribus id placeat.
+</p>
+                        </Item.Description>
+                    </Item.Content>
+                </Item>
+            </Item.Group>
+            {/* </Segment> */}
+        </Container>
+
+        <Divider hidden />
+        <Divider />
+        <Divider hidden />
+
+        <Container>
+            <h1>Latest Blog Post</h1>
+            <Item.Group>
+                <PostPreview readMoreButton blogView post={props.posts[0]} />
+            </Item.Group>
+        </Container>
 
     </>
 

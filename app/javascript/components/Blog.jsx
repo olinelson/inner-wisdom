@@ -10,8 +10,8 @@ export default function Blog(props) {
        
         <FeatureImageSegment style={{ backgroundImage: `url('https://storage.googleapis.com/inner_wisdom_bucket/ancient-art-asia-302100.jpg') `, backgroundPosition: "center" }}/>
 
-            {/* <Image wrapped src="https://storage.googleapis.com/inner_wisdom_bucket/ancient-art-asia-302100.jpg" /> */}
             <Container>
+                <Divider hidden/>
                 <p>
 
                     <Header size="large" as="span">H</Header>aiores in ducimus quia alias ea quos sequi dolorum. Quam doloribus veritatis in amet velit aut. Esse blanditiis molestiae quod ea quia. Qui magnam nulla rem nihil provident.

@@ -1,42 +1,61 @@
 import React from 'react'
 import styled from "styled-components"
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
-import { Card, Image, Label, Icon } from "semantic-ui-react"
+import { Card, Image, Label, Icon, Item, Button, Divider } from "semantic-ui-react"
 import moment from "moment"
 
 export default function PostPreview(props) {
-    let html = ReactHtmlParser(props.post.body)[0]
-    let p = props.post
 
+    const handleCardClick = (id) => {
+        props.history.push(`/posts/${id}`)
+    }
+
+    let p = props.post
+    let firstParagraph = ReactHtmlParser(p.body)[0]
     return (
 
 
-        <Card
-            fluid
+        <Item
+            style={{ cursor: "pointer" }}
             key={p.id}
-        // onClick={() => handleCardClick(p.id)}
-        >
-            <Image size="medium" src={p.feature_image} />
-            <Card.Content>
-                <Card.Header>{p.title}</Card.Header>
-                <Card.Meta>
-                    <span className='date'>created {moment(p.created_at).format('Do MMMM  YYYY')}</span>
-                </Card.Meta>
-                <Card.Description>
-                    {p.published ?
-                        <Label>
-                            <Icon name='share alternate' /> Published
-                        </Label>
-                        :
-                        <Label>
-                            <Icon name='user secret' /> Private
-                        </Label>
-                    }
-                </Card.Description>
-                {html}
-            </Card.Content>
+            onClick={() => handleCardClick(p.id)}>
 
-        </Card>
+            <Item.Content>
+                <Image floated='left' size="small" src={p.feature_image} />
+                <Item.Header>{p.title}</Item.Header>
+                <Item.Meta>
+                    <span className='date'>Created {moment(p.created_at).format('Do MMMM  YYYY')}</span>
+                    {props.blogView ? null :
+                        <>
+                            {
+                                p.published ?
+                                    <Label>
+                                        <Icon name='share alternate' /> Published
+                        </Label>
+                                    :
+                                    <Label>
+                                        <Icon name='user secret' /> Private
+                        </Label>
+                            }
+                        </>
+
+                    }
+
+                </Item.Meta>
+                <Item.Description>
+                    {firstParagraph}
+                    {props.readMoreButton ? <a onClick={() => handleCardClick(p.id)}>Read more.</a> : null}
+                </Item.Description>
+
+
+
+            </Item.Content>
+
+
+
+        </Item>
 
     )
 }
+
+

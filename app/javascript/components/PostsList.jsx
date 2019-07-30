@@ -3,7 +3,7 @@ import { Card, Menu, Image, Icon, Label, Button, Item } from "semantic-ui-react"
 import { Link } from "react-router-dom"
 import moment from 'moment'
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
-
+import PostsPreview from "./PostPreview"
 import { connect } from "react-redux"
 
 
@@ -15,6 +15,8 @@ function PostsList(props) {
 
     const cardMapper = (p) => {
         let firstParagraph = ReactHtmlParser(p.body)[0]
+
+        return <PostsPreview post={p} />
 
         return <Item
             style={{ cursor: "pointer" }}
