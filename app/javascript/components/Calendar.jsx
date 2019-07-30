@@ -44,7 +44,7 @@ class Calendar extends React.Component {
         event: this.state.newAppointment
       }),
       headers: {
-        "X-CSRF-Token": this.state.csrfToken,
+        "X-CSRF-Token": this.props.csrfToken,
         "Content-Type": "application/json",
         Accept: "application/json",
         "X-Requested-With": "XMLHttpRequest"
