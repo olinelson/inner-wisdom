@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Menu, Image, Icon, Label, Button } from "semantic-ui-react"
+import { Card, Menu, Image, Icon, Label, Button, Item } from "semantic-ui-react"
 import { Link } from "react-router-dom"
 import moment from 'moment'
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
@@ -16,85 +16,43 @@ function PostsList(props) {
     const cardMapper = (p) => {
         let firstParagraph = ReactHtmlParser(p.body)[0]
 
-        return <Card
-            fluid
+        return <Item
+            style={{ cursor: "pointer" }}
             key={p.id}
             onClick={() => handleCardClick(p.id)}>
 
-            <Card.Content>
+            <Item.Content>
                 <Image floated='left' size="tiny" src={p.feature_image} />
-                <Card.Header>{p.title}</Card.Header>
-                <Card.Meta>
+                <Item.Header>{p.title}</Item.Header>
+                <Item.Meta>
                     <span className='date'>Created {moment(p.created_at).format('Do MMMM  YYYY')}</span>
-                </Card.Meta>
-                {/* <Card.Description> */}
-                {firstParagraph}
-                {/* </Card.Description> */}
-
-
-            </Card.Content>
-            {props.blogView ? null :
-                <Card.Content textAlign="right" extra>
-                    {p.published ?
-                        <Label>
-                            <Icon name='share alternate' /> Published
+                    {props.blogView ? null :
+                        <>
+                            {
+                                p.published ?
+                                    <Label>
+                                        <Icon name='share alternate' /> Published
                         </Label>
-                        :
-                        <Label>
-                            <Icon name='user secret' /> Private
+                                    :
+                                    <Label>
+                                        <Icon name='user secret' /> Private
                         </Label>
+                            }
+                        </>
+
                     }
-                </Card.Content>
-            }
+                </Item.Meta>
+                <Item.Description>
+                    {firstParagraph}
+                </Item.Description>
 
 
-        </Card>
+            </Item.Content>
+
+
+
+        </Item>
     }
-
-    // const cardMapper = (p) => {
-    //     return <Card
-    //         key={p.id}
-    //         onClick={() => handleCardClick(p.id)}>
-    //         <Card.Content>
-    //             <Image floated='left' size="tiny" src={p.feature_image} />
-    //             <Card.Header>{p.title}</Card.Header>
-    //             <Card.Meta>
-    //                 <span className='date'>Created {moment(p.created_at).format('Do MMMM  YYYY')}</span>
-    //             </Card.Meta>
-    //             {/* <Card.Description> */}
-    //             {firstParagraph}
-    //             {p.published ?
-    //                 <Label>
-    //                     <Icon name='share alternate' /> Published
-    //                     </Label>
-    //                 :
-    //                 <Label>
-    //                     <Icon name='user secret' /> Private
-    //                     </Label>
-    //             }
-    //             {/* </Card.Description> */}
-    //         </Card.Content>
-
-    //         {/* <Card.Content>
-    //             <Card.Header>{p.title}</Card.Header>
-    //             <Card.Meta>
-    //                 <span className='date'>created {moment(p.created_at).format('Do MMMM  YYYY')}</span>
-    //             </Card.Meta>
-    //             <Card.Description>
-    //                 {p.published ?
-    //                     <Label>
-    //                         <Icon name='share alternate' /> Published
-    //                     </Label>
-    //                     :
-    //                     <Label>
-    //                         <Icon name='user secret' /> Private
-    //                     </Label>
-    //                 }
-    //             </Card.Description>
-    //         </Card.Content> */}
-
-    //     </Card>
-    // }
 
 
 
@@ -105,7 +63,7 @@ function PostsList(props) {
         fetch(`${props.baseUrl}/posts`, {
             method: "POST",
             headers: {
-                "X-CSRF-Token": this.props.csrfToken,
+                "X-CSRF-Token": props.csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -151,11 +109,16 @@ function PostsList(props) {
 
     return <>
         {props.creatable ? showToolBar() : null}
-        <Card.Group style={{ gridArea: "panel" }} stackable >
+        {/* <Card.Group style={{ gridArea: "panel" }} stackable >
 
             {showUserOrPublishedPosts()}
 
-        </Card.Group>
+        </Card.Group> */}
+        <Item.Group style={{ gridArea: "panel", margin: "0rem !important" }}  >
+
+            {showUserOrPublishedPosts()}
+
+        </Item.Group>
     </>
 }
 
