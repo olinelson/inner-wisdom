@@ -20,7 +20,7 @@ class MainController < ApplicationController
         if current_user
             user = current_user
         end
-        render react_component: 'App', props: { events: @cal.events, posts: Post.all, user: user}
+        render react_component: 'App', props: { events: @cal.events, posts: Post.all, user: user, baseUrl: ENV["BASE_URL"]}
     end
 
     def refresh 
