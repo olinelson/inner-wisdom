@@ -39,10 +39,12 @@ class MainController < ApplicationController
             e.start_time = newEvent["slots"].first
             e.end_time = newEvent["slots"].second
             e.location= "609 W 135 St New York, New York"
+            # byebug
+            e.reminders =  { "useDefault": false }
             # e.notes= "one fine day in the middle of the night, two dead men got up to fight"
-            e.attendees= [
-            {'email' => current_user.email, 'displayName' => "#{current_user.first_name} #{current_user.last_name}" , 'responseStatus' => 'tentative'},
-        ]
+        #     e.attendees= [
+        #     {'email' => current_user.email, 'displayName' => "#{current_user.first_name} #{current_user.last_name}" , 'responseStatus' => 'tentative'},
+        # ]
         end
         # byebug
         render json: {event: event}

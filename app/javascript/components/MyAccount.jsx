@@ -47,6 +47,7 @@ class MyAccount extends Component {
     }
 
     RelevantAppointments = () => {
+        if (this.props.user.admin) return this.props.events
 
         let events = this.props.events.filter(e => this.isUserAnAttendeeOfEvent(e))
         return events
