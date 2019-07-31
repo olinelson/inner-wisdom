@@ -18,6 +18,12 @@ local:
 google:
   service: GCS
   project: innerWisdom
+  credentials: <%= ENV['GOOGLE_APPLICATION_CREDENTIALS'] %>
+  bucket: inner_wisdom_bucket
+
+google_dev:
+  service: GCS
+  project: innerWisdom
   credentials: <%= Rails.root.join("gcs_credentials.json") %>
   bucket: inner_wisdom_bucket
 
