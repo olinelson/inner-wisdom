@@ -90,7 +90,10 @@ function PostsList(props) {
     }
 
     const showUserOrPublishedPosts = () => {
-        let sortedPosts = props.allPosts.sort((b, a) => new Date(a.created) - new Date(b.created))
+        let sortedPosts = props.allPosts.sort((b, a) => a.id - b.id)
+        // sort by date published coming soon!
+        // let sortedPosts = props.allPosts.sort((a, b) => new Date(a.updated) - new Date(b.updated))
+
         if (props.blogView) return showPublishedPosts(sortedPosts)
         return showUsersPosts(sortedPosts)
     }
@@ -104,7 +107,7 @@ function PostsList(props) {
 
     const showPublishedPosts = (sortedPosts) => {
         let result = sortedPosts.map(p => {
-            if (p.published) return cardMapper(p)
+            if (p.published === true) return cardMapper(p)
         })
         return result
     }

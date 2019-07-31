@@ -50,14 +50,14 @@ function Home(props) {
     const publishedPosts = props.posts.filter(p => p.published === true)
 
 
-    const firstPublicPost = publishedPosts[publishedPosts.length - 1]
+    const mostRecentPublicPost = publishedPosts.sort((b, a) => a.id - b.id)[0]
 
     const showRecentBlogPost = () => {
         if (publishedPosts.length > 0) {
             return <Container>
                 <h1>Latest Blog Post</h1>
                 <Item.Group>
-                    <PostPreview {...props} readMoreButton blogView post={props.posts[0]} />
+                    <PostPreview {...props} readMoreButton blogView post={mostRecentPublicPost} />
                 </Item.Group>
             </Container>
         }
