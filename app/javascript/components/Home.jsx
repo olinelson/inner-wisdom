@@ -53,11 +53,11 @@ function Home(props) {
     const firstPublicPost = publishedPosts[publishedPosts.length - 1]
 
     const showRecentBlogPost = () => {
-        if (props.posts && props.posts.length > 0) {
+        if (publishedPosts.length > 0) {
             return <Container>
                 <h1>Latest Blog Post</h1>
                 <Item.Group>
-                    <PostPreview readMoreButton blogView post={props.posts[0]} />
+                    <PostPreview {...props} readMoreButton blogView post={props.posts[0]} />
                 </Item.Group>
             </Container>
         }
