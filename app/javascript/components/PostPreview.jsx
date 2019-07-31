@@ -11,7 +11,7 @@ export default function PostPreview(props) {
     }
 
     let p = props.post
-    let firstParagraph = ReactHtmlParser(p.body)[0]
+    // let firstParagraph = ReactHtmlParser(p.body)[0]
     return (
 
 
@@ -43,7 +43,7 @@ export default function PostPreview(props) {
 
                 </Item.Meta>
                 <Item.Description>
-                    {firstParagraph}
+                    {/* {firstParagraph} */}
                     {props.readMoreButton ? <a onClick={() => handleCardClick(p.id)}>Read more.</a> : null}
                 </Item.Description>
 
