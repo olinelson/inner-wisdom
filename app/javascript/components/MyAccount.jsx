@@ -17,6 +17,15 @@ const TwoColumnContainer = styled.div`
     "sideMenu panel"
     ". panel"
     ;
+    @media (max-width: 50rem) {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    grid-template-areas: 
+    "sideMenu"
+    "toolBar"
+    "panel"
+    ;
+  }
 
 `
 
@@ -64,7 +73,7 @@ class MyAccount extends Component {
     panelSwitch = () => {
         switch (this.props.myAccountPanel) {
             case "calendar":
-                return <Calendar  {...this.props} events={this.RelevantAppointments()} />
+                return <Calendar {...this.props} events={this.RelevantAppointments()} />
             // return <h4 style={{ gridArea: "panel" }}>calendar</h4>
             case "profile":
                 return this.profileSettingsLinks()
@@ -98,6 +107,7 @@ class MyAccount extends Component {
         console.log(this.props)
 
         return <Container >
+
             <TwoColumnContainer>
                 {this.props.user.admin ? this.showAdminMenu() : this.showUserMenu()}
 

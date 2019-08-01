@@ -267,6 +267,11 @@ class Calendar extends React.Component {
     min-height: 50rem;
     justify-self: center;
 
+     @media (max-width: 50rem) {
+      max-width: 95vw;
+    ;
+  }
+
 }
     `
 

@@ -46,11 +46,10 @@ class MainController < ApplicationController
 
     def home
         user = nil
+        personalEvents = nil
+
         if current_user
             user = current_user
-        end
-
-        personalEvents = nil
 
         if user.admin === true && user.google_calendar_email.length > 0 && user.google_calendar_refresh_token.length > 0
             begin
@@ -58,8 +57,16 @@ class MainController < ApplicationController
             personalEvents = @personalCal.events
             rescue
                 puts "error fetching personal events"
+                personalEvents = nil
             end
         end
+
+
+        end
+
+        
+
+        
 
         render react_component: 'App', props: { events: @cal.events, personalEvents: personalEvents, posts: Post.all, user: user, baseUrl: ENV["BASE_URL"]}
     end

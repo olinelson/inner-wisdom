@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 
-import { Menu, Icon } from 'semantic-ui-react'
+import { Menu, Icon, Dropdown, Sidebar, Segment, Header, Image } from 'semantic-ui-react'
 
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
@@ -10,6 +10,8 @@ import styled from "styled-components"
 
 
 function Nav(props) {
+
+    const [sideBarOpen, setSideBar] = useState(false);
 
     const pathname = props.location.pathname
 
@@ -30,45 +32,62 @@ function Nav(props) {
     const LogoLink = styled(Link)`
         font-size: 2rem;
     `
+    console.log("pathname", pathname)
 
     const FixedMenu = styled(Menu)`
-        position: ${() => pathname === '/' ? "absolute" : "static"};
+        position: ${() => pathname === '/' || pathname === '/blog' ? "absolute" : "sticky"};
+        // position: absolute ;
+        z-index: 1;
         width: 100vw;
         top:0rem !important;
         border: none !important;
-        // background: rgb(0,0,0,0);
         background: ${() => pathname === '/' ? "linear-gradient(180deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,0) 100%) !important;" : "rgba(0,0,0,0)"};
-        // background: linear-gradient(180deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,0) 100%) !important;
+
+        @media (max-width: 40rem) {
+            border: 1px solid red !important;
+            display: none !important;
+        }
+         
     `
 
+    const MobileMenu = styled(Menu)`
+        
+        position: ${() => pathname === '/' || pathname === '/blog' ? "absolute" : "sticky"};
+        z-index: 2;
+        width: 100vw;
+        top: 0rem!important;
+        background: rgba(0, 0, 0, 0);
 
-    return <FixedMenu pointing
-        inverted={pathname === '/' ? true : false}
-        secondary >
-        <Menu.Item
-            active={pathname === '/'}
-        >
-            <Link to="/">Inner Wisdom</Link>
-        </Menu.Item>
-        <Menu.Item
-            active={pathname === '/blog'}
-        >
-            {/* <Icon name="book" /> */}
-            <Link to="/blog">Blog</Link>
-        </Menu.Item>
-        <Menu.Item
-            active={pathname === '/appointments'}
-        >
-            {/* <Icon name="calendar alternate"></Icon> */}
-            <Link to="/appointments">Appointments</Link>
-        </Menu.Item>
+        @media(min-width: 40rem) {
+            display: none!important;
+        }
+`
 
-        <Menu.Menu position="right">
-            {props.user === null ?
+    const menuOptions = () => {
+        return <>
+            <Menu.Item active={pathname === '/'} >
+                <Link to="/">Inner Wisdom</Link>
+            </Menu.Item>
+
+            <Menu.Item active={pathname === '/blog'} >
+                <Link to="/blog">Blog</Link>
+            </Menu.Item>
+
+            <Menu.Item active={pathname === '/appointments'}>
+                <Link to="/appointments">Appointments</Link>
+            </Menu.Item>
+        </>
+    }
+
+
+    const UserMenuOptions = () => {
+        return <> {
+            props.user === null ?
                 <Menu.Item>
                     <Icon name="sign in"></Icon>
-                    <a href={`${props.baseUrl}/users/sign_in`}>Sign In</a>
+                    <a href={`${props.baseUrl} /users/sign_in`}>Sign In</a>
                 </Menu.Item>
+
                 :
                 <>
                     <Menu.Item
@@ -84,11 +103,66 @@ function Nav(props) {
                         <a style={{ cursor: "pointer" }} onClick={signOutHandeler}>Sign Out</a>
                     </Menu.Item>
                 </>
-            }
-        </Menu.Menu>
-    </FixedMenu >
+        }
+        </>
+    }
+
+    return <>
+        <FixedMenu pointing inverted={pathname === '/' || pathname === '/blog' ? true : false} secondary >
+            {menuOptions()}
+            <Menu.Menu position="right">
+                {UserMenuOptions()}
+            </Menu.Menu>
+           
+        </FixedMenu >
+
+        <MobileMenu secondary>
+            <Menu.Menu position="right">
+                < Menu.Item  >
+                    <Dropdown icon="bars" floating >
+
+                        <Dropdown.Menu>
+                            {menuOptions()}
+                            {UserMenuOptions()}
+                        </Dropdown.Menu>
+                    </Dropdown>
+                </Menu.Item >
+            </Menu.Menu>
+
+
+        </MobileMenu>
+        {/* <Sidebar.Pushable style={{ position: "absolute", zIndex: "1", width: "50vw" }} as={Segment}>
+            <Sidebar
+                as={Menu}
+                animation='overlay'
+                icon='labeled'
+                inverted
+                onHide={() => setSideBar(false)}
+                vertical
+                visible={sideBarOpen}
+                width='thin'
+            >
+                <Menu.Item as='a'>
+                    <Icon name='home' />
+                    Home
+            </Menu.Item>
+                <Menu.Item as='a'>
+                    <Icon name='gamepad' />
+                    Games
+            </Menu.Item>
+                <Menu.Item as='a'>
+                    <Icon name='camera' />
+                    Channels
+            </Menu.Item>
+            </Sidebar>
+
+
+        </Sidebar.Pushable> */}
+    </>
 
 }
+
+
 
 
 const mapStateToProps = (state) => ({
@@ -99,3 +173,5 @@ const mapStateToProps = (state) => ({
 })
 
 export default connect(mapStateToProps)(Nav)
+
+

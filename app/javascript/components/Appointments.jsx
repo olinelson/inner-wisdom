@@ -12,6 +12,7 @@ function Appointments(props) {
     }
 
     const AppointmentPageContainer = styled(Container)`
+        margin-top: 4rem;
         display: grid !Important;
         grid-template-columns: 1fr;
         grid-template-areas: "heading" "divider" "panel";
