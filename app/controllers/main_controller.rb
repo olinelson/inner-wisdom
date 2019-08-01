@@ -50,16 +50,17 @@ class MainController < ApplicationController
 
         if current_user
             user = current_user
-
-        if user.admin === true && user.google_calendar_email.length > 0 && user.google_calendar_refresh_token.length > 0
-            begin
-            personalCalendarEvents 
-            personalEvents = @personalCal.events
-            rescue
+        begin
+            if user.admin === true && user.google_calendar_email  && user.google_calendar_refresh_token
+                
+                personalCalendarEvents 
+                personalEvents = @personalCal.events
+                
+            end
+        rescue
                 puts "error fetching personal events"
                 personalEvents = nil
             end
-        end
 
 
         end

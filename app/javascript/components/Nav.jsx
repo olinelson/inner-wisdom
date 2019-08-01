@@ -85,7 +85,7 @@ function Nav(props) {
             props.user === null ?
                 <Menu.Item>
                     <Icon name="sign in"></Icon>
-                    <a href={`${props.baseUrl} /users/sign_in`}>Sign In</a>
+                    <a href={`${props.baseUrl}/users/sign_in`}>Sign In</a>
                 </Menu.Item>
 
                 :
@@ -113,7 +113,7 @@ function Nav(props) {
             <Menu.Menu position="right">
                 {UserMenuOptions()}
             </Menu.Menu>
-           
+
         </FixedMenu >
 
         <MobileMenu secondary>
