@@ -22,7 +22,7 @@ function Appointments(props) {
         <AppointmentPageContainer>
             <h1>Available Appointments</h1>
             <Divider style={{ gridArea: "divider" }} />
-            <Calendar {...props} bookable events={availableAppointments()} />
+            <Calendar fullWidth {...props} bookable events={availableAppointments()} />
         </AppointmentPageContainer>
     )
 }

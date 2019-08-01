@@ -255,13 +255,12 @@ class Calendar extends React.Component {
 
   render() {
 
-
     let allViews = Object.keys(Views).map(k => Views[k])
 
     const CalendarContainer = styled.div`
       grid-area: panel;
       height: 100vh;
-    max-width: 60vw;
+    max-width: ${props => this.props.fullWidth ? "95vw" : "60vw"};
     width: 100rem;
     min-height: 50rem;
     justify-self: center;
