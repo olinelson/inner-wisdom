@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   
   post '/edit', to: 'main#editEvent'
 
+  post '/calendar_auth', to: 'main#calendarAuthLink'
+
   get '/pay', to: 'payment#pay'
 
   patch '/posts/:id', to: 'posts#edit'
@@ -19,6 +21,8 @@ Rails.application.routes.draw do
   post '/posts', to: 'posts#create'
 
   post '/attach/posts/:id', to: 'posts#attach'
+
+  
 
   
 

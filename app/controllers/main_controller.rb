@@ -7,7 +7,7 @@ class MainController < ApplicationController
                 :client_id     => ENV['GOOGLE_CLIENT_ID'], 
                 :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
                 :calendar      => ENV['GOOGLE_CALENDAR_ADDRESS'],
-                :redirect_url  => ENV['GOOGLE_REDIRECT_URL']
+                :redirect_url  => ENV['GOOGLE_REDIRECT_URL'],
                                 )
                 @cal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])               
             rescue
@@ -15,12 +15,53 @@ class MainController < ApplicationController
         end
     end
 
+    def calendarAuthLink
+        byebug
+
+
+        cal = Google::Calendar.new(
+                :client_id     => ENV['GOOGLE_CLIENT_ID'], 
+                :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
+                :calendar      => params["email"],
+                :redirect_url  => ENV['GOOGLE_REDIRECT_URL']
+                                )
+                                byebug
+            redirect_to(cal.authorize_url.to_str)
+    end
+
+    def personalCalendarEvents
+        begin
+            @personalCal = Google::Calendar.new(
+                :client_id     => ENV['GOOGLE_CLIENT_ID'], 
+                :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
+                :calendar      => current_user.google_calendar_email,
+                :redirect_url  => ENV['GOOGLE_REDIRECT_URL'],
+                                )
+                @personalCal.login_with_refresh_token(current_user.google_calendar_refresh_token)               
+            rescue
+                puts "login error"
+        end
+        
+    end
+
     def home
         user = nil
         if current_user
             user = current_user
         end
-        render react_component: 'App', props: { events: @cal.events, posts: Post.all, user: user, baseUrl: ENV["BASE_URL"]}
+
+        personalEvents = nil
+
+        if user.admin === true && user.google_calendar_email.length > 0 && user.google_calendar_refresh_token.length > 0
+            begin
+            personalCalendarEvents 
+            personalEvents = @personalCal.events
+            rescue
+                puts "error fetching personal events"
+            end
+        end
+
+        render react_component: 'App', props: { events: @cal.events, personalEvents: personalEvents, posts: Post.all, user: user, baseUrl: ENV["BASE_URL"]}
     end
 
     def refresh 

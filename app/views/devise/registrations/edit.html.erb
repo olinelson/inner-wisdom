@@ -18,6 +18,19 @@
     <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
   </div>
 
+
+  <div class="field">
+    <%= f.label :google_calendar_email %><br />
+    <%= f.email_field :google_calendar_email, autofocus: true, autocomplete: "email" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :google_calendar_refresh_token %><br />
+    <%= f.text_field :google_calendar_refresh_token, autofocus: true %>
+  </div>
+
+  
+
   <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
     <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
   <% end %>
@@ -54,8 +67,11 @@
   <input type="submit" class="ui button" value="Cancel my account">
 <% end %>
 
-</p>
 
+
+
+</p>
+  
 
 
  

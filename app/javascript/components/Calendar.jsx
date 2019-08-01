@@ -5,12 +5,14 @@ import { connect } from "react-redux"
 import { Button, Container, Modal, Header, Image, Dropdown, Divider } from "semantic-ui-react"
 import Checkout from './Checkout'
 import styled from "styled-components"
-
+import CustomEvent from "./CustomEvent"
 
 
 const localizer = momentLocalizer(moment)
 
-
+let components = {
+  event: CustomEvent, // used by each view (Month, Day, Week)
+}
 
 
 class Calendar extends React.Component {
@@ -272,6 +274,7 @@ class Calendar extends React.Component {
       <CalendarContainer >
         {this.state.showCheckout ? <Checkout onToken={this.bookAppointment} /> : null}
         <BigCalendar
+          components={components}
           selectable
           localizer={localizer}
           events={this.props.events}

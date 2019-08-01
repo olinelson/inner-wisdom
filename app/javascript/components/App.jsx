@@ -18,6 +18,7 @@ import { Provider } from "react-redux"
 const initialState = {
     user: null,
     events: [],
+    personalEvents: [],
     posts: [],
     myAccountPanel: "calendar",
     notifications: [],
@@ -44,6 +45,7 @@ function reducer(state = initialState, action) {
             return {
                 ...state,
                 events: action.value.events,
+                personalEvents: action.value.personalEvents,
                 posts: action.value.posts,
                 user: action.value.user,
                 baseUrl: action.value.baseUrl,
@@ -58,14 +60,15 @@ function reducer(state = initialState, action) {
 
 const store = createStore(reducer);
 
-export const eventMapper = (e) => {
+export const eventMapper = (e, type) => {
     event = {
         id: e.id,
         title: e.title,
         start: new Date(e.start_time),
         end: new Date(e.end_time),
         allDay: false,
-        attendees: e.attendees
+        attendees: e.attendees,
+        type: type
     }
     return event
 }
@@ -73,15 +76,18 @@ export const eventMapper = (e) => {
 
 function App(props) {
 
-    const getEvents = () => {
-        let result = props.events.map((e) => eventMapper(e))
+    const getEvents = (events, type) => {
+        console.log(events)
+        if (events === null) return null
+        let result = events.map((e) => eventMapper(e, type))
         return result
     }
 
     store.dispatch({
         type: "SET_ALL", value: {
             posts: props.posts,
-            events: getEvents(),
+            events: getEvents(props.events, "business"),
+            personalEvents: getEvents(props.personalEvents, "personal"),
             user: props.user,
             baseUrl: props.baseUrl,
             csrfToken: document.querySelectorAll('meta[name="csrf-token"]')[0].content

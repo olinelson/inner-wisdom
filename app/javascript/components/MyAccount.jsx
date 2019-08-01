@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { Container, Menu } from "semantic-ui-react"
+import { Container, Menu, Divider } from "semantic-ui-react"
 import Calendar from "./Calendar"
 import { connect } from 'react-redux';
 import styled from "styled-components"
@@ -47,7 +47,8 @@ class MyAccount extends Component {
     }
 
     RelevantAppointments = () => {
-        if (this.props.user.admin) return this.props.events
+        // console.log([...this.props.events, this.props.personalEvents])
+        if (this.props.user.admin) return this.props.events.concat(this.props.personalEvents)
 
         let events = this.props.events.filter(e => this.isUserAnAttendeeOfEvent(e))
         return events
@@ -77,10 +78,16 @@ class MyAccount extends Component {
     }
 
     profileSettingsLinks = () => {
+        let user = this.props.user
+
         return < div style={{ gridArea: "panel" }}>
             <h1>Account Details</h1>
-            <h4>{this.props.user.first_name} {this.props.user.last_name}</h4>
-            <h4>{this.props.user.email}</h4>
+            <h4>{user.first_name} {user.last_name}</h4>
+            <h4>{user.email}</h4>
+            <Divider />
+            <h2>Personal Google Calendar Settings</h2>
+            <h4>{user.google_calendar_email}</h4>
+            <h4>{user.google_calendar_refresh_token}</h4>
             <a href={`${this.props.baseUrl}/users/edit`}>Change Details</a>
         </div>
     }
@@ -88,7 +95,7 @@ class MyAccount extends Component {
 
 
     render() {
-
+        console.log(this.props)
 
         return <Container >
             <TwoColumnContainer>
@@ -106,6 +113,7 @@ class MyAccount extends Component {
 
 const mapStateToProps = (state) => ({
     events: state.events,
+    personalEvents: state.personalEvents,
     user: state.user,
     myAccountPanel: state.myAccountPanel,
     baseUrl: state.baseUrl
