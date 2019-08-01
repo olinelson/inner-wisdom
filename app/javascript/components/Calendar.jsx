@@ -30,12 +30,30 @@ class Calendar extends React.Component {
     }
   }
 
+  deleteSelectedEventHandeler = () => {
+    fetch(`${this.props.baseUrl}/delete`, {
+      method: "DELETE",
+      body: JSON.stringify({
+        event: this.state.selectedEvent
+      }),
+      headers: {
+        "X-CSRF-Token": this.props.csrfToken,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-Requested-With": "XMLHttpRequest"
+      }
+    })
+      .then(() => {
+        let events = [...this.props.events].filter(e => e.id !== this.state.selectedEvent.id)
+        console.log(events)
+        this.props.dispatch({ type: "SET_EVENTS", value: events })
+        this.setState({ dialogOpen: false })
+      })
+  }
+
 
   createAppointmentSlotHandeler = () => {
     this.setState({ creatingAppointmentSlot: false })
-
-
-
     fetch(`${this.props.baseUrl}/create`, {
       method: "POST",
       body: JSON.stringify({
@@ -147,6 +165,40 @@ class Calendar extends React.Component {
     </Modal>
   }
 
+  showInfoModal = () => {
+    return <Modal
+      open={this.state.dialogOpen}
+      onClose={() => this.setState({ dialogOpen: false })}
+    >
+      <Modal.Header>Appointment Confirmed</Modal.Header>
+      <Modal.Content >
+        <Modal.Description>
+          <Header>{this.state.selectedEvent ? this.state.selectedEvent.title : null}</Header>
+          {/* <p>{this.state.selectedEvent.description}</p> */}
+          {this.state.selectedEvent ? this.showPrettyStartAndEndTime(this.state.selectedEvent) : null}
+
+        </Modal.Description>
+      </Modal.Content>
+    </Modal>
+  }
+
+  showEditableModal = () => {
+    return <Modal
+      open={this.state.dialogOpen}
+      onClose={() => this.setState({ dialogOpen: false })}
+    >
+      <input value={this.state.selectedEvent ? this.state.selectedEvent.title : null} />
+      <Modal.Content >
+        <Modal.Description>
+          {/* <p>{this.state.selectedEvent.description}</p> */}
+          {this.state.selectedEvent ? this.showPrettyStartAndEndTime(this.state.selectedEvent) : null}
+
+        </Modal.Description>
+        <Button content="delete" onClick={this.deleteSelectedEventHandeler} />
+      </Modal.Content>
+    </Modal>
+  }
+
   appointmentTimeSetter = (selectedSlot) => {
     let endTime = moment(selectedSlot.end)
     let timeOptions = [endTime]
@@ -191,22 +243,7 @@ class Calendar extends React.Component {
     </>
   }
 
-  showInfoModal = () => {
-    return <Modal
-      open={this.state.dialogOpen}
-      onClose={() => this.setState({ dialogOpen: false })}
-    >
-      <Modal.Header>Appointment Confirmed</Modal.Header>
-      <Modal.Content >
-        <Modal.Description>
-          <Header>{this.state.selectedEvent ? this.state.selectedEvent.title : null}</Header>
-          {/* <p>{this.state.selectedEvent.description}</p> */}
-          {this.state.selectedEvent ? this.showPrettyStartAndEndTime(this.state.selectedEvent) : null}
 
-        </Modal.Description>
-      </Modal.Content>
-    </Modal>
-  }
 
   createAppointmentSlotModal = () => {
     let e = this.state.newAppointment
@@ -234,7 +271,10 @@ class Calendar extends React.Component {
 
   showAppropriateModal = () => {
 
+
     if (this.props.user) {
+      if (this.props.user.admin === true) return this.showEditableModal()
+
       if (this.props.bookable) return this.showBookableModal()
       return this.showInfoModal()
     }
@@ -260,15 +300,15 @@ class Calendar extends React.Component {
     let allViews = Object.keys(Views).map(k => Views[k])
 
     const CalendarContainer = styled.div`
-      grid-area: panel;
-      height: 100vh;
+        grid-area: panel;
+        height: 100vh;
     max-width: ${props => this.props.fullWidth ? "95vw" : "60vw"};
-    width: 100rem;
-    min-height: 50rem;
-    justify-self: center;
-
+      width: 100rem;
+      min-height: 50rem;
+      justify-self: center;
+  
      @media (max-width: 50rem) {
-      max-width: 95vw;
+        max - width: 95vw;
     ;
   }
 

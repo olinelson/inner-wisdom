@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   get '/refresh', to: 'main#refresh'
 
   post '/create', to: 'main#createEvent'
+
+  delete '/delete', to: 'main#deleteEvent'
   
   post '/edit', to: 'main#editEvent'
 

@@ -120,6 +120,14 @@ class MainController < ApplicationController
         render json: {events: @cal.events} 
     end
 
+    def deleteEvent
+        user = params["user"]
+        event = params["event"]
+        found = @cal.find_event_by_id(event["id"])
+        found.first.delete
+
+    end
+
     def all 
         puts @cal.events
     end
