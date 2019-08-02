@@ -57,7 +57,7 @@ function Home(props) {
             return <Container>
                 <h1>Latest Blog Post</h1>
                 <Item.Group>
-                    <PostPreview {...props} readMoreButton blogView post={mostRecentPublicPost} />
+                    <PostPreview readMoreButton blogView post={mostRecentPublicPost} />
                 </Item.Group>
             </Container>
         }

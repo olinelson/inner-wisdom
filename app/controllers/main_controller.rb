@@ -15,19 +15,16 @@ class MainController < ApplicationController
         end
     end
 
-    def calendarAuthLink
-        byebug
-
-
-        cal = Google::Calendar.new(
-                :client_id     => ENV['GOOGLE_CLIENT_ID'], 
-                :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
-                :calendar      => params["email"],
-                :redirect_url  => ENV['GOOGLE_REDIRECT_URL']
-                                )
-                                byebug
-            redirect_to(cal.authorize_url.to_str)
-    end
+    # def calendarAuthLink
+    #     cal = Google::Calendar.new(
+    #             :client_id     => ENV['GOOGLE_CLIENT_ID'], 
+    #             :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
+    #             :calendar      => params["email"],
+    #             :redirect_url  => ENV['GOOGLE_REDIRECT_URL']
+    #                             )
+    #                             byebug
+    #         redirect_to(cal.authorize_url.to_str)
+    # end
 
     def personalCalendarEvents
         begin
@@ -47,6 +44,7 @@ class MainController < ApplicationController
     def home
         user = nil
         personalEvents = nil
+        users = User.all
 
         if current_user
             user = current_user
@@ -62,7 +60,7 @@ class MainController < ApplicationController
                 personalEvents = nil
             end
         
-        users = User.all
+        
 
         end
 
@@ -73,29 +71,40 @@ class MainController < ApplicationController
         render react_component: 'App', props: { events: @cal.events, personalEvents: personalEvents, posts: Post.all, user: user, baseUrl: ENV["BASE_URL"], users: users}
     end
 
-    def refresh 
-        user = nil
-        if current_user
-            user = current_user
-        end
-        render json: {user: user, events: @cal.events, posts: Post.all} 
-    end
 
     def createEvent
         newEvent = params["event"]
+        title = "Available Appointment"
+
+        if newEvent["attendees"]
+             attendees = newEvent["attendees"].map do |a|
+            {
+                'email' => a["email"],
+                'displayName' => a["first_name"] + " " + a["last_name"], 
+                'responseStatus' => 'tentative'
+            }
+            end
+
+            title = ""
+
+            attendees.each do |a|
+            title << a["displayName"]
+            end
+
+        end
+
         event = @cal.create_event do |e|
-            e.title = 'Free Time Slot'
+            e.title = title
             e.start_time = newEvent["start"]
             e.end_time = newEvent["end"]
             e.location= "609 W 135 St New York, New York"
             # byebug
             e.reminders =  { "useDefault": false }
             # e.notes= "one fine day in the middle of the night, two dead men got up to fight"
-        #     e.attendees= [
-        #     {'email' => current_user.email, 'displayName' => "#{current_user.first_name} #{current_user.last_name}" , 'responseStatus' => 'tentative'},
-        # ]
+            
+            
+            e.attendees= attendees
         end
-        # byebug
         render json: {event: event}
 
     end

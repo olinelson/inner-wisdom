@@ -6,6 +6,7 @@ import { Button, Container, Label, Grid, Search, Icon, Segment, Radio, Modal, He
 import Checkout from './Checkout'
 import styled from "styled-components"
 import CustomEvent from "./CustomEvent"
+import { withRouter } from 'react-router-dom'
 
 
 const localizer = momentLocalizer(moment)
@@ -52,7 +53,7 @@ class Calendar extends React.Component {
 
 
   createEventHandeler = () => {
-    // console.log("hello", e)
+
     this.setState({ creatingEvent: false })
     fetch(`${this.props.baseUrl}/create`, {
       method: "POST",
@@ -83,8 +84,6 @@ class Calendar extends React.Component {
   }
 
   bookAppointment = () => {
-
-
     let user = this.props.user
     let event = this.state.selectedEvent
 
@@ -122,12 +121,8 @@ class Calendar extends React.Component {
   }
 
   handleEventClick = (event) => {
-    // alert(event)
-    // this.setState({ selectedEvent: event, showCheckout: true })
+    console.log("selected event", event)
     this.setState({ selectedEvent: event, dialogOpen: true })
-
-
-
   }
 
   showMustCreateAccountModal = () => {
@@ -187,19 +182,76 @@ class Calendar extends React.Component {
       open={this.state.dialogOpen}
       onClose={() => this.setState({ dialogOpen: false })}
     >
-      <input value={this.state.selectedEvent ? this.state.selectedEvent.title : null} />
+      <Modal.Header>{this.state.selectedEvent ? this.state.selectedEvent.title : null}</Modal.Header>
       <Modal.Content >
         <Modal.Description>
           {/* <p>{this.state.selectedEvent.description}</p> */}
           {this.state.selectedEvent ? this.showPrettyStartAndEndTime(this.state.selectedEvent) : null}
-
+          {this.showSelectedEventAttendees()}
         </Modal.Description>
+
         <Button content="delete" onClick={this.deleteSelectedEventHandeler} />
       </Modal.Content>
     </Modal>
   }
 
+  // createAppointmentHandeler = () => {
+  //   this.setState({ newAppointment: { ...this.state.newAppointment,title: ``} })
+  // }
+
+
+  createAppointmentSlotModal = () => {
+
+    let e = this.state.newAppointment
+
+    return <Modal
+      open={this.state.creatingEvent}
+      onClose={() => this.setState({ creatingEvent: false })}
+    >
+      <Modal.Header>Create Event</Modal.Header>
+      <Modal.Content >
+        <Segment placeholder>
+          <Grid columns={2} stackable textAlign='center'>
+            <Divider vertical>Or</Divider>
+
+            <Grid.Row verticalAlign='middle'>
+
+              <Grid.Column>
+                <Header icon>
+                  <Icon name='bookmark' />
+                  Book New Appointment
+          </Header>
+                {this.appointmentTimeSetter(e)}
+                <Divider hidden />
+
+                <div>
+                  {this.showNewAppointmentAttendees()}
+                </div>
+                <Divider hidden />
+                {this.userPickerDropDown()}
+                <Divider hidden />
+                <Button primary onClick={this.createEventHandeler}>Create</Button>
+              </Grid.Column>
+
+              <Grid.Column>
+                <Header icon>
+                  <Icon name='time' />
+                  New Appointment Slot
+          </Header>
+                {this.appointmentTimeSetter(e)}
+                <Divider hidden />
+                <Button onClick={this.createEventHandeler} primary>Create</Button>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </Segment>
+      </Modal.Content>
+
+    </Modal >
+  }
+
   appointmentTimeSetter = (selectedSlot) => {
+    if (!selectedSlot) return null
 
     let endTime = moment(selectedSlot.end)
     let startTime = moment(selectedSlot.start)
@@ -236,9 +288,6 @@ class Calendar extends React.Component {
       }
     })
 
-
-    // return null
-
     return <>
       <h4>{moment(selectedSlot.start).format('Do MMMM  YYYY')}</h4>
       {/* {moment(selectedSlot.start).format('h:mm a')}  */}
@@ -262,6 +311,29 @@ class Calendar extends React.Component {
     </>
   }
 
+  showSelectedEventAttendees = () => {
+    if (this.state.selectedEvent && this.state.selectedEvent.attendees) {
+      return this.showAttendeeLabels(this.state.selectedEvent.attendees)
+    }
+    return null
+  }
+
+  showNewAppointmentAttendees = () => {
+    if (this.state.newAppointment && this.state.newAppointment.attendees) {
+      return this.showAttendeeLabels(this.state.newAppointment.attendees)
+    }
+    return null
+  }
+
+  showAttendeeLabels = (users) => {
+    return users.map(u => <Label key={u.id}>
+      <Icon name='user' />
+      {u.first_name + " " + u.last_name}
+      <Icon name='delete' onClick={() => this.removeAttendeeFromNewAppointment(u)} />
+    </Label>
+    )
+  }
+
   showPrettyStartAndEndTime = (selectedEvent) => {
 
     return <>
@@ -271,74 +343,6 @@ class Calendar extends React.Component {
   }
 
 
-
-  createAppointmentSlotModal = () => {
-
-    let e = this.state.newAppointment
-
-    return <Modal
-      open={this.state.creatingEvent}
-      onClose={() => this.setState({ creatingEvent: false })}
-    >
-      <Modal.Header>Create Event</Modal.Header>
-      <Modal.Content >
-
-        {/* <Modal.Description>
-          {e == null ?
-            null
-            :
-            this.appointmentTimeSetter({ start: e.start, end: e.end })
-
-          }
-        </Modal.Description>
-        <Divider hidden />
-        <Button onClick={this.createEventHandeler}>Create</Button> */}
-        <Segment placeholder>
-          <Grid columns={2} stackable textAlign='center'>
-            <Divider vertical>Or</Divider>
-
-            <Grid.Row verticalAlign='middle'>
-
-              <Grid.Column>
-                <Header icon>
-                  <Icon name='bookmark' />
-                  Book New Appointment
-          </Header>
-                {e == null ?
-                  null
-                  :
-                  this.appointmentTimeSetter({ start: e.start, end: e.end })
-
-                }
-                <div>
-                  {this.state.newAppointment && this.state.newAppointment.attendees ? this.state.newAppointment.attendees.map(u => <Label icon="user"><Icon name='user' />{u.first_name + " " + u.last_name} <Icon name='delete' onClick={() => this.removeAttendeeFromNewAppointment(u)} /></Label>) : null}
-                </div>
-                {this.userPickerDropDown()}
-                <Divider hidden />
-                <Button primary onClick={this.createEventHandeler}>Create</Button>
-              </Grid.Column>
-
-              <Grid.Column>
-                <Header icon>
-                  <Icon name='time' />
-                  New Appointment Slot
-          </Header>
-                {e == null ?
-                  null
-                  :
-                  this.appointmentTimeSetter({ start: e.start, end: e.end })
-
-                }
-                <Divider hidden />
-                <Button primary>Create</Button>
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
-        </Segment>
-      </Modal.Content>
-
-    </Modal >
-  }
 
   showAppropriateModal = () => {
 
@@ -366,7 +370,7 @@ class Calendar extends React.Component {
 
   userPickerDropDown = () => {
     return <Dropdown
-      text='Add user'
+      text='Add Client'
       icon='add user'
       floating
       labeled
@@ -375,9 +379,7 @@ class Calendar extends React.Component {
     >
       <Dropdown.Menu>
         <Dropdown.Header content='Clients' />
-        {this.props.users.map(user => (
-          <Dropdown.Item onClick={() => this.addAttendeeToNewAppointment(user)} key={user.id} text={`${user.first_name} ${user.last_name}`} icon="user circle" />
-        ))}
+        {this.allUsersNotAttendingList()}
       </Dropdown.Menu>
     </Dropdown>
   }
@@ -391,8 +393,39 @@ class Calendar extends React.Component {
     else this.setState({ newAppointment: { ...this.state.newAppointment, attendees: [...this.state.newAppointment.attendees, user] } })
   }
 
+  allUsersNotAttendingList = () => {
+    // if (this.state.newAppointment) return null
+
+    return this.allUsersNotAttending().map(user => (
+      <Dropdown.Item onClick={() => this.addAttendeeToNewAppointment(user)} key={user.id} text={`${user.first_name} ${user.last_name}`} icon="user circle" />
+    ))
+
+  }
+
+
+
+  allUsersNotAttending = () => {
+    let allUsers = this.props.users
+    if (this.state.newAppointment == null) return allUsers
+
+    if (!this.state.newAppointment.attendees || this.state.newAppointment.attendees.length < 1) return allUsers
+
+    const isAnAttendee = (user) => {
+      for (let u of this.state.newAppointment.attendees) {
+        if (u.id === user.id) return false
+      }
+      return true
+    }
+
+    let result = this.props.users.filter(isAnAttendee)
+
+    return result
+
+  }
+
   removeAttendeeFromNewAppointment = user => {
-    console.log(user)
+    let attendees = this.state.newAppointment.attendees.filter(a => a.id !== user.id)
+    this.setState({ newAppointment: { ...this.state.newAppointment, attendees } })
   }
 
   render() {
@@ -454,9 +487,11 @@ class Calendar extends React.Component {
 }
 const mapStateToProps = (state) => ({
   user: state.user,
+  users: state.users,
   baseUrl: state.baseUrl,
-  csrfToken: state.csrfToken
+  csrfToken: state.csrfToken,
+
 })
 
-export default connect(mapStateToProps)(Calendar)
+export default withRouter(connect(mapStateToProps)(Calendar))
 

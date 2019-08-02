@@ -5,6 +5,7 @@ import moment from 'moment'
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import PostsPreview from "./PostPreview"
 import { connect } from "react-redux"
+import { withRouter } from 'react-router-dom'
 
 
 function PostsList(props) {
@@ -16,7 +17,7 @@ function PostsList(props) {
     const cardMapper = (p) => {
         let firstParagraph = ReactHtmlParser(p.body)[0]
 
-        return <PostsPreview key={p.id + "preview"} {...props} post={p} />
+        return <PostsPreview key={p.id + "preview"} post={p} />
 
         return <Item
             style={{ cursor: "pointer" }}
@@ -136,4 +137,4 @@ const mapStateToProps = (state) => ({
     csrfToken: state.csrfToken
 })
 
-export default connect(mapStateToProps)(PostsList)
+export default withRouter(connect(mapStateToProps)(PostsList))

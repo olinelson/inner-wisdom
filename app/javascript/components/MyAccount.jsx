@@ -73,14 +73,14 @@ class MyAccount extends Component {
     panelSwitch = () => {
         switch (this.props.myAccountPanel) {
             case "calendar":
-                return <Calendar creatable {...this.props} events={this.RelevantAppointments()} />
+                return <Calendar creatable events={this.RelevantAppointments()} />
             // return <h4 style={{ gridArea: "panel" }}>calendar</h4>
             case "profile":
                 return this.profileSettingsLinks()
             case "posts":
-                return <PostsList creatable {...this.props} posts={this.props.user.posts} />
+                return <PostsList creatable posts={this.props.user.posts} />
             default:
-                return <Calendar {...this.props} events={this.RelevantAppointments()} />
+                return <Calendar events={this.RelevantAppointments()} />
         }
 
 

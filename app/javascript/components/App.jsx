@@ -62,21 +62,30 @@ function reducer(state = initialState, action) {
 
 const store = createStore(reducer);
 
-export const eventMapper = (e, type) => {
-    event = {
-        id: e.id,
-        title: e.title,
-        start: new Date(e.start_time),
-        end: new Date(e.end_time),
-        allDay: false,
-        attendees: e.attendees,
-        type: type
+export function App(props) {
+
+    const eventMapper = (e, type) => {
+        event = {
+            id: e.id,
+            title: e.title,
+            start: new Date(e.start_time),
+            end: new Date(e.end_time),
+            allDay: false,
+            attendees: e.attendees ? getAllUsersFromEmails(e.attendees) : null,
+            type: type
+        }
+        return event
     }
-    return event
-}
 
+    const getAllUsersFromEmails = (users) => {
+        return users.map(user => getUserFromEmail(user))
+    }
 
-function App(props) {
+    const getUserFromEmail = (calUser) => {
+        let found = props.users.find(u => u.email === calUser.email)
+        return found
+    }
+
 
     const getEvents = (events, type) => {
         if (events === null) return null
@@ -92,7 +101,8 @@ function App(props) {
             user: props.user,
             baseUrl: props.baseUrl,
             csrfToken: document.querySelectorAll('meta[name="csrf-token"]')[0].content,
-            users: props.users
+            users: props.users,
+
         }
 
     })
@@ -109,24 +119,24 @@ function App(props) {
                         <Route
                             exact
                             path="/"
-                            render={props => <><Nav {...props} /><Home {...props} /></>}
+                            render={props => <><Nav /><Home /></>}
                         />
                         <Route
                             path="/appointments"
-                            render={props => <><Nav {...props} /><Appointments {...props} /></>}
+                            render={props => <><Nav /><Appointments /></>}
                         />
                         <Route
                             path="/myaccount"
-                            render={props => <><Nav {...props} /><MyAccount {...props} /></>}
+                            render={props => <><Nav /><MyAccount /></>}
                         />
                         <Route
                             path="/blog"
-                            render={props => <><Nav {...props} /><Blog {...props} /></>}
+                            render={props => <><Nav /><Blog /></>}
                         />
 
                         <Route
                             path="/posts/:id"
-                            render={props => <><Nav {...props} /><PostEditor {...props} /></>}
+                            render={props => <><Nav /><PostEditor /></>}
                         />
 
                     </Switch>

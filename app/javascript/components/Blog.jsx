@@ -25,7 +25,7 @@ export default function Blog(props) {
                     Est occaecati est voluptatum ut provident. Nobis voluptatum dolor rerum illo dolorum omnis. Minus doloribus id placeat.
 </p>
                 <Divider />
-                <PostsList {...props} blogView />
+                <PostsList blogView />
             </Container>
     </>
         }

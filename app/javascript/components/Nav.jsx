@@ -3,9 +3,10 @@ import React, { useState } from 'react'
 
 import { Menu, Icon, Dropdown, Sidebar, Segment, Header, Image } from 'semantic-ui-react'
 
-import { Link } from 'react-router-dom'
+import { Link, withRouter } from 'react-router-dom'
 import { connect } from 'react-redux';
 import styled from "styled-components"
+
 
 
 
@@ -167,6 +168,6 @@ const mapStateToProps = (state) => ({
     csrfToken: state.csrfToken
 })
 
-export default connect(mapStateToProps)(Nav)
+export default withRouter(connect(mapStateToProps)(Nav))
 
 

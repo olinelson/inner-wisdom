@@ -36,23 +36,29 @@ else
 
 end
 
-event = cal.create_event do |e|
-  e.title = 'A Cool Event'
-  e.start_time = Time.now
-  e.end_time = Time.now + (60 * 60) # seconds * min
-end
+cal.events.each do |e|
+  e.delete
+ end
 
-puts event
+# event = cal.create_event do |e|
+#   e.title = 'A Cool Event'
+#   e.start_time = Time.now
+#   e.end_time = Time.now + (60 * 60) # seconds * min
+# end
 
-event = cal.find_or_create_event_by_id(event.id) do |e|
-  e.title = 'An Updated Cool Event'
-  e.end_time = Time.now + (60 * 60 * 2) # seconds * min * hours
-end
+# puts event
 
-puts event
+# event = cal.find_or_create_event_by_id(event.id) do |e|
+#   e.title = 'An Updated Cool Event'
+#   e.end_time = Time.now + (60 * 60 * 2) # seconds * min * hours
+# end
 
-# All events
-puts cal.events
+# puts event
 
-# Query events
-puts cal.find_events('your search string')
+# # All events
+# puts cal.events
+
+
+
+# # Query events
+# puts cal.find_events('your search string')
