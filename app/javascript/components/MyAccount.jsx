@@ -73,7 +73,7 @@ class MyAccount extends Component {
     panelSwitch = () => {
         switch (this.props.myAccountPanel) {
             case "calendar":
-                return <Calendar {...this.props} events={this.RelevantAppointments()} />
+                return <Calendar creatable {...this.props} events={this.RelevantAppointments()} />
             // return <h4 style={{ gridArea: "panel" }}>calendar</h4>
             case "profile":
                 return this.profileSettingsLinks()
@@ -104,7 +104,6 @@ class MyAccount extends Component {
 
 
     render() {
-        console.log(this.props)
 
         return <Container >
 
@@ -125,6 +124,7 @@ const mapStateToProps = (state) => ({
     events: state.events,
     personalEvents: state.personalEvents,
     user: state.user,
+    users: state.users,
     myAccountPanel: state.myAccountPanel,
     baseUrl: state.baseUrl
 })

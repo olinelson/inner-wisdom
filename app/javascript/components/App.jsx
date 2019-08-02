@@ -24,6 +24,7 @@ const initialState = {
     notifications: [],
     baseUrl: null,
     csrfToken: null,
+    users: null,
 }
 
 
@@ -48,6 +49,7 @@ function reducer(state = initialState, action) {
                 personalEvents: action.value.personalEvents,
                 posts: action.value.posts,
                 user: action.value.user,
+                users: action.value.users,
                 baseUrl: action.value.baseUrl,
                 csrfToken: action.value.csrfToken
             }
@@ -77,7 +79,6 @@ export const eventMapper = (e, type) => {
 function App(props) {
 
     const getEvents = (events, type) => {
-        console.log(events)
         if (events === null) return null
         let result = events.map((e) => eventMapper(e, type))
         return result
@@ -90,7 +91,8 @@ function App(props) {
             personalEvents: getEvents(props.personalEvents, "personal"),
             user: props.user,
             baseUrl: props.baseUrl,
-            csrfToken: document.querySelectorAll('meta[name="csrf-token"]')[0].content
+            csrfToken: document.querySelectorAll('meta[name="csrf-token"]')[0].content,
+            users: props.users
         }
 
     })

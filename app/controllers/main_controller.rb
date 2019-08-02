@@ -61,7 +61,8 @@ class MainController < ApplicationController
                 puts "error fetching personal events"
                 personalEvents = nil
             end
-
+        
+        users = User.all
 
         end
 
@@ -69,7 +70,7 @@ class MainController < ApplicationController
 
         
 
-        render react_component: 'App', props: { events: @cal.events, personalEvents: personalEvents, posts: Post.all, user: user, baseUrl: ENV["BASE_URL"]}
+        render react_component: 'App', props: { events: @cal.events, personalEvents: personalEvents, posts: Post.all, user: user, baseUrl: ENV["BASE_URL"], users: users}
     end
 
     def refresh 
@@ -81,12 +82,11 @@ class MainController < ApplicationController
     end
 
     def createEvent
-        # byebug
         newEvent = params["event"]
         event = @cal.create_event do |e|
             e.title = 'Free Time Slot'
-            e.start_time = newEvent["slots"].first
-            e.end_time = newEvent["slots"].second
+            e.start_time = newEvent["start"]
+            e.end_time = newEvent["end"]
             e.location= "609 W 135 St New York, New York"
             # byebug
             e.reminders =  { "useDefault": false }

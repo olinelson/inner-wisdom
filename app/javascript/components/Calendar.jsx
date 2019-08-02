@@ -2,7 +2,7 @@ import React from 'react';
 import { Calendar as BigCalendar, momentLocalizer, Views } from 'react-big-calendar'
 import moment from 'moment'
 import { connect } from "react-redux"
-import { Button, Container, Modal, Header, Image, Dropdown, Divider } from "semantic-ui-react"
+import { Button, Container, Label, Grid, Search, Icon, Segment, Radio, Modal, Header, Image, Dropdown, Divider } from "semantic-ui-react"
 import Checkout from './Checkout'
 import styled from "styled-components"
 import CustomEvent from "./CustomEvent"
@@ -25,7 +25,7 @@ class Calendar extends React.Component {
       selectedEvent: null,
       showCheckout: false,
       dialogOpen: false,
-      creatingAppointmentSlot: false,
+      creatingEvent: false,
       newAppointment: null,
     }
   }
@@ -45,15 +45,15 @@ class Calendar extends React.Component {
     })
       .then(() => {
         let events = [...this.props.events].filter(e => e.id !== this.state.selectedEvent.id)
-        console.log(events)
         this.props.dispatch({ type: "SET_EVENTS", value: events })
         this.setState({ dialogOpen: false })
       })
   }
 
 
-  createAppointmentSlotHandeler = () => {
-    this.setState({ creatingAppointmentSlot: false })
+  createEventHandeler = () => {
+    // console.log("hello", e)
+    this.setState({ creatingEvent: false })
     fetch(`${this.props.baseUrl}/create`, {
       method: "POST",
       body: JSON.stringify({
@@ -200,17 +200,35 @@ class Calendar extends React.Component {
   }
 
   appointmentTimeSetter = (selectedSlot) => {
-    let endTime = moment(selectedSlot.end)
-    let timeOptions = [endTime]
 
-    for (let i = 0; i < 10; i++) {
-      let newEndTime = moment(timeOptions[i]).add(30, 'm')
-      timeOptions.push(newEndTime)
+    let endTime = moment(selectedSlot.end)
+    let startTime = moment(selectedSlot.start)
+
+    let endTimeOptions = [endTime]
+    let startTimeOptions = [startTime]
+
+
+    for (let i = 0; i < 22; i++) {
+      let addEndTime = moment(endTimeOptions[endTimeOptions.length - 1]).add(30, 'm')
+      let subEndTime = moment(endTimeOptions[0]).subtract(30, 'm')
+
+      let addStartTime = moment(startTimeOptions[startTimeOptions.length - 1]).add(30, 'm')
+      let subStartTime = moment(startTimeOptions[0]).subtract(30, 'm')
+
+
+      startTimeOptions = [subStartTime, ...startTimeOptions, addStartTime]
+      endTimeOptions = [subEndTime, ...endTimeOptions, addEndTime]
     }
 
-    let formattedTimeOptions = timeOptions.map(op => {
+    let formattedendEndTimeOptions = endTimeOptions.map(op => {
+      return {
+        key: op._d,
+        text: moment(op._d).format("h:mm a"),
+        value: op._d.toString(),
+      }
+    })
 
-
+    let formattedendStartTimeOptions = startTimeOptions.map(op => {
       return {
         key: op._d,
         text: moment(op._d).format("h:mm a"),
@@ -223,11 +241,20 @@ class Calendar extends React.Component {
 
     return <>
       <h4>{moment(selectedSlot.start).format('Do MMMM  YYYY')}</h4>
-      {moment(selectedSlot.start).format('h:mm a')} to{" "}
+      {/* {moment(selectedSlot.start).format('h:mm a')}  */}
       <Dropdown
         inline
-        options={formattedTimeOptions}
-        defaultValue={formattedTimeOptions[0].value}
+        options={formattedendStartTimeOptions}
+        defaultValue={formattedendStartTimeOptions[22].value}
+        upward={false}
+        scrolling
+        onChange={(e, d) => this.setState({ newAppointment: { ...this.state.newAppointment, slots: [selectedSlot.start, new Date(d.value)] } })}
+      />
+      to{" "}
+      <Dropdown
+        inline
+        options={formattedendEndTimeOptions}
+        defaultValue={formattedendEndTimeOptions[22].value}
         upward={false}
         scrolling
         onChange={(e, d) => this.setState({ newAppointment: { ...this.state.newAppointment, slots: [selectedSlot.start, new Date(d.value)] } })}
@@ -246,27 +273,71 @@ class Calendar extends React.Component {
 
 
   createAppointmentSlotModal = () => {
+
     let e = this.state.newAppointment
 
     return <Modal
-      open={this.state.creatingAppointmentSlot}
-      onClose={() => this.setState({ creatingAppointmentSlot: false })}
+      open={this.state.creatingEvent}
+      onClose={() => this.setState({ creatingEvent: false })}
     >
-      <Modal.Header>Create Appointment Slot</Modal.Header>
+      <Modal.Header>Create Event</Modal.Header>
       <Modal.Content >
-        <Modal.Description>
+
+        {/* <Modal.Description>
           {e == null ?
             null
             :
-            this.appointmentTimeSetter({ start: e.slots[0], end: e.slots[1] })
+            this.appointmentTimeSetter({ start: e.start, end: e.end })
 
           }
         </Modal.Description>
         <Divider hidden />
-        <Button onClick={this.createAppointmentSlotHandeler}>Create</Button>
+        <Button onClick={this.createEventHandeler}>Create</Button> */}
+        <Segment placeholder>
+          <Grid columns={2} stackable textAlign='center'>
+            <Divider vertical>Or</Divider>
+
+            <Grid.Row verticalAlign='middle'>
+
+              <Grid.Column>
+                <Header icon>
+                  <Icon name='bookmark' />
+                  Book New Appointment
+          </Header>
+                {e == null ?
+                  null
+                  :
+                  this.appointmentTimeSetter({ start: e.start, end: e.end })
+
+                }
+                <div>
+                  {this.state.newAppointment && this.state.newAppointment.attendees ? this.state.newAppointment.attendees.map(u => <Label icon="user"><Icon name='user' />{u.first_name + " " + u.last_name} <Icon name='delete' onClick={() => this.removeAttendeeFromNewAppointment(u)} /></Label>) : null}
+                </div>
+                {this.userPickerDropDown()}
+                <Divider hidden />
+                <Button primary onClick={this.createEventHandeler}>Create</Button>
+              </Grid.Column>
+
+              <Grid.Column>
+                <Header icon>
+                  <Icon name='time' />
+                  New Appointment Slot
+          </Header>
+                {e == null ?
+                  null
+                  :
+                  this.appointmentTimeSetter({ start: e.start, end: e.end })
+
+                }
+                <Divider hidden />
+                <Button primary>Create</Button>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </Segment>
       </Modal.Content>
 
-    </Modal>
+    </Modal >
   }
 
   showAppropriateModal = () => {
@@ -288,14 +359,44 @@ class Calendar extends React.Component {
   }
 
   selectSlotHandeler = (e) => {
-    if (this.props.user.admin) this.setState({ creatingAppointmentSlot: true, newAppointment: e })
+    if (this.props.user.admin && this.props.creatable) this.setState({ creatingEvent: true, newAppointment: e })
 
     else console.log("not allowed")
   }
 
+  userPickerDropDown = () => {
+    return <Dropdown
+      text='Add user'
+      icon='add user'
+      floating
+      labeled
+      button
+      className='icon'
+    >
+      <Dropdown.Menu>
+        <Dropdown.Header content='Clients' />
+        {this.props.users.map(user => (
+          <Dropdown.Item onClick={() => this.addAttendeeToNewAppointment(user)} key={user.id} text={`${user.first_name} ${user.last_name}`} icon="user circle" />
+        ))}
+      </Dropdown.Menu>
+    </Dropdown>
+  }
 
+  addAttendeeToNewAppointment = (user) => {
+    console.log(user)
+    let attendees = this.state.newAppointment.attendees
+
+    if (attendees == null) this.setState({ newAppointment: { ...this.state.newAppointment, attendees: [user] } })
+
+    else this.setState({ newAppointment: { ...this.state.newAppointment, attendees: [...this.state.newAppointment.attendees, user] } })
+  }
+
+  removeAttendeeFromNewAppointment = user => {
+    console.log(user)
+  }
 
   render() {
+    console.log(this.state.newAppointment)
 
     let allViews = Object.keys(Views).map(k => Views[k])
 

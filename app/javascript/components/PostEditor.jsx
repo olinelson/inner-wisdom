@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Editor from 'react-medium-editor';
 import { connect } from 'react-redux';
-import { Container, Menu, Checkbox, Label, Dropdown, Modal, Popup, Header, Button, Icon, Image, Segment, Placeholder, Dimmer } from "semantic-ui-react"
+import { Container, Input, Divider, Menu, Checkbox, Label, Dropdown, Modal, Popup, Header, Button, Icon, Image, Segment, Placeholder, Dimmer } from "semantic-ui-react"
 import PostViewer from './PostViewer';
 import Dropzone from 'react-dropzone'
 import styled from "styled-components"
@@ -36,6 +36,7 @@ class PostEditor extends Component {
             featureImage: post.feature_image,
             featureImageLoading: false,
             featureImageHovering: false,
+            saving: false,
         }
 
     }
@@ -49,18 +50,17 @@ class PostEditor extends Component {
     }
 
     handlePublishChange = () => {
-        this.setState({ editedPost: { ...this.state.editedPost, published: !this.state.editedPost.published } })
+        this.setState({ editedPost: { ...this.state.editedPost, published: !this.state.editedPost.published }, unsavedChanges: true })
     }
 
     handleTitleChange = (e) => {
-        this.setState({ editedPost: { ...this.state.editedPost, title: e.target.value } })
+        this.setState({ editedPost: { ...this.state.editedPost, title: e.target.value }, unsavedChanges: true })
     }
 
     saveChanges = () => {
 
-
+        this.setState({ saving: true })
         let post = this.state.editedPost
-
 
         fetch(`${this.props.baseUrl}/posts/${post.id}`, {
             method: "PATCH",
@@ -77,7 +77,7 @@ class PostEditor extends Component {
 
             .then(response => response.json())
             .then((e) => {
-                // this.props.history.push("/myaccount")
+                this.setState({ saving: false, unsavedChanges: false })
                 this.props.dispatch({ type: "SET_POSTS", value: e.posts })
             })
 
@@ -127,15 +127,34 @@ class PostEditor extends Component {
 
         return <>
             <Menu secondary>
-                <Menu.Item
-                    name={"save changes"}
-                    active={this.state.unsavedChanges}
-                    onClick={this.saveChanges}
-                />
+                <Menu.Item >
+                    {/* <Button
+                        content="save changes"
+                        disabled={!this.state.unsavedChanges}
+                        onClick={this.saveChanges}
+                    /> */}
+                    <Button as='div' labelPosition='right'>
+                        <Button
+                            content="Save"
+                            icon="save"
+                            disabled={!this.state.unsavedChanges}
+                            onClick={this.saveChanges}
+                            loading={this.state.saving}
+                        />
+                        <Label as='a'
+                            basic
+                            color={this.state.unsavedChanges ? "red" : "green"}
+                            pointing='left'
+                            content={this.state.unsavedChanges ? "Unsaved Changes" : "Changes Saved"}
+                        />
+
+                    </Button>
+
+                </Menu.Item>
                 <Menu.Menu position="right">
                     <Menu.Item>
-                        <Dropdown text='Options'>
-                            <Dropdown.Menu>
+                        <Dropdown text='Options' floating>
+                            <Dropdown.Menu >
                                 {this.deletePostModal()}
 
                             </Dropdown.Menu>
@@ -181,10 +200,8 @@ class PostEditor extends Component {
 
 
 
-                <input onChange={this.handleTitleChange} style={{ fontSize: "3rem" }} value={this.state.editedPost.title} />
+                <Input transparent onChange={this.handleTitleChange} style={{ fontSize: "3rem", margin: "1rem 0" }} value={this.state.editedPost.title} />
                 <Editor
-                    // tag="pre"
-                    contentEditable={false}
                     text={this.state.editedPost.body}
                     onChange={this.handleChange}
                     options={{ disableEditing: this.state.editingDisabled, toolbar: { buttons: ['bold', 'italic', 'underline', 'anchor', 'h2', 'h3', 'quote'] } }}
@@ -221,7 +238,6 @@ class PostEditor extends Component {
 
 
     render() {
-
         if (this.state.editingDisabled === false) return this.showEditor()
 
         return <PostViewer post={this.state.savedPost} />

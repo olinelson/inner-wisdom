@@ -2,3 +2,19 @@
     color: inherit!important;
 } */
 /*  */
+.medium-editor-element:focus{
+
+    outline: none;
+}
+
+ p {
+    display: grid;
+}
+
+ p img {
+    /* border: 1px solid red; */
+     width: 450px;
+  height: auto;
+  font-size: 1.14285714rem;
+  justify-self: center;
+}

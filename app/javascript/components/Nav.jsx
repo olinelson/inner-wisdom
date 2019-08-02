@@ -29,11 +29,6 @@ function Nav(props) {
             .then(() => props.dispatch({ type: "SET_USER", value: null }))
     }
 
-    const LogoLink = styled(Link)`
-        font-size: 2rem;
-    `
-    console.log("pathname", pathname)
-
     const FixedMenu = styled(Menu)`
         position: ${() => pathname === '/' || pathname === '/blog' ? "absolute" : "sticky"};
         // position: absolute ;
