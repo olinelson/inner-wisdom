@@ -131,7 +131,6 @@ class MainController < ApplicationController
     end
 
     def deleteEvent
-        user = params["user"]
         event = params["event"]
         found = @cal.find_event_by_id(event["id"])
         found.first.delete
