@@ -87,7 +87,7 @@ export function App(props) {
     }
 
 
-    const getEvents = (events, type) => {
+    const formatEvents = (events, type) => {
         if (events === null) return null
         let result = events.map((e) => eventMapper(e, type))
         return result
@@ -96,8 +96,8 @@ export function App(props) {
     store.dispatch({
         type: "SET_ALL", value: {
             posts: props.posts,
-            events: getEvents(props.events, "business"),
-            personalEvents: getEvents(props.personalEvents, "personal"),
+            events: formatEvents(props.events, "business"),
+            personalEvents: formatEvents(props.personalEvents, "personal"),
             user: props.user,
             baseUrl: props.baseUrl,
             csrfToken: document.querySelectorAll('meta[name="csrf-token"]')[0].content,

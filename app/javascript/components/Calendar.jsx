@@ -81,6 +81,8 @@ class Calendar extends React.Component {
         return formattedEvent
       })
       .then(formattedEvent => this.props.dispatch({ type: "SET_EVENTS", value: [...this.props.events, formattedEvent] }))
+
+
   }
 
   bookAppointment = () => {
@@ -456,7 +458,7 @@ class Calendar extends React.Component {
           components={components}
           selectable
           localizer={localizer}
-          events={this.props.events}
+          events={this.props.combinedEvents}
           defaultView={Views.WEEK}
           scrollToTime={new Date(2050, 1, 1)}
           defaultDate={new Date()}
@@ -490,6 +492,7 @@ const mapStateToProps = (state) => ({
   users: state.users,
   baseUrl: state.baseUrl,
   csrfToken: state.csrfToken,
+  events: state.events
 
 })
 

@@ -7,7 +7,7 @@ import styled from "styled-components"
 
 function Appointments(props) {
     const availableAppointments = () => {
-        let result = props.events.filter(e => e.attendees == null || e.attendees.length < 2)
+        let result = props.events.filter(e => e.attendees == null || e.attendees.length < 1)
         return result
     }
 
