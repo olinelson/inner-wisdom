@@ -18,3 +18,11 @@
   font-size: 1.14285714rem;
   justify-self: center;
 }
+
+.rbc-event-label{
+    display: none;
+}
+.rbc-event{
+    padding: 0 !important;
+    border: none !important;
+}

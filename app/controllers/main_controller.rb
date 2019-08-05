@@ -76,6 +76,11 @@ class MainController < ApplicationController
         newEvent = params["event"]
         title = "Available Appointment"
 
+        if newEvent["appointmentSlot"] == false
+            fullName = newEvent["attendees"].first["first_name"] + newEvent["attendees"].first["last_name"]
+            title = fullName + " | session confirmed"
+        end
+
         if newEvent["attendees"]
              attendees = newEvent["attendees"].map do |a|
             {

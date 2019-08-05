@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Container, Divider, Modal, Button, Label, Icon, Segment, Grid, Header, Dropdown, Input } from 'semantic-ui-react'
+import { Container, Divider, Modal, Popup, Button, Label, Icon, Segment, Grid, Header, Dropdown, Input } from 'semantic-ui-react'
 import Calendar from './Calendar';
 import { connect } from 'react-redux';
 import styled from "styled-components"
@@ -59,7 +59,6 @@ class Schedule extends Component {
 
     // ATTENDEE METHODS ====================
     allUsersNotAttending = (event) => {
-        console.log("is this null?", event)
         let users = this.props.users
         if (event == null) return users
 
@@ -73,16 +72,12 @@ class Schedule extends Component {
         }
 
         let result = users.filter(isAnAttendee)
-        console.log("filtered", result)
         return result
 
     }
 
     allUsersNotAttendingList = (event, addAttendeeHandeler) => {
-        // if (event == null || event.attendees == null) return null
-        console.log("check", event)
         let users = this.allUsersNotAttending(event)
-        console.log(users)
         return users.map(user => (
             <Dropdown.Item onClick={() => addAttendeeHandeler(user)} key={user.id} text={`${user.first_name} ${user.last_name}`} icon="user circle" />
         ))
@@ -90,7 +85,6 @@ class Schedule extends Component {
     }
 
     userPickerDropDown = (event, addAttendeeHandeler) => {
-        console.log("event in userPickerdropdown", event)
         return <Dropdown
             text='Add Client'
             icon='add user'
@@ -147,17 +141,14 @@ class Schedule extends Component {
 
     // =====================================
 
-
-
-
-
-    createEventHandeler = () => {
+    createEventHandeler = (isAppointmentSlot) => {
 
         this.setState({ creatingEvent: false })
         fetch(`${this.props.baseUrl}/create`, {
             method: "POST",
             body: JSON.stringify({
-                event: this.state.newAppointment
+                event: this.state.selectedEvent,
+                appointmentSlot: isAppointmentSlot
             }),
             headers: {
                 "X-CSRF-Token": this.props.csrfToken,
@@ -190,12 +181,26 @@ class Schedule extends Component {
     }
 
     selectSlotHandeler = (e) => {
-        if (this.props.user.admin) this.setState({ creatingEvent: true, newAppointment: e })
+        if (this.props.user.admin) this.setState({ creatingEvent: true, selectedEvent: e })
 
+    }
+
+    changeDayHandeler = (day) => {
+        console.log(day)
+        let updatedDate = this.state.selectedEvent.start
+        console.log(updatedDate)
+        updatedDate.setMonth(day.getMonth())
+        updatedDate.setDate(day.getDate())
+        console.log(updatedDate)
+
+        this.setState({
+            selectedEvent: { ...this.state.selectedEvent, start: updatedDate, end: updatedDate }
+        })
     }
 
     editableEventModal = () => {
         let event = this.state.selectedEvent
+        console.log("event in editable modal", event)
 
         return <Modal
             open={this.state.dialogOpen}
@@ -205,6 +210,17 @@ class Schedule extends Component {
             <Modal.Content >
                 <Modal.Description>
                     {/* <p>{this.state.selectedEvent.description}</p> */}
+                    {/* {this.state.selectedEvent ?
+                        <Popup
+                            content={<DayPicker
+                                onDayClick={this.changeDayHandeler}
+                                selectedDays={this.state.selectedEvent.start}
+                            />}
+                            trigger={<Button icon='add' />} />
+
+                        : null
+                    } */}
+
                     {this.appointmentTimeSetter(event)}
                     {/* {this.state.selectedEvent ? this.showPrettyStartAndEndTime(this.state.selectedEvent) : null} */}
                     <Divider hidden />
@@ -260,7 +276,14 @@ class Schedule extends Component {
         })
 
         return <>
-            <h4>{moment(selectedSlot.start).format('Do MMMM  YYYY')}</h4>
+            {/* <h4>{moment(selectedSlot.start).format('Do MMMM  YYYY')}</h4> */}
+            <Popup
+                on="click"
+                content={<DayPicker
+                    onDayClick={this.changeDayHandeler}
+                    selectedDays={this.state.selectedEvent.start}
+                />}
+                trigger={<h4 style={{ cursor: "pointer" }}>{moment(selectedSlot.start).format('Do MMMM  YYYY')}<Icon name="caret down" /></h4>} />
             {/* {moment(selectedSlot.start).format('h:mm a')}  */}
             <Dropdown
                 inline
@@ -286,7 +309,7 @@ class Schedule extends Component {
 
     creatingEventModal = () => {
 
-        let e = this.state.newAppointment
+        let e = this.state.selectedEvent
 
         return <Modal
             open={this.state.creatingEvent}
@@ -312,9 +335,9 @@ class Schedule extends Component {
                                     {this.showEventAttendees(e, this.removeAttendeeFromNewAppointment)}
                                 </div>
                                 <Divider hidden />
-                                {this.userPickerDropDown(e, this.addAttendeeToNewAppointment)}
+                                {this.userPickerDropDown(e, this.addAttendeeToSelectedEvent)}
                                 <Divider hidden />
-                                <Button primary onClick={this.createEventHandeler}>Create</Button>
+                                <Button primary onClick={() => this.createEventHandeler(false)}>Create</Button>
                             </Grid.Column>
 
                             <Grid.Column>
@@ -324,7 +347,7 @@ class Schedule extends Component {
           </Header>
                                 {this.appointmentTimeSetter(e)}
                                 <Divider hidden />
-                                <Button onClick={this.createEventHandeler} primary>Create</Button>
+                                <Button onClick={() => this.createEventHandeler(true)} primary>Create</Button>
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>
@@ -335,13 +358,11 @@ class Schedule extends Component {
     }
 
     render() {
-        // console.log(this.state.selectedEvent)
+
         return (
 
             <FullWidthCalendarContainer>
-                <DayPicker
-                    onDayClick={(day, { selected }) => console.log(selected)}
-                />
+
                 <h1>Schedule</h1>
                 <Divider style={{ gridArea: "divider" }} />
                 <Calendar

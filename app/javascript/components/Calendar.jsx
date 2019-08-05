@@ -293,21 +293,20 @@ function Calendar(props) {
 
   // }
 
-  console.log(props)
   let allViews = Object.keys(Views).map(k => Views[k])
 
   const CalendarContainer = styled.div`
         grid-area: panel;
         height: 100vh;
-      max-width: ${props => props.fullWidth ? "95vw" : "60vw"};
+      // max-width: ${props => props.fullWidth ? "95vw" : "70vw"};
       width: 100rem;
       min-height: 50rem;
       justify-self: center;
-  
-     @media (max-width: 50rem) {
-        max-width: 95vw;
-    ;
-  }
+    max-width: 95vw;
+  //    @media (max-width: 50rem) {
+  //       max-width: 95vw;
+  //   ;
+  // }
 
 }
     `
