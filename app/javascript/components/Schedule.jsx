@@ -30,15 +30,36 @@ class Schedule extends Component {
     showPrettyStartAndEndTime = (selectedEvent) => {
 
         return <>
-            <h4>{moment(selectedEvent.start).format('Do MMMM  YYYY')}</h4>
-            <p>{moment(selectedEvent.start).format('h:mm a')} to {moment(selectedEvent.end).format('h:mm a')}</p>
+            <h4>{moment(selectedEvent.start_time).format('Do MMMM  YYYY')}</h4>
+            <p>{moment(selectedEvent.start_time).format('h:mm a')} to {moment(selectedEvent.end).format('h:mm a')}</p>
         </>
     }
 
-    deleteSelectedEventHandeler = () => {
+    // deleteSelectedEventHandeler = () => {
+    //     this.setState({ dialogOpen: false })
+    //     fetch(`${this.props.baseUrl}/delete`, {
+    //         method: "DELETE",
+    //         body: JSON.stringify({
+    //             event: this.state.selectedEvent
+    //         }),
+    //         headers: {
+    //             "X-CSRF-Token": this.props.csrfToken,
+    //             "Content-Type": "application/json",
+    //             Accept: "application/json",
+    //             "X-Requested-With": "XMLHttpRequest"
+    //         }
+    //     })
+    //         .then(() => {
+    //             let events = [...this.props.events].filter(e => e.id !== this.state.selectedEvent.id)
+    //             this.props.dispatch({ type: "SET_EVENTS", value: events })
+
+    //         })
+    // }
+
+    updateSelectedEventHandeler = () => {
         this.setState({ dialogOpen: false })
-        fetch(`${this.props.baseUrl}/delete`, {
-            method: "DELETE",
+        fetch(`${this.props.baseUrl}/update`, {
+            method: "POST",
             body: JSON.stringify({
                 event: this.state.selectedEvent
             }),
@@ -49,11 +70,8 @@ class Schedule extends Component {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(() => {
-                let events = [...this.props.events].filter(e => e.id !== this.state.selectedEvent.id)
-                this.props.dispatch({ type: "SET_EVENTS", value: events })
-
-            })
+            .then(response => response.json())
+            .then((res) => this.props.dispatch({ type: "SET_EVENTS", value: res.events }))
     }
 
 
@@ -158,19 +176,7 @@ class Schedule extends Component {
             }
         })
             .then(response => response.json())
-            .then((e) => {
-
-                let formattedEvent = {
-                    id: e.event.id,
-                    title: e.event.title,
-                    start: new Date(e.event.start_time),
-                    end: new Date(e.event.end_time),
-                    allDay: false,
-                    attendees: e.attendees
-                }
-                return formattedEvent
-            })
-            .then(formattedEvent => this.props.dispatch({ type: "SET_EVENTS", value: [...this.props.events, formattedEvent] }))
+            .then(event => this.props.dispatch({ type: "SET_EVENTS", value: [...this.props.events, event] }))
 
 
     }
@@ -186,56 +192,56 @@ class Schedule extends Component {
     }
 
     changeDayHandeler = (day) => {
-        console.log(day)
-        let updatedDate = this.state.selectedEvent.start
-        console.log(updatedDate)
+        let updatedDate = new Date(this.state.selectedEvent.start_time)
         updatedDate.setMonth(day.getMonth())
         updatedDate.setDate(day.getDate())
-        console.log(updatedDate)
-
         this.setState({
-            selectedEvent: { ...this.state.selectedEvent, start: updatedDate, end: updatedDate }
+            selectedEvent: { ...this.state.selectedEvent, start_time: updatedDate, end_time: updatedDate }
         })
     }
 
-    editableEventModal = () => {
-        let event = this.state.selectedEvent
-        console.log("event in editable modal", event)
-
-        return <Modal
-            open={this.state.dialogOpen}
-            onClose={() => this.setState({ dialogOpen: false })}
-        >
-            <Input transparent>{event ? event.title : null}</Input>
-            <Modal.Content >
-                <Modal.Description>
-                    {/* <p>{this.state.selectedEvent.description}</p> */}
-                    {/* {this.state.selectedEvent ?
-                        <Popup
-                            content={<DayPicker
-                                onDayClick={this.changeDayHandeler}
-                                selectedDays={this.state.selectedEvent.start}
-                            />}
-                            trigger={<Button icon='add' />} />
-
-                        : null
-                    } */}
-
-                    {this.appointmentTimeSetter(event)}
-                    {/* {this.state.selectedEvent ? this.showPrettyStartAndEndTime(this.state.selectedEvent) : null} */}
-                    <Divider hidden />
-
-                    <div>
-                        {this.showEventAttendees(event, this.removeAttendeeFromSelectedEvent)}
-                    </div>
-                    <Divider hidden />
-                    {this.userPickerDropDown(event, this.addAttendeeToSelectedEvent)}
-                </Modal.Description>
-
-                <Button content="delete" onClick={this.deleteSelectedEventHandeler} />
-            </Modal.Content>
-        </Modal>
+    changeTitleHandeler = (e) => {
+        this.setState({ selectedEvent: { ...this.state.selectedEvent, title: e.target.value } })
     }
+
+    // editableEventModal = () => {
+    //     let event = this.state.selectedEvent
+
+    //     return <Modal
+    //         open={this.state.dialogOpen}
+    //         onClose={() => this.setState({ dialogOpen: false })}
+    //     >
+    //         <Input onChange={this.changeTitleHandeler} transparent value={event ? event.title : null} />
+    //         <Modal.Content >
+    //             <Modal.Description>
+    //                 {/* <p>{this.state.selectedEvent.description}</p> */}
+    //                 {/* {this.state.selectedEvent ?
+    //                     <Popup
+    //                         content={<DayPicker
+    //                             onDayClick={this.changeDayHandeler}
+    //                             selectedDays={this.state.selectedEvent.start}
+    //                         />}
+    //                         trigger={<Button icon='add' />} />
+
+    //                     : null
+    //                 } */}
+
+    //                 {this.appointmentTimeSetter(event)}
+    //                 {/* {this.state.selectedEvent ? this.showPrettyStartAndEndTime(this.state.selectedEvent) : null} */}
+    //                 <Divider hidden />
+
+    //                 <div>
+    //                     {this.showEventAttendees(event, this.removeAttendeeFromSelectedEvent)}
+    //                 </div>
+    //                 <Divider hidden />
+    //                 {this.userPickerDropDown(event, this.addAttendeeToSelectedEvent)}
+    //             </Modal.Description>
+
+    //             <Button content="delete" onClick={this.deleteSelectedEventHandeler} />
+    //             <Button content="save" onClick={this.updateSelectedEventHandeler} />
+    //         </Modal.Content>
+    //     </Modal>
+    // }
 
     appointmentTimeSetter = (selectedSlot) => {
         if (!selectedSlot) return null
@@ -281,9 +287,9 @@ class Schedule extends Component {
                 on="click"
                 content={<DayPicker
                     onDayClick={this.changeDayHandeler}
-                    selectedDays={this.state.selectedEvent.start}
+                    selectedDays={new Date(this.state.selectedEvent.start_time)}
                 />}
-                trigger={<h4 style={{ cursor: "pointer" }}>{moment(selectedSlot.start).format('Do MMMM  YYYY')}<Icon name="caret down" /></h4>} />
+                trigger={<h4 style={{ cursor: "pointer" }}>{moment(selectedSlot.start_time).format('Do MMMM  YYYY')}<Icon name="caret down" /></h4>} />
             {/* {moment(selectedSlot.start).format('h:mm a')}  */}
             <Dropdown
                 inline
@@ -291,7 +297,7 @@ class Schedule extends Component {
                 defaultValue={formattedendStartTimeOptions[22].value}
                 upward={false}
                 scrolling
-                onChange={(e, d) => this.setState({ newAppointment: { ...this.state.newAppointment, slots: [selectedSlot.start, new Date(d.value)] } })}
+                onChange={(e, d) => this.setState({ selectedEvent: { ...this.state.selectedEvent, start_time: new Date(d.value) } })}
             />
             to{" "}
             <Dropdown
@@ -300,7 +306,7 @@ class Schedule extends Component {
                 defaultValue={formattedendEndTimeOptions[22].value}
                 upward={false}
                 scrolling
-                onChange={(e, d) => this.setState({ newAppointment: { ...this.state.newAppointment, slots: [selectedSlot.start, new Date(d.value)] } })}
+                onChange={(e, d) => this.setState({ selectedEvent: { ...this.state.selectedEvent, end_time: new Date(d.value) } })}
             />
         </>
     }
@@ -371,7 +377,7 @@ class Schedule extends Component {
                     onSelectEvent={this.eventClickHandeler}
                     onSelectSlot={this.selectSlotHandeler}
                 />
-                {this.editableEventModal()}
+                {/* {this.editableEventModal()} */}
                 {this.creatingEventModal()}
             </FullWidthCalendarContainer>
         )

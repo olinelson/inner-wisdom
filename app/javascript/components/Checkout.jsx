@@ -10,7 +10,7 @@ export default class Checkout extends React.Component {
         // XHR, fetch, or a GraphQL mutation is typical.
         // alert(JSON.stringify(token))
         // this.props.onToken(token, addresses)
-        // console.log(token, addresses)
+
         this.props.onToken()
     };
 

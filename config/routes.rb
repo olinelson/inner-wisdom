@@ -4,11 +4,11 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   root to: 'main#home'
 
-  get '/refresh', to: 'main#refresh'
-
   post '/create', to: 'main#createEvent'
 
   delete '/delete', to: 'main#deleteEvent'
+
+  post '/update', to: 'main#updateEvent'
   
   post '/edit', to: 'main#editEvent'
 

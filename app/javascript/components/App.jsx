@@ -37,6 +37,8 @@ function reducer(state = initialState, action) {
     switch (action.type) {
         case "SET_EVENTS":
             return { ...state, events: action.value }
+        case "SET_PERSONAL_EVENTS":
+            return { ...state, personalEvents: action.value }
         case "SET_USER":
             return { ...state, user: action.value }
         case "SET_POSTS":
@@ -65,40 +67,42 @@ const store = createStore(reducer);
 
 export function App(props) {
 
-    const eventMapper = (e, type) => {
-        event = {
-            id: e.id,
-            title: e.title,
-            start: new Date(e.start_time),
-            end: new Date(e.end_time),
-            allDay: false,
-            attendees: e.attendees ? getAllUsersFromEmails(e.attendees) : null,
-            type: type
-        }
-        return event
-    }
+    // const eventMapper = (e, type) => {
+    //     event = {
+    //         id: e.id,
+    //         title: e.title,
+    //         start_time: new Date(e.start_time),
+    //         end_time: new Date(e.end_time),
+    //         allDay: false,
+    //         attendees: e.attendees ? getAllUsersFromEmails(e.attendees) : null,
+    //         type: type
+    //     }
+    //     return event
+    // }
 
-    const getAllUsersFromEmails = (users) => {
-        return users.map(user => getUserFromEmail(user))
-    }
+    // const getAllUsersFromEmails = (users) => {
+    //     return users.map(user => getUserFromEmail(user))
+    // }
 
-    const getUserFromEmail = (calUser) => {
-        let found = props.users.find(u => u.email === calUser.email)
-        return found
-    }
+    // const getUserFromEmail = (calUser) => {
+    //     let found = props.users.find(u => u.email === calUser.email)
+    //     return found
+    // }
 
 
-    const formatEvents = (events, type) => {
-        if (events === null) return null
-        let result = events.map((e) => eventMapper(e, type))
-        return result
-    }
+    // const formatEvents = (events, type) => {
+    //     if (events === null) return null
+    //     let result = events.map((e) => eventMapper(e, type))
+    //     return result
+    // }
 
     store.dispatch({
         type: "SET_ALL", value: {
             posts: props.posts,
-            events: formatEvents(props.events, "business"),
-            personalEvents: formatEvents(props.personalEvents, "personal"),
+            // events: formatEvents(props.events, "business"),
+            events: props.events,
+            // personalEvents: formatEvents(props.personalEvents, "personal"),
+            personalEvents: props.personalEvents,
             user: props.user,
             baseUrl: props.baseUrl,
             csrfToken: document.querySelectorAll('meta[name="csrf-token"]')[0].content,

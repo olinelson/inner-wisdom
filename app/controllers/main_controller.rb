@@ -15,17 +15,6 @@ class MainController < ApplicationController
         end
     end
 
-    # def calendarAuthLink
-    #     cal = Google::Calendar.new(
-    #             :client_id     => ENV['GOOGLE_CLIENT_ID'], 
-    #             :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
-    #             :calendar      => params["email"],
-    #             :redirect_url  => ENV['GOOGLE_REDIRECT_URL']
-    #                             )
-    #                             byebug
-    #         redirect_to(cal.authorize_url.to_str)
-    # end
-
     def personalCalendarEvents
         begin
             @personalCal = Google::Calendar.new(
@@ -75,7 +64,7 @@ class MainController < ApplicationController
     def createEvent
         newEvent = params["event"]
         title = "Available Appointment"
-
+        
         if newEvent["appointmentSlot"] == false
             fullName = newEvent["attendees"].first["first_name"] + newEvent["attendees"].first["last_name"]
             title = fullName + " | session confirmed"
@@ -134,6 +123,22 @@ class MainController < ApplicationController
             {'email' => user["email"], 'displayName' => fullName, 'responseStatus' => 'accepted'}]
         end
 
+        render json: {events: @cal.events} 
+    end
+
+    def updateEvent
+        event = params["event"]
+
+        editedEvent = @cal.find_or_create_event_by_id(event["id"]) do |e|
+            e.title = event["title"]
+            e.color_id = 2
+            e.start_time = event["start_time"]
+            e.end_time = event["end_time"]
+            # e.end_time = Time.now + (60 * 60 * 2) # seconds * min * hours
+            e.location= "609 W 135 St New York, New York"
+            # e.notes= "one fine day in the middle of the night, two dead men got up to fight"
+            e.attendees = event["attendees"]
+        end
         render json: {events: @cal.events} 
     end
 
