@@ -105,7 +105,9 @@ class MainController < ApplicationController
             
             e.attendees= attendees
         end
-        render json: {event: event}
+        attendees = newEvent["attendees"]
+
+        render json: {event: event, attendees: attendees}
 
     end
 

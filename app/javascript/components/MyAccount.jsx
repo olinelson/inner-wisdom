@@ -42,7 +42,7 @@ class MyAccount extends Component {
 
     showAdminMenu = () => {
         return <Menu vertical fluid style={{ gridArea: "sideMenu" }}  >
-            <Menu.Item name='My Appointments' active={this.props.myAccountPanel === 'calendar'} onClick={() => this.handleTabClick("calendar")} />
+            {/* <Menu.Item name='My Appointments' active={this.props.myAccountPanel === 'calendar'} onClick={() => this.handleTabClick("calendar")} /> */}
             <Menu.Item name='Profile' active={this.props.myAccountPanel === 'profile'} onClick={() => this.handleTabClick("profile")} />
             <Menu.Item name='Posts' active={this.props.myAccountPanel === 'posts'} onClick={() => this.handleTabClick("posts")} />
         </Menu>
@@ -72,15 +72,15 @@ class MyAccount extends Component {
 
     panelSwitch = () => {
         switch (this.props.myAccountPanel) {
-            case "calendar":
-                return <Calendar creatable combinedEvents={this.RelevantAppointments()} />
+            // case "calendar":
+            //     return <Calendar creatable combinedEvents={this.RelevantAppointments()} />
             // return <h4 style={{ gridArea: "panel" }}>calendar</h4>
             case "profile":
                 return this.profileSettingsLinks()
             case "posts":
                 return <PostsList creatable posts={this.props.user.posts} />
             default:
-                return <Calendar combinedEvents={this.RelevantAppointments()} />
+                return this.profileSettingsLinks()
         }
 
 

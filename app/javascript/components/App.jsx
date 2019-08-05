@@ -13,6 +13,7 @@ import Blog from './Blog'
 
 import { createStore } from "redux"
 import { Provider } from "react-redux"
+import Schedule from './Schedule';
 
 
 const initialState = {
@@ -128,6 +129,10 @@ export function App(props) {
                         <Route
                             path="/myaccount"
                             render={props => <><Nav /><MyAccount /></>}
+                        />
+                        <Route
+                            path="/schedule"
+                            render={props => <><Nav /><Schedule /></>}
                         />
                         <Route
                             path="/blog"

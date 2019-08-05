@@ -78,7 +78,7 @@ function Nav(props) {
 
     const UserMenuOptions = () => {
         return <> {
-            props.user === null ?
+            props.user == null ?
                 <Menu.Item>
                     <Icon name="sign in"></Icon>
                     <a href={`${props.baseUrl}/users/sign_in`}>Sign In</a>
@@ -86,12 +86,24 @@ function Nav(props) {
 
                 :
                 <>
+                    {props.user.admin === true ?
+
+                        <Menu.Item
+                            active={pathname === '/schedule'}
+                        >
+                            {/* <Icon name="user circle"></Icon> */}
+                            <Link to="/schedule">Schedule</Link>
+                        </Menu.Item>
+                        : null}
                     <Menu.Item
                         active={pathname === '/myaccount'}
                     >
                         {/* <Icon name="user circle"></Icon> */}
                         <Link to="/myaccount">My Account</Link>
                     </Menu.Item>
+
+
+
 
 
                     <Menu.Item>

@@ -4,14 +4,7 @@ import Calendar from './Calendar';
 import { connect } from 'react-redux';
 import styled from "styled-components"
 
-
-function Appointments(props) {
-    const availableAppointments = () => {
-        let result = props.events.filter(e => e.attendees == null || e.attendees.length < 1)
-        return result
-    }
-
-    const AppointmentPageContainer = styled(Container)`
+export const FullWidthCalendarContainer = styled(Container)`
         margin-top: 4rem;
         display: grid !Important;
         grid-template-columns: 1fr;
@@ -19,12 +12,20 @@ function Appointments(props) {
         justify-content: center ;
     `
 
+function Appointments(props) {
+    const availableAppointments = () => {
+        let result = props.events.filter(e => e.attendees == null || e.attendees.length < 1)
+        return result
+    }
+
+
+
     return (
-        <AppointmentPageContainer>
+        <FullWidthCalendarContainer>
             <h1>Available Appointments</h1>
             <Divider style={{ gridArea: "divider" }} />
             <Calendar fullWidth bookable combinedEvents={availableAppointments()} />
-        </AppointmentPageContainer>
+        </FullWidthCalendarContainer>
     )
 }
 
