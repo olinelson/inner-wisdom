@@ -12,6 +12,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-big-calendar": "^0.22.0",
+    "react-day-picker": "^7.3.1",
     "react-dom": "^16.8.6",
     "react-dropzone": "^10.1.6",
     "react-hot-loader": "4",

@@ -6081,6 +6081,13 @@ react-context-toolbox@^2.0.2:
   resolved "https://registry.yarnpkg.com/react-context-toolbox/-/react-context-toolbox-2.0.2.tgz#35637287cb23f801e6ed802c2bb7a97e1f04e3fb"
   integrity sha512-tY4j0imkYC3n5ZlYSgFkaw7fmlCp3IoQQ6DxpqeNHzcD0hf+6V+/HeJxviLUZ1Rv1Yn3N3xyO2EhkkZwHn0m1A==
 
+react-day-picker@^7.3.1:
+  version "7.3.1"
+  resolved "https://registry.yarnpkg.com/react-day-picker/-/react-day-picker-7.3.1.tgz#949b752af6c4219c3d741dacfc3ce10dc6e2d26f"
+  integrity sha512-51GkSD0LW3uHBWCcwENMxJmniG+1jPQDtADpOu21+KYOvNHLFjlW+LdB/b/35SGJKEE502SyYqueutr4PD0czQ==
+  dependencies:
+    prop-types "^15.6.2"
+
 react-dom@^16.8.6:
   version "16.8.6"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.8.6.tgz#71d6303f631e8b0097f56165ef608f051ff6e10f"

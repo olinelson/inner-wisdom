@@ -4,6 +4,8 @@ import Calendar from './Calendar';
 import { connect } from 'react-redux';
 import styled from "styled-components"
 import moment from "moment"
+import DayPicker from 'react-day-picker';
+import 'react-day-picker/lib/style.css';
 
 import { FullWidthCalendarContainer } from "./Appointments"
 
@@ -335,7 +337,11 @@ class Schedule extends Component {
     render() {
         // console.log(this.state.selectedEvent)
         return (
+
             <FullWidthCalendarContainer>
+                <DayPicker
+                    onDayClick={(day, { selected }) => console.log(selected)}
+                />
                 <h1>Schedule</h1>
                 <Divider style={{ gridArea: "divider" }} />
                 <Calendar
