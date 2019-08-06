@@ -56,9 +56,9 @@ function CustomEvent(props) {
     const showEventAttendees = () => {
         if (event && event.attendees) {
             let users = event.attendees
-            return users.map(u => <Label key={u.id}>
+            return users.map(u => <Label key={"label" + u.id}>
                 <Icon name='user' />
-                {u.first_name + " " + u.last_name}
+                {u.displayName || u.first_name + " " + u.last_name}
                 <Icon name='delete' onClick={() => removeAttendeeFromEvent(u)} />
             </Label>
             )
@@ -183,7 +183,7 @@ function CustomEvent(props) {
     }
 
     const updateSelectedEventHandeler = () => {
-        this.setState({ dialogOpen: false })
+        setModalOpen(false)
         fetch(`${props.baseUrl}/update`, {
             method: "POST",
             body: JSON.stringify({
@@ -197,7 +197,7 @@ function CustomEvent(props) {
             }
         })
             .then(response => response.json())
-            .then((res) => this.props.dispatch({ type: "SET_EVENTS", value: res.events }))
+            .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { events: res.events, personalEvents: res.personalEvents } }))
     }
 
     const editableEventModal = () => {

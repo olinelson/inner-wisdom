@@ -36,6 +36,8 @@ function Calendar(props) {
 }
     `
 
+  console.log("calendar props", props)
+
   return <>
     <CalendarContainer >
       {/* {this.state.showCheckout ? <Checkout onToken={this.bookAppointment} /> : null} */}
@@ -46,7 +48,7 @@ function Calendar(props) {
         selectable
         localizer={localizer}
         events={props.events}
-        defaultView={Views.WEEK}
+        // defaultView={Views.WEEK}
         scrollToTime={new Date(2050, 1, 1)}
         defaultDate={new Date()}
         // onSelectEvent={props.onSelectEvent}
@@ -54,8 +56,8 @@ function Calendar(props) {
         step={30}
         timeslots={1}
         onSelectSlot={props.onSelectSlot}
-        min={new Date(2050, 1, 1, 9)}
-        max={new Date(2050, 1, 1, 22)}
+      // min={new Date(2050, 1, 1, 9)}
+      // max={new Date(2050, 1, 1, 22)}
       />
 
     </CalendarContainer>

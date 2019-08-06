@@ -1,31 +1,36 @@
 class MainController < ApplicationController
-     before_action :createInstance
+     before_action :createBusinessCalInstance, :createPersonalCalInstance
     
-    def createInstance
+    def createBusinessCalInstance
         begin
-            @cal = Google::Calendar.new(
+            @businessCal = Google::Calendar.new(
                 :client_id     => ENV['GOOGLE_CLIENT_ID'], 
                 :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
                 :calendar      => ENV['GOOGLE_CALENDAR_ADDRESS'],
                 :redirect_url  => ENV['GOOGLE_REDIRECT_URL'],
                                 )
-                @cal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])               
+                @businessCal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])               
             rescue
                 puts "login error"
+
         end
+        
     end
 
-    def personalCalendarEvents
-        begin
-            @personalCal = Google::Calendar.new(
-                :client_id     => ENV['GOOGLE_CLIENT_ID'], 
-                :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
-                :calendar      => current_user.google_calendar_email,
-                :redirect_url  => ENV['GOOGLE_REDIRECT_URL'],
-                                )
-                @personalCal.login_with_refresh_token(current_user.google_calendar_refresh_token)               
-            rescue
-                puts "login error"
+    def createPersonalCalInstance
+        if current_user.google_calendar_email
+            begin
+                @personalCal = Google::Calendar.new(
+                    :client_id     => ENV['GOOGLE_CLIENT_ID'], 
+                    :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
+                    :calendar      => current_user.google_calendar_email,
+                    :redirect_url  => ENV['GOOGLE_REDIRECT_URL'],
+                                    )
+                    @personalCal.login_with_refresh_token(current_user.google_calendar_refresh_token)               
+                rescue
+                    puts "login error"
+            end
+
         end
         
     end
@@ -40,7 +45,7 @@ class MainController < ApplicationController
         begin
             if user.admin === true && user.google_calendar_email  && user.google_calendar_refresh_token
                 
-                personalCalendarEvents 
+                 
                 personalEvents = @personalCal.events
                 
             end
@@ -55,9 +60,9 @@ class MainController < ApplicationController
 
         
 
-        
 
-        render react_component: 'App', props: { events: @cal.events, personalEvents: personalEvents, posts: Post.all, user: user, baseUrl: ENV["BASE_URL"], users: users}
+
+        render react_component: 'App', props: { events: @businessCal.events, personalEvents: personalEvents, posts: Post.all, user: user, baseUrl: ENV["BASE_URL"], users: users, businessCalendarAddress: ENV["GOOGLE_CALENDAR_ADDRESS"]}
     end
 
 
@@ -87,7 +92,7 @@ class MainController < ApplicationController
 
         end
 
-        event = @cal.create_event do |e|
+        event = @businessCal.create_event do |e|
             e.title = title
             e.start_time = newEvent["start"]
             e.end_time = newEvent["end"]
@@ -112,7 +117,7 @@ class MainController < ApplicationController
         
         fullName = "#{user['first_name']} #{user['last_name']}"
 
-        editedEvent = @cal.find_or_create_event_by_id(event["id"]) do |e|
+        editedEvent = @businessCal.find_or_create_event_by_id(event["id"]) do |e|
             e.title = fullName + " | session confirmed"
             e.color_id = 2
             # e.end_time = Time.now + (60 * 60 * 2) # seconds * min * hours
@@ -123,13 +128,45 @@ class MainController < ApplicationController
             {'email' => user["email"], 'displayName' => fullName, 'responseStatus' => 'accepted'}]
         end
 
-        render json: {events: @cal.events} 
+        render json: {events: @businessCal.events} 
     end
+
 
     def updateEvent
         event = params["event"]
 
-        editedEvent = @cal.find_or_create_event_by_id(event["id"]) do |e|
+        if event["calendar"]["id"] === current_user.google_calendar_email
+                cal = @personalCal
+        end
+
+        if event["calendar"]["id"] === ENV["GOOGLE_CALENDAR_ADDRESS"]
+            cal = @businessCal
+        end
+
+
+        attendees = nil
+
+        if event["attendees"]
+            attendees = event["attendees"].map{|a| 
+
+    
+                user = User.find_by(email: a["email"])
+                if user === nil
+                    displayName= a["email"].split("@").first
+                else
+                    displayName = user["first_name"] + " " + user["last_name"]
+                end
+                
+                
+            {
+            'email' => a["email"],
+            'displayName' => displayName, 
+            'responseStatus' => 'tentative'
+             }
+            }
+        end
+        
+        editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
             e.title = event["title"]
             e.color_id = 2
             e.start_time = event["start_time"]
@@ -137,20 +174,22 @@ class MainController < ApplicationController
             # e.end_time = Time.now + (60 * 60 * 2) # seconds * min * hours
             e.location= "609 W 135 St New York, New York"
             # e.notes= "one fine day in the middle of the night, two dead men got up to fight"
-            e.attendees = event["attendees"]
+            e.attendees = attendees
         end
-        render json: {events: @cal.events} 
+
+
+        render json: {events: @businessCal.events, personalEvents: @personalCal.events } 
     end
 
     def deleteEvent
         event = params["event"]
-        found = @cal.find_event_by_id(event["id"])
+        found = @businessCal.find_event_by_id(event["id"])
         found.first.delete
 
     end
 
     def all 
-        puts @cal.events
+        puts @businessCal.events
     end
 
 end

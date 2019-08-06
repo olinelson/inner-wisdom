@@ -26,6 +26,7 @@ const initialState = {
     baseUrl: null,
     csrfToken: null,
     users: null,
+    businessCalendarAddress: null,
 }
 
 
@@ -39,6 +40,9 @@ function reducer(state = initialState, action) {
             return { ...state, events: action.value }
         case "SET_PERSONAL_EVENTS":
             return { ...state, personalEvents: action.value }
+        case "SET_PERSONAL_AND_BUSINESS_EVENTS":
+            console.log(action)
+            return { ...state, personalEvents: action.value.personalEvents, events: action.value.events }
         case "SET_USER":
             return { ...state, user: action.value }
         case "SET_POSTS":
@@ -54,7 +58,8 @@ function reducer(state = initialState, action) {
                 user: action.value.user,
                 users: action.value.users,
                 baseUrl: action.value.baseUrl,
-                csrfToken: action.value.csrfToken
+                csrfToken: action.value.csrfToken,
+                businessCalendarAddress: action.value.businessCalendarAddress
             }
 
 
@@ -67,6 +72,7 @@ const store = createStore(reducer);
 
 export function App(props) {
 
+    console.log("app props", props)
     // const eventMapper = (e, type) => {
     //     event = {
     //         id: e.id,
@@ -107,6 +113,7 @@ export function App(props) {
             baseUrl: props.baseUrl,
             csrfToken: document.querySelectorAll('meta[name="csrf-token"]')[0].content,
             users: props.users,
+            businessCalendarAddress: props.businessCalendarAddress
 
         }
 

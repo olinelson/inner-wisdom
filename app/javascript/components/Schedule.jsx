@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Container, Divider, Modal, Popup, Button, Label, Icon, Segment, Grid, Header, Dropdown, Input } from 'semantic-ui-react'
+import { Container, Divider, Modal, Popup, Button, Label, Icon, Segment, Grid, Header, Dropdown, Checkbox } from 'semantic-ui-react'
 import Calendar from './Calendar';
 import { connect } from 'react-redux';
 import styled from "styled-components"
@@ -187,7 +187,7 @@ class Schedule extends Component {
     }
 
     selectSlotHandeler = (e) => {
-        if (this.props.user.admin) this.setState({ creatingEvent: true, selectedEvent: e })
+        if (this.props.user.admin) this.setState({ creatingEvent: true, selectedEvent: { ...e, calendar: { id: this.props.googleCalendarAddress } } })
 
     }
 
@@ -311,19 +311,46 @@ class Schedule extends Component {
         </>
     }
 
+    personalOrBusinessToggle = (e) => {
+        function togglePersonalOrBusinessState() {
+            let email
+            if (e.calendar.id === props.businessCalendarAddress) email = props.user.google_calendar_email
+
+            this.setState({ selectedEvent: { ...this.state.selectedEvent, calendar: { id: email } } })
+        }
+
+        let label = null
+        if (e.calendar.id === this.props.businessCalendarAddress) {
+            label = <Label color="blue">Business</Label>
+        } else {
+            label = <Label color="green">Personal</Label>
+        }
+
+
+        return <>
+            {label}
+            <Checkbox onChange={togglePersonalOrBusinessState} toggle />
+        </>
+
+    }
 
 
     creatingEventModal = () => {
 
         let e = this.state.selectedEvent
-
+        console.log(e)
         return <Modal
             open={this.state.creatingEvent}
             onClose={() => this.setState({ creatingEvent: false })}
         >
-            <Modal.Header>Create Event</Modal.Header>
+            <Modal.Header>Create Event
+
+            </Modal.Header>
             <Modal.Content >
+                {this.personalOrBusinessToggle(e)}
+
                 <Segment placeholder>
+
                     <Grid columns={2} stackable textAlign='center'>
                         <Divider vertical>Or</Divider>
 
@@ -392,7 +419,8 @@ const mapStateToProps = (state) => ({
     user: state.user,
     users: state.users,
     csrfToken: state.csrfToken,
-    baseUrl: state.baseUrl
+    baseUrl: state.baseUrl,
+    businessCalendarAddress: state.businessCalendarAddress
 })
 
 export default connect(mapStateToProps)(Schedule)
