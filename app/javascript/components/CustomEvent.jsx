@@ -201,7 +201,6 @@ function CustomEvent(props) {
         })
             .then(response => response.json())
             .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { scrollToEvent: res.scrollToEvent, events: res.events, personalEvents: res.personalEvents } }))
-            .then(() => setLoading(false))
 
     }
 
