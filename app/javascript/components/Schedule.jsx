@@ -137,7 +137,6 @@ class Schedule extends Component {
     // =====================================
 
     createEventHandeler = (isAppointmentSlot) => {
-
         this.setState({ creatingEvent: false })
         fetch(`${this.props.baseUrl}/create`, {
             method: "POST",
@@ -164,7 +163,7 @@ class Schedule extends Component {
     }
 
     selectSlotHandeler = (e) => {
-        if (this.props.user.admin) this.setState({ creatingEvent: true, selectedEvent: { ...e, personal: false } })
+        if (this.props.user.admin) this.setState({ creatingEvent: true, selectedEvent: { ...e, start_time: e.start, end_time: e.end, personal: false } })
 
     }
 

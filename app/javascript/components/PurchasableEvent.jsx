@@ -9,18 +9,20 @@ import Checkout from "./Checkout"
 
 function PurchasableEvent(props) {
 
-    const [event, setEvent] = useState(props.event);
+    const event = props.event
     const [modalOpen, setModalOpen] = useState(false)
     const [loading, setLoading] = useState(false)
 
 
-    const showPrettyStartAndEndTime = (selectedEvent) => {
+    const showPrettyStartAndEndTime = () => {
 
         return <>
-            <h4>{moment(selectedEvent.start_time).format('Do MMMM  YYYY')}</h4>
-            <p>{moment(selectedEvent.start_time).format('h:mm a')} to {moment(selectedEvent.end_time).format('h:mm a')}</p>
+            <h4>{moment(event.start_time).format('Do MMMM  YYYY')}</h4>
+            <p>{moment(event.start_time).format('h:mm a')} to {moment(event.end_time).format('h:mm a')}</p>
         </>
     }
+
+    console.log(props)
 
     const onTokenHandeler = () => {
         fetch(`${props.baseUrl}/purchase`, {
@@ -56,7 +58,7 @@ function PurchasableEvent(props) {
     }
 
     const modal = () => {
-        let event = props.event
+
         return <Modal
             open={modalOpen}
             onClose={() => setModalOpen(false)}
@@ -64,7 +66,7 @@ function PurchasableEvent(props) {
             <Header content={event.title} />
             <Modal.Content >
                 <Modal.Description>
-                    {showPrettyStartAndEndTime(event)}
+                    {showPrettyStartAndEndTime()}
                     <Divider hidden />
 
                     <div>
@@ -103,13 +105,11 @@ function PurchasableEvent(props) {
 
 
 const mapStateToProps = (state, props) => ({
-    // events: state.events,
-    // personalEvents: state.personalEvents,
-    // allEvents: state.events.concat(state.personalEvents),
+
     user: state.user,
     users: state.users,
     events: state.events,
-    // users: state.users,
+
     csrfToken: state.csrfToken,
     baseUrl: state.baseUrl
 })

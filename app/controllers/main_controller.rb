@@ -100,16 +100,17 @@ class MainController < ApplicationController
 
         event = cal.create_event do |e|
             e.title = title
-            e.start_time = newEvent["start"]
-            e.end_time = newEvent["end"]
+            e.start_time = newEvent["start_time"]
+            e.end_time = newEvent["end_time"]
             e.location= "609 W 135 St New York, New York"
-            # byebug
+
             e.reminders =  { "useDefault": false }
             # e.notes= "one fine day in the middle of the night, two dead men got up to fight"
             
              
             e.attendees= attendees
         end
+
         
         render json: {scrollToEvent: event, events: @businessCal.events, personalEvents: @personalCal.events}
  
@@ -123,14 +124,15 @@ class MainController < ApplicationController
         editedEvent = @businessCal.find_or_create_event_by_id(event["id"]) do |e|
             e.title = fullName + " | session confirmed"
             e.color_id = 2
-            # e.end_time = Time.now + (60 * 60 * 2) # seconds * min * hours
             e.location= "609 W 135 St New York, New York"
-            # e.notes= "one fine day in the middle of the night, two dead men got up to fight"
             e.attendees= [
             {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
         end
+
+
         render json: {events: @businessCal.events} 
-        NotificationMailer.appointment_confirmation(user, editedEvent).deliver
+        NotificationMailer.user_appointment_confirmation(user, editedEvent).deliver
+        NotificationMailer.admin_appointment_confirmation(user, editedEvent).deliver
         
     end
 
@@ -195,7 +197,6 @@ class MainController < ApplicationController
             cal = @businessCal
         end
 
-        # byebug
        
         found = cal.find_event_by_id(event["id"])
 
