@@ -3,6 +3,8 @@ import { HashRouter, Route, Link, Switch, Redirect } from 'react-router-dom'
 
 import { Container, Menu, Button } from "semantic-ui-react"
 
+import { Views } from "react-big-calendar"
+
 import Home from "./Home"
 import MyAccount from './MyAccount';
 import Nav from './Nav';
@@ -27,6 +29,8 @@ const initialState = {
     csrfToken: null,
     users: null,
     businessCalendarAddress: null,
+    defaultCalendarView: Views.MONTH,
+    calendarScrollToTime: new Date,
 }
 
 
@@ -41,14 +45,18 @@ function reducer(state = initialState, action) {
         case "SET_PERSONAL_EVENTS":
             return { ...state, personalEvents: action.value }
         case "SET_PERSONAL_AND_BUSINESS_EVENTS":
-            console.log(action)
-            return { ...state, personalEvents: action.value.personalEvents, events: action.value.events }
+
+            return { ...state, personalEvents: action.value.personalEvents, events: action.value.events, calendarScrollToTime: new Date(action.value.scrollToEvent.start_time) }
         case "SET_USER":
             return { ...state, user: action.value }
         case "SET_POSTS":
             return { ...state, posts: action.value }
         case "SET_MY_ACCOUNT_PANEL":
             return { ...state, myAccountPanel: action.value }
+        case "SET_DEFAULT_CALENDAR_VIEW":
+            return { ...state, defaultCalendarView: action.value }
+        case "SET_CALENDAR_SCROLL_TO_TIME":
+            return { ...state, calendarScrollToTime: action.value }
         case "SET_ALL":
             return {
                 ...state,
@@ -59,7 +67,9 @@ function reducer(state = initialState, action) {
                 users: action.value.users,
                 baseUrl: action.value.baseUrl,
                 csrfToken: action.value.csrfToken,
-                businessCalendarAddress: action.value.businessCalendarAddress
+                businessCalendarAddress: action.value.businessCalendarAddress,
+                calendarScrollToTime: action.value.calendarScrollToTime,
+                hourlyRate: action.value.hourlyRate
             }
 
 
@@ -72,7 +82,6 @@ const store = createStore(reducer);
 
 export function App(props) {
 
-    console.log("app props", props)
     // const eventMapper = (e, type) => {
     //     event = {
     //         id: e.id,
@@ -113,7 +122,7 @@ export function App(props) {
             baseUrl: props.baseUrl,
             csrfToken: document.querySelectorAll('meta[name="csrf-token"]')[0].content,
             users: props.users,
-            businessCalendarAddress: props.businessCalendarAddress
+            businessCalendarAddress: props.businessCalendarAddress,
 
         }
 

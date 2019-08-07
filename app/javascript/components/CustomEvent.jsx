@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from "styled-components"
-import { Card, Label, Popup, Rating, Segment, Input, Divider, Dropdown, Modal, Grid, Header, Icon, Button } from 'semantic-ui-react';
+import { Card, Label, Popup, Rating, Segment, Input, Loader, Divider, Dropdown, Modal, Grid, Header, Icon, Button } from 'semantic-ui-react';
 import { connect } from "react-redux"
 import moment from 'moment'
 import DayPicker from 'react-day-picker';
@@ -9,6 +9,7 @@ function CustomEvent(props) {
 
     const [event, setEvent] = useState(props.event);
     const [modalOpen, setModalOpen] = useState(false)
+    const [loading, setLoading] = useState(false)
     // `
 
 
@@ -184,6 +185,7 @@ function CustomEvent(props) {
 
     const updateSelectedEventHandeler = () => {
         setModalOpen(false)
+        setLoading(true)
         fetch(`${props.baseUrl}/update`, {
             method: "POST",
             body: JSON.stringify({
@@ -197,7 +199,9 @@ function CustomEvent(props) {
             }
         })
             .then(response => response.json())
-            .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { events: res.events, personalEvents: res.personalEvents } }))
+            .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { scrollToEvent: res.scrollToEvent, events: res.events, personalEvents: res.personalEvents } }))
+            .then(() => setLoading(false))
+
     }
 
     const editableEventModal = () => {
@@ -225,17 +229,24 @@ function CustomEvent(props) {
         </Modal>
     }
 
+    const CustomLabel = styled(Label)`
+        opacity: ${() => loading ? "0.5" : "1"} !important;
+
+    `
 
 
     return <>
 
-        <Label
+        <CustomLabel
             style={{ height: "100%", width: "100%" }}
             color={personal ? "green" : "blue"}
             onClick={() => setModalOpen(true)}
         >
+            <Loader size="mini" inverted active={loading} inline style={{ marginRight: ".5rem", marginLeft: "-.25rem" }} />
             {event.title}
-        </Label>
+
+
+        </CustomLabel>
 
         {editableEventModal()}
 

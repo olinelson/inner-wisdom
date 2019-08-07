@@ -10,11 +10,11 @@ Rails.application.routes.draw do
 
   post '/update', to: 'main#updateEvent'
   
-  post '/edit', to: 'main#editEvent'
+  post '/purchase', to: 'main#purchase'
 
   post '/calendar_auth', to: 'main#calendarAuthLink'
 
-  get '/pay', to: 'payment#pay'
+  # get '/pay', to: 'payment#pay'
 
   patch '/posts/:id', to: 'posts#edit'
 

@@ -18,7 +18,7 @@ class MainController < ApplicationController
     end
 
     def createPersonalCalInstance
-        if current_user.google_calendar_email
+        if current_user && current_user.google_calendar_email
             begin
                 @personalCal = Google::Calendar.new(
                     :client_id     => ENV['GOOGLE_CLIENT_ID'], 
@@ -69,6 +69,12 @@ class MainController < ApplicationController
     def createEvent
         newEvent = params["event"]
         title = "Available Appointment"
+
+        cal = @businessCal
+
+        if newEvent["personal"]
+            cal = @personalCal
+        end
         
         if newEvent["appointmentSlot"] == false
             fullName = newEvent["attendees"].first["first_name"] + newEvent["attendees"].first["last_name"]
@@ -92,7 +98,7 @@ class MainController < ApplicationController
 
         end
 
-        event = @businessCal.create_event do |e|
+        event = cal.create_event do |e|
             e.title = title
             e.start_time = newEvent["start"]
             e.end_time = newEvent["end"]
@@ -104,14 +110,12 @@ class MainController < ApplicationController
             
             e.attendees= attendees
         end
-        attendees = newEvent["attendees"]
-
-        render json: {event: event, attendees: attendees}
-
+        render json: {scrollToEvent: event, events: @businessCal.events, personalEvents: @personalCal.events}
+ 
     end
 
-    def editEvent
-
+    def purchase
+        byebug
         user = params["user"]
         event = params["event"]
         
@@ -124,7 +128,6 @@ class MainController < ApplicationController
             e.location= "609 W 135 St New York, New York"
             # e.notes= "one fine day in the middle of the night, two dead men got up to fight"
             e.attendees= [
-            {'email' => 'olinelson93@gmail.com', 'displayName' => 'Oli Nelson', 'responseStatus' => 'accepted'},
             {'email' => user["email"], 'displayName' => fullName, 'responseStatus' => 'accepted'}]
         end
 
@@ -178,7 +181,7 @@ class MainController < ApplicationController
         end
 
 
-        render json: {events: @businessCal.events, personalEvents: @personalCal.events } 
+        render json: {scrollToEvent: editedEvent, events: @businessCal.events, personalEvents: @personalCal.events } 
     end
 
     def deleteEvent

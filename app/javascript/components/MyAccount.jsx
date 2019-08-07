@@ -57,8 +57,6 @@ class MyAccount extends Component {
 
     RelevantAppointments = () => {
 
-        if (this.props.user.admin) return this.props.events.concat(this.props.personalEvents)
-
         let events = this.props.events.filter(e => this.isUserAnAttendeeOfEvent(e))
         return events
     }
@@ -72,8 +70,8 @@ class MyAccount extends Component {
 
     panelSwitch = () => {
         switch (this.props.myAccountPanel) {
-            // case "calendar":
-            //     return <Calendar creatable combinedEvents={this.RelevantAppointments()} />
+            case "calendar":
+                return <Calendar readOnly events={this.RelevantAppointments()} />
             // return <h4 style={{ gridArea: "panel" }}>calendar</h4>
             case "profile":
                 return this.profileSettingsLinks()

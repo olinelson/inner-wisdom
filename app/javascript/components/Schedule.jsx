@@ -22,11 +22,6 @@ class Schedule extends Component {
         }
     }
 
-    // availableAppointments = () => {
-    //     let result = props.events.filter(e => e.attendees == null || e.attendees.length < 1)
-    //     return result
-    // }
-
     showPrettyStartAndEndTime = (selectedEvent) => {
 
         return <>
@@ -35,10 +30,12 @@ class Schedule extends Component {
         </>
     }
 
-    // deleteSelectedEventHandeler = () => {
+
+
+    // updateSelectedEventHandeler = () => {
     //     this.setState({ dialogOpen: false })
-    //     fetch(`${this.props.baseUrl}/delete`, {
-    //         method: "DELETE",
+    //     fetch(`${this.props.baseUrl}/update`, {
+    //         method: "POST",
     //         body: JSON.stringify({
     //             event: this.state.selectedEvent
     //         }),
@@ -49,30 +46,10 @@ class Schedule extends Component {
     //             "X-Requested-With": "XMLHttpRequest"
     //         }
     //     })
-    //         .then(() => {
-    //             let events = [...this.props.events].filter(e => e.id !== this.state.selectedEvent.id)
-    //             this.props.dispatch({ type: "SET_EVENTS", value: events })
-
-    //         })
+    //         .then(response => response.json())
+    //         // .then(e => console.log(e))
+    //     .then((res) => this.props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { event: res.events, personalEvents: res.personalEvents, scrollToEvent: res.scrollToEvent } }))
     // }
-
-    updateSelectedEventHandeler = () => {
-        this.setState({ dialogOpen: false })
-        fetch(`${this.props.baseUrl}/update`, {
-            method: "POST",
-            body: JSON.stringify({
-                event: this.state.selectedEvent
-            }),
-            headers: {
-                "X-CSRF-Token": this.props.csrfToken,
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        })
-            .then(response => response.json())
-            .then((res) => this.props.dispatch({ type: "SET_EVENTS", value: res.events }))
-    }
 
 
     // ATTENDEE METHODS ====================
@@ -176,7 +153,7 @@ class Schedule extends Component {
             }
         })
             .then(response => response.json())
-            .then(event => this.props.dispatch({ type: "SET_EVENTS", value: [...this.props.events, event] }))
+            .then(res => this.props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { events: res.events, personalEvents: res.personalEvents, scrollToEvent: res.scrollToEvent } }))
 
 
     }
@@ -187,7 +164,7 @@ class Schedule extends Component {
     }
 
     selectSlotHandeler = (e) => {
-        if (this.props.user.admin) this.setState({ creatingEvent: true, selectedEvent: { ...e, calendar: { id: this.props.googleCalendarAddress } } })
+        if (this.props.user.admin) this.setState({ creatingEvent: true, selectedEvent: { ...e, personal: false } })
 
     }
 
@@ -203,45 +180,6 @@ class Schedule extends Component {
     changeTitleHandeler = (e) => {
         this.setState({ selectedEvent: { ...this.state.selectedEvent, title: e.target.value } })
     }
-
-    // editableEventModal = () => {
-    //     let event = this.state.selectedEvent
-
-    //     return <Modal
-    //         open={this.state.dialogOpen}
-    //         onClose={() => this.setState({ dialogOpen: false })}
-    //     >
-    //         <Input onChange={this.changeTitleHandeler} transparent value={event ? event.title : null} />
-    //         <Modal.Content >
-    //             <Modal.Description>
-    //                 {/* <p>{this.state.selectedEvent.description}</p> */}
-    //                 {/* {this.state.selectedEvent ?
-    //                     <Popup
-    //                         content={<DayPicker
-    //                             onDayClick={this.changeDayHandeler}
-    //                             selectedDays={this.state.selectedEvent.start}
-    //                         />}
-    //                         trigger={<Button icon='add' />} />
-
-    //                     : null
-    //                 } */}
-
-    //                 {this.appointmentTimeSetter(event)}
-    //                 {/* {this.state.selectedEvent ? this.showPrettyStartAndEndTime(this.state.selectedEvent) : null} */}
-    //                 <Divider hidden />
-
-    //                 <div>
-    //                     {this.showEventAttendees(event, this.removeAttendeeFromSelectedEvent)}
-    //                 </div>
-    //                 <Divider hidden />
-    //                 {this.userPickerDropDown(event, this.addAttendeeToSelectedEvent)}
-    //             </Modal.Description>
-
-    //             <Button content="delete" onClick={this.deleteSelectedEventHandeler} />
-    //             <Button content="save" onClick={this.updateSelectedEventHandeler} />
-    //         </Modal.Content>
-    //     </Modal>
-    // }
 
     appointmentTimeSetter = (selectedSlot) => {
         if (!selectedSlot) return null
@@ -311,26 +249,27 @@ class Schedule extends Component {
         </>
     }
 
-    personalOrBusinessToggle = (e) => {
-        function togglePersonalOrBusinessState() {
-            let email
-            if (e.calendar.id === props.businessCalendarAddress) email = props.user.google_calendar_email
 
-            this.setState({ selectedEvent: { ...this.state.selectedEvent, calendar: { id: email } } })
-        }
+
+    personalOrBusinessToggle = () => {
+        let e = this.state.selectedEvent
+        if (!e || this.props.user.google_calendar_email.length < 1) return null
+
 
         let label = null
-        if (e.calendar.id === this.props.businessCalendarAddress) {
-            label = <Label color="blue">Business</Label>
-        } else {
+        if (e.personal) {
             label = <Label color="green">Personal</Label>
+
+        } else {
+            label = <Label color="blue">Business</Label>
         }
 
 
-        return <>
+        return <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+
             {label}
-            <Checkbox onChange={togglePersonalOrBusinessState} toggle />
-        </>
+            <Checkbox onChange={() => this.setState({ selectedEvent: { ...this.state.selectedEvent, personal: !this.state.selectedEvent.personal } })} toggle />
+        </div>
 
     }
 
@@ -338,7 +277,6 @@ class Schedule extends Component {
     creatingEventModal = () => {
 
         let e = this.state.selectedEvent
-        console.log(e)
         return <Modal
             open={this.state.creatingEvent}
             onClose={() => this.setState({ creatingEvent: false })}
@@ -391,7 +329,7 @@ class Schedule extends Component {
     }
 
     render() {
-
+        console.log("selected event", this.state.selectedEvent)
         return (
 
             <FullWidthCalendarContainer>
@@ -399,9 +337,9 @@ class Schedule extends Component {
                 <h1>Schedule</h1>
                 <Divider style={{ gridArea: "divider" }} />
                 <Calendar
+                    admin
                     fullWidth
                     events={this.props.allEvents}
-                    onSelectEvent={this.eventClickHandeler}
                     onSelectSlot={this.selectSlotHandeler}
                 />
                 {/* {this.editableEventModal()} */}

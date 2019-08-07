@@ -19,12 +19,12 @@ function Appointments(props) {
     }
 
 
-
+    console.log(availableAppointments())
     return (
         <FullWidthCalendarContainer>
             <h1>Available Appointments</h1>
             <Divider style={{ gridArea: "divider" }} />
-            <Calendar fullWidth bookable combinedEvents={availableAppointments()} />
+            <Calendar fullWidth purchasable events={availableAppointments()} />
         </FullWidthCalendarContainer>
     )
 }

@@ -24,5 +24,6 @@
 }
 .rbc-event{
     padding: 0 !important;
-    border: none !important;
+    border: 1px solid white !important;
+    background-color: rgba(0,0,0,0) !Important;
 }

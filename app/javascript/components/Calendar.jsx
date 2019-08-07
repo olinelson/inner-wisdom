@@ -6,15 +6,21 @@ import { Button, Container, Label, Grid, Search, Icon, Segment, Radio, Modal, He
 import Checkout from './Checkout'
 import styled from "styled-components"
 import CustomEvent from "./CustomEvent"
+import PurchasableEvent from "./PurchasableEvent"
 import { withRouter } from 'react-router-dom'
 
 
 const localizer = momentLocalizer(moment)
 
-let components = {
-  event: CustomEvent, // used by each view (Month, Day, Week)
+let AdminComponents = {
+  event: CustomEvent // used by each view (Month, Day, Week)
 }
-
+let PurchasableComponents = {
+  event: PurchasableEvent
+}
+let ReadOnlyComponents = {
+  // event: PurchasableEvent
+}
 
 function Calendar(props) {
 
@@ -23,11 +29,11 @@ function Calendar(props) {
   const CalendarContainer = styled.div`
         grid-area: panel;
         height: 100vh;
-      // max-width: ${props => props.fullWidth ? "95vw" : "70vw"};
+      max-width: ${props => props.fullWidth ? "95vw" : "60vw"};
       width: 100rem;
       min-height: 50rem;
       justify-self: center;
-    max-width: 95vw;
+
   //    @media (max-width: 50rem) {
   //       max-width: 95vw;
   //   ;
@@ -36,22 +42,43 @@ function Calendar(props) {
 }
     `
 
-  console.log("calendar props", props)
+  const changeDefaultViewHandeler = (view) => {
+
+
+    props.dispatch({ type: "SET_DEFAULT_CALENDAR_VIEW", value: view })
+  }
+
+  const componentSwitch = () => {
+    switch (props) {
+      case props.admin:
+        return AdminComponents
+      case props.purchasable:
+        return PurchasableComponents
+      case props.readOnlyComponents:
+        return ReadOnlyComponents
+      default:
+
+        return ReadOnlyComponents
+    }
+
+  }
 
   return <>
     <CalendarContainer >
       {/* {this.state.showCheckout ? <Checkout onToken={this.bookAppointment} /> : null} */}
       <BigCalendar
-        components={components}
+        components={props.admin ? AdminComponents : {}}
+        components={props.purchasable ? PurchasableComponents : {}}
+        components={props.readOnly ? readOnlyComponents : {}}
         startAccessor={event => new Date(event.start_time)}
         endAccessor={event => new Date(event.end_time)}
         selectable
         localizer={localizer}
         events={props.events}
-        // defaultView={Views.WEEK}
-        scrollToTime={new Date(2050, 1, 1)}
+        onView={changeDefaultViewHandeler}
+        defaultView={props.defaultCalendarView}
+        scrollToTime={props.calendarScrollToTime}
         defaultDate={new Date()}
-        // onSelectEvent={props.onSelectEvent}
         popup
         step={30}
         timeslots={1}
@@ -64,7 +91,17 @@ function Calendar(props) {
   </ >
 }
 
+const mapStateToProps = (state) => ({
+  // events: state.events,
+  // personalEvents: state.personalEvents,
+  // user: state.user,
+  // users: state.users,
+  // myAccountPanel: state.myAccountPanel,
+  // baseUrl: state.baseUrl
+  defaultCalendarView: state.defaultCalendarView,
+  calendarScrollToTime: state.calendarScrollToTime
+})
 
 
-export default withRouter((Calendar))
+export default withRouter((connect(mapStateToProps)(Calendar)))
 
