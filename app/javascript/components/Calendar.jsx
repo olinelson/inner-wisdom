@@ -7,6 +7,7 @@ import Checkout from './Checkout'
 import styled from "styled-components"
 import CustomEvent from "./CustomEvent"
 import PurchasableEvent from "./PurchasableEvent"
+import ReadOnlyEvent from "./ReadOnlyEvent"
 import { withRouter } from 'react-router-dom'
 
 
@@ -19,25 +20,26 @@ let PurchasableComponents = {
   event: PurchasableEvent
 }
 let ReadOnlyComponents = {
-  // event: PurchasableEvent
+  event: ReadOnlyEvent
+
 }
 
 function Calendar(props) {
 
   let allViews = Object.keys(Views).map(k => Views[k])
-
+  console.log(props)
   const CalendarContainer = styled.div`
         grid-area: panel;
         height: 100vh;
       max-width: ${props => props.fullWidth ? "95vw" : "60vw"};
-      width: 100rem;
+      width: 200rem;
       min-height: 50rem;
       justify-self: center;
 
-  //    @media (max-width: 50rem) {
-  //       max-width: 95vw;
-  //   ;
-  // }
+     @media (max-width: 50rem) {
+        max-width: 95vw;
+    ;
+  }
 
 }
     `
@@ -49,27 +51,20 @@ function Calendar(props) {
   }
 
   const componentSwitch = () => {
-    switch (props) {
-      case props.admin:
-        return AdminComponents
-      case props.purchasable:
-        return PurchasableComponents
-      case props.readOnlyComponents:
-        return ReadOnlyComponents
-      default:
+    if (props.admin) return AdminComponents
 
-        return ReadOnlyComponents
-    }
+    if (props.purchasable) return PurchasableComponents
 
+    if (props.readOnlyComponents) return ReadOnlyComponents
+
+    return ReadOnlyComponents
   }
 
   return <>
     <CalendarContainer >
       {/* {this.state.showCheckout ? <Checkout onToken={this.bookAppointment} /> : null} */}
       <BigCalendar
-        components={props.admin ? AdminComponents : {}}
-        components={props.purchasable ? PurchasableComponents : {}}
-        components={props.readOnly ? readOnlyComponents : {}}
+        components={componentSwitch()}
         startAccessor={event => new Date(event.start_time)}
         endAccessor={event => new Date(event.end_time)}
         selectable

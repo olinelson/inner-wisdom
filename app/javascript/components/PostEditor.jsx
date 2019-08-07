@@ -5,6 +5,7 @@ import { Container, Input, Divider, Menu, Checkbox, Label, Dropdown, Modal, Popu
 import PostViewer from './PostViewer';
 import Dropzone from 'react-dropzone'
 import styled from "styled-components"
+import { withRouter } from "react-router-dom"
 
 export const FeatureImageSegment = styled(Segment)`
     background-position: center !important;
@@ -254,4 +255,4 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps)(PostEditor)
+export default withRouter(connect(mapStateToProps)(PostEditor))

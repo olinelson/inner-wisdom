@@ -18,8 +18,6 @@ function Appointments(props) {
         return result
     }
 
-
-    console.log(availableAppointments())
     return (
         <FullWidthCalendarContainer>
             <h1>Available Appointments</h1>

@@ -107,19 +107,18 @@ class MainController < ApplicationController
             e.reminders =  { "useDefault": false }
             # e.notes= "one fine day in the middle of the night, two dead men got up to fight"
             
-            
+             
             e.attendees= attendees
         end
+        
         render json: {scrollToEvent: event, events: @businessCal.events, personalEvents: @personalCal.events}
  
     end
 
     def purchase
-        byebug
-        user = params["user"]
+        user = current_user
         event = params["event"]
-        
-        fullName = "#{user['first_name']} #{user['last_name']}"
+        fullName = user.first_name + " " + user.last_name
 
         editedEvent = @businessCal.find_or_create_event_by_id(event["id"]) do |e|
             e.title = fullName + " | session confirmed"
@@ -128,10 +127,11 @@ class MainController < ApplicationController
             e.location= "609 W 135 St New York, New York"
             # e.notes= "one fine day in the middle of the night, two dead men got up to fight"
             e.attendees= [
-            {'email' => user["email"], 'displayName' => fullName, 'responseStatus' => 'accepted'}]
+            {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
         end
-
         render json: {events: @businessCal.events} 
+        NotificationMailer.appointment_confirmation(user, editedEvent).deliver
+        
     end
 
 
@@ -185,9 +185,23 @@ class MainController < ApplicationController
     end
 
     def deleteEvent
-        event = params["event"]
-        found = @businessCal.find_event_by_id(event["id"])
+         event = params["event"]
+
+         if event["calendar"]["id"] === current_user.google_calendar_email
+                cal = @personalCal
+        end
+
+        if event["calendar"]["id"] === ENV["GOOGLE_CALENDAR_ADDRESS"]
+            cal = @businessCal
+        end
+
+        # byebug
+       
+        found = cal.find_event_by_id(event["id"])
+
         found.first.delete
+
+        render json: {scrollToEvent: event, events: @businessCal.events, personalEvents: @personalCal.events}
 
     end
 

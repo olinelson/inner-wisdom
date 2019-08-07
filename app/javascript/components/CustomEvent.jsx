@@ -164,6 +164,7 @@ function CustomEvent(props) {
 
     const deleteEventHandeler = () => {
         setModalOpen(false)
+        setLoading(true)
         fetch(`${props.baseUrl}/delete`, {
             method: "DELETE",
             body: JSON.stringify({
@@ -176,11 +177,11 @@ function CustomEvent(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(() => {
-                let events = [...props.events].filter(e => e.id !== event.id)
-                props.dispatch({ type: "SET_EVENTS", value: events })
-
+            .then(res => res.json())
+            .then((res) => {
+                props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { scrollToEvent: res.scrollToEvent, events: res.events, personalEvents: res.personalEvents } })
             })
+
     }
 
     const updateSelectedEventHandeler = () => {

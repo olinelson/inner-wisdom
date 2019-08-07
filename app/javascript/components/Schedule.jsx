@@ -332,7 +332,7 @@ class Schedule extends Component {
         console.log("selected event", this.state.selectedEvent)
         return (
 
-            <FullWidthCalendarContainer>
+            <FullWidthCalendarContainer >
 
                 <h1>Schedule</h1>
                 <Divider style={{ gridArea: "divider" }} />

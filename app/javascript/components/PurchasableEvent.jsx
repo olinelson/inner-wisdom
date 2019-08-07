@@ -14,12 +14,11 @@ function PurchasableEvent(props) {
     const [loading, setLoading] = useState(false)
 
 
-
     const showPrettyStartAndEndTime = (selectedEvent) => {
 
         return <>
             <h4>{moment(selectedEvent.start_time).format('Do MMMM  YYYY')}</h4>
-            <p>{moment(selectedEvent.start_time).format('h:mm a')} to {moment(selectedEvent.end).format('h:mm a')}</p>
+            <p>{moment(selectedEvent.start_time).format('h:mm a')} to {moment(selectedEvent.end_time).format('h:mm a')}</p>
         </>
     }
 
@@ -43,6 +42,19 @@ function PurchasableEvent(props) {
 
     }
 
+    const ifUserShowCheckout = () => {
+        if (props.user) return <Checkout
+            ammount={8000}
+            email={props.user.email}
+            onToken={onTokenHandeler}
+        />
+        return <>
+            <Button content="Pay With Card" disabled />
+            <Divider />
+            <span><a href={`${props.baseUrl}/users/sign_in`}>Sign in</a> to make an appointment</span>
+        </>
+    }
+
     const modal = () => {
         let event = props.event
         return <Modal
@@ -62,15 +74,10 @@ function PurchasableEvent(props) {
                     <Divider hidden />
                     {/* {userPickerDropDown()} */}
                 </Modal.Description>
-                <Checkout
-                    ammount={8000}
-                    email={props.user.email}
-                    onToken={onTokenHandeler}
-                />
+                {ifUserShowCheckout()}
             </Modal.Content>
         </Modal>
     }
-
 
 
     return <>

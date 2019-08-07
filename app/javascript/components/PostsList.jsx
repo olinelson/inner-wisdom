@@ -17,44 +17,8 @@ function PostsList(props) {
     const cardMapper = (p) => {
         let firstParagraph = ReactHtmlParser(p.body)[0]
 
-        return <PostsPreview key={p.id + "preview"} post={p} />
+        return <PostsPreview blogView={props.blogView} key={p.id + "preview"} post={p} />
 
-        return <Item
-            style={{ cursor: "pointer" }}
-            key={p.id}
-            onClick={() => handleCardClick(p.id)}>
-
-            <Item.Content>
-                <Image floated='left' size="tiny" src={p.feature_image} />
-                <Item.Header>{p.title}</Item.Header>
-                <Item.Meta>
-                    <span className='date'>Created {moment(p.created_at).format('Do MMMM  YYYY')}</span>
-                    {props.blogView ? null :
-                        <>
-                            {
-                                p.published ?
-                                    <Label>
-                                        <Icon name='share alternate' /> Published
-                        </Label>
-                                    :
-                                    <Label>
-                                        <Icon name='user secret' /> Private
-                        </Label>
-                            }
-                        </>
-
-                    }
-                </Item.Meta>
-                <Item.Description>
-                    {firstParagraph}
-                </Item.Description>
-
-
-            </Item.Content>
-
-
-
-        </Item>
     }
 
 
