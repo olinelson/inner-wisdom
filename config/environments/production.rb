@@ -1,6 +1,6 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
-
+   routes.default_url_options[:host] = ENV["BASE_URL"]
   # Code is not reloaded between requests.
   config.cache_classes = true
 
