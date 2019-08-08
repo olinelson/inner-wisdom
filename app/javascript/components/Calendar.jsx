@@ -27,7 +27,7 @@ let ReadOnlyComponents = {
 function Calendar(props) {
 
   let allViews = Object.keys(Views).map(k => Views[k])
-  console.log(props)
+
   const CalendarContainer = styled.div`
         grid-area: panel;
         height: 100vh;

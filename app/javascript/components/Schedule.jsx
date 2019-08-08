@@ -328,7 +328,7 @@ class Schedule extends Component {
     }
 
     render() {
-        console.log("selected event", this.state.selectedEvent)
+
         return (
 
             <FullWidthCalendarContainer >

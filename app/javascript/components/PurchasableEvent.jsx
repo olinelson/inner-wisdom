@@ -1,17 +1,20 @@
 import React, { useState } from 'react'
 import styled from "styled-components"
-import { Card, Label, Popup, Rating, Segment, Input, Loader, Divider, Dropdown, Modal, Grid, Header, Icon, Button } from 'semantic-ui-react';
+import { Card, Label, Popup, Progress, Rating, Segment, Input, Loader, Divider, Dropdown, Modal, Grid, Header, Icon, Button } from 'semantic-ui-react';
 import { connect } from "react-redux"
 import moment from 'moment'
 import DayPicker from 'react-day-picker';
+import { withRouter, Link } from "react-router-dom"
 
 import Checkout from "./Checkout"
 
 function PurchasableEvent(props) {
 
     const event = props.event
-    const [modalOpen, setModalOpen] = useState(false)
+    const [infoModal, setInfoModal] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [purchased, setPurchased] = useState(false)
+    const [progress, setProgress] = useState(0)
 
 
     const showPrettyStartAndEndTime = () => {
@@ -22,9 +25,27 @@ function PurchasableEvent(props) {
         </>
     }
 
-    console.log(props)
+    const incrementProgess = () => {
+        let interval = null
+
+        interval = setInterval(() => {
+            if (progress >= 100) clearInterval()
+            setProgress(progress => progress + 1);
+
+        }, 50);
+
+    }
+
+    // need to utilize useEffect hook thing
+
+
 
     const onTokenHandeler = () => {
+        setInfoModal(false)
+        setPurchased(true)
+        incrementProgess()
+
+        console.log("going past it")
         fetch(`${props.baseUrl}/purchase`, {
             method: "POST",
             body: JSON.stringify({
@@ -39,7 +60,12 @@ function PurchasableEvent(props) {
             }
         })
             .then(res => res.json())
+            .then((res) => {
+                setProgress(100)
+                return res
+            })
             .then((res) => props.dispatch({ type: "SET_EVENTS", value: res.events }))
+            .then(() => props.history.push("/myAccount"))
 
 
     }
@@ -60,8 +86,8 @@ function PurchasableEvent(props) {
     const modal = () => {
 
         return <Modal
-            open={modalOpen}
-            onClose={() => setModalOpen(false)}
+            open={infoModal}
+            onClose={() => setInfoModal(false)}
         >
             <Header content={event.title} />
             <Modal.Content >
@@ -81,13 +107,45 @@ function PurchasableEvent(props) {
         </Modal>
     }
 
+    const purchasedModal = () => {
+
+        if (purchased) return <Modal
+            open={purchased}
+        // onClose={() => set(false)}
+        >
+            <Header content={"Booking Complete"} />
+            <Modal.Content >
+                <Modal.Description>
+                    {showPrettyStartAndEndTime()}
+                    <Divider hidden />
+
+                    <div>
+                        <p>$80</p>
+                        {/* {showEventAttendees()} */}
+                    </div>
+                    <Divider hidden />
+
+
+
+                    <Link to="/myAccount">Show Me My Appointments</Link>
+
+                </Modal.Description>
+
+            </Modal.Content>
+            <Progress color="green" percent={progress} attached='bottom' active></Progress>
+        </Modal>
+
+        return null
+
+    }
+
 
     return <>
 
         <Label
             style={{ height: "100%", width: "100%" }}
             color="blue"
-            onClick={() => setModalOpen(true)}
+            onClick={() => setInfoModal(true)}
         >
             <Loader size="mini" inverted active={loading} inline style={{ marginRight: ".5rem", marginLeft: "-.25rem" }} />
             {event.title}
@@ -97,6 +155,7 @@ function PurchasableEvent(props) {
         </Label>
 
         {modal()}
+        {purchasedModal()}
 
 
     </>
@@ -116,4 +175,4 @@ const mapStateToProps = (state, props) => ({
 
 
 
-export default connect(mapStateToProps)(PurchasableEvent)
+export default withRouter(connect(mapStateToProps)(PurchasableEvent))
