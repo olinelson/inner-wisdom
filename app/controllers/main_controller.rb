@@ -131,8 +131,8 @@ class MainController < ApplicationController
 
 
         render json: {events: @businessCal.events} 
-        NotificationMailer.user_appointment_confirmation(user, editedEvent).deliver
-        NotificationMailer.admin_appointment_confirmation(user, editedEvent).deliver
+        NotificationMailer.user_appointment_confirmation(user, editedEvent).deliver_later
+        NotificationMailer.admin_appointment_confirmation(user, editedEvent).deliver_later
         
     end
 
