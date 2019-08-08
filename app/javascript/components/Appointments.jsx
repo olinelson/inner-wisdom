@@ -13,10 +13,14 @@ export const FullWidthCalendarContainer = styled(Container)`
     `
 
 function Appointments(props) {
+
     const availableAppointments = () => {
+        if (!props.events) return []
         let result = props.events.filter(e => e.attendees == null || e.attendees.length < 1)
         return result
     }
+
+
 
     return (
         <FullWidthCalendarContainer>
