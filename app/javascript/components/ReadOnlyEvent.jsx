@@ -46,7 +46,7 @@ function ReadOnlyEvent(props) {
 
         <Label
             style={{ height: "100%", width: "100%" }}
-            color="blue"
+            color="teal"
             onClick={() => setModalOpen(true)}
         >
 

@@ -12,6 +12,8 @@ import Appointments from './Appointments';
 import PostEditor from './PostEditor';
 import PostsList from './PostsList'
 import Blog from './Blog'
+import Clients from "./Clients"
+import ClientShow from "./ClientShow"
 
 import { createStore } from "redux"
 import { Provider } from "react-redux"
@@ -162,6 +164,15 @@ export function App(props) {
                         <Route
                             path="/posts/:id"
                             render={props => <><Nav /><PostEditor /></>}
+                        />
+                        <Route
+                            path="/clients"
+                            exact
+                            render={props => <><Nav /><Clients /></>}
+                        />
+                        <Route
+                            path="/clients/:id"
+                            render={props => <><Nav /><ClientShow /></>}
                         />
 
                     </Switch>

@@ -87,13 +87,20 @@ function Nav(props) {
                 :
                 <>
                     {props.user.admin === true ?
-
-                        <Menu.Item
-                            active={pathname === '/schedule'}
-                        >
-                            {/* <Icon name="user circle"></Icon> */}
-                            <Link to="/schedule">Schedule</Link>
-                        </Menu.Item>
+                        <>
+                            <Menu.Item
+                                active={pathname === '/schedule'}
+                            >
+                                {/* <Icon name="user circle"></Icon> */}
+                                <Link to="/schedule">Schedule</Link>
+                            </Menu.Item>
+                            <Menu.Item
+                                active={pathname === '/clients'}
+                            >
+                                {/* <Icon name="user circle"></Icon> */}
+                                <Link to="/clients">Clients</Link>
+                            </Menu.Item>
+                        </>
                         : null}
                     <Menu.Item
                         active={pathname === '/myaccount'}
@@ -101,6 +108,7 @@ function Nav(props) {
                         {/* <Icon name="user circle"></Icon> */}
                         <Link to="/myaccount">My Account</Link>
                     </Menu.Item>
+
 
 
 

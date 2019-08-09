@@ -18,6 +18,37 @@
     <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
   </div>
 
+   <div class="field">
+    <%= f.label :phone_number %><br />
+    <%= f.text_field :phone_number, autofocus: true %>
+  </div>
+
+  <hr>
+
+   <div class="field">
+    <%= f.label :street_address %><br />
+    <%= f.text_field :street_address, autofocus: true %>
+  </div>
+
+  <div class="field">
+    <%= f.label :apartment_number %><br />
+    <%= f.text_field :apartment_number, autofocus: true %>
+  </div>
+
+  <div class="field">
+    <%= f.label :suburb %><br />
+    <%= f.text_field :suburb, autofocus: true %>
+  </div>
+
+  <div class="field">
+    <%= f.label :state %><br />
+    <%= f.text_field :state, autofocus: true %>
+  </div>
+
+  <div class="field">
+    <%= f.label :post_code %><br />
+    <%= f.number_field :post_code, autofocus: true %>
+  </div>
 
   <div class="field">
     <%= f.label :google_calendar_email %><br />

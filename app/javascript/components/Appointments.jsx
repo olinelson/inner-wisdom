@@ -4,6 +4,20 @@ import Calendar from './Calendar';
 import { connect } from 'react-redux';
 import styled from "styled-components"
 
+export const isUserAnAttendeeOfEvent = (event, user) => {
+    if (event.attendees === null) return false
+    for (let att of event.attendees) {
+        if (att.email === user.email) return true
+    }
+}
+
+export const availableAppointments = (events) => {
+    if (!events) return []
+    let result = events.filter(e => e.attendees == null || e.attendees.length < 1)
+    return result
+}
+
+
 export const FullWidthCalendarContainer = styled(Container)`
         margin-top: 4rem;
         display: grid !Important;
@@ -14,11 +28,13 @@ export const FullWidthCalendarContainer = styled(Container)`
 
 function Appointments(props) {
 
-    const availableAppointments = () => {
-        if (!props.events) return []
-        let result = props.events.filter(e => e.attendees == null || e.attendees.length < 1)
-        return result
-    }
+    // const isUserAnAttendeeOfEvent = (event) => {
+    //     if (event.attendees === null) return false
+    //     for (let att of event.attendees) {
+    //         if (att.email === props.user.email) return true
+    //     }
+    // }
+
 
 
 
@@ -26,13 +42,14 @@ function Appointments(props) {
         <FullWidthCalendarContainer>
             <h1>Available Appointments</h1>
             <Divider style={{ gridArea: "divider" }} />
-            <Calendar fullWidth purchasable events={availableAppointments()} />
+            <Calendar fullWidth purchasable events={availableAppointments(props.events)} />
         </FullWidthCalendarContainer>
     )
 }
 
 const mapStateToProps = (state) => ({
-    events: state.events
+    events: state.events,
+    user: state.user
 })
 
 export default connect(mapStateToProps)(Appointments)

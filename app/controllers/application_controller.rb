@@ -4,8 +4,29 @@ class ApplicationController < ActionController::Base
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:first_name, :last_name])
-    devise_parameter_sanitizer.permit(:account_update, keys: [:first_name, :last_name, :google_calendar_email, :google_calendar_refresh_token])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [
+      :first_name, 
+      :last_name,
+       :street_address, 
+      :apartment_number,
+      :suburb,
+      :state,
+      :post_code,
+      :phone_number
+
+      ])
+    devise_parameter_sanitizer.permit(:account_update, keys: [
+      :first_name, 
+      :last_name, 
+      :google_calendar_email, 
+      :google_calendar_refresh_token,
+      :street_address, 
+      :apartment_number,
+      :suburb,
+      :state,
+      :post_code,
+      :phone_number
+      ])
 
   end
 end

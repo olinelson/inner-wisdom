@@ -32,7 +32,7 @@ function PurchasableEvent(props) {
             if (progress >= 100) clearInterval()
             setProgress(progress => progress + 1);
 
-        }, 50);
+        });
 
     }
 
