@@ -5,6 +5,8 @@ class Users::PasswordsController < Devise::PasswordsController
   # Render the #edit only if coming from a reset password email link
   append_before_action :assert_reset_token_passed, only: :edit
 
+  
+
   # GET /resource/password/new
   def new
     self.resource = resource_class.new

@@ -17,15 +17,22 @@ class MainController < ApplicationController
         
     end
 
+    
+
     def createPersonalCalInstance
         if current_user && current_user.google_calendar_email
+            # byebug
             begin
+                calendar_address = current_user.google_calendar_email
+                # byebug
                 @personalCal = Google::Calendar.new(
                     :client_id     => ENV['GOOGLE_CLIENT_ID'], 
                     :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
-                    :calendar      => current_user.google_calendar_email,
+                    :calendar      => calendar_address,
                     :redirect_url  => ENV['GOOGLE_REDIRECT_URL'],
                                     )
+# byebug
+
                     @personalCal.login_with_refresh_token(current_user.google_calendar_refresh_token)               
                 rescue
                     puts "login error"

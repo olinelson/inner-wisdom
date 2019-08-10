@@ -25,6 +25,10 @@ Rails.application.routes.draw do
 
   post '/attach/posts/:id', to: 'posts#attach'
 
+  post '/googlecal/url', to: 'googlecal#genNewCalAuthUrl'
+  
+  post '/googlecal/token', to: 'googlecal#setPersonalCalRefreshToken'
+
   
 
   
