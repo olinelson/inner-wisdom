@@ -51,6 +51,8 @@ function reducer(state = initialState, action) {
             return { ...state, personalEvents: action.value.personalEvents, events: action.value.events, calendarScrollToTime: new Date(action.value.scrollToEvent.start_time) }
         case "SET_USER":
             return { ...state, user: action.value }
+        case "SET_USERS":
+            return { ...state, users: action.value }
         case "SET_POSTS":
             return { ...state, posts: action.value }
         case "SET_MY_ACCOUNT_PANEL":

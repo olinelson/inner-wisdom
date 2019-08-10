@@ -21,5 +21,10 @@ class NotificationMailer < ApplicationMailer
 
     end
 
+    def account_created_by_admin_notification(user)
+        @user = user
+        mail(to: @user.email, subject: 'Welcome To Inner Wisdom')
+    end
+
 
 end

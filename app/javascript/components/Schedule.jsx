@@ -328,7 +328,7 @@ class Schedule extends Component {
     }
 
     render() {
-
+        console.log("schedule", this.props)
         return (
 
             <FullWidthCalendarContainer >
@@ -349,10 +349,18 @@ class Schedule extends Component {
 
 }
 
+const allEvents = (events, personalEvents) => {
+
+    let result = []
+    if (events) result = result.concat(events)
+    if (personalEvents) result = result.concat(personalEvents)
+    return result
+}
+
 const mapStateToProps = (state) => ({
     events: state.events,
     personalEvents: state.personalEvents,
-    allEvents: state.events.concat(state.personalEvents),
+    allEvents: allEvents(state.events, state.personalEvents),
     user: state.user,
     users: state.users,
     csrfToken: state.csrfToken,

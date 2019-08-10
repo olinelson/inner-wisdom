@@ -5,52 +5,61 @@ import { withRouter } from "react-router-dom"
 
 
 function Clients(props) {
-    const [firstName, setFirstName] = useState("")
-    const [lastName, setLastName] = useState("")
+    const [first_name, setFirst_name] = useState("")
+    const [last_name, setLast_name] = useState("")
     const [email, setEmail] = useState("")
     const [tempPassword, setTempPassword] = useState("")
     const [confirmTempPassword, setConfirmTempPassword] = useState("")
     const [sendWelcomeEmail, setSendWelcomeEmail] = useState(false)
+    const [modalOpen, setModalOpen] = useState(false)
+    const [loading, setLoading] = useState(false)
 
 
     let allUsersExceptMe = props.users.filter(u => u.id !== props.user.id)
 
     const createUserHandeler = (e) => {
-        console.log(e.target)
-        // fetch(`${props.baseUrl}/delete`, {
-        //     method: "DELETE",
-        //     body: JSON.stringify({
-        //         event: event
-        //     }),
-        //     headers: {
-        //         "X-CSRF-Token": props.csrfToken,
-        //         "Content-Type": "application/json",
-        //         Accept: "application/json",
-        //         "X-Requested-With": "XMLHttpRequest"
-        //     }
-        // })
-        //     .then(res => res.json())
-        //     .then((res) => {
-        //         props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { scrollToEvent: res.scrollToEvent, events: res.events, personalEvents: res.personalEvents } })
-        //     })
+        setLoading(true)
+        let newUser = { createdByAdmin: true, first_name, last_name, email, password: tempPassword, sendWelcomeEmail }
+        fetch(`${props.baseUrl}/users`, {
+            method: "POST",
+            body: JSON.stringify({
+                user: newUser
+            }),
+            headers: {
+                "X-CSRF-Token": props.csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(res => res.json())
+            .then((res) => {
+                setLoading(false)
+                setModalOpen(false)
+                props.dispatch({ type: "SET_USERS", value: res.users })
+            })
     }
+
+
+
 
 
     return (
         <div>
             <h4>Clients</h4>
-            <Modal trigger={<Button icon="plus" content="Create" />}>
+            <Button onClick={() => setModalOpen(!modalOpen)} icon="plus" content="Create" />
+            <Modal onClose={() => setModalOpen(false)} open={modalOpen}>
                 <Modal.Header>Create New Client</Modal.Header>
                 <Modal.Content image>
                     <Modal.Description>
                         <Form onSubmit={(e) => createUserHandeler(e)}>
                             <Form.Field>
                                 <label>First Name</label>
-                                <input value={firstName} onChange={(e) => setFirstName(e.target.value)} required placeholder='First Name' />
+                                <input value={first_name} onChange={(e) => setFirst_name(e.target.value)} required placeholder='First Name' />
                             </Form.Field>
                             <Form.Field>
                                 <label>Last Name</label>
-                                <input value={lastName} onChange={(e) => setLastName(e.target.value)} required placeholder='Last Name' />
+                                <input value={last_name} onChange={(e) => setLast_name(e.target.value)} required placeholder='Last Name' />
                             </Form.Field>
                             <Form.Field>
                                 <label>Email</label>
@@ -67,7 +76,7 @@ function Clients(props) {
                             <Form.Field>
                                 <Checkbox checked={sendWelcomeEmail} onChange={() => setSendWelcomeEmail(!sendWelcomeEmail)} label='Send User Welcome Email' />
                             </Form.Field>
-                            <Button type="submit">Create</Button>
+                            <Button loading={loading} type="submit">Create</Button>
                         </Form>
                     </Modal.Description>
                 </Modal.Content>
@@ -89,6 +98,7 @@ function Clients(props) {
 }
 
 const mapStateToProps = (state) => ({
+    csrfToken: state.csrfToken,
     events: state.events,
     personalEvents: state.personalEvents,
     user: state.user,
