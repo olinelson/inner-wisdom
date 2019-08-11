@@ -5,7 +5,7 @@ import { connect } from "react-redux"
 import { Button, Container, Label, Grid, Search, Icon, Segment, Radio, Modal, Header, Image, Dropdown, Divider } from "semantic-ui-react"
 import Checkout from './Checkout'
 import styled from "styled-components"
-import CustomEvent from "./CustomEvent"
+import Event from "./Event"
 import PurchasableEvent from "./PurchasableEvent"
 import ReadOnlyEvent from "./ReadOnlyEvent"
 import { withRouter } from 'react-router-dom'
@@ -14,7 +14,7 @@ import { withRouter } from 'react-router-dom'
 const localizer = momentLocalizer(moment)
 
 let AdminComponents = {
-  event: CustomEvent // used by each view (Month, Day, Week)
+  event: Event // used by each view (Month, Day, Week)
 }
 let PurchasableComponents = {
   event: PurchasableEvent

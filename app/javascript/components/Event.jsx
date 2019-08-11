@@ -4,8 +4,10 @@ import { Card, Label, Popup, Rating, Segment, Input, Loader, Divider, Dropdown, 
 import { connect } from "react-redux"
 import moment from 'moment'
 import DayPicker from 'react-day-picker';
+import TimePicker from 'rc-time-picker';
+// import 'rc-time-picker/assets/index.css';
 
-function CustomEvent(props) {
+function Event(props) {
 
     const [event, setEvent] = useState(props.event);
     const [modalOpen, setModalOpen] = useState(false)
@@ -47,11 +49,23 @@ function CustomEvent(props) {
         setEvent({ ...event, attendees })
     }
 
-    const changeDayHandeler = (day) => {
-        let updatedDate = new Date(event.start_time)
-        updatedDate.setMonth(day.getMonth())
-        updatedDate.setDate(day.getDate())
-        setEvent({ ...event, start_time: updatedDate, end_time: updatedDate })
+    const changeDayHandeler = (dt) => {
+
+        let dateTime = new Date(dt)
+        let newMonth = dateTime.getMonth()
+        let newDay = dateTime.getDate()
+
+        let start_time = new Date(event.start_time)
+        start_time.setMonth(newMonth)
+        start_time.setDate(newDay)
+
+        let end_time = new Date(event.end_time)
+        end_time.setMonth(newMonth)
+        end_time.setDate(newDay)
+
+
+
+        setEvent({ ...event, start_time, end_time })
     }
 
     const showEventAttendees = () => {
@@ -105,10 +119,11 @@ function CustomEvent(props) {
             }
         })
 
+        const now = moment().hour(0).minute(0)
 
 
         return <>
-            {/* <h4>{moment(selectedSlot.start).format('Do MMMM  YYYY')}</h4> */}
+
             <Popup
                 on="click"
                 content={<DayPicker
@@ -116,24 +131,28 @@ function CustomEvent(props) {
                     selectedDays={new Date(event.start_time)}
                 />}
                 trigger={<h4 style={{ cursor: "pointer" }}>{moment(event.start_time).format('Do MMMM  YYYY')}<Icon name="caret down" /></h4>} />
-            {/* {moment(selectedSlot.start).format('h:mm a')}  */}
-            <Dropdown
-                inline
-                options={formattedendStartTimeOptions}
-                defaultValue={formattedendStartTimeOptions[22].value}
-                upward={false}
-                scrolling
-                onChange={(e, d) => setEvent({ ...event, start_time: new Date(d.value) })}
+
+            <TimePicker
+                showSecond={false}
+
+                value={startTime}
+                // className=" ui menu transition"
+                onChange={(e) => setEvent({ ...event, start_time: e._d })}
+                format='h:mm a'
+                use12Hours
+                inputReadOnly
             />
-            to{" "}
-            <Dropdown
-                inline
-                options={formattedendEndTimeOptions}
-                defaultValue={formattedendEndTimeOptions[22].value}
-                upward={false}
-                scrolling
-                onChange={(e, d) => setEvent({ ...event, end_time: new Date(d.value) })}
+            {/* to{" "} */}
+            <TimePicker
+                showSecond={false}
+                value={endTime}
+                // className="ui menu transition"
+                onChange={(e) => setEvent({ ...event, end_time: e._d })}
+                format='h:mm a'
+                use12Hours
+                inputReadOnly
             />
+
         </>
     }
 
@@ -270,4 +289,4 @@ const mapStateToProps = (state, props) => ({
 
 
 
-export default connect(mapStateToProps)(CustomEvent)
+export default connect(mapStateToProps)(Event)
