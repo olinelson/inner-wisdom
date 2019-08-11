@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { connect } from "react-redux"
 import { withRouter } from "react-router-dom"
-import { Container, Card, Item, Table, Label, Menu, Button, Icon, Checkbox, Modal, Form } from 'semantic-ui-react';
+import { Container, Card, Item, Table, Label, Menu, Button, Icon, Checkbox, Modal, Form, Header } from 'semantic-ui-react';
 import { isUserAnAttendeeOfEvent } from "./Appointments"
 import moment from "moment"
 
@@ -23,6 +23,7 @@ function ClientShow(props) {
 
     const [email, set_email] = useState(user.email || "")
     const [modalOpen, setModalOpen] = useState(false)
+    const [deleteModal, setDeleteModal] = useState(false)
     const [loading, setLoading] = useState(false)
     let chronologicalSorted = relevantAppointments.sort((b, a) => new Date(a.start_time) - new Date(b.end_time))
 
@@ -53,7 +54,6 @@ function ClientShow(props) {
                         {user.first_name + " " + user.last_name}
                     </Label>
                 </Table.Cell>
-                <Table.Cell><Checkbox checked /></Table.Cell>
             </Table.Row>
 
         }
@@ -85,11 +85,77 @@ function ClientShow(props) {
             })
     }
 
+    const deleteUserHandeler = () => {
+        fetch(`${props.baseUrl}/clients/${user.id}`, {
+            method: "DELETE",
+            headers: {
+                "X-CSRF-Token": props.csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(res => res.json())
+            .then((res) => {
+                props.history.push('/clients')
+                props.dispatch({ type: "SET_USERS", value: res.users })
+            })
+    }
+
     return (
         <Container>
 
             <h4>{user.first_name + " " + user.last_name}</h4>
             <Button content="edit" onClick={() => setModalOpen(true)} />
+            <Button content="Delete User" onClick={() => setDeleteModal(true)} />
+
+
+            <hr />
+            <h4>Address</h4>
+            <p>{user.street_address}</p>
+            <p>{user.apartment_number}</p>
+            <p>{user.suburb}</p>
+            <p>{user.state}</p>
+            <p>{user.post_code}</p>
+            <hr />
+            <h4>Email</h4>
+            <p>{user.email}</p>
+
+            <h4>Appointment History</h4>
+
+
+            <Table basic="very" >
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell>Date</Table.HeaderCell>
+                        <Table.HeaderCell>Duration</Table.HeaderCell>
+                        <Table.HeaderCell>Attendees</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+
+                <Table.Body>
+                    {appointmentHistoryTableRows()}
+
+                    {/* <Table.Row>
+                        <Table.Cell>
+                            <Label ribbon>First</Label>
+                        </Table.Cell>
+                        <Table.Cell>Cell</Table.Cell>
+                        <Table.Cell>Cell</Table.Cell>
+                    </Table.Row>
+                    <Table.Row>
+                        <Table.Cell>Cell</Table.Cell>
+                        <Table.Cell>Cell</Table.Cell>
+                        <Table.Cell>Cell</Table.Cell>
+                    </Table.Row>
+                    <Table.Row>
+                        <Table.Cell>Cell</Table.Cell>
+                        <Table.Cell>Cell</Table.Cell>
+                        <Table.Cell>Cell</Table.Cell>
+                    </Table.Row> */}
+                </Table.Body>
+            </Table>
+
             <Modal onClose={() => setModalOpen(false)} open={modalOpen}>
                 <Modal.Header>Edit Client</Modal.Header>
                 <Modal.Content image>
@@ -137,56 +203,26 @@ function ClientShow(props) {
                     </Modal.Description>
                 </Modal.Content>
             </Modal >
-            <hr />
-            <h4>Address</h4>
-            <p>{user.street_address}</p>
-            <p>{user.apartment_number}</p>
-            <p>{user.suburb}</p>
-            <p>{user.state}</p>
-            <p>{user.post_code}</p>
-            <hr />
-            <h4>Email</h4>
-            <p>{user.email}</p>
 
-            <h4>Appointment History</h4>
-
-
-            <Table basic="very" >
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell>Date</Table.HeaderCell>
-                        <Table.HeaderCell>Duration</Table.HeaderCell>
-                        <Table.HeaderCell>Attendees</Table.HeaderCell>
-                        <Table.HeaderCell>Paid</Table.HeaderCell>
-
-                        {/* <Table.HeaderCell>Header</Table.HeaderCell> */}
-                    </Table.Row>
-                </Table.Header>
-
-                <Table.Body>
-                    {appointmentHistoryTableRows()}
-
-                    {/* <Table.Row>
-                        <Table.Cell>
-                            <Label ribbon>First</Label>
-                        </Table.Cell>
-                        <Table.Cell>Cell</Table.Cell>
-                        <Table.Cell>Cell</Table.Cell>
-                    </Table.Row>
-                    <Table.Row>
-                        <Table.Cell>Cell</Table.Cell>
-                        <Table.Cell>Cell</Table.Cell>
-                        <Table.Cell>Cell</Table.Cell>
-                    </Table.Row>
-                    <Table.Row>
-                        <Table.Cell>Cell</Table.Cell>
-                        <Table.Cell>Cell</Table.Cell>
-                        <Table.Cell>Cell</Table.Cell>
-                    </Table.Row> */}
-                </Table.Body>
-            </Table>
-
-
+            <Modal onClose={() => setDeleteModal(false)} open={deleteModal} basic size='small'>
+            <Header icon='user delete' content='Delete User' />
+            <Modal.Content>
+            <p>
+            Are you sure you would like to delete this user? This cannot be undone.
+            </p>
+            </Modal.Content>
+            <Modal.Actions>
+            <Button onClick={() => setDeleteModal(false)} basic color='red' inverted>
+            <Icon name='remove' /> Cancel
+            </Button>
+            <Button onClick={()=> deleteUserHandeler()} color='green' inverted>
+            <Icon name='checkmark' /> Yes, Delete
+            </Button>
+            </Modal.Actions>
+            </Modal>
+)
+            
+            
         </Container>
     )
 }

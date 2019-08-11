@@ -34,6 +34,8 @@ Rails.application.routes.draw do
     post "/clients" => 'users/registrations#create_user_with_admin'
 
     patch "/clients/:id" => 'users/registrations#edit_user_with_admin'
+
+    delete "/clients/:id" => 'users/registrations#destroy_with_admin'
   end
 
   

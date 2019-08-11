@@ -8,12 +8,13 @@ function Clients(props) {
     const [first_name, setFirst_name] = useState("")
     const [last_name, setLast_name] = useState("")
     const [email, setEmail] = useState("")
-    const [tempPassword, setTempPassword] = useState("")
-    const [confirmTempPassword, setConfirmTempPassword] = useState("")
+    // const [tempPassword, setTempPassword] = useState("")
+    // const [confirmTempPassword, setConfirmTempPassword] = useState("")
     const [sendWelcomeEmail, setSendWelcomeEmail] = useState(false)
     const [modalOpen, setModalOpen] = useState(false)
     const [loading, setLoading] = useState(false)
 
+    const tempPassword = Math.random().toString(36).slice(2)
 
     let allUsersExceptMe = props.users.filter(u => u.id !== props.user.id)
 
@@ -64,14 +65,6 @@ function Clients(props) {
                             <Form.Field>
                                 <label>Email</label>
                                 <input value={email} onChange={(e) => setEmail(e.target.value)} required placeholder='newclient@gmail.com' />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Temp. Password</label>
-                                <input value={tempPassword} onChange={(e) => setTempPassword(e.target.value)} required />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Confirm Temp. Password</label>
-                                <input value={confirmTempPassword} onChange={(e) => setConfirmTempPassword(e.target.value)} required />
                             </Form.Field>
                             <Form.Field>
                                 <Checkbox checked={sendWelcomeEmail} onChange={() => setSendWelcomeEmail(!sendWelcomeEmail)} label='Send User Welcome Email' />
