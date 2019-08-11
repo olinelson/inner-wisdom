@@ -25,7 +25,7 @@ class ApplicationController < ActionController::Base
       :suburb,
       :state,
       :post_code,
-      :phone_number
+      :phone_number,
       ])
 
   end

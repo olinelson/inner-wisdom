@@ -13,7 +13,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def create_user_with_admin
-    params.permit(:sendWelcomeEmail, :createdByAdmin)
+    if current_user.admin 
+      params.permit(:sendWelcomeEmail)
     build_resource(sign_up_params)
    
     resource.save
@@ -31,6 +32,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
        render json: {users: User.all}
       end
     end
+    end
+
+    
   end
 
   # POST /resource
@@ -71,6 +75,17 @@ class Users::RegistrationsController < Devise::RegistrationsController
     render :edit
   end
 
+  def edit_user_with_admin
+    if current_user.admin
+       user = User.find(params["id"])
+      user.update(account_update_params)
+    end
+    # params.permit(:editedByAdmin)
+   
+   
+
+    render json: {users: User.all}
+  end
   # PUT /resource
   # We need to use a copy of the resource because we don't want to change
   # the current user in place.

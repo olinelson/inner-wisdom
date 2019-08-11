@@ -19,8 +19,8 @@ function Clients(props) {
 
     const createUserHandeler = (e) => {
         setLoading(true)
-        let newUser = { createdByAdmin: true, first_name, last_name, email, password: tempPassword, sendWelcomeEmail }
-        fetch(`${props.baseUrl}/users`, {
+        let newUser = { first_name, last_name, email, password: tempPassword, sendWelcomeEmail }
+        fetch(`${props.baseUrl}/clients`, {
             method: "POST",
             body: JSON.stringify({
                 user: newUser

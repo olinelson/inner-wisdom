@@ -5,7 +5,7 @@ import { connect } from "react-redux"
 import moment from 'moment'
 import DayPicker from 'react-day-picker';
 import TimePicker from 'rc-time-picker';
-// import 'rc-time-picker/assets/index.css';
+import 'rc-time-picker/assets/index.css';
 
 function Event(props) {
 

@@ -26,8 +26,15 @@ Rails.application.routes.draw do
   post '/attach/posts/:id', to: 'posts#attach'
 
   post '/googlecal/url', to: 'googlecal#genNewCalAuthUrl'
-  
+
   post '/googlecal/token', to: 'googlecal#setPersonalCalRefreshToken'
+
+  # post '/clients', to: 'users/registrations#create_user_with_admin'
+   devise_scope :user do
+    post "/clients" => 'users/registrations#create_user_with_admin'
+
+    patch "/clients/:id" => 'users/registrations#edit_user_with_admin'
+  end
 
   
 
