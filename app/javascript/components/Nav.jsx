@@ -69,9 +69,12 @@ function Nav(props) {
                 <Link to="/blog">Blog</Link>
             </Menu.Item>
 
-            <Menu.Item active={pathname === '/appointments'}>
-                <Link to="/appointments">Appointments</Link>
-            </Menu.Item>
+            {props.user.admin ? null :
+                <Menu.Item active={pathname === '/appointments'}>
+                    <Link to="/appointments">Appointments</Link>
+                </Menu.Item>
+            }
+
         </>
     }
 

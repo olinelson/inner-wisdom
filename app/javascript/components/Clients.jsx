@@ -24,7 +24,7 @@ function Clients(props) {
 
     let allUsersExceptMe = props.users.filter(u => u.id !== props.user.id)
 
-    console.log(allUsersExceptMe)
+
 
     const createUserHandeler = (e) => {
         setLoading(true)
@@ -92,7 +92,7 @@ function Clients(props) {
                     let relevantAppointments = props.events.filter(e => isUserAnAttendeeOfEvent(e, user))
                     let pastAppointments = relevantAppointments.filter(a => new Date(a.start_time) < new Date)
                     let futureAppointments = relevantAppointments.filter(a => new Date(a.start_time) > new Date)
-                    console.log(futureAppointments)
+
                     return <Card
                         onClick={() => props.history.push(`/clients/${user.id}`)}
                         key={user.id}>

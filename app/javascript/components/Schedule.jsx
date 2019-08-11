@@ -274,21 +274,18 @@ class Schedule extends Component {
 
     creatingPersonalEventOptions = (e) => {
         if (e && e.personal) return <Segment placeholder>
-            <Form >
+            <Form onSubmit={(e) => console.log(e.target.value)}>
                 <Form.Field>
                     <label>Title</label>
-                    <input value={e.title} onChange={(e) => setFirst_name(e.target.value)} required placeholder='First Name' />
+                    <input placeholder='New Event Name' />
                 </Form.Field>
                 <Form.Field>
-                    <label>Last Name</label>
-                    <input value={last_name} onChange={(e) => setLast_name(e.target.value)} required placeholder='Last Name' />
+                    <label>Location</label>
+                    <input placeholder='42 Wallaby Way Sydney' />
                 </Form.Field>
-                <Form.Field>
-                    <label>Email</label>
-                    <input value={email} onChange={(e) => setEmail(e.target.value)} required placeholder='newclient@gmail.com' />
-                </Form.Field>
-                <Form.Field>
-                </Form.Field>
+
+
+                <Button type="submit">Create</Button>
             </Form>
         </Segment>
     }
@@ -356,12 +353,12 @@ class Schedule extends Component {
     }
 
     render() {
-        return (
-
-            <FullWidthCalendarContainer >
+        return <>
+            <FullWidthCalendarContainer fluid>
 
                 <h1>Schedule</h1>
                 <Divider style={{ gridArea: "divider" }} />
+
                 <Calendar
                     admin
                     fullWidth
@@ -371,7 +368,7 @@ class Schedule extends Component {
                 {/* {this.editableEventModal()} */}
                 {this.creatingEventModal()}
             </FullWidthCalendarContainer>
-        )
+        </>
     }
 
 }

@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { withRouter } from "react-router-dom"
 import styled from "styled-components"
 import { Card, Label, Popup, Rating, Segment, Input, Loader, Divider, Dropdown, Modal, Grid, Header, Icon, Button } from 'semantic-ui-react';
 import { connect } from "react-redux"
@@ -12,12 +13,18 @@ function Event(props) {
     const [event, setEvent] = useState(props.event);
     const [modalOpen, setModalOpen] = useState(false)
     const [loading, setLoading] = useState(false)
-    // `
+
+
 
 
     let personal = false
-    if (props.event.calendar.id === props.user.google_calendar_email) personal = true
+    if (event.calendar.id === props.user.google_calendar_email) personal = true
 
+
+    const isAnEmptySlot = () => {
+        if (!personal && event.attendees == null) return true
+        return false
+    }
 
     const allUsersNotAttending = () => {
         if (!event.attendees || event.attendees.length < 1) return props.users
@@ -68,14 +75,22 @@ function Event(props) {
         setEvent({ ...event, start_time, end_time })
     }
 
+    const findUserByEmail = (email) => {
+        return props.users.find(u => u.email === email)
+    }
+
     const showEventAttendees = () => {
         if (event && event.attendees) {
             let users = event.attendees
-            return users.map(u => <Label key={"label" + u.id}>
-                <Icon name='user' />
-                {u.displayName || u.first_name + " " + u.last_name}
-                <Icon name='delete' onClick={() => removeAttendeeFromEvent(u)} />
-            </Label>
+            return users.map(u => {
+                let linkToClientPage = `/clients/${findUserByEmail(u.email).id}`
+
+                return <Label key={"label" + u.id}>
+                    <Icon style={{ cursor: "pointer" }} onClick={() => props.history.push(linkToClientPage)} name='user' />
+                    <span style={{ cursor: "pointer" }} onClick={() => props.history.push(linkToClientPage)}>{u.displayName || u.first_name + " " + u.last_name}</span>
+                    <Icon name='delete' onClick={() => removeAttendeeFromEvent(u)} />
+                </Label>
+            }
             )
         }
         return null
@@ -252,13 +267,17 @@ function Event(props) {
         opacity: ${() => loading ? "0.5" : "1"} !important;
 
     `
-
+    const colorPicker = () => {
+        if (personal) return "green"
+        if (!personal && isAnEmptySlot()) return "blue"
+        return "teal"
+    }
 
     return <>
 
         <CustomLabel
             style={{ height: "100%", width: "100%" }}
-            color={personal ? "green" : "blue"}
+            color={colorPicker()}
             onClick={() => setModalOpen(true)}
         >
             <Loader size="mini" inverted active={loading} inline style={{ marginRight: ".5rem", marginLeft: "-.25rem" }} />
@@ -289,4 +308,4 @@ const mapStateToProps = (state, props) => ({
 
 
 
-export default connect(mapStateToProps)(Event)
+export default withRouter(connect(mapStateToProps)(Event))
