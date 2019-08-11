@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
 import { connect } from "react-redux"
-import { Card, Button, Modal, Form, Checkbox } from "semantic-ui-react"
+import { Card, Button, Modal, Search, Label, Form, Checkbox, Divider, Container } from "semantic-ui-react"
 import { withRouter } from "react-router-dom"
+import moment from "moment"
+import { isUserAnAttendeeOfEvent } from "./Appointments"
+import { debounce } from "debounce";
 
 
 function Clients(props) {
@@ -14,9 +17,14 @@ function Clients(props) {
     const [modalOpen, setModalOpen] = useState(false)
     const [loading, setLoading] = useState(false)
 
+    // const [users, setUsers] = useState(props.users)
+    const [filteredUsers, setFilteredUsers] = useState()
+
     const tempPassword = Math.random().toString(36).slice(2)
 
     let allUsersExceptMe = props.users.filter(u => u.id !== props.user.id)
+
+    console.log(allUsersExceptMe)
 
     const createUserHandeler = (e) => {
         setLoading(true)
@@ -41,14 +49,79 @@ function Clients(props) {
             })
     }
 
+    const userFilter = (user, query) => {
+        if (user.first_name.includes(query)) return true
+        if (user.last_name.includes(query)) return true
+        if (user.email.includes(query)) return true
+        return false
+    }
+
+    const handleResultSelect = (e, { result }) => {
+        props.history.push(`/clients/${result.id}`)
+    }
+
+    const handleSearchChange = (e, { value }) => {
+
+        let allUsers = props.users
+        let filtered = allUsers.filter(u => userFilter(u, value))
+        let result = filtered.map(u => { return { title: `${u.first_name} ${u.last_name}`, id: u.id } })
+        setFilteredUsers(result)
+
+    }
 
 
 
 
     return (
-        <div>
+        <Container>
             <h4>Clients</h4>
             <Button onClick={() => setModalOpen(!modalOpen)} icon="plus" content="Create" />
+            <Search
+                loading={loading}
+                onResultSelect={(e, { result }) => handleResultSelect(e, { result })}
+                onSearchChange={debounce(handleSearchChange, 500, {
+                    leading: true,
+                })}
+                results={filteredUsers}
+            // value={filteredUsers}
+
+            />
+            <Card.Group>
+
+                {allUsersExceptMe.map(user => {
+                    let relevantAppointments = props.events.filter(e => isUserAnAttendeeOfEvent(e, user))
+                    let pastAppointments = relevantAppointments.filter(a => new Date(a.start_time) < new Date)
+                    let futureAppointments = relevantAppointments.filter(a => new Date(a.start_time) > new Date)
+                    console.log(futureAppointments)
+                    return <Card
+                        onClick={() => props.history.push(`/clients/${user.id}`)}
+                        key={user.id}>
+                        <Card.Content>
+                            <Card.Header>{user.first_name + " " + user.last_name}</Card.Header>
+                            <Card.Meta>
+                                {moment(user.created_at).format('MM/DD/YYYY')}
+                            </Card.Meta>
+                            <Card.Content extra>
+                                <Label
+                                    icon="history"
+                                    content={pastAppointments.length}
+                                />
+                                <Label
+                                    icon="calendar"
+                                    content={futureAppointments.length}
+                                />
+                            </Card.Content>
+
+                        </Card.Content>
+                    </Card>
+
+                }
+
+                )}
+            </Card.Group>
+
+
+
             <Modal onClose={() => setModalOpen(false)} open={modalOpen}>
                 <Modal.Header>Create New Client</Modal.Header>
                 <Modal.Content image>
@@ -74,19 +147,7 @@ function Clients(props) {
                     </Modal.Description>
                 </Modal.Content>
             </Modal >
-            <Card.Group>
-
-                {allUsersExceptMe.map(user => <Card
-                    onClick={() => props.history.push(`/clients/${user.id}`)}
-                    key={user.id}>
-                    <Card.Content>
-                        <Card.Header>{user.first_name + " " + user.last_name}</Card.Header>
-                        <Card.Meta>{user.created}</Card.Meta>
-                        <Card.Description>Matthew is a pianist living in Nashville.</Card.Description>
-                    </Card.Content>
-                </Card>)}
-            </Card.Group>
-        </div >
+        </Container >
     )
 }
 

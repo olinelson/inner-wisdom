@@ -44,8 +44,6 @@ function PurchasableEvent(props) {
         setInfoModal(false)
         setPurchased(true)
         incrementProgess()
-
-        console.log("going past it")
         fetch(`${props.baseUrl}/purchase`, {
             method: "POST",
             body: JSON.stringify({

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Container, Divider, Modal, Popup, Button, Label, Icon, Segment, Grid, Header, Dropdown, Checkbox } from 'semantic-ui-react'
+import { Container, Divider, Modal, Popup, Button, Label, Icon, Segment, Grid, Header, Dropdown, Checkbox, Form } from 'semantic-ui-react'
 import Calendar from './Calendar';
 import { connect } from 'react-redux';
 import styled from "styled-components"
@@ -272,6 +272,66 @@ class Schedule extends Component {
 
     }
 
+    creatingPersonalEventOptions = (e) => {
+        if (e && e.personal) return <Segment placeholder>
+            <Form >
+                <Form.Field>
+                    <label>Title</label>
+                    <input value={e.title} onChange={(e) => setFirst_name(e.target.value)} required placeholder='First Name' />
+                </Form.Field>
+                <Form.Field>
+                    <label>Last Name</label>
+                    <input value={last_name} onChange={(e) => setLast_name(e.target.value)} required placeholder='Last Name' />
+                </Form.Field>
+                <Form.Field>
+                    <label>Email</label>
+                    <input value={email} onChange={(e) => setEmail(e.target.value)} required placeholder='newclient@gmail.com' />
+                </Form.Field>
+                <Form.Field>
+                </Form.Field>
+            </Form>
+        </Segment>
+    }
+
+    creatingBusinessEventOptions = (e) => {
+        if (e && e.personal === false) return <Segment placeholder>
+
+            <Grid columns={2} stackable textAlign='center'>
+                <Divider vertical>Or</Divider>
+
+                <Grid.Row verticalAlign='middle'>
+
+                    <Grid.Column>
+                        <Header icon>
+                            <Icon name='bookmark' />
+                            Book New Appointment
+          </Header>
+                        {this.appointmentTimeSetter(e)}
+                        <Divider hidden />
+
+                        <div>
+                            {this.showEventAttendees(e, this.removeAttendeeFromNewAppointment)}
+                        </div>
+                        <Divider hidden />
+                        {this.userPickerDropDown(e, this.addAttendeeToSelectedEvent)}
+                        <Divider hidden />
+                        <Button primary onClick={() => this.createEventHandeler(false)}>Create</Button>
+                    </Grid.Column>
+
+                    <Grid.Column>
+                        <Header icon>
+                            <Icon name='time' />
+                            New Appointment Slot
+          </Header>
+                        {this.appointmentTimeSetter(e)}
+                        <Divider hidden />
+                        <Button onClick={() => this.createEventHandeler(true)} primary>Create</Button>
+                    </Grid.Column>
+                </Grid.Row>
+            </Grid>
+        </Segment>
+    }
+
 
     creatingEventModal = () => {
 
@@ -286,49 +346,16 @@ class Schedule extends Component {
             <Modal.Content >
                 {this.personalOrBusinessToggle(e)}
 
-                <Segment placeholder>
+                {this.creatingBusinessEventOptions(e)}
 
-                    <Grid columns={2} stackable textAlign='center'>
-                        <Divider vertical>Or</Divider>
+                {this.creatingPersonalEventOptions(e)}
 
-                        <Grid.Row verticalAlign='middle'>
-
-                            <Grid.Column>
-                                <Header icon>
-                                    <Icon name='bookmark' />
-                                    Book New Appointment
-          </Header>
-                                {this.appointmentTimeSetter(e)}
-                                <Divider hidden />
-
-                                <div>
-                                    {this.showEventAttendees(e, this.removeAttendeeFromNewAppointment)}
-                                </div>
-                                <Divider hidden />
-                                {this.userPickerDropDown(e, this.addAttendeeToSelectedEvent)}
-                                <Divider hidden />
-                                <Button primary onClick={() => this.createEventHandeler(false)}>Create</Button>
-                            </Grid.Column>
-
-                            <Grid.Column>
-                                <Header icon>
-                                    <Icon name='time' />
-                                    New Appointment Slot
-          </Header>
-                                {this.appointmentTimeSetter(e)}
-                                <Divider hidden />
-                                <Button onClick={() => this.createEventHandeler(true)} primary>Create</Button>
-                            </Grid.Column>
-                        </Grid.Row>
-                    </Grid>
-                </Segment>
             </Modal.Content>
 
         </Modal >
     }
 
     render() {
-        console.log("schedule", this.props)
         return (
 
             <FullWidthCalendarContainer >

@@ -60,7 +60,6 @@ function ClientShow(props) {
 
         )
     }
-    console.log(props.events)
 
     const editUserHandeler = () => {
         let editedUser = { first_name, last_name, email, street_address, apartment_number, post_code, suburb, state: address_state }
