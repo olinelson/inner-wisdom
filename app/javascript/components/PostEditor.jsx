@@ -104,7 +104,7 @@ class PostEditor extends Component {
     }
 
     deletePostModal = () => {
-        return <Modal trigger={<Button icon="trash" content='Delete' />} basic size='small'>
+        return <Modal trigger={<Button basic icon="trash" content='Delete' />} basic size='small'>
             <Header icon='trash' content='Delete Post' />
             <Modal.Content>
                 <p>Are you sure you want to delete this post? This action is irreversable.</p>
@@ -136,6 +136,7 @@ class PostEditor extends Component {
                     /> */}
                     <Button as='div' labelPosition='right'>
                         <Button
+                            basic
                             content="Save"
                             icon="save"
                             disabled={!this.state.unsavedChanges}
@@ -156,7 +157,7 @@ class PostEditor extends Component {
 
 
                     <Menu.Item>
-                        <Checkbox checked={this.state.editedPost.published} toggle onChange={this.handlePublishChange} />
+                        <Checkbox checked={this.state.editedPost.published} slider onChange={this.handlePublishChange} />
                         <Label>{this.state.editedPost.published === true ?
                             <><Icon name='share alternate' /> Published</>
                             :

@@ -71,9 +71,20 @@ function ClientShow(props) {
     return (
         <Container>
 
-            <h4>{user.first_name + " " + user.last_name}</h4>
-            <Button content="edit" onClick={() => setModalOpen(true)} />
-            <Button content="Delete User" onClick={() => setDeleteModal(true)} />
+            <h1>{user.first_name + " " + user.last_name}</h1>
+            <Button
+                basic
+                content="edit"
+                onClick={() => setModalOpen(true)}
+                icon="edit"
+            />
+            <Button
+                basic
+                content="Delete User"
+                onClick={() => setDeleteModal(true)}
+                icon="delete"
+
+            />
 
 
             <hr />
@@ -149,12 +160,21 @@ function ClientShow(props) {
             </p>
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button onClick={() => setDeleteModal(false)} basic color='red' inverted>
-                        <Icon name='remove' /> Cancel
-            </Button>
-                    <Button onClick={() => deleteUserHandeler()} color='green' inverted>
-                        <Icon name='checkmark' /> Yes, Delete
-            </Button>
+                    <Button
+                        onClick={() => deleteUserHandeler()}
+                        color='red'
+                        inverted
+                        icon="checkmark"
+                        content="Yes, Delete"
+                    />
+                    <Button
+                        onClick={() => setDeleteModal(false)}
+                        basic
+                        color='green'
+                        inverted
+                        icon="remove"
+                        content="Cancel"
+                    />
                 </Modal.Actions>
             </Modal>
 

@@ -58,15 +58,19 @@ function Event(props) {
         setEvent({ ...event, start_time, end_time })
     }
 
-    const findUserByEmail = (email) => {
-        return props.users.find(u => u.email === email)
+    const findUserIdByEmail = (email) => {
+        let user = props.users.find(u => u.email === email)
+        if (user) return user.id
+        return ""
     }
+
+
 
     const showEventAttendees = () => {
         if (event && event.attendees) {
             let users = event.attendees
             return users.map(u => {
-                let linkToClientPage = `/clients/${findUserByEmail(u.email).id}`
+                let linkToClientPage = `/clients/${findUserIdByEmail(u.email)}`
 
                 return <Label key={"label" + u.email}>
                     <Icon style={{ cursor: "pointer" }} onClick={() => props.history.push(linkToClientPage)} name='user' />
@@ -204,7 +208,7 @@ function Event(props) {
             transparent
             value={event.location || ""}
             onChange={(e) => setEvent({ ...event, location: e.target.value })}
-            placeholder={"Address - Leave this blank unless you wish to publicly disclose the location"}
+            placeholder={"Address - If this is a free appointment slot leave this blank, unless you wish to publicly disclose the location."}
         />
     }
 

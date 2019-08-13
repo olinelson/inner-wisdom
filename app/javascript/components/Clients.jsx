@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { connect } from "react-redux"
-import { Card, Button, Modal, Search, Label, Form, Checkbox, Divider, Container } from "semantic-ui-react"
+import { Card, Button, Modal, Search, Menu, Label, Form, Checkbox, Divider, Container } from "semantic-ui-react"
 import { withRouter } from "react-router-dom"
 import moment from "moment"
 import { isUserAnAttendeeOfEvent } from "./Appointments"
 import { debounce } from "debounce";
+import styled from "styled-components"
 
 
 function Clients(props) {
@@ -70,23 +71,43 @@ function Clients(props) {
     }
 
 
-
+    const SubMenu = styled.div`
+        // display: flex;
+        // justify-content: space-between;
+        // width: 100%;
+    `
 
     return (
         <Container>
-            <h4>Clients</h4>
-            <Button onClick={() => setModalOpen(!modalOpen)} icon="plus" content="Create" />
-            <Search
-                loading={loading}
-                onResultSelect={(e, { result }) => handleResultSelect(e, { result })}
-                onSearchChange={debounce(handleSearchChange, 500, {
-                    leading: true,
-                })}
-                results={filteredUsers}
-            // value={filteredUsers}
+            <h1>Clients</h1>
+            <Menu fluid secondary >
+                <Menu.Item
 
-            />
-            <Card.Group>
+                    content={<Button basic onClick={() => setModalOpen(!modalOpen)} icon="plus" content="Create" />}
+                />
+
+                <Menu.Item
+                    position="right"
+                >
+
+                    <Search
+                        loading={loading}
+                        onResultSelect={(e, { result }) => handleResultSelect(e, { result })}
+                        onSearchChange={debounce(handleSearchChange, 500, {
+                            leading: true,
+                        })}
+                        results={filteredUsers}
+                    // value={filteredUsers}
+
+                    />
+                </Menu.Item>
+
+
+
+            </Menu>
+
+
+            <Card.Group stackable doubling centered>
 
                 {allUsersExceptMe.map(user => {
                     let relevantAppointments = props.events.filter(e => isUserAnAttendeeOfEvent(e, user))

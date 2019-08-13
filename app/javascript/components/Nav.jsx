@@ -37,7 +37,7 @@ function Nav(props) {
         width: 100vw;
         top:0rem !important;
         border: none !important;
-        background: ${() => pathname === '/' ? "linear-gradient(180deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,0) 100%) !important;" : "rgba(0,0,0,0)"};
+        background: ${() => pathname === '/' || pathname === '/blog' ? "linear-gradient(180deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,0) 100%) !important;" : "white !important"};
 
         @media (max-width: 40rem) {
             border: 1px solid red !important;

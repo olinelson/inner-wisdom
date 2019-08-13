@@ -127,6 +127,7 @@ export function App(props) {
             csrfToken: document.querySelectorAll('meta[name="csrf-token"]')[0].content,
             users: props.users,
             businessCalendarAddress: props.businessCalendarAddress,
+            calendarScrollToTime: new Date
 
         }
 

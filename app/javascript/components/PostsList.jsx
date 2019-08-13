@@ -45,9 +45,9 @@ function PostsList(props) {
     const showToolBar = () => {
         return <Menu style={{ gridArea: "toolBar" }} secondary>
             <Menu.Menu position="right">
-                <Menu.Item icon="add" name='create new'
-                    // active={activeItem === 'messages'}
-                    onClick={createNewPost}
+                <Menu.Item
+                    name='create new'
+                    content={<Button onClick={createNewPost} content="Create New" icon="add" basic />}
                 />
             </Menu.Menu>
 
