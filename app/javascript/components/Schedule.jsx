@@ -6,6 +6,7 @@ import styled from "styled-components"
 import moment from "moment"
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
+import TimePicker from 'rc-time-picker';
 
 import { FullWidthCalendarContainer } from "./Appointments"
 
@@ -79,6 +80,14 @@ class Schedule extends Component {
 
     }
 
+    searchForUsersHandeler = (items, query) => {
+        let result = []
+        for (let item of items) {
+            if (item.props.text.includes(query)) result.push(item)
+        }
+        return result
+    }
+
     userPickerDropDown = (event, addAttendeeHandeler) => {
         return <Dropdown
             text='Add Client'
@@ -87,11 +96,13 @@ class Schedule extends Component {
             labeled
             button
             className='icon'
+            search={this.searchForUsersHandeler}
+            options={this.allUsersNotAttendingList(event, addAttendeeHandeler)}
         >
-            <Dropdown.Menu>
+            {/* <Dropdown.Menu>
                 <Dropdown.Header content='Clients' />
                 {this.allUsersNotAttendingList(event, addAttendeeHandeler)}
-            </Dropdown.Menu>
+            </Dropdown.Menu> */}
         </Dropdown>
     }
 
@@ -107,7 +118,7 @@ class Schedule extends Component {
     showEventAttendees = (event, onDelete) => {
         if (event && event.attendees) {
             let users = event.attendees
-            return users.map(u => <Label key={u.id}>
+            return users.map(u => <Label style={{ margin: ".1rem" }} key={u.id}>
                 <Icon name='user' />
                 {u.first_name + " " + u.last_name}
                 <Icon name='delete' onClick={() => onDelete(u)} />
@@ -163,31 +174,41 @@ class Schedule extends Component {
     }
 
     selectSlotHandeler = (e) => {
-        if (this.props.user.admin) this.setState({ creatingEvent: true, selectedEvent: { ...e, start_time: e.start, end_time: e.end, personal: false } })
+        if (this.props.user.admin) this.setState({ creatingEvent: true, selectedEvent: { ...e, title: "", location: "", start_time: e.start, end_time: e.end, personal: false } })
 
     }
 
-    changeDayHandeler = (day) => {
-        let updatedDate = new Date(this.state.selectedEvent.start_time)
-        updatedDate.setMonth(day.getMonth())
-        updatedDate.setDate(day.getDate())
-        this.setState({
-            selectedEvent: { ...this.state.selectedEvent, start_time: updatedDate, end_time: updatedDate }
-        })
+    changeDayHandeler = (dt) => {
+        let event = this.state.selectedEvent
+
+        let dateTime = new Date(dt)
+        let newMonth = dateTime.getMonth()
+        let newDay = dateTime.getDate()
+
+        let start_time = new Date(event.start_time)
+        start_time.setMonth(newMonth)
+        start_time.setDate(newDay)
+
+        let end_time = new Date(event.end_time)
+        end_time.setMonth(newMonth)
+        end_time.setDate(newDay)
+
+        this.setState({ selectedEvent: { ...this.state.selectedEvent, start_time, end_time } })
     }
 
     changeTitleHandeler = (e) => {
         this.setState({ selectedEvent: { ...this.state.selectedEvent, title: e.target.value } })
     }
 
-    appointmentTimeSetter = (selectedSlot) => {
-        if (!selectedSlot) return null
+    eventTimeSetter = () => {
+        let event = this.state.selectedEvent
 
-        let endTime = moment(selectedSlot.end)
-        let startTime = moment(selectedSlot.start)
+        let startTime = moment(event.start_time)
+        let endTime = moment(event.end_time)
 
-        let endTimeOptions = [endTime]
         let startTimeOptions = [startTime]
+        let endTimeOptions = [endTime]
+
 
 
         for (let i = 0; i < 22; i++) {
@@ -218,34 +239,40 @@ class Schedule extends Component {
             }
         })
 
-        return <>
-            {/* <h4>{moment(selectedSlot.start).format('Do MMMM  YYYY')}</h4> */}
+        const now = moment().hour(0).minute(0)
+
+
+        return <span>
+
             <Popup
                 on="click"
                 content={<DayPicker
                     onDayClick={this.changeDayHandeler}
-                    selectedDays={new Date(this.state.selectedEvent.start_time)}
+                    selectedDays={new Date(event.start_time)}
                 />}
-                trigger={<h4 style={{ cursor: "pointer" }}>{moment(selectedSlot.start_time).format('Do MMMM  YYYY')}<Icon name="caret down" /></h4>} />
-            {/* {moment(selectedSlot.start).format('h:mm a')}  */}
-            <Dropdown
-                inline
-                options={formattedendStartTimeOptions}
-                defaultValue={formattedendStartTimeOptions[22].value}
-                upward={false}
-                scrolling
-                onChange={(e, d) => this.setState({ selectedEvent: { ...this.state.selectedEvent, start_time: new Date(d.value) } })}
+                trigger={<h4 style={{ cursor: "pointer" }}>{moment(event.start_time).format('Do MMMM  YYYY')}<Icon name="caret down" /></h4>} />
+
+            <TimePicker
+                showSecond={false}
+
+                value={startTime}
+                // className=" ui menu transition"
+                onChange={(e) => this.setState({ selectedEvent: { ...this.state.selectedEvent, start_time: e._d } })}
+                format='h:mm a'
+                use12Hours
+                inputReadOnly
             />
-            to{" "}
-            <Dropdown
-                inline
-                options={formattedendEndTimeOptions}
-                defaultValue={formattedendEndTimeOptions[22].value}
-                upward={false}
-                scrolling
-                onChange={(e, d) => this.setState({ selectedEvent: { ...this.state.selectedEvent, end_time: new Date(d.value) } })}
+            <TimePicker
+                showSecond={false}
+                value={endTime}
+                // className="ui menu transition"
+                onChange={(e) => this.setState({ selectedEvent: { ...this.state.selectedEvent, end_time: e._d } })}
+                format='h:mm a'
+                use12Hours
+                inputReadOnly
             />
-        </>
+
+        </span>
     }
 
 
@@ -272,20 +299,31 @@ class Schedule extends Component {
 
     }
 
+
     creatingPersonalEventOptions = (e) => {
+        // console.log("this is e", e)
+        console.log("selected event", this.state.selectedEvent)
+
         if (e && e.personal) return <Segment placeholder>
-            <Form onSubmit={(e) => console.log(e.target.value)}>
+            <Form>
                 <Form.Field>
                     <label>Title</label>
-                    <input placeholder='New Event Name' />
+                    <input
+                        placeholder='New Event Name' value={this.state.selectedEvent.title}
+                        onChange={(e) => this.setState({ selectedEvent: { ...this.state.selectedEvent, title: e.target.value } })}
+                    />
                 </Form.Field>
                 <Form.Field>
                     <label>Location</label>
-                    <input placeholder='42 Wallaby Way Sydney' />
+                    <input
+                        value={this.state.selectedEvent.location}
+                        onChange={(e) => this.setState({ selectedEvent: { ...this.state.selectedEvent, location: e.target.value } })}
+                        placeholder='42 Wallaby Way Sydney'
+                    />
                 </Form.Field>
 
 
-                <Button type="submit">Create</Button>
+                <Button color="green" onClick={() => this.createEventHandeler(false)} type="submit">Create</Button>
             </Form>
         </Segment>
     }
@@ -296,33 +334,47 @@ class Schedule extends Component {
             <Grid columns={2} stackable textAlign='center'>
                 <Divider vertical>Or</Divider>
 
-                <Grid.Row verticalAlign='middle'>
+                <Grid.Row verticalAlign='top'>
 
-                    <Grid.Column>
+                    <Grid.Column >
                         <Header icon>
                             <Icon name='bookmark' />
                             Book New Appointment
-          </Header>
-                        {this.appointmentTimeSetter(e)}
+                        </Header>
+
+                        {this.eventTimeSetter(e)}
+                        {/* <Divider hidden /> */}
+
                         <Divider hidden />
 
-                        <div>
-                            {this.showEventAttendees(e, this.removeAttendeeFromNewAppointment)}
-                        </div>
+                        {/* <p>This will create a confirmed appointment slot that will only be visible to admin and its attendees.</p> */}
+                        {/* <Button primary onClick={() => this.createEventHandeler(false)}>Create</Button> */}
+                        <Popup content='This will create a confirmed appointment slot that will only be visible to admin and its attendees.' trigger={<Button primary onClick={() => this.createEventHandeler(false)}>Create</Button>} />
                         <Divider hidden />
                         {this.userPickerDropDown(e, this.addAttendeeToSelectedEvent)}
                         <Divider hidden />
-                        <Button primary onClick={() => this.createEventHandeler(false)}>Create</Button>
+                        <div>
+                            {this.showEventAttendees(e, this.removeAttendeeFromSelectedEvent)}
+                        </div>
+
+
+
+
                     </Grid.Column>
 
-                    <Grid.Column>
+                    <Grid.Column  >
                         <Header icon>
                             <Icon name='time' />
                             New Appointment Slot
-          </Header>
-                        {this.appointmentTimeSetter(e)}
+                         </Header>
+
+                        {this.eventTimeSetter(e)}
+
                         <Divider hidden />
-                        <Button onClick={() => this.createEventHandeler(true)} primary>Create</Button>
+                        {/* <p>This will create a "bookable" appointment slot visable to all clients.</p> */}
+                        {/* <Button color="grey" onClick={() => this.createEventHandeler(true)} >Create</Button> */}
+                        <Popup content='This will create a "bookable" appointment slot visable to all clients.' trigger={<Button color="grey" onClick={() => this.createEventHandeler(true)} >Create</Button>} />
+
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
@@ -353,10 +405,18 @@ class Schedule extends Component {
     }
 
     render() {
+        // console.log(this.state.selectedEvent)
         return <>
-            <FullWidthCalendarContainer fluid>
 
-                <h1>Schedule</h1>
+            <FullWidthCalendarContainer fluid >
+                <div style={{ width: "100%", maxWidth: "95vw", justifySelf: "center" }}>
+                    <h1>Schedule</h1>
+                    <Label circular color={"blue"} content="Business" />
+                    <Label circular color={"green"} content="Personal" />
+                    <Label circular color={"grey"} content="Bookable" />
+                </div>
+
+
                 <Divider style={{ gridArea: "divider" }} />
 
                 <Calendar
@@ -365,7 +425,6 @@ class Schedule extends Component {
                     events={this.props.allEvents}
                     onSelectSlot={this.selectSlotHandeler}
                 />
-                {/* {this.editableEventModal()} */}
                 {this.creatingEventModal()}
             </FullWidthCalendarContainer>
         </>

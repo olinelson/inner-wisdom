@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import styled from "styled-components"
 
 import PostsList from './PostsList';
+import AppointmentHistoryTable from './AppointmentHistoryTable';
 
 const TwoColumnContainer = styled.div`
     display: grid;
@@ -48,8 +49,8 @@ function MyAccount(props) {
 
     const showUserMenu = () => {
         return <Menu fluid style={{ gridArea: "sideMenu" }} vertical  >
-            <Menu.Item name='My Appointments' active={props.myAccountPanel === 'calendar'} onClick={() => handleTabClick("calendar")} />
             <Menu.Item name='Profile' active={props.myAccountPanel === 'profile'} onClick={() => handleTabClick("profile")} />
+            <Menu.Item name='Appointment History' active={props.myAccountPanel === 'history'} onClick={() => handleTabClick("history")} />
         </Menu>
     }
 
@@ -68,9 +69,9 @@ function MyAccount(props) {
 
     const panelSwitch = () => {
         switch (props.myAccountPanel) {
-            case "calendar":
-                return <Calendar readOnly events={RelevantAppointments()} />
-            // return <h4 style={{ gridArea: "panel" }}>calendar</h4>
+            case "history":
+                // return <Calendar readOnly events={RelevantAppointments()} />
+                return <AppointmentHistoryTable events={RelevantAppointments()} user={props.user} />
             case "profile":
                 return profileSettingsLinks()
             case "posts":

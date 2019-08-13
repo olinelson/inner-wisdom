@@ -31,15 +31,16 @@ function Calendar(props) {
   const CalendarContainer = styled.div`
         grid-area: panel;
         height: 100vh;
-      max-width: ${props => props.fullWidth ? "95vw" : "60vw"};
-      width: 200rem;
+      
+      width: 500rem;
       min-height: 50rem;
       justify-self: center;
+      max-width: ${() => props.fullWidth === true ? "95vw" : "60vw"};
 
-     @media (max-width: 50rem) {
-        max-width: 95vw;
-    ;
-  }
+  //    @media (max-width: 50rem) {
+  //       max-width: 95vw;
+  //   ;
+  // }
 
 }
     `
@@ -59,6 +60,8 @@ function Calendar(props) {
 
     return ReadOnlyComponents
   }
+
+
 
   return <>
     <CalendarContainer >

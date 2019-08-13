@@ -5,8 +5,9 @@ import { connect } from "react-redux"
 import moment from 'moment'
 import DayPicker from 'react-day-picker';
 import { withRouter, Link } from "react-router-dom"
-
+import { isUserAnAttendeeOfEvent } from "./Appointments"
 import Checkout from "./Checkout"
+import ReadOnlyEvent from './ReadOnlyEvent';
 
 function PurchasableEvent(props) {
 
@@ -109,7 +110,6 @@ function PurchasableEvent(props) {
 
         if (purchased) return <Modal
             open={purchased}
-        // onClose={() => set(false)}
         >
             <Header content={"Booking Complete"} />
             <Modal.Content >
@@ -119,7 +119,6 @@ function PurchasableEvent(props) {
 
                     <div>
                         <p>$80</p>
-                        {/* {showEventAttendees()} */}
                     </div>
                     <Divider hidden />
 
@@ -138,25 +137,38 @@ function PurchasableEvent(props) {
     }
 
 
-    return <>
 
-        <Label
-            style={{ height: "100%", width: "100%" }}
-            color="blue"
-            onClick={() => setInfoModal(true)}
-        >
-            <Loader size="mini" inverted active={loading} inline style={{ marginRight: ".5rem", marginLeft: "-.25rem" }} />
-            {event.title}
+    const colorPicker = () => {
+        if (noAttendees) return "blue"
+        if (!personal && isAnEmptySlot()) return "grey"
+        return "blue"
+    }
 
 
 
-        </Label>
+    return (
+        isUserAnAttendeeOfEvent(event, props.user) ? <ReadOnlyEvent event={event} /> :
 
-        {modal()}
-        {purchasedModal()}
+            <>
+
+                <Label
+                    style={{ height: "100%", width: "100%" }}
+                    color="grey"
+                    onClick={() => setInfoModal(true)}
+                >
+                    <Loader size="mini" inverted active={loading} inline style={{ marginRight: ".5rem", marginLeft: "-.25rem" }} />
+                    {event.title}
 
 
-    </>
+
+                </Label>
+
+                {modal()}
+                {purchasedModal()}
+
+
+            </>
+    )
 }
 
 

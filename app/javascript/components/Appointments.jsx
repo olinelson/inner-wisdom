@@ -11,9 +11,18 @@ export const isUserAnAttendeeOfEvent = (event, user) => {
     }
 }
 
-export const availableAppointments = (events) => {
-    if (!events) return []
-    let result = events.filter(e => e.attendees == null || e.attendees.length < 1)
+export const availableAndUserBookedAppointments = (events, user) => {
+    let result = []
+
+    if (!events) return result
+
+    if (user) {
+        result = events.filter(e => e.attendees == null || e.attendees.length < 1 || isUserAnAttendeeOfEvent(e, user))
+
+    } else {
+        result = events.filter(e => e.attendees == null || e.attendees.length < 1)
+    }
+
     return result
 }
 
@@ -22,7 +31,7 @@ export const FullWidthCalendarContainer = styled(Container)`
         margin-top: 4rem;
         display: grid !Important;
         grid-template-columns: 1fr;
-        grid-template-areas: "heading" "divider" "panel";
+        grid-template-areas: "heading" "divider" "panel";a
         justify-content: center ;
     `
 
@@ -40,9 +49,9 @@ function Appointments(props) {
 
     return (
         <FullWidthCalendarContainer>
-            <h1>Available Appointments</h1>
+            <h1>Appointments</h1>
             <Divider style={{ gridArea: "divider" }} />
-            <Calendar fullWidth purchasable events={availableAppointments(props.events)} />
+            <Calendar fullWidth purchasable events={availableAndUserBookedAppointments(props.events, props.user)} />
         </FullWidthCalendarContainer>
     )
 }

@@ -74,19 +74,9 @@ class MainController < ApplicationController
 
 
     def createEvent
+
         newEvent = params["event"]
-        title = "Available Appointment"
-
-        cal = @businessCal
-
-        if newEvent["personal"]
-            cal = @personalCal
-        end
-        
-        if newEvent["appointmentSlot"] == false
-            fullName = newEvent["attendees"].first["first_name"] + newEvent["attendees"].first["last_name"]
-            title = fullName + " | session confirmed"
-        end
+        title= ""
 
         if newEvent["attendees"]
              attendees = newEvent["attendees"].map do |a|
@@ -97,31 +87,36 @@ class MainController < ApplicationController
             }
             end
 
-            title = ""
-
-            attendees.each do |a|
-            title << a["displayName"]
-            end
+            fullName = newEvent["attendees"].first["first_name"] + newEvent["attendees"].first["last_name"]
+            title = fullName + " | session confirmed"
 
         end
 
+        if newEvent["personal"]
+            return createGoogleEvent(cal: @personalCal, newEvent: newEvent, title: newEvent["title"])
+        end
+
+        if params["appointmentSlot"]
+            return createGoogleEvent(cal: @businessCal,newEvent: newEvent, title: "Available Appointment")
+        end
+
+        return createGoogleEvent(cal: @businessCal, newEvent: newEvent, title: title, attendees: attendees )
+    end
+
+
+    def createGoogleEvent(cal:, newEvent:, title:, attendees: [])
         event = cal.create_event do |e|
             e.title = title
             e.start_time = newEvent["start_time"]
             e.end_time = newEvent["end_time"]
-            e.location= "609 W 135 St New York, New York"
-
+            e.location= newEvent["location"]
             e.reminders =  { "useDefault": false }
-            # e.notes= "one fine day in the middle of the night, two dead men got up to fight"
-            
-             
             e.attendees= attendees
         end
-
-        
-        render json: {scrollToEvent: event, events: @businessCal.events, personalEvents: @personalCal.events}
- 
+         render json: {scrollToEvent: event, events: @businessCal.events, personalEvents: @personalCal.events}
     end
+
+   
 
     def purchase
         user = current_user
@@ -147,18 +142,9 @@ class MainController < ApplicationController
     def updateEvent
         event = params["event"]
 
-        if event["calendar"]["id"] === current_user.google_calendar_email
-                cal = @personalCal
-        end
+        attendees= []
 
-        if event["calendar"]["id"] === ENV["GOOGLE_CALENDAR_ADDRESS"]
-            cal = @businessCal
-        end
-
-
-        attendees = nil
-
-        if event["attendees"]
+         if event["attendees"]
             attendees = event["attendees"].map{|a| 
 
     
@@ -177,20 +163,30 @@ class MainController < ApplicationController
              }
             }
         end
-        
+
+        #  personal
+        if event["calendar"]["id"] === current_user.google_calendar_email
+                return editGoogleCalEvent(cal: @personalCal, event: event)
+        end
+
+        # business
+        if event["calendar"]["id"] === ENV["GOOGLE_CALENDAR_ADDRESS"]
+                return editGoogleCalEvent(cal: @businessCal, event: event, attendees: attendees)
+        end
+    end
+
+    def editGoogleCalEvent(cal:, event:, attendees: [])
         editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
             e.title = event["title"]
             e.color_id = 2
             e.start_time = event["start_time"]
             e.end_time = event["end_time"]
             # e.end_time = Time.now + (60 * 60 * 2) # seconds * min * hours
-            e.location= "609 W 135 St New York, New York"
+            e.location= event["location"]
             # e.notes= "one fine day in the middle of the night, two dead men got up to fight"
             e.attendees = attendees
         end
-
-
-        render json: {scrollToEvent: editedEvent, events: @businessCal.events, personalEvents: @personalCal.events } 
+         render json: {scrollToEvent: editedEvent, events: @businessCal.events, personalEvents: @personalCal.events } 
     end
 
     def deleteEvent

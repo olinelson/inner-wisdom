@@ -104,7 +104,7 @@ class PostEditor extends Component {
     }
 
     deletePostModal = () => {
-        return <Modal trigger={<Dropdown.Item icon="delete" text='Delete' />} basic size='small'>
+        return <Modal trigger={<Button icon="trash" content='Delete' />} basic size='small'>
             <Header icon='trash' content='Delete Post' />
             <Modal.Content>
                 <p>Are you sure you want to delete this post? This action is irreversable.</p>
@@ -153,18 +153,19 @@ class PostEditor extends Component {
 
                 </Menu.Item>
                 <Menu.Menu position="right">
-                    <Menu.Item>
-                        <Dropdown text='Options' floating>
-                            <Dropdown.Menu >
-                                {this.deletePostModal()}
 
-                            </Dropdown.Menu>
-                        </Dropdown>
-                    </Menu.Item>
 
                     <Menu.Item>
                         <Checkbox checked={this.state.editedPost.published} toggle onChange={this.handlePublishChange} />
-                        <Label>{this.state.editedPost.published === true ? "Published" : "Private"}</Label>
+                        <Label>{this.state.editedPost.published === true ?
+                            <><Icon name='share alternate' /> Published</>
+                            :
+                            <><Icon name='user secret' /> Private</>
+                        }</Label>
+                    </Menu.Item>
+                    <Menu.Item>
+
+                        {this.deletePostModal()}
                     </Menu.Item>
                 </Menu.Menu>
             </Menu>

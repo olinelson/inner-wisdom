@@ -4,6 +4,7 @@ import { withRouter } from "react-router-dom"
 import { Container, Card, Item, Table, Label, Menu, Button, Icon, Checkbox, Modal, Form, Header } from 'semantic-ui-react';
 import { isUserAnAttendeeOfEvent } from "./Appointments"
 import moment from "moment"
+import AppointmentHistoryTable from './AppointmentHistoryTable';
 
 
 function ClientShow(props) {
@@ -26,40 +27,6 @@ function ClientShow(props) {
     const [deleteModal, setDeleteModal] = useState(false)
     const [loading, setLoading] = useState(false)
     let chronologicalSorted = relevantAppointments.sort((b, a) => new Date(a.start_time) - new Date(b.end_time))
-
-
-    const formattedDuration = (duration) => {
-        let hours = duration.hours()
-        let minutes = duration.minutes()
-
-        hours < 1 ? hours = '' : hours = `${hours} hr`
-        minutes < 1 ? minutes = '' : minutes = ` ${minutes} min`
-
-        return hours + minutes
-
-    }
-
-    const appointmentHistoryTableRows = () => {
-        return chronologicalSorted.map(a => {
-
-            let duration = moment.duration(moment(a.end_time) - moment(a.start_time))
-
-            return <Table.Row key={a.id}>
-
-                <Table.Cell>{moment(a.start_time).format('Do MMMM  YYYY h:mm a')}</Table.Cell>
-                <Table.Cell>{formattedDuration(duration)}</Table.Cell>
-                <Table.Cell>
-                    <Label>
-                        <Icon name='user' />
-                        {user.first_name + " " + user.last_name}
-                    </Label>
-                </Table.Cell>
-            </Table.Row>
-
-        }
-
-        )
-    }
 
     const editUserHandeler = () => {
         let editedUser = { first_name, last_name, email, street_address, apartment_number, post_code, suburb, state: address_state }
@@ -122,38 +89,9 @@ function ClientShow(props) {
 
             <h4>Appointment History</h4>
 
+            <AppointmentHistoryTable events={relevantAppointments} user={user} />
 
-            <Table basic="very" >
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell>Date</Table.HeaderCell>
-                        <Table.HeaderCell>Duration</Table.HeaderCell>
-                        <Table.HeaderCell>Attendees</Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
 
-                <Table.Body>
-                    {appointmentHistoryTableRows()}
-
-                    {/* <Table.Row>
-                        <Table.Cell>
-                            <Label ribbon>First</Label>
-                        </Table.Cell>
-                        <Table.Cell>Cell</Table.Cell>
-                        <Table.Cell>Cell</Table.Cell>
-                    </Table.Row>
-                    <Table.Row>
-                        <Table.Cell>Cell</Table.Cell>
-                        <Table.Cell>Cell</Table.Cell>
-                        <Table.Cell>Cell</Table.Cell>
-                    </Table.Row>
-                    <Table.Row>
-                        <Table.Cell>Cell</Table.Cell>
-                        <Table.Cell>Cell</Table.Cell>
-                        <Table.Cell>Cell</Table.Cell>
-                    </Table.Row> */}
-                </Table.Body>
-            </Table>
 
             <Modal onClose={() => setModalOpen(false)} open={modalOpen}>
                 <Modal.Header>Edit Client</Modal.Header>
@@ -204,24 +142,24 @@ function ClientShow(props) {
             </Modal >
 
             <Modal onClose={() => setDeleteModal(false)} open={deleteModal} basic size='small'>
-            <Header icon='user delete' content='Delete User' />
-            <Modal.Content>
-            <p>
-            Are you sure you would like to delete this user? This cannot be undone.
+                <Header icon='user delete' content='Delete User' />
+                <Modal.Content>
+                    <p>
+                        Are you sure you would like to delete this user? This cannot be undone.
             </p>
-            </Modal.Content>
-            <Modal.Actions>
-            <Button onClick={() => setDeleteModal(false)} basic color='red' inverted>
-            <Icon name='remove' /> Cancel
+                </Modal.Content>
+                <Modal.Actions>
+                    <Button onClick={() => setDeleteModal(false)} basic color='red' inverted>
+                        <Icon name='remove' /> Cancel
             </Button>
-            <Button onClick={()=> deleteUserHandeler()} color='green' inverted>
-            <Icon name='checkmark' /> Yes, Delete
+                    <Button onClick={() => deleteUserHandeler()} color='green' inverted>
+                        <Icon name='checkmark' /> Yes, Delete
             </Button>
-            </Modal.Actions>
+                </Modal.Actions>
             </Modal>
-)
-            
-            
+
+
+
         </Container>
     )
 }

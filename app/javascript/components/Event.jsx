@@ -52,7 +52,7 @@ function Event(props) {
     }
 
     const removeAttendeeFromEvent = (user) => {
-        let attendees = event.attendees.filter(a => a.id !== user.id)
+        let attendees = event.attendees.filter(a => a.email !== user.email)
         setEvent({ ...event, attendees })
     }
 
@@ -85,7 +85,7 @@ function Event(props) {
             return users.map(u => {
                 let linkToClientPage = `/clients/${findUserByEmail(u.email).id}`
 
-                return <Label key={"label" + u.id}>
+                return <Label key={"label" + u.email}>
                     <Icon style={{ cursor: "pointer" }} onClick={() => props.history.push(linkToClientPage)} name='user' />
                     <span style={{ cursor: "pointer" }} onClick={() => props.history.push(linkToClientPage)}>{u.displayName || u.first_name + " " + u.last_name}</span>
                     <Icon name='delete' onClick={() => removeAttendeeFromEvent(u)} />
@@ -137,6 +137,7 @@ function Event(props) {
         const now = moment().hour(0).minute(0)
 
 
+
         return <>
 
             <Popup
@@ -180,6 +181,7 @@ function Event(props) {
     }
 
     const userPickerDropDown = () => {
+        if (personal) return null
         return <Dropdown
             text='Add Client'
             icon='add user'
@@ -238,18 +240,28 @@ function Event(props) {
 
     }
 
+    const eventLocation = () => {
+        return <Input
+            fluid
+            transparent
+            value={event.location || ""}
+            onChange={(e) => setEvent({ ...event, location: e.target.value })}
+        />
+    }
+
     const editableEventModal = () => {
 
         return <Modal
             open={modalOpen}
             onClose={() => setModalOpen(false)}
         >
-            <Input onChange={(e) => changeTitleHandeler(e)} transparent value={event ? event.title : null} />
-            <Modal.Content >
-                <Modal.Description>
-                    {appointmentTimeSetter(event)}
-                    <Divider hidden />
 
+            <Modal.Content >
+                <Input fluid size="massive" onChange={(e) => changeTitleHandeler(e)} transparent value={event ? event.title : null} />
+                <Modal.Description>
+                    {appointmentTimeSetter()}
+                    <Divider hidden />
+                    {eventLocation()}
                     <div>
                         {showEventAttendees()}
                     </div>
@@ -269,8 +281,8 @@ function Event(props) {
     `
     const colorPicker = () => {
         if (personal) return "green"
-        if (!personal && isAnEmptySlot()) return "blue"
-        return "teal"
+        if (!personal && isAnEmptySlot()) return "grey"
+        return "blue"
     }
 
     return <>
