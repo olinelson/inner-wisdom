@@ -9,6 +9,7 @@ import 'react-day-picker/lib/style.css';
 import TimePicker from 'rc-time-picker';
 
 import { FullWidthCalendarContainer } from "./Appointments"
+import UserPickerDropDown from './UserPickerDropDown';
 
 class Schedule extends Component {
 
@@ -32,89 +33,6 @@ class Schedule extends Component {
     }
 
 
-
-    // updateSelectedEventHandeler = () => {
-    //     this.setState({ dialogOpen: false })
-    //     fetch(`${this.props.baseUrl}/update`, {
-    //         method: "POST",
-    //         body: JSON.stringify({
-    //             event: this.state.selectedEvent
-    //         }),
-    //         headers: {
-    //             "X-CSRF-Token": this.props.csrfToken,
-    //             "Content-Type": "application/json",
-    //             Accept: "application/json",
-    //             "X-Requested-With": "XMLHttpRequest"
-    //         }
-    //     })
-    //         .then(response => response.json())
-    //         // .then(e => console.log(e))
-    //     .then((res) => this.props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { event: res.events, personalEvents: res.personalEvents, scrollToEvent: res.scrollToEvent } }))
-    // }
-
-
-    // ATTENDEE METHODS ====================
-    allUsersNotAttending = (event) => {
-        let users = this.props.users
-        if (event == null) return users
-
-        if (!event.attendees || event.attendees.length < 1) return users
-
-        const isAnAttendee = (user) => {
-            for (let u of event.attendees) {
-                if (u.id === user.id) return false
-            }
-            return true
-        }
-
-        let result = users.filter(isAnAttendee)
-        return result
-
-    }
-
-    allUsersNotAttendingList = (event, addAttendeeHandeler) => {
-        let users = this.allUsersNotAttending(event)
-        return users.map(user => (
-            <Dropdown.Item onClick={() => addAttendeeHandeler(user)} key={user.id} text={`${user.first_name} ${user.last_name}`} icon="user circle" />
-        ))
-
-    }
-
-    searchForUsersHandeler = (items, query) => {
-        let result = []
-        for (let item of items) {
-            if (item.props.text.includes(query)) result.push(item)
-        }
-        return result
-    }
-
-    userPickerDropDown = (event, addAttendeeHandeler) => {
-        return <Dropdown
-            text='Add Client'
-            icon='add user'
-            floating
-            labeled
-            button
-            className='icon'
-            search={this.searchForUsersHandeler}
-            options={this.allUsersNotAttendingList(event, addAttendeeHandeler)}
-        >
-            {/* <Dropdown.Menu>
-                <Dropdown.Header content='Clients' />
-                {this.allUsersNotAttendingList(event, addAttendeeHandeler)}
-            </Dropdown.Menu> */}
-        </Dropdown>
-    }
-
-
-    addAttendeeToNewAppointment = (user) => {
-        let attendees = this.state.newAppointment.attendees
-        if (attendees == null) this.setState({ newAppointment: { ...this.state.newAppointment, attendees: [user] } })
-        else this.setState({ newAppointment: { ...this.state.newAppointment, attendees: [...this.state.newAppointment.attendees, user] } })
-    }
-
-
-
     showEventAttendees = (event, onDelete) => {
         if (event && event.attendees) {
             let users = event.attendees
@@ -128,10 +46,6 @@ class Schedule extends Component {
         return null
     }
 
-    removeAttendeeFromNewAppointment = user => {
-        let attendees = this.state.newAppointment.attendees.filter(a => a.id !== user.id)
-        this.setState({ newAppointment: { ...this.state.newAppointment, attendees } })
-    }
 
     addAttendeeToSelectedEvent = (user) => {
         let attendees = this.state.selectedEvent.attendees
@@ -301,8 +215,6 @@ class Schedule extends Component {
 
 
     creatingPersonalEventOptions = (e) => {
-        // console.log("this is e", e)
-        console.log("selected event", this.state.selectedEvent)
 
         if (e && e.personal) return <Segment placeholder>
             <Form>
@@ -351,7 +263,8 @@ class Schedule extends Component {
                         {/* <Button primary onClick={() => this.createEventHandeler(false)}>Create</Button> */}
                         <Popup content='This will create a confirmed appointment slot that will only be visible to admin and its attendees.' trigger={<Button primary onClick={() => this.createEventHandeler(false)}>Create</Button>} />
                         <Divider hidden />
-                        {this.userPickerDropDown(e, this.addAttendeeToSelectedEvent)}
+                        {/* {this.userPickerDropDown(e, this.addAttendeeToSelectedEvent)} */}
+                        <UserPickerDropDown event={e} addAttendeeHandeler={this.addAttendeeToSelectedEvent} />
                         <Divider hidden />
                         <div>
                             {this.showEventAttendees(e, this.removeAttendeeFromSelectedEvent)}

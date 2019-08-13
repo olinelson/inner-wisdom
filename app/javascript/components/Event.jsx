@@ -7,15 +7,13 @@ import moment from 'moment'
 import DayPicker from 'react-day-picker';
 import TimePicker from 'rc-time-picker';
 import 'rc-time-picker/assets/index.css';
+import UserPickerDropDown from "./UserPickerDropDown"
 
 function Event(props) {
 
     const [event, setEvent] = useState(props.event);
     const [modalOpen, setModalOpen] = useState(false)
     const [loading, setLoading] = useState(false)
-
-
-
 
     let personal = false
     if (event.calendar.id === props.user.google_calendar_email) personal = true
@@ -24,21 +22,6 @@ function Event(props) {
     const isAnEmptySlot = () => {
         if (!personal && event.attendees == null) return true
         return false
-    }
-
-    const allUsersNotAttending = () => {
-        if (!event.attendees || event.attendees.length < 1) return props.users
-
-        const isAnAttendee = (user) => {
-            for (let u of event.attendees) {
-                if (u.id === user.id) return false
-            }
-            return true
-        }
-
-        let result = props.users.filter(isAnAttendee)
-        return result
-
     }
 
     const changeTitleHandeler = (e) => {
@@ -172,31 +155,6 @@ function Event(props) {
         </>
     }
 
-    const allUsersNotAttendingList = () => {
-
-        return allUsersNotAttending().map(user => (
-            <Dropdown.Item onClick={() => addAttendeeToSelectedEvent(user)} key={user.id} text={`${user.first_name} ${user.last_name}`} icon="user circle" />
-        ))
-
-    }
-
-    const userPickerDropDown = () => {
-        if (personal) return null
-        return <Dropdown
-            text='Add Client'
-            icon='add user'
-            floating
-            labeled
-            button
-            className='icon'
-        >
-            <Dropdown.Menu>
-                <Dropdown.Header content='Clients' />
-                {allUsersNotAttendingList()}
-            </Dropdown.Menu>
-        </Dropdown>
-    }
-
 
     const deleteEventHandeler = () => {
         setModalOpen(false)
@@ -246,6 +204,7 @@ function Event(props) {
             transparent
             value={event.location || ""}
             onChange={(e) => setEvent({ ...event, location: e.target.value })}
+            placeholder={"Address - Leave this blank unless you wish to publicly disclose the location"}
         />
     }
 
@@ -266,7 +225,8 @@ function Event(props) {
                         {showEventAttendees()}
                     </div>
                     <Divider hidden />
-                    {userPickerDropDown()}
+                    {/* {userPickerDropDown()} */}
+                    <UserPickerDropDown event={event} addAttendeeHandeler={(user) => addAttendeeToSelectedEvent(user)} />
                 </Modal.Description>
 
                 <Button content="delete" onClick={() => deleteEventHandeler()} />
