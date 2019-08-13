@@ -15,8 +15,10 @@ function PurchasableEvent(props) {
     const [infoModal, setInfoModal] = useState(false)
     const [loading, setLoading] = useState(false)
     const [purchased, setPurchased] = useState(false)
-    const [progress, setProgress] = useState(0)
+    const [progress, setProgress] = useState(1)
 
+
+    console.log(progress)
 
     const showPrettyStartAndEndTime = () => {
 
@@ -26,25 +28,34 @@ function PurchasableEvent(props) {
         </>
     }
 
-    const incrementProgess = () => {
-        let interval = null
 
-        interval = setInterval(() => {
-            if (progress >= 100) clearInterval()
-            setProgress(progress => progress + 1);
+    let int
 
-        });
+    const incrementProgress = () => {
 
+
+        let prog = 0
+
+        int = setInterval(() => {
+
+            prog++
+            if (prog >= 100 || progress >= 100) {
+                clearInterval(int);
+            }
+            setProgress(prog)
+            // console.log(progress)
+        }, 100);
     }
 
-    // need to utilize useEffect hook thing
+    // incrementProgress()
+
 
 
 
     const onTokenHandeler = () => {
         setInfoModal(false)
         setPurchased(true)
-        incrementProgess()
+        incrementProgress()
         fetch(`${props.baseUrl}/purchase`, {
             method: "POST",
             body: JSON.stringify({
@@ -61,10 +72,13 @@ function PurchasableEvent(props) {
             .then(res => res.json())
             .then((res) => {
                 setProgress(100)
+                clearInterval(int)
                 return res
             })
             .then((res) => props.dispatch({ type: "SET_EVENTS", value: res.events }))
-            .then(() => props.history.push("/myAccount"))
+        // .then(() => setInfoModal(false))
+        // .then(() => setPurchased(true))
+        // .then(() => props.history.push("/myAccount"))
 
 
     }
@@ -87,6 +101,7 @@ function PurchasableEvent(props) {
         return <Modal
             open={infoModal}
             onClose={() => setInfoModal(false)}
+
         >
             <Header content={event.title} />
             <Modal.Content >
@@ -129,7 +144,7 @@ function PurchasableEvent(props) {
                 </Modal.Description>
 
             </Modal.Content>
-            <Progress color="green" percent={progress} attached='bottom' active></Progress>
+            <Progress autoSuccess color="green" label={"Booking Appointment & Sending Confirmation Email"} percent={progress} active></Progress>
         </Modal>
 
         return null

@@ -60,8 +60,8 @@ function Event(props) {
 
     const findUserIdByEmail = (email) => {
         let user = props.users.find(u => u.email === email)
-        if (user) return user.id
-        return ""
+        if (user) return `/clients/${user.id}`
+        return "not_found"
     }
 
 
@@ -70,7 +70,7 @@ function Event(props) {
         if (event && event.attendees) {
             let users = event.attendees
             return users.map(u => {
-                let linkToClientPage = `/clients/${findUserIdByEmail(u.email)}`
+                let linkToClientPage = `${findUserIdByEmail(u.email)}`
 
                 return <Label key={"label" + u.email}>
                     <Icon style={{ cursor: "pointer" }} onClick={() => props.history.push(linkToClientPage)} name='user' />

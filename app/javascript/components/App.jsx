@@ -19,6 +19,8 @@ import { createStore } from "redux"
 import { Provider } from "react-redux"
 import Schedule from './Schedule';
 
+import NotFound from "./NotFound"
+
 
 const initialState = {
     user: null,
@@ -177,6 +179,9 @@ export function App(props) {
                             path="/clients/:id"
                             render={props => <><Nav /><ClientShow /></>}
                         />
+                        <Route render={props => <><Nav /><NotFound /></>} />
+
+
 
                     </Switch>
                 </div>

@@ -10,6 +10,8 @@ import AppointmentHistoryTable from './AppointmentHistoryTable';
 function ClientShow(props) {
     let userId = props.match.params.id
     let user = props.users.find(u => u.id == userId)
+
+    if (!user) return props.history.push('/notfound')
     let relevantAppointments = props.events.filter(e => isUserAnAttendeeOfEvent(e, user))
 
     const [first_name, set_first_name] = useState(user.first_name || "")
