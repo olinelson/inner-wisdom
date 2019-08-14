@@ -33,7 +33,7 @@ const initialState = {
     csrfToken: null,
     users: null,
     businessCalendarAddress: null,
-    defaultCalendarView: Views.MONTH,
+    defaultCalendarView: Views.WEEK,
     calendarScrollToTime: new Date,
 }
 

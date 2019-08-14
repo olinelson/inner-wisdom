@@ -70,17 +70,26 @@ function PurchasableEvent(props) {
             }
         })
             .then(res => res.json())
-            .then((res) => {
+            .then(res => {
                 setProgress(100)
                 clearInterval(int)
-                return res
+
+                return delay(1000).then(() => {
+                    return props.dispatch({ type: "SET_EVENTS", value: res.events })
+                })
             })
-            .then((res) => props.dispatch({ type: "SET_EVENTS", value: res.events }))
+        // .then((res) => props.dispatch({ type: "SET_EVENTS", value: res.events }))
         // .then(() => setInfoModal(false))
         // .then(() => setPurchased(true))
         // .then(() => props.history.push("/myAccount"))
 
 
+    }
+
+    const delay = (t, v) => {
+        return new Promise(function (resolve) {
+            setTimeout(resolve.bind(null, v), t)
+        });
     }
 
     const ifUserShowCheckout = () => {
@@ -144,7 +153,14 @@ function PurchasableEvent(props) {
                 </Modal.Description>
 
             </Modal.Content>
-            <Progress autoSuccess color="green" label={"Booking Appointment & Sending Confirmation Email"} percent={progress} active></Progress>
+            <Progress
+                autoSuccess
+                color="green"
+                label={progress >= 100 ? "Done" : "Booking Appointment & Sending Confirmation Email"}
+                percent={progress}
+                active>
+
+            </Progress>
         </Modal>
 
         return null

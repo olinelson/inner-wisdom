@@ -11,9 +11,6 @@ function ReadOnlyEvent(props) {
 
     const event = props.event
     const [modalOpen, setModalOpen] = useState(false)
-    // const [loading, setLoading] = useState(false)
-
-
 
     const showPrettyStartAndEndTime = (selectedEvent) => {
 
@@ -21,6 +18,10 @@ function ReadOnlyEvent(props) {
             <h4>{moment(selectedEvent.start_time).format('Do MMMM  YYYY')}</h4>
             <p>{moment(selectedEvent.start_time).format('h:mm a')} to {moment(selectedEvent.end).format('h:mm a')}</p>
         </>
+    }
+    const isAnEmptySlot = () => {
+        if (!personal && event.attendees == null) return true
+        return false
     }
 
 
@@ -46,7 +47,7 @@ function ReadOnlyEvent(props) {
 
         <Label
             style={{ height: "100%", width: "100%" }}
-            color="blue"
+            color={"blue"}
             onClick={() => setModalOpen(true)}
         >
 

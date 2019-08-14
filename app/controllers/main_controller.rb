@@ -50,7 +50,8 @@ class MainController < ApplicationController
         if current_user
             user = current_user
         begin
-            if user.admin === true && user.google_calendar_email  && user.google_calendar_refresh_token
+            # if user.admin === true && user.google_calendar_email  && user.google_calendar_refresh_token
+            if user.google_calendar_email  && user.google_calendar_refresh_token
                 
                  
                 personalEvents = @personalCal.events
