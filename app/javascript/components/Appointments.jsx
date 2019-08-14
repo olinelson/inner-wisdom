@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Divider, Label } from 'semantic-ui-react'
+import { Container, Divider, Label, Button } from 'semantic-ui-react'
 import Calendar from './Calendar';
 import { connect } from 'react-redux';
 import styled from "styled-components"
@@ -41,16 +41,6 @@ export const FullWidthCalendarContainer = styled(Container)`
 
 
 function Appointments(props) {
-
-    console.log(props)
-
-    // const isUserAnAttendeeOfEvent = (event) => {
-    //     if (event.attendees === null) return false
-    //     for (let att of event.attendees) {
-    //         if (att.email === props.user.email) return true
-    //     }
-    // }
-
 
 
 

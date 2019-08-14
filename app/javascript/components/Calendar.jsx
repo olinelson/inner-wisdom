@@ -30,7 +30,7 @@ function Calendar(props) {
 
   const CalendarContainer = styled.div`
         grid-area: panel;
-        height: 100vh;
+        height: 70vh;
       
       width: 500rem;
       min-height: 50rem;
@@ -76,7 +76,7 @@ function Calendar(props) {
         onView={changeDefaultViewHandeler}
         defaultView={props.defaultCalendarView}
         scrollToTime={props.calendarScrollToTime}
-        defaultDate={new Date()}
+        defaultDate={props.calendarDisplayDate}
         popup
         step={30}
         timeslots={1}
@@ -97,7 +97,8 @@ const mapStateToProps = (state) => ({
   // myAccountPanel: state.myAccountPanel,
   // baseUrl: state.baseUrl
   defaultCalendarView: state.defaultCalendarView,
-  calendarScrollToTime: state.calendarScrollToTime
+  calendarScrollToTime: state.calendarScrollToTime,
+  calendarDisplayDate: state.calendarDisplayDate,
 })
 
 

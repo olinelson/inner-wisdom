@@ -70,7 +70,15 @@ class MainController < ApplicationController
 
 
 
-        render react_component: 'App', props: { events: @businessCal.events, personalEvents: personalEvents, posts: Post.all, user: user, baseUrl: ENV["BASE_URL"], users: users, businessCalendarAddress: ENV["GOOGLE_CALENDAR_ADDRESS"]}
+        render react_component: 'App', props: { 
+            events: @businessCal.events, 
+            personalEvents: personalEvents, 
+            posts: Post.all, 
+            user: user, 
+            baseUrl: ENV["BASE_URL"], 
+            users: users, 
+            businessCalendarAddress: ENV["GOOGLE_CALENDAR_ADDRESS"]
+        }
     end
 
 

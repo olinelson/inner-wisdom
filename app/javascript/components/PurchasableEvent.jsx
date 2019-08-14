@@ -17,9 +17,6 @@ function PurchasableEvent(props) {
     const [purchased, setPurchased] = useState(false)
     const [progress, setProgress] = useState(1)
 
-
-    console.log(progress)
-
     const showPrettyStartAndEndTime = () => {
 
         return <>
@@ -43,7 +40,6 @@ function PurchasableEvent(props) {
                 clearInterval(int);
             }
             setProgress(prog)
-            // console.log(progress)
         }, 100);
     }
 
@@ -75,7 +71,9 @@ function PurchasableEvent(props) {
                 clearInterval(int)
 
                 return delay(1000).then(() => {
-                    return props.dispatch({ type: "SET_EVENTS", value: res.events })
+                    props.dispatch({ type: "SET_EVENTS", value: res.events })
+                    props.dispatch({ type: "SET_NOTIFICATIONS", value: [{ id: event.id, type: "notice", message: "Appointment Booked" }] })
+
                 })
             })
         // .then((res) => props.dispatch({ type: "SET_EVENTS", value: res.events }))

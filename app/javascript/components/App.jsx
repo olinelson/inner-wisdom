@@ -20,7 +20,19 @@ import { Provider } from "react-redux"
 import Schedule from './Schedule';
 
 import NotFound from "./NotFound"
+import Notification from "./Notification"
+// import dotenv from 'dotenv'
+// const dotenv = require('dotenv')
 
+// console.log(dotenv.config({ path: '../../../.env' }))
+
+// console.log(dotenv.config({ path: '../../../.env' }))
+
+
+
+
+
+// dotenv.config()
 
 const initialState = {
     user: null,
@@ -35,6 +47,7 @@ const initialState = {
     businessCalendarAddress: null,
     defaultCalendarView: Views.WEEK,
     calendarScrollToTime: new Date,
+    calendarDisplayDate: new Date,
 }
 
 
@@ -62,7 +75,9 @@ function reducer(state = initialState, action) {
         case "SET_DEFAULT_CALENDAR_VIEW":
             return { ...state, defaultCalendarView: action.value }
         case "SET_CALENDAR_SCROLL_TO_TIME":
-            return { ...state, calendarScrollToTime: action.value }
+            return { ...state, calendarScrollToTime: action.value, calendarDisplayDate: action.value }
+        case "SET_NOTIFICATIONS":
+            return { ...state, notifications: action.value }
         case "SET_ALL":
             return {
                 ...state,
@@ -75,7 +90,7 @@ function reducer(state = initialState, action) {
                 csrfToken: action.value.csrfToken,
                 businessCalendarAddress: action.value.businessCalendarAddress,
                 calendarScrollToTime: action.value.calendarScrollToTime,
-                hourlyRate: action.value.hourlyRate
+                hourlyRate: action.value.hourlyRate,
             }
 
 
@@ -129,7 +144,7 @@ export function App(props) {
             csrfToken: document.querySelectorAll('meta[name="csrf-token"]')[0].content,
             users: props.users,
             businessCalendarAddress: props.businessCalendarAddress,
-            calendarScrollToTime: new Date
+            calendarScrollToTime: new Date,
 
         }
 
@@ -184,6 +199,7 @@ export function App(props) {
 
 
                     </Switch>
+                    <Notification />
                 </div>
             </HashRouter>
 

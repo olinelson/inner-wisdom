@@ -62,11 +62,12 @@ class Schedule extends Component {
     // =====================================
 
     createEventHandeler = (isAppointmentSlot) => {
+        let event = { ...this.state.selectedEvent }
         this.setState({ creatingEvent: false })
         fetch(`${this.props.baseUrl}/create`, {
             method: "POST",
             body: JSON.stringify({
-                event: this.state.selectedEvent,
+                event: event,
                 appointmentSlot: isAppointmentSlot
             }),
             headers: {
@@ -78,6 +79,7 @@ class Schedule extends Component {
         })
             .then(response => response.json())
             .then(res => this.props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { events: res.events, personalEvents: res.personalEvents, scrollToEvent: res.scrollToEvent } }))
+            .then(res => this.props.dispatch({ type: "SET_CALENDAR_SCROLL_TO_TIME", value: event.start_time }))
 
 
     }
@@ -318,7 +320,6 @@ class Schedule extends Component {
     }
 
     render() {
-        // console.log(this.state.selectedEvent)
         return <>
 
             <FullWidthCalendarContainer fluid >

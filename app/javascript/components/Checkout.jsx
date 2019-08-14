@@ -19,7 +19,7 @@ export default class Checkout extends React.Component {
     render() {
         return (
             <StripeCheckout
-                stripeKey="pk_test_HHBNIwO4ufcXaVKWVPsV6y4v"
+                stripeKey={process.env.STRIPE_KEY}
                 token={this.onToken}
                 amount={this.props.ammount}
                 email={this.props.email}

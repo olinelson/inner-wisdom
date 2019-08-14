@@ -24,12 +24,10 @@ let CustomContainer = styled.div`
 
 function Notification(props) {
 
-    // const [messages, setMessages] = useState(props.notifications)
+    const [messages, setMessages] = useState(props.notifications)
 
     const [currentCount, setCount] = useState(props.notifications ? props.notifications.length : 0)
 
-
-    const messages = props.notifications
 
     const hideMessage = (e) => {
         e.target.parentElement.style.display = "none"
@@ -60,14 +58,10 @@ function Notification(props) {
 
     const deleteMessage = () => {
 
-        if (currentCount === 0) props.dispatch({ type: "SET_NOTIFICATIONS", value: [] })
-        // else setMessages([...messages].slice(1))
-        else props.dispatch({ type: "SET_NOTIFICATIONS", value: [...props.notifications].slice(1) })
+        if (currentCount === 1) setMessages([])
+        else setMessages([...messages].slice(1))
         setCount(currentCount - 1)
-
     }
-
-
 
     useEffect(
         () => {
@@ -90,10 +84,10 @@ function Notification(props) {
 
 }
 
-const mapStateToProps = (state) => ({
-    notifications: state.notifications
-})
+// const mapStateToProps = (state) => ({
+//     notifications: state.notifications
+// })
 
-export default connect(mapStateToProps)(Notification)
-// export default Notification
+// export default connect(mapStateToProps)(Notification)
+export default Notification
 

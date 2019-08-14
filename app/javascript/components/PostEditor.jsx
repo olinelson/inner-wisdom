@@ -189,7 +189,7 @@ class PostEditor extends Component {
                                 </FeatureImageSegment>
 
                                 :
-                                <Placeholder onMouseOver={() => console.log("hello")}>
+                                <Placeholder >
                                     {/* <Placeholder.Image /> */}
                                 </Placeholder>
                             }
