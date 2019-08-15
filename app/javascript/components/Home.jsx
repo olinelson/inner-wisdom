@@ -33,7 +33,9 @@ const ThreeColumnContainer = styled(Container)`
     display: grid !important;
     grid-template-columns: repeat( auto-fit, minmax(15rem, 1fr)) ;
     justify-items: center;
-    grid-gap: 1rem;
+    grid-gap: 2rem;
+    align-items: flex-end;
+    text-align: center;
 
 
 `
@@ -76,35 +78,36 @@ function Home(props) {
 
         <ThreeColumnContainer>
 
-            <GridCard >
+            <div>
+                <Image size="small" src="https://storage.googleapis.com/inner_wisdom_bucket/APS_Member%20Logo.jpg" />
+                <Header content="Counselling" />
+
+            </div>
+
+            <div>
+                <Image size="tiny" src="https://storage.googleapis.com/inner_wisdom_bucket/AAOS_Member_Logo.jpg" />
+                <Header content="Supervision" />
+
+            </div>
+            <div>
+                <Image size="small" src="https://storage.googleapis.com/inner_wisdom_bucket/bonsai-garden-plant-1382195(1).jpg" />
+                <Header content="Training" />
+
+            </div>
+            {/* <GridCard >
+
                 <Card.Content textAlign="center">
-                    <Icon size="huge" name="share alternate"></Icon>
-                    <Header size="large" content="Data Driven Treatments" />
-                    <p>We use data-driven treatments and proven science tailored to you.</p>
+                    <Image size="tiny" src="https://storage.googleapis.com/inner_wisdom_bucket/AAOS_Member_Logo.jpg" />
+                    <Header size="large" content="Supervision" />
                 </Card.Content>
             </GridCard>
 
             <GridCard >
                 <Card.Content textAlign="center">
-                    <Icon size="huge" name="user doctor"></Icon>
-                    <Header size="large" content="Personolized Fit" />
-                    <p>Get confidential,
-                    personalized access to
-                    our caring expert
-                        therapists in NYC.</p>
+                    <Image src="https://storage.googleapis.com/inner_wisdom_bucket/bonsai-garden-plant-1382195(1).jpg" />
+                    <Header size="large" content="Training" />
                 </Card.Content>
-            </GridCard>
-
-            <GridCard >
-                <Card.Content textAlign="center">
-                    <Icon size="huge" name="compass outline"></Icon>
-                    <Header size="large" content="Continous Guidance" />
-                    <p>Help and guidance throughout,
-                    from before your first
-                    appointment to streamlined
-                    pa</p>
-                </Card.Content>
-            </GridCard>
+            </GridCard> */}
 
         </ThreeColumnContainer>
 
@@ -119,19 +122,16 @@ function Home(props) {
                     <Item.Image size='medium' src='https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500' />
 
                     <Item.Content>
-                        <Item.Header as='a'>Sue Stephenson</Item.Header>
+                        <Item.Header>About
+                        </Item.Header>
+                        <Item.Meta>Director Susan Stephenson
+                            B.A (Psych), Dip. Ed. (Psych), MEd (Counselling), FAPS, MCCOUNP, AAOS
+                        </Item.Meta>
+
                         <Item.Description>
                             <p>
-
-                                Maiores in ducimus quia alias ea quos sequi dolorum. Quam doloribus veritatis in amet velit aut. Esse blanditiis molestiae quod ea quia. Qui magnam nulla rem nihil provident.
-
-                                Maxime autem iusto sed qui neque id odit recusandae. Quam ut odio veritatis. Et harum consequatur illum quis voluptas porro officia id.
-
-                                Qui vel quam et ad illo ab omnis. Doloremque excepturi vero adipisci ea placeat molestiae eligendi. Consequuntur mollitia voluptas molestias. Quia sit soluta commodi. Ullam voluptatibus deserunt nobis dolor est perspiciatis minima impedit.
-
-                                Dolores ut similique dolor voluptas est optio nihil est. Repellat cupiditate sunt harum aspernatur sint totam dolor dolorum. Repellat vel corporis id voluptas numquam.
-
-                                Est occaecati est voluptatum ut provident. Nobis voluptatum dolor rerum illo dolorum omnis. Minus doloribus id placeat.
+                                I am a Registered Counselling Psychologist with 30+ years’ experience helping adults and couples resolve difficulties in order to live fulfilling, purposeful and content lives.
+                                I specialize in mental health well-being, including managing personal and workplace stress, anxiety and depression; recovery from psychological and emotional trauma (past and present), bereavement, grief and loss; life transitions and adjustments; couples and relationship counselling.
 </p>
                         </Item.Description>
                     </Item.Content>

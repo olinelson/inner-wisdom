@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { HashRouter, Route, Link, Switch, Redirect } from 'react-router-dom'
 
-import { Container, Menu, Button } from "semantic-ui-react"
+import { Container, Divider, Segment, Menu, Image, Button, Icon } from "semantic-ui-react"
 
 import { Views } from "react-big-calendar"
 
@@ -158,51 +158,66 @@ export function App(props) {
         <Provider store={store}>
 
             <HashRouter basename="/" >
-                <div>
-                    <Switch>
+                <>
+                    <div style={{ minHeight: "90vh" }}>
+                        <Switch>
 
-                        <Route
-                            exact
-                            path="/"
-                            render={props => <><Nav /><Home /></>}
-                        />
-                        <Route
-                            path="/appointments"
-                            render={props => <><Nav /><Appointments /></>}
-                        />
-                        <Route
-                            path="/myaccount"
-                            render={props => <><Nav /><MyAccount /></>}
-                        />
-                        <Route
-                            path="/schedule"
-                            render={props => <><Nav /><Schedule /></>}
-                        />
-                        <Route
-                            path="/blog"
-                            render={props => <><Nav /><Blog /></>}
-                        />
+                            <Route
+                                exact
+                                path="/"
+                                render={props => <><Nav /><Home /></>}
+                            />
+                            <Route
+                                path="/appointments"
+                                render={props => <><Nav /><Appointments /></>}
+                            />
+                            <Route
+                                path="/myaccount"
+                                render={props => <><Nav /><MyAccount /></>}
+                            />
+                            <Route
+                                path="/schedule"
+                                render={props => <><Nav /><Schedule /></>}
+                            />
+                            <Route
+                                path="/blog"
+                                render={props => <><Nav /><Blog /></>}
+                            />
 
-                        <Route
-                            path="/posts/:id"
-                            render={props => <><Nav /><PostEditor /></>}
-                        />
-                        <Route
-                            path="/clients"
-                            exact
-                            render={props => <><Nav /><Clients /></>}
-                        />
-                        <Route
-                            path="/clients/:id"
-                            render={props => <><Nav /><ClientShow /></>}
-                        />
-                        <Route render={props => <><Nav /><NotFound /></>} />
+                            <Route
+                                path="/posts/:id"
+                                render={props => <><Nav /><PostEditor /></>}
+                            />
+                            <Route
+                                path="/clients"
+                                exact
+                                render={props => <><Nav /><Clients /></>}
+                            />
+                            <Route
+                                path="/clients/:id"
+                                render={props => <><Nav /><ClientShow /></>}
+                            />
+                            <Route render={props => <><Nav /><NotFound /></>} />
 
 
 
-                    </Switch>
-                    <Notification />
-                </div>
+                        </Switch>
+                        <Notification />
+                    </div>
+
+                    <Divider hidden />
+
+                    <Container style={{ backgroundColor: "rgba(128,128,128,0.1)", height: "10vh", display: "flex", alignItems: "center", justifyContent: "center" }} fluid>
+                        {/* <Divider hidden /> */}
+                        {/* <Container textAlign="center" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}> */}
+                        <span><Icon name="copyright" /> Inner Wisdom {new Date().getFullYear()}</span>
+
+                        {/* </Container> */}
+
+                    </Container>
+
+
+                </>
             </HashRouter>
 
         </Provider>
