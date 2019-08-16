@@ -21,6 +21,7 @@ import Schedule from './Schedule';
 
 import NotFound from "./NotFound"
 import Notification from "./Notification"
+import Counselling from './Counselling';
 // import dotenv from 'dotenv'
 // const dotenv = require('dotenv')
 
@@ -160,44 +161,49 @@ export function App(props) {
             <HashRouter basename="/" >
                 <>
                     <div style={{ minHeight: "90vh" }}>
+                        <Nav />
                         <Switch>
 
                             <Route
                                 exact
                                 path="/"
-                                render={props => <><Nav /><Home /></>}
+                                render={props => <Home />}
                             />
                             <Route
                                 path="/appointments"
-                                render={props => <><Nav /><Appointments /></>}
+                                render={props => <Appointments />}
+                            />
+                            <Route
+                                path="/counselling"
+                                render={props => <Counselling />}
                             />
                             <Route
                                 path="/myaccount"
-                                render={props => <><Nav /><MyAccount /></>}
+                                render={props => <MyAccount />}
                             />
                             <Route
                                 path="/schedule"
-                                render={props => <><Nav /><Schedule /></>}
+                                render={props => <Schedule />}
                             />
                             <Route
                                 path="/blog"
-                                render={props => <><Nav /><Blog /></>}
+                                render={props => <Blog />}
                             />
 
                             <Route
                                 path="/posts/:id"
-                                render={props => <><Nav /><PostEditor /></>}
+                                render={props => <PostEditor />}
                             />
                             <Route
                                 path="/clients"
                                 exact
-                                render={props => <><Nav /><Clients /></>}
+                                render={props => <Clients />}
                             />
                             <Route
                                 path="/clients/:id"
-                                render={props => <><Nav /><ClientShow /></>}
+                                render={props => <ClientShow />}
                             />
-                            <Route render={props => <><Nav /><NotFound /></>} />
+                            <Route render={props => <NotFound />} />
 
 
 
@@ -207,7 +213,7 @@ export function App(props) {
 
                     <Divider hidden />
 
-                    <Container style={{ backgroundColor: "rgba(128,128,128,0.1)", height: "10vh", display: "flex", alignItems: "center", justifyContent: "center" }} fluid>
+                    <Container style={{ backgroundColor: "rgba(128,128,128,0.1)", height: "20rem", display: "flex", alignItems: "center", justifyContent: "center" }} fluid>
                         {/* <Divider hidden /> */}
                         {/* <Container textAlign="center" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}> */}
                         <span><Icon name="copyright" /> Inner Wisdom {new Date().getFullYear()}</span>

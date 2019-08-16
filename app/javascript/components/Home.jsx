@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { Menu, Header, Container, Card, Button, Segment, Icon, Item, Image, Divider } from "semantic-ui-react"
+import { Menu, Header, Container, Card, Button, Segment, Icon, Item, Image, Divider, Label } from "semantic-ui-react"
 
 import { Link } from "react-router-dom"
 import PostViewer from './PostViewer';
@@ -31,11 +31,15 @@ export const JumboMessage = styled(Segment)`
 const ThreeColumnContainer = styled(Container)`
     padding: 1rem;
     display: grid !important;
-    grid-template-columns: repeat( auto-fit, minmax(15rem, 1fr)) ;
+    // grid-template-columns: repeat( auto-fit, minmax(15rem, 1fr)) ;
+    grid-template-columns: repeat(3, 1fr);
     justify-items: center;
     grid-gap: 2rem;
     align-items: flex-end;
     text-align: center;
+    @media(max-width: 400px){
+        grid-template-columns: 1fr;
+    }
 
 
 `
@@ -81,7 +85,6 @@ function Home(props) {
             <div>
                 <Image size="small" src="https://storage.googleapis.com/inner_wisdom_bucket/APS_Member%20Logo.jpg" />
                 <Header content="Counselling" />
-
             </div>
 
             <div>
@@ -94,20 +97,6 @@ function Home(props) {
                 <Header content="Training" />
 
             </div>
-            {/* <GridCard >
-
-                <Card.Content textAlign="center">
-                    <Image size="tiny" src="https://storage.googleapis.com/inner_wisdom_bucket/AAOS_Member_Logo.jpg" />
-                    <Header size="large" content="Supervision" />
-                </Card.Content>
-            </GridCard>
-
-            <GridCard >
-                <Card.Content textAlign="center">
-                    <Image src="https://storage.googleapis.com/inner_wisdom_bucket/bonsai-garden-plant-1382195(1).jpg" />
-                    <Header size="large" content="Training" />
-                </Card.Content>
-            </GridCard> */}
 
         </ThreeColumnContainer>
 
@@ -121,12 +110,10 @@ function Home(props) {
                 <Item>
                     <Item.Image size='medium' src='https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500' />
 
-                    <Item.Content>
-                        <Item.Header>About
-                        </Item.Header>
-                        <Item.Meta>Director Susan Stephenson
-                            B.A (Psych), Dip. Ed. (Psych), MEd (Counselling), FAPS, MCCOUNP, AAOS
-                        </Item.Meta>
+                    <Item.Content verticalAlign='top'>
+                        <Header>Susan Stephenson | Director
+                            <Header.Subheader> B.A (Psych), Dip. Ed. (Psych), MEd (Counselling), FAPS, MCCOUNP, AAOS</Header.Subheader>
+                        </Header>
 
                         <Item.Description>
                             <p>
@@ -140,9 +127,12 @@ function Home(props) {
             {/* </Segment> */}
         </Container>
 
+
+
         <Divider hidden />
         <Divider />
         <Divider hidden />
+
         {showRecentBlogPost()}
 
 
