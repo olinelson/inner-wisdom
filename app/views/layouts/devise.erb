@@ -1,7 +1,7 @@
 <%= javascript_pack_tag 'application' %>
 <%= stylesheet_pack_tag 'application'%>
 
-<%= react_component('StaticNav', baseUrl: ENV['BASE_URL']) %>
+<%= react_component('Nav', user: current_user, static: true) %>
 <div class="ui divider hidden"></div>
 <div class="ui container text">
 <%= yield %>

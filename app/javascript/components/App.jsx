@@ -6,10 +6,10 @@ import { Container, Divider, Segment, Menu, Image, Button, Icon } from "semantic
 import { Views } from "react-big-calendar"
 
 import Home from "./Home"
-import MyAccount from './MyAccount';
-import Nav from './Nav';
-import Appointments from './Appointments';
-import PostEditor from './PostEditor';
+import MyAccount from './MyAccount'
+import Nav from './Nav'
+import Appointments from './Appointments'
+import PostEditor from './PostEditor'
 import PostsList from './PostsList'
 import Blog from './Blog'
 import Clients from "./Clients"
@@ -17,11 +17,13 @@ import ClientShow from "./ClientShow"
 
 import { createStore } from "redux"
 import { Provider } from "react-redux"
-import Schedule from './Schedule';
+import Schedule from './Schedule'
 
 import NotFound from "./NotFound"
 import Notification from "./Notification"
-import Counselling from './Counselling';
+import Counselling from './Counselling'
+import Supervision from './Supervision'
+import Training from './Training'
 // import dotenv from 'dotenv'
 // const dotenv = require('dotenv')
 
@@ -66,6 +68,7 @@ function reducer(state = initialState, action) {
 
             return { ...state, personalEvents: action.value.personalEvents, events: action.value.events, calendarScrollToTime: new Date(action.value.scrollToEvent.start_time) }
         case "SET_USER":
+            console.log("setting user in appState", action.value)
             return { ...state, user: action.value }
         case "SET_USERS":
             return { ...state, users: action.value }
@@ -104,35 +107,6 @@ const store = createStore(reducer);
 
 export function App(props) {
 
-    // const eventMapper = (e, type) => {
-    //     event = {
-    //         id: e.id,
-    //         title: e.title,
-    //         start_time: new Date(e.start_time),
-    //         end_time: new Date(e.end_time),
-    //         allDay: false,
-    //         attendees: e.attendees ? getAllUsersFromEmails(e.attendees) : null,
-    //         type: type
-    //     }
-    //     return event
-    // }
-
-    // const getAllUsersFromEmails = (users) => {
-    //     return users.map(user => getUserFromEmail(user))
-    // }
-
-    // const getUserFromEmail = (calUser) => {
-    //     let found = props.users.find(u => u.email === calUser.email)
-    //     return found
-    // }
-
-
-    // const formatEvents = (events, type) => {
-    //     if (events === null) return null
-    //     let result = events.map((e) => eventMapper(e, type))
-    //     return result
-    // }
-
     store.dispatch({
         type: "SET_ALL", value: {
             posts: props.posts,
@@ -154,16 +128,18 @@ export function App(props) {
 
 
 
-
     return (
         <Provider store={store}>
 
             <HashRouter basename="/" >
                 <>
                     <div style={{ minHeight: "90vh" }}>
-                        <Nav />
-                        <Switch>
+                        {/* {console.log("above route", store)} */}
+                        <Route
+                            render={rProps => <Nav {...store} {...rProps} user={store.getState().user} />}
+                        />
 
+                        <Switch>
                             <Route
                                 exact
                                 path="/"
@@ -176,6 +152,14 @@ export function App(props) {
                             <Route
                                 path="/counselling"
                                 render={props => <Counselling />}
+                            />
+                            <Route
+                                path="/supervision"
+                                render={props => <Supervision />}
+                            />
+                            <Route
+                                path="/training"
+                                render={props => <Training />}
                             />
                             <Route
                                 path="/myaccount"

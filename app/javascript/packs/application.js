@@ -18,7 +18,7 @@ import WebpackerReact from 'webpacker-react'
 import App from 'components/App'
 // import Home from 'components/Home'
 import FlashNotification from 'components/FlashNotification'
-// import Nav from "components/Nav"
+import Nav from "components/Nav"
 // import Appointments from "components/Appointments"
 // import PostEditor from "components/PostEditor"
 // import PostsList from "components/PostsList"
@@ -41,4 +41,4 @@ import "components/stylesheet.css"
 
 
 
-WebpackerReact.setup({ App, FlashNotification, StaticNav }) // ES6 shorthand for {Hello: Hello}
+WebpackerReact.setup({ App, FlashNotification, StaticNav, Nav }) // ES6 shorthand for {Hello: Hello}

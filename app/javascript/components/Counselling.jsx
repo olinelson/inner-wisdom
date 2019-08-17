@@ -1,7 +1,7 @@
 import React from 'react'
-import { Container, Header } from "semantic-ui-react"
-
-export default function Counselling() {
+import { Container, Header, Button } from "semantic-ui-react"
+import { withRouter } from "react-router-dom"
+function Counselling(props) {
     return (
         <Container text >
 
@@ -21,6 +21,22 @@ export default function Counselling() {
             <p>Transformational Chairwork</p>
             <p>Couples Counselling</p>
 
+            <Button
+                content="Schedule Appointment"
+                onClick={() => props.history.push("/appointments")}
+            />
+
         </Container>
     )
+
+
+
 }
+
+// const mapStateToProps = (state) => ({
+//     events: state.events,
+//     user: state.user,
+//     personalEvents: state.personalEvents
+// })
+
+export default withRouter(Counselling)

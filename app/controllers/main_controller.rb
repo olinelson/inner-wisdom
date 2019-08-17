@@ -31,7 +31,6 @@ class MainController < ApplicationController
                     :calendar      => calendar_address,
                     :redirect_url  => ENV['GOOGLE_REDIRECT_URL'],
                                     )
-# byebug
 
                     @personalCal.login_with_refresh_token(current_user.google_calendar_refresh_token)               
                 rescue
@@ -50,12 +49,8 @@ class MainController < ApplicationController
         if current_user
             user = current_user
         begin
-            # if user.admin === true && user.google_calendar_email  && user.google_calendar_refresh_token
             if user.google_calendar_email  && user.google_calendar_refresh_token
-                
-                 
                 personalEvents = @personalCal.events
-                
             end
         rescue
                 puts "error fetching personal events"
@@ -66,12 +61,16 @@ class MainController < ApplicationController
 
         end
 
-        
+        begin
+            businessEvents = @businessCal.events
+            rescue
+            businessEvents = []    
+        end
 
 
 
         render react_component: 'App', props: { 
-            events: @businessCal.events, 
+            events: businessEvents, 
             personalEvents: personalEvents, 
             posts: Post.all, 
             user: user, 

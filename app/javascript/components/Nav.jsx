@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, Component } from 'react'
 
 
 import { Menu, Icon, Dropdown, Sidebar, Segment, Header, Image } from 'semantic-ui-react'
@@ -7,27 +7,42 @@ import { Link, withRouter } from 'react-router-dom'
 import { connect } from 'react-redux';
 import styled from "styled-components"
 
+import LinkOrATag from "./LinkOrATag"
+
 
 
 
 function Nav(props) {
 
-    const [sideBarOpen, setSideBar] = useState(false);
 
-    const pathname = props.location.pathname
+    let csrfToken
+
+    if (props.static) csrfToken = ""
+    else csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
+
+    const [sideBarOpen, setSideBar] = useState(false);
+    console.log("props in nav", props)
+
+    let pathname = ""
+
+    if (props.static) pathname = ""
+    else pathname = props.location.pathname
+
 
     const signOutHandeler = () => {
 
-        fetch(`${props.baseUrl}/users/sign_out`, {
+        fetch(`${process.env.BASE_URL}/users/sign_out`, {
             method: "DELETE",
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
             }
-        }).then(() => props.history.push("/"))
+        })
             .then(() => props.dispatch({ type: "SET_USER", value: null }))
+            .then(() => props.history.push("/"))
+
     }
 
     const FixedMenu = styled(Menu)`
@@ -62,22 +77,30 @@ function Nav(props) {
     const menuOptions = () => {
         return <>
             <Menu.Item active={pathname === '/'} >
-                <Link to="/">Inner Wisdom</Link>
+                <LinkOrATag to="/" static={props.static}>Inner Wisdom</LinkOrATag>
             </Menu.Item>
 
             <Menu.Item active={pathname === '/counselling'} >
-                <Link to="/counselling">Counselling</Link>
+                <LinkOrATag static={props.static} to="/counselling">Counselling</LinkOrATag>
+            </Menu.Item>
+
+            <Menu.Item active={pathname === '/supervision'} >
+                <LinkOrATag static={props.static} to="/supervision">Supervision</LinkOrATag>
+            </Menu.Item>
+
+            <Menu.Item active={pathname === '/training'} >
+                <LinkOrATag static={props.static} to="/training">Training</LinkOrATag>
             </Menu.Item>
 
             <Menu.Item active={pathname === '/blog'} >
-                <Link to="/blog">Blog</Link>
+                <LinkOrATag static={props.static} to="/blog">Blog</LinkOrATag>
             </Menu.Item>
 
 
 
             {props.user && props.user.admin ? null :
                 <Menu.Item active={pathname === '/appointments'}>
-                    <Link to="/appointments">Appointments</Link>
+                    <LinkOrATag static={props.static} to="/appointments">Appointments</LinkOrATag>
                 </Menu.Item>
             }
 
@@ -90,7 +113,7 @@ function Nav(props) {
             props.user == null ?
                 <Menu.Item>
                     <Icon name="sign in"></Icon>
-                    <a href={`${props.baseUrl}/users/sign_in`}>Sign In</a>
+                    <a href={`${process.env.BASE_URL}/users/sign_in`}>Sign In</a>
                 </Menu.Item>
 
                 :
@@ -100,22 +123,22 @@ function Nav(props) {
                             <Menu.Item
                                 active={pathname === '/schedule'}
                             >
-                                {/* <Icon name="user circle"></Icon> */}
-                                <Link to="/schedule">Schedule</Link>
+
+                                <LinkOrATag static={props.static} to="/schedule">Schedule</LinkOrATag>
                             </Menu.Item>
                             <Menu.Item
                                 active={pathname === '/clients'}
                             >
-                                {/* <Icon name="user circle"></Icon> */}
-                                <Link to="/clients">Clients</Link>
+
+                                <LinkOrATag static={props.static} to="/clients">Clients</LinkOrATag>
                             </Menu.Item>
                         </>
                         : null}
                     <Menu.Item
                         active={pathname === '/myaccount'}
                     >
-                        {/* <Icon name="user circle"></Icon> */}
-                        <Link to="/myaccount">My Account</Link>
+
+                        <LinkOrATag static={props.static} to="/myaccount">My Account</LinkOrATag>
                     </Menu.Item>
 
 
@@ -156,33 +179,6 @@ function Nav(props) {
 
 
         </MobileMenu>
-        {/* <Sidebar.Pushable style={{ position: "absolute", zIndex: "1", width: "50vw" }} as={Segment}>
-            <Sidebar
-                as={Menu}
-                animation='overlay'
-                icon='labeled'
-                inverted
-                onHide={() => setSideBar(false)}
-                vertical
-                visible={sideBarOpen}
-                width='thin'
-            >
-                <Menu.Item as='a'>
-                    <Icon name='home' />
-                    Home
-            </Menu.Item>
-                <Menu.Item as='a'>
-                    <Icon name='gamepad' />
-                    Games
-            </Menu.Item>
-                <Menu.Item as='a'>
-                    <Icon name='camera' />
-                    Channels
-            </Menu.Item>
-            </Sidebar>
-
-
-        </Sidebar.Pushable> */}
     </>
 
 }
@@ -190,13 +186,8 @@ function Nav(props) {
 
 
 
-const mapStateToProps = (state) => ({
-    user: state.user,
-    refreshMethod: state.refreshMethod,
-    baseUrl: state.baseUrl,
-    csrfToken: state.csrfToken
-})
 
-export default withRouter(connect(mapStateToProps)(Nav))
+
+export default Nav
 
 

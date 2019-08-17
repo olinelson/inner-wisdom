@@ -4,11 +4,11 @@ import moment from 'moment'
 import { connect } from "react-redux"
 import { Button, Container, Label, Grid, Search, Icon, Segment, Radio, Modal, Header, Image, Dropdown, Divider } from "semantic-ui-react"
 import Checkout from './Checkout'
-import styled from "styled-components"
 import Event from "./Event"
 import PurchasableEvent from "./PurchasableEvent"
 import ReadOnlyEvent from "./ReadOnlyEvent"
 import { withRouter } from 'react-router-dom'
+import styled from "styled-components"
 
 
 const localizer = momentLocalizer(moment)
@@ -29,21 +29,21 @@ function Calendar(props) {
   let allViews = Object.keys(Views).map(k => Views[k])
 
   const CalendarContainer = styled.div`
-        grid-area: panel;
-        height: 70vh;
-      
-      width: 500rem;
-      min-height: 50rem;
-      justify-self: center;
-      max-width: ${() => props.fullWidth === true ? "95vw" : "60vw"};
+          grid-area: panel;
+          height: 70vh;
 
-  //    @media (max-width: 50rem) {
-  //       max-width: 95vw;
-  //   ;
-  // }
+        width: 500rem;
+        min-height: 50rem;
+        justify-self: center;
+        max-width: ${() => props.fullWidth === true ? "95vw" : "60vw"};
 
-}
-    `
+    //    @media (max-width: 50rem) {
+    //       max-width: 95vw;
+    //   ;
+    // }
+
+  }
+      `
 
   const changeDefaultViewHandeler = (view) => {
 
