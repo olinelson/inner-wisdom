@@ -197,14 +197,14 @@ export function App(props) {
 
                     <Divider hidden />
 
-                    <Container style={{ backgroundColor: "rgba(128,128,128,0.1)", height: "20rem", display: "flex", alignItems: "center", justifyContent: "center" }} fluid>
+                    <div style={{ backgroundColor: "rgba(128,128,128,0.1)", height: "20rem", display: "flex", alignItems: "center", justifyContent: "center" }} >
                         {/* <Divider hidden /> */}
                         {/* <Container textAlign="center" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}> */}
                         <span><Icon name="copyright" /> Inner Wisdom {new Date().getFullYear()}</span>
 
                         {/* </Container> */}
 
-                    </Container>
+                    </div>
 
 
                 </>

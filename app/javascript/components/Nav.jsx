@@ -21,8 +21,6 @@ function Nav(props) {
     else csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
     const [sideBarOpen, setSideBar] = useState(false);
-    console.log("props in nav", props)
-
     let pathname = ""
 
     if (props.static) pathname = ""
@@ -46,13 +44,13 @@ function Nav(props) {
     }
 
     const FixedMenu = styled(Menu)`
-        position: ${() => pathname === '/' || pathname === '/blog' ? "absolute" : "sticky"};
+        position: ${() => pathname === '/schedule' || pathname === '/clients' || pathname === '/myaccount' ? "sticky" : "absolute"};
         // position: absolute ;
         z-index: 1;
         width: 100vw;
         top:0rem !important;
         border: none !important;
-        background: ${() => pathname === '/' || pathname === '/blog' ? "linear-gradient(180deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,0) 100%) !important;" : "white !important"};
+        background: ${() => pathname === '/schedule' || pathname === '/clients' || pathname === '/myaccount' || pathname === '/appointments' ? "white !important" : "linear-gradient(180deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,0) 100%) !important;"};
 
         @media (max-width: 40rem) {
             border: 1px solid red !important;
@@ -63,10 +61,10 @@ function Nav(props) {
 
     const MobileMenu = styled(Menu)`
         
-        position: ${() => pathname === '/' || pathname === '/blog' ? "absolute" : "sticky"};
+        position: ${() => pathname === '/myaccount' || pathname === '/clients' || pathname === '/appointments' ? "sticky" : "fixed"};
         z-index: 2;
         width: 100vw;
-        top: 0rem!important;
+        top: 0!important;
         background: rgba(0, 0, 0, 0);
 
         @media(min-width: 40rem) {
@@ -156,7 +154,7 @@ function Nav(props) {
     }
 
     return <>
-        <FixedMenu pointing inverted={pathname === '/' || pathname === '/blog' ? true : false} secondary >
+        <FixedMenu pointing inverted={pathname === '/myaccount' || pathname === '/clients' || pathname === '/schedule' || pathname === '/appointments' ? false : true} secondary >
             {menuOptions()}
             <Menu.Menu position="right">
                 {UserMenuOptions()}

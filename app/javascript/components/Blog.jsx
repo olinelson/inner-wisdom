@@ -3,12 +3,13 @@ import PostsList from './PostsList';
 import { Container, Divider, Header, Segment, Button } from 'semantic-ui-react';
 
 import {FeatureImageSegment} from "./PostEditor"
+import { Jumbotron } from './StyledComponents';
 
 
 export default function Blog(props) {
     return <>
-       
-        <FeatureImageSegment style={{ backgroundImage: `url('https://storage.googleapis.com/inner_wisdom_bucket/ancient-art-asia-302100.jpg') `, backgroundPosition: "center" }}/>
+        <Jumbotron style={{ backgroundImage: `url('https://storage.googleapis.com/inner_wisdom_bucket/ancient-art-asia-302100.jpg') `, backgroundPosition: "center" }}/>
+
 
             <Container>
                 <Divider hidden/>

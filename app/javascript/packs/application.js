@@ -25,7 +25,7 @@ import Nav from "components/Nav"
 // import PostViewer from "components/PostViewer"
 // import PostPreview from "components/PostViewer"
 // import Blog from "components/Blog"
-import StaticNav from "components/StaticNav"
+
 
 
 
@@ -41,4 +41,4 @@ import "components/stylesheet.css"
 
 
 
-WebpackerReact.setup({ App, FlashNotification, StaticNav, Nav }) // ES6 shorthand for {Hello: Hello}
+WebpackerReact.setup({ App, FlashNotification, Nav }) // ES6 shorthand for {Hello: Hello}

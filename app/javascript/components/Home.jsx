@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, useRef } from 'react'
 
 import { Menu, Header, Container, Card, Button, Segment, Icon, Item, Image, Divider, Label } from "semantic-ui-react"
 
@@ -7,12 +7,27 @@ import PostViewer from './PostViewer';
 import { connect } from 'react-redux';
 import PostPreview from './PostPreview';
 import styled from "styled-components"
+import { withRouter } from "react-router-dom"
 
-import { Jumbotron, JumboMessage, ThreeColumnContainer, GridCard } from './StyledComponents'
+import { Jumbotron, JumboMessage, ThreeColumnContainer, GridCard, ImageDivider } from './StyledComponents'
+import Counselling from './Counselling';
 
 function Home(props) {
 
 
+
+    const BasicCard = styled.div`
+    transition: .1s ease-in;
+
+    :hover {
+        -webkit-transform: scale(1.05);
+        -ms-transform: scale(1.05);
+        transform: scale(1.05);
+        transition: .1s ease-in;
+    } 
+    cursor: pointer;
+
+    `
 
     const publishedPosts = props.posts.filter(p => p.published === true)
 
@@ -33,31 +48,33 @@ function Home(props) {
 
 
     return <>
-        <Jumbotron style={{ backgroundImage: 'url("https://static.pexels.com/photos/52599/pexels-photo-52599.jpeg")' }}>
-            <JumboMessage placeholder >
+        <Jumbotron fullHeight src="https://static.pexels.com/photos/52599/pexels-photo-52599.jpeg" >
+            <JumboMessage style={{ justifySelf: "center" }} placeholder >
                 <Header style={{ fontSize: "4rem" }} size="huge" as={"h1"} inverted>Inner Wisdom Psychology</Header>
+
             </JumboMessage>
+            <Label style={{ alignSelf: "flex-end", justifySelf: "flex-start", color: "white", backgroundColor: "rgba(0,0,0,0)" }} size="big" content="scroll" icon="arrow up" />
         </Jumbotron>
 
         <Divider hidden />
 
         <ThreeColumnContainer>
 
-            <div>
+            <BasicCard onClick={() => props.history.push("/counselling")}>
                 <Image size="small" src="https://storage.googleapis.com/inner_wisdom_bucket/APS_Member%20Logo.jpg" />
                 <Header content="Counselling" />
-            </div>
+            </BasicCard>
 
-            <div>
+            <BasicCard onClick={() => props.history.push("/supervision")}>
                 <Image size="tiny" src="https://storage.googleapis.com/inner_wisdom_bucket/AAOS_Member_Logo.jpg" />
                 <Header content="Supervision" />
 
-            </div>
-            <div>
+            </BasicCard>
+            <BasicCard onClick={() => props.history.push("/training")}>
                 <Image size="small" src="https://storage.googleapis.com/inner_wisdom_bucket/bonsai-garden-plant-1382195(1).jpg" />
                 <Header content="Training" />
 
-            </div>
+            </BasicCard>
 
         </ThreeColumnContainer>
 
@@ -97,6 +114,9 @@ function Home(props) {
         {showRecentBlogPost()}
 
 
+
+
+
     </>
 
 }
@@ -105,4 +125,4 @@ const mapStateToProps = (state) => ({
     posts: state.posts
 })
 
-export default connect(mapStateToProps)(Home)
+export default withRouter(connect(mapStateToProps)(Home))

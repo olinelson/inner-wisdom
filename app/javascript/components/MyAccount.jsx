@@ -169,7 +169,7 @@ function MyAccount(props) {
 
 
     return <Container >
-
+        <h1>My Account</h1>
         <TwoColumnContainer>
             {props.user.admin ? showAdminMenu() : showUserMenu()}
 
