@@ -30,13 +30,15 @@ function Nav(props) {
 
 
     const imageHeader = () => {
+        console.log(pathname)
         if (
             pathname === '/schedule' ||
             pathname.includes('/clients') ||
             pathname === '/myaccount' ||
             pathname.includes('/posts') ||
             pathname.includes('/users') ||
-            pathname.includes('/appointments')
+            pathname.includes('/appointments') ||
+            pathname === ""
 
         ) return false
 
@@ -178,7 +180,7 @@ function Nav(props) {
     }
 
     return <>
-        <FixedMenu pointing inverted={pathname === '/schedule' || pathname === '/appointments' || pathname.includes('/clients') || pathname === '/myaccount' || pathname.includes('/posts') ? false : true} secondary >
+        <FixedMenu pointing inverted={imageHeader() ? true : false} secondary >
             {menuOptions()}
             <Menu.Menu position="right">
                 {UserMenuOptions()}
