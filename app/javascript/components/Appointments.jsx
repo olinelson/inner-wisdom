@@ -11,7 +11,7 @@ export const isUserAnAttendeeOfEvent = (event, user) => {
     }
 }
 
-export const availableAndUserBookedAppointments = (events, user, personalEvents) => {
+export const availableAndUserBookedAppointments = (events, user, personalEvents = []) => {
     let result = []
 
     if (!events) return result

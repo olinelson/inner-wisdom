@@ -9,7 +9,7 @@
 // require('dotenv').config()
 // import dotenv from 'dotenv'
 
-// console.log(require('dotenv').config({ path: '../../../.env' }))
+
 
 import WebpackerReact from 'webpacker-react'
 // components

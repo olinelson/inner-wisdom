@@ -25,13 +25,6 @@ import Counselling from './Counselling'
 import Supervision from './Supervision'
 import Training from './Training'
 import About from './About';
-// import dotenv from 'dotenv'
-// const dotenv = require('dotenv')
-
-// console.log(dotenv.config({ path: '../../../.env' }))
-
-// console.log(dotenv.config({ path: '../../../.env' }))
-
 
 
 
@@ -69,7 +62,6 @@ function reducer(state = initialState, action) {
 
             return { ...state, personalEvents: action.value.personalEvents, events: action.value.events, calendarScrollToTime: new Date(action.value.scrollToEvent.start_time) }
         case "SET_USER":
-            console.log("setting user in appState", action.value)
             return { ...state, user: action.value }
         case "SET_USERS":
             return { ...state, users: action.value }
@@ -135,7 +127,7 @@ export function App(props) {
             <HashRouter basename="/" >
                 <>
                     <div style={{ minHeight: "90vh" }}>
-                        {/* {console.log("above route", store)} */}
+
                         <Route
                             render={rProps => <Nav {...store} {...rProps} user={store.getState().user} />}
                         />

@@ -20,11 +20,10 @@ class MainController < ApplicationController
     
 
     def createPersonalCalInstance
-        if current_user && current_user.google_calendar_email
-            # byebug
+        if current_user && current_user.google_calendar_email.length > 1
+
             begin
                 calendar_address = current_user.google_calendar_email
-                # byebug
                 @personalCal = Google::Calendar.new(
                     :client_id     => ENV['GOOGLE_CLIENT_ID'], 
                     :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
@@ -141,9 +140,47 @@ class MainController < ApplicationController
 
 
         render json: {events: @businessCal.events} 
-        NotificationMailer.user_appointment_confirmation(user, editedEvent).deliver
-        NotificationMailer.admin_appointment_confirmation(user, editedEvent).deliver
+        jsonEvent = editedEvent.to_json
+        NotificationMailer.user_appointment_confirmation(user, jsonEvent).deliver_later
+        NotificationMailer.admin_appointment_confirmation(user, jsonEvent).deliver_later
         
+    end
+
+    def cancelEvent
+        event = params["event"]
+        inGracePeriod = params["inGracePeriod"]
+        user = current_user
+        attendees= []
+
+         if inGracePeriod
+            event["title"] = "Available Appointment"
+        end
+
+         if !inGracePeriod && event["attendees"] 
+            attendees = event["attendees"].map{|a| 
+
+    
+                user = User.find_by(email: a["email"])
+                if user === nil
+                    displayName= a["email"].split("@").first
+                else
+                    displayName = user["first_name"] + " " + user["last_name"]
+                end
+                
+                
+            {
+            'email' => a["email"],
+            'displayName' => displayName, 
+            'responseStatus' => 'tentative'
+             }
+            }
+        end
+        jsonEvent = event.to_json
+        NotificationMailer.user_appointment_cancelation(user, jsonEvent).deliver_later
+        # NotificationMailer.admin_appointment_confirmation(user, jsonEvent).deliver_later
+        
+
+        return editGoogleCalEvent(cal: @businessCal, event: event, attendees: attendees)
     end
 
 
@@ -184,6 +221,7 @@ class MainController < ApplicationController
     end
 
     def editGoogleCalEvent(cal:, event:, attendees: [])
+
         editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
             e.title = event["title"]
             e.color_id = 2
@@ -194,8 +232,10 @@ class MainController < ApplicationController
             # e.notes= "one fine day in the middle of the night, two dead men got up to fight"
             e.attendees = attendees
         end
-         render json: {scrollToEvent: editedEvent, events: @businessCal.events, personalEvents: @personalCal.events } 
+         render json: {scrollToEvent: editedEvent, events: @businessCal.events} 
     end
+
+
 
     def deleteEvent
          event = params["event"]

@@ -30,7 +30,7 @@ function Nav(props) {
 
 
     const imageHeader = () => {
-        console.log(pathname)
+
         if (
             pathname === '/schedule' ||
             pathname.includes('/clients') ||

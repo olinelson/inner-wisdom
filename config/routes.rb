@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   delete '/delete', to: 'main#deleteEvent'
 
   post '/update', to: 'main#updateEvent'
+
+  post '/cancel', to: 'main#cancelEvent'
   
   post '/purchase', to: 'main#purchase'
 
