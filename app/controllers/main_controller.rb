@@ -41,6 +41,7 @@ class MainController < ApplicationController
     end
 
     def home
+        byebug
         user = nil
         personalEvents = nil
         users = User.all
@@ -256,6 +257,12 @@ class MainController < ApplicationController
         render json: {scrollToEvent: event, events: @businessCal.events, personalEvents: @personalCal.events}
 
     end
+
+    # def deleteAllEvents(cal)
+    #     cal.events.each do |e|
+    #         e.delete
+    #     end
+    # end
 
     def all 
         puts @businessCal.events
