@@ -15,6 +15,8 @@ import LinkOrATag from "./LinkOrATag"
 function Nav(props) {
 
 
+
+
     let csrfToken
 
     if (props.static) csrfToken = ""
@@ -26,6 +28,20 @@ function Nav(props) {
     if (props.static) pathname = ""
     else pathname = props.location.pathname
 
+
+    const imageHeader = () => {
+        if (
+            pathname === '/schedule' ||
+            pathname.includes('/clients') ||
+            pathname === '/myaccount' ||
+            pathname.includes('/posts') ||
+            pathname.includes('/users') ||
+            pathname.includes('/appointments')
+
+        ) return false
+
+        return true
+    }
 
     const signOutHandeler = () => {
 
@@ -44,13 +60,13 @@ function Nav(props) {
     }
 
     const FixedMenu = styled(Menu)`
-        position: ${() => pathname === '/schedule' || pathname.includes('/clients') || pathname === '/myaccount' || pathname.includes('/posts') ? "sticky" : "absolute"};
+        position: ${() => imageHeader() ? "absolute" : "sticky"};
         // position: sticky ;
         z-index: 1;
         width: 100vw;
         top:0rem !important;
         border: none !important;
-        background: ${() => pathname === '/schedule' || pathname.includes('/clients') || pathname === '/myaccount' || pathname === '/appointments' || pathname.includes('/posts') ? "white !important" : "linear-gradient(180deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,0) 100%) !important;"};
+        background: ${() => imageHeader() ? "linear-gradient(180deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,0) 100%) !important;" : "white !important"};
 
         @media (max-width: 40rem) {
             border: 1px solid red !important;
@@ -60,8 +76,6 @@ function Nav(props) {
     `
 
     const MobileMenu = styled.div`
-        
-        // position: ${() => pathname === '/myaccount' || pathname === '/clients' || pathname === '/appointments' ? "sticky" : "fixed"};
         position: fixed;
         z-index: 2;
         top: 1.5rem;
