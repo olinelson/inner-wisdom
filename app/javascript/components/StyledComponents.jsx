@@ -10,7 +10,7 @@ export const Jumbotron = styled.div`
     height: ${props => props.fullHeight ? "100vh !important" : "40vh"};
 
     display: grid;
-    // align-items: center;
+    align-items: center;
     // justify-content: center;
 }
 `

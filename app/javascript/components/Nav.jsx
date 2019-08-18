@@ -44,13 +44,13 @@ function Nav(props) {
     }
 
     const FixedMenu = styled(Menu)`
-        position: ${() => pathname === '/schedule' || pathname === '/clients' || pathname === '/myaccount' ? "sticky" : "absolute"};
-        // position: absolute ;
+        position: ${() => pathname === '/schedule' || pathname.includes('/clients') || pathname === '/myaccount' || pathname.includes('/posts') ? "sticky" : "absolute"};
+        // position: sticky ;
         z-index: 1;
         width: 100vw;
         top:0rem !important;
         border: none !important;
-        background: ${() => pathname === '/schedule' || pathname === '/clients' || pathname === '/myaccount' || pathname === '/appointments' ? "white !important" : "linear-gradient(180deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,0) 100%) !important;"};
+        background: ${() => pathname === '/schedule' || pathname.includes('/clients') || pathname === '/myaccount' || pathname.includes('/posts') ? "white !important" : "linear-gradient(180deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,0) 100%) !important;"};
 
         @media (max-width: 40rem) {
             border: 1px solid red !important;
@@ -61,7 +61,8 @@ function Nav(props) {
 
     const MobileMenu = styled(Menu)`
         
-        position: ${() => pathname === '/myaccount' || pathname === '/clients' || pathname === '/appointments' ? "sticky" : "fixed"};
+        // position: ${() => pathname === '/myaccount' || pathname === '/clients' || pathname === '/appointments' ? "sticky" : "fixed"};
+        position: sticky;
         z-index: 2;
         width: 100vw;
         top: 0!important;
@@ -154,7 +155,7 @@ function Nav(props) {
     }
 
     return <>
-        <FixedMenu pointing inverted={pathname === '/myaccount' || pathname === '/clients' || pathname === '/schedule' || pathname === '/appointments' ? false : true} secondary >
+        <FixedMenu pointing inverted={pathname === '/schedule' || pathname.includes('/clients') || pathname === '/myaccount' || pathname.includes('/posts') ? false : true} secondary >
             {menuOptions()}
             <Menu.Menu position="right">
                 {UserMenuOptions()}

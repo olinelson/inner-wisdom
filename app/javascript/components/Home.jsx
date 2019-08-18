@@ -49,7 +49,7 @@ function Home(props) {
 
     return <>
         <Jumbotron fullHeight src="https://static.pexels.com/photos/52599/pexels-photo-52599.jpeg" >
-            <JumboMessage style={{ justifySelf: "center" }} placeholder >
+            <JumboMessage style={{ justifySelf: "center", alignSelf: "center" }} placeholder >
                 <Header style={{ fontSize: "4rem" }} size="huge" as={"h1"} inverted>Inner Wisdom Psychology</Header>
 
             </JumboMessage>
