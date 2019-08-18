@@ -3,26 +3,27 @@ import { Container, Segment, Card, Icon } from "semantic-ui-react"
 import React from "react"
 
 export const Jumbotron = styled.div`
-    background-position: center;
+    background-position: center !important;
     background-size: cover !important;
     background-repeat: no-repeat !important;
      background: ${props => `url('${props.src}')`};
-    height: ${props => props.fullHeight ? "100vh !important" : "40vh"};
+     height: ${props => props.fullHeight ? "100vh !important" : "40vh"};
 
     display: grid;
-    align-items: center;
-    // justify-content: center;
 }
 `
-export const JumboMessage = styled(Segment)`
+export const JumboMessage = styled.div`
     background-color: rgba(0,0,0,0) !important;
-    border: none !important;
+    // border: none !important;
+    align-self: end;
+    justify-self: center;
+
 `
 
 export const ThreeColumnContainer = styled(Container)`
     padding: 1rem;
     display: grid !important;
-    // grid-template-columns: repeat( auto-fit, minmax(15rem, 1fr)) ;
+    // grid-template-columns: repeat( auto-fill, minmax(14rem, 1fr)) ;
     grid-template-columns: repeat(3, 1fr);
     justify-items: center;
     grid-gap: 2rem;
@@ -48,18 +49,21 @@ export const ImageDivider = styled.div`
     margin: 2rem 0;
 `
 
-export const QuoteContainer = styled.blockquote`
+export const QuoteContainer = styled.div`
   border-left: .5rem solid  	#8EC03E;
   padding-left: .5rem;
   display: grid;
   grid-gap: .5rem;
-  margin: 2rem -1rem;
+  margin: 0 0 1rem -1rem;
   color:  	grey;
   font-size: 1.5rem;
+  width: 50rem;
+  max-width: 100%;
+  grid-area: quote;
 `
 
 export const Quote = (props) => {
-    return <QuoteContainer>
+    return <QuoteContainer >
         <Icon size="big" style={{ color: "grey" }} name="quote left" />
         {props.children}
         {props.cite ?
@@ -68,5 +72,19 @@ export const Quote = (props) => {
         }
     </QuoteContainer>
 }
+
+export const InfoContainer = styled(Container)`
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        grid-gap: 1rem;
+        grid-template-areas:
+        "header header"
+        "p1 img"
+        "quote quote"
+        "p2 p2"
+        "p3 p3"
+        
+        ;
+    `
 
 

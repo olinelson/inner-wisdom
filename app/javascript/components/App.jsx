@@ -24,6 +24,7 @@ import Notification from "./Notification"
 import Counselling from './Counselling'
 import Supervision from './Supervision'
 import Training from './Training'
+import About from './About';
 // import dotenv from 'dotenv'
 // const dotenv = require('dotenv')
 
@@ -152,6 +153,11 @@ export function App(props) {
                             <Route
                                 path="/counselling"
                                 render={props => <Counselling />}
+                            />
+
+                            <Route
+                                path="/about"
+                                render={props => <About />}
                             />
                             <Route
                                 path="/supervision"

@@ -11,6 +11,8 @@ import { withRouter } from "react-router-dom"
 
 import { Jumbotron, JumboMessage, ThreeColumnContainer, GridCard, ImageDivider } from './StyledComponents'
 import Counselling from './Counselling';
+import Supervision from './Supervision';
+import Training from './Training';
 
 function Home(props) {
 
@@ -18,6 +20,7 @@ function Home(props) {
 
     const BasicCard = styled.div`
     transition: .1s ease-in;
+    text-align: center;
 
     :hover {
         -webkit-transform: scale(1.05);
@@ -49,8 +52,10 @@ function Home(props) {
 
     return <>
         <Jumbotron fullHeight src="https://static.pexels.com/photos/52599/pexels-photo-52599.jpeg" >
-            <JumboMessage style={{ justifySelf: "center", alignSelf: "center" }} placeholder >
+            <JumboMessage  >
                 <Header style={{ fontSize: "4rem" }} size="huge" as={"h1"} inverted>Inner Wisdom Psychology</Header>
+                <Header.Subheader style={{ color: "white" }} inverted as="h3">Wellbeing, Relationships, Guidance</Header.Subheader>
+                {/* <h1>Inner Wisdom Psychology</h1> */}
 
             </JumboMessage>
             <Label style={{ alignSelf: "flex-end", justifySelf: "flex-start", color: "white", backgroundColor: "rgba(0,0,0,0)" }} size="big" content="scroll" icon="arrow up" />
@@ -75,6 +80,11 @@ function Home(props) {
                 <Header content="Training" />
 
             </BasicCard>
+            {/* <BasicCard onClick={() => props.history.push("/training")}>
+                <Image size="small" src="https://storage.googleapis.com/inner_wisdom_bucket/bonsai-garden-plant-1382195(1).jpg" />
+                <Header content="Memberships" />
+
+            </BasicCard> */}
 
         </ThreeColumnContainer>
 
@@ -86,7 +96,7 @@ function Home(props) {
             {/* <Segment> */}
             <Item.Group>
                 <Item>
-                    <Item.Image size='medium' src='https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500' />
+                    <Item.Image size='medium' src='https://storage.googleapis.com/inner_wisdom_bucket/DSC_0014.jpg' />
 
                     <Item.Content verticalAlign='top'>
                         <Header>Susan Stephenson | Director
@@ -107,9 +117,9 @@ function Home(props) {
 
 
 
-        <Divider hidden />
-        <Divider />
-        <Divider hidden />
+
+
+
 
         {showRecentBlogPost()}
 

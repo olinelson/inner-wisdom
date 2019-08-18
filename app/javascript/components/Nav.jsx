@@ -50,7 +50,7 @@ function Nav(props) {
         width: 100vw;
         top:0rem !important;
         border: none !important;
-        background: ${() => pathname === '/schedule' || pathname.includes('/clients') || pathname === '/myaccount' || pathname.includes('/posts') ? "white !important" : "linear-gradient(180deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,0) 100%) !important;"};
+        background: ${() => pathname === '/schedule' || pathname.includes('/clients') || pathname === '/myaccount' || pathname === '/appointments' || pathname.includes('/posts') ? "white !important" : "linear-gradient(180deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,0) 100%) !important;"};
 
         @media (max-width: 40rem) {
             border: 1px solid red !important;
@@ -79,7 +79,11 @@ function Nav(props) {
                 <LinkOrATag to="/" static={props.static}>Inner Wisdom</LinkOrATag>
             </Menu.Item>
 
-            <Menu.Item active={pathname === '/counselling'} >
+            <Menu.Item active={pathname === '/about'} >
+                <LinkOrATag static={props.static} to="/about">About</LinkOrATag>
+            </Menu.Item>
+
+            {/* <Menu.Item active={pathname === '/counselling'} >
                 <LinkOrATag static={props.static} to="/counselling">Counselling</LinkOrATag>
             </Menu.Item>
 
@@ -89,7 +93,7 @@ function Nav(props) {
 
             <Menu.Item active={pathname === '/training'} >
                 <LinkOrATag static={props.static} to="/training">Training</LinkOrATag>
-            </Menu.Item>
+            </Menu.Item> */}
 
             <Menu.Item active={pathname === '/blog'} >
                 <LinkOrATag static={props.static} to="/blog">Blog</LinkOrATag>
@@ -155,7 +159,7 @@ function Nav(props) {
     }
 
     return <>
-        <FixedMenu pointing inverted={pathname === '/schedule' || pathname.includes('/clients') || pathname === '/myaccount' || pathname.includes('/posts') ? false : true} secondary >
+        <FixedMenu pointing inverted={pathname === '/schedule' || pathname === '/appointments' || pathname.includes('/clients') || pathname === '/myaccount' || pathname.includes('/posts') ? false : true} secondary >
             {menuOptions()}
             <Menu.Menu position="right">
                 {UserMenuOptions()}
