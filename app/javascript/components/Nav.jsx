@@ -189,6 +189,7 @@ function Nav(props) {
         </FixedMenu >
 
         <MobileMenu>
+            <Divider hidden />
             {/* <Menu.Menu position="right"> */}
             {/* < Menu.Item  > */}
             <Dropdown direction="left" icon="bars" floating >

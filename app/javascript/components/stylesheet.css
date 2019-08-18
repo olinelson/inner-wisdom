@@ -28,3 +28,8 @@
     background-color: rgba(0,0,0,0) !Important;
 }
 
+input[type='text'],
+input[type='number'],
+textarea {
+  font-size: 16px;
+}
