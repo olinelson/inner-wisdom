@@ -8,7 +8,7 @@ export default function Training() {
             <Divider hidden />
             <Container text >
 
-                <Header>Training page</Header>
+                <Header>Training</Header>
 
                 <p>I have spent 20 years as a trainer of mental health professionals in a variety of areas, including: counselling skills and theories; grief and loss; mental health in adulthood; treating psychological and emotional trauma; practitioner well-being and  burnout and training pastoral and Clinical Supervisors.</p>
                 <p>Currently, I lecture Post graduate students in the School of Counselling at Excelsia College, Sydney.</p>
