@@ -1,7 +1,7 @@
 import React, { useState, Component } from 'react'
 
 
-import { Menu, Icon, Dropdown, Sidebar, Segment, Header, Image } from 'semantic-ui-react'
+import { Menu, Icon, Dropdown, Divider, Sidebar, Segment, Header, Image } from 'semantic-ui-react'
 
 import { Link, withRouter } from 'react-router-dom'
 import { connect } from 'react-redux';
@@ -59,15 +59,20 @@ function Nav(props) {
          
     `
 
-    const MobileMenu = styled(Menu)`
+    const MobileMenu = styled.div`
         
         // position: ${() => pathname === '/myaccount' || pathname === '/clients' || pathname === '/appointments' ? "sticky" : "fixed"};
-        position: sticky;
+        position: fixed;
         z-index: 2;
-        width: 100vw;
-        top: 0!important;
+        top: 1.5rem;
+        right: 1rem;
         background: rgba(0, 0, 0, 0);
-
+        font-size: 2.5rem !important;
+        color: #666666;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        
         @media(min-width: 40rem) {
             display: none!important;
         }
@@ -167,18 +172,20 @@ function Nav(props) {
 
         </FixedMenu >
 
-        <MobileMenu secondary>
-            <Menu.Menu position="right">
-                < Menu.Item  >
-                    <Dropdown icon="bars" floating >
+        <MobileMenu>
+            {/* <Menu.Menu position="right"> */}
+            {/* < Menu.Item  > */}
+            <Dropdown direction="left" icon="bars" floating >
 
-                        <Dropdown.Menu>
-                            {menuOptions()}
-                            {UserMenuOptions()}
-                        </Dropdown.Menu>
-                    </Dropdown>
-                </Menu.Item >
-            </Menu.Menu>
+                <Dropdown.Menu>
+                    {menuOptions()}
+                    {UserMenuOptions()}
+                </Dropdown.Menu>
+            </Dropdown>
+
+            <Divider hidden />
+            {/* </Menu.Item > */}
+            {/* </Menu.Menu> */}
 
 
         </MobileMenu>
