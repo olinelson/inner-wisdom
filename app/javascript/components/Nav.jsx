@@ -56,8 +56,8 @@ function Nav(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(() => props.dispatch({ type: "SET_USER", value: null }))
-            .then(() => props.history.push("/"))
+            .then(() => window.location.href = `${process.env.BASE_URL}`)
+
 
     }
 
@@ -189,7 +189,6 @@ function Nav(props) {
         </FixedMenu >
 
         <MobileMenu>
-            <Divider hidden />
             {/* <Menu.Menu position="right"> */}
             {/* < Menu.Item  > */}
             <Dropdown direction="left" icon="bars" floating >

@@ -54,7 +54,7 @@ function Home(props) {
         <Jumbotron fullHeight src="https://static.pexels.com/photos/52599/pexels-photo-52599.jpeg" >
             <JumboMessage  >
                 <Header style={{ fontSize: "4rem" }} size="huge" as={"h1"} inverted>Inner Wisdom Psychology</Header>
-                <Header.Subheader style={{ color: "white" }} inverted as="h3">Wellbeing, Relationships, Guidance</Header.Subheader>
+                <Header.Subheader style={{ color: "white" }} as="h3">Wellbeing, Relationships, Guidance</Header.Subheader>
                 {/* <h1>Inner Wisdom Psychology</h1> */}
 
             </JumboMessage>
@@ -76,7 +76,7 @@ function Home(props) {
 
             </BasicCard>
             <BasicCard onClick={() => props.history.push("/training")}>
-                <Image size="small" src="https://storage.googleapis.com/inner_wisdom_bucket/bonsai-garden-plant-1382195(1).jpg" />
+                <Image size="small" src="https://storage.googleapis.com/inner_wisdom_bucket/DSC_0021.jpg" />
                 <Header content="Training" />
 
             </BasicCard>
