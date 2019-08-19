@@ -79,7 +79,7 @@ function ReadOnlyEvent(props) {
             <p>As this is less than 24 hours notice you will be charged in full</p>
         </>
 
-        return <p>As this is more than 24 hours notice this cancellation is free.</p>
+        return <p>As this is more than 24 hours notice this cancelation is free.</p>
     }
 
     const cancelEventModal = () => {
