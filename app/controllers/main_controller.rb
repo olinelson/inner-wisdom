@@ -41,7 +41,7 @@ class MainController < ApplicationController
     end
 
     def allPastAndTwoYearsAhead(cal)
-        now = DateTime.now
+        now = DateTime.new(2018,1,1)
         twoYearsAhead = now >> 24
         cal.find_events_in_range(now,twoYearsAhead, options = {max_results: 2500})
     end
