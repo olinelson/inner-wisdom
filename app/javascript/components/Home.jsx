@@ -66,17 +66,17 @@ function Home(props) {
         <ThreeColumnContainer>
 
             <BasicCard onClick={() => props.history.push("/counselling")}>
-                <Image size="small" src="https://storage.googleapis.com/inner_wisdom_bucket/APS_Member%20Logo.jpg" />
+                <Image centered size="small" src="https://storage.googleapis.com/inner_wisdom_bucket/DSC_0022.jpg" />
                 <Header content="Counselling" />
             </BasicCard>
 
             <BasicCard onClick={() => props.history.push("/supervision")}>
-                <Image size="tiny" src="https://storage.googleapis.com/inner_wisdom_bucket/AAOS_Member_Logo.jpg" />
+                <Image centered size="tiny" src="https://storage.googleapis.com/inner_wisdom_bucket/bonsai.jpg" />
                 <Header content="Supervision" />
 
             </BasicCard>
             <BasicCard onClick={() => props.history.push("/training")}>
-                <Image size="small" src="https://storage.googleapis.com/inner_wisdom_bucket/DSC_0021.jpg" />
+                <Image centered size="small" src="https://storage.googleapis.com/inner_wisdom_bucket/DSC_0021.jpg" />
                 <Header content="Training" />
 
             </BasicCard>

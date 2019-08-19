@@ -38,6 +38,8 @@ function Nav(props) {
             pathname.includes('/posts') ||
             pathname.includes('/users') ||
             pathname.includes('/appointments') ||
+            pathname.includes('/supervision') ||
+            pathname.includes('/training') ||
             pathname === ""
 
         ) return false
@@ -100,11 +102,9 @@ function Nav(props) {
                 <LinkOrATag to="/" static={props.static}>Inner Wisdom</LinkOrATag>
             </Menu.Item>
 
-            <Menu.Item active={pathname === '/about'} >
-                <LinkOrATag static={props.static} to="/about">About</LinkOrATag>
-            </Menu.Item>
 
-            {/* <Menu.Item active={pathname === '/counselling'} >
+
+            <Menu.Item active={pathname === '/counselling'} >
                 <LinkOrATag static={props.static} to="/counselling">Counselling</LinkOrATag>
             </Menu.Item>
 
@@ -114,7 +114,11 @@ function Nav(props) {
 
             <Menu.Item active={pathname === '/training'} >
                 <LinkOrATag static={props.static} to="/training">Training</LinkOrATag>
-            </Menu.Item> */}
+            </Menu.Item>
+
+            <Menu.Item active={pathname === '/about'} >
+                <LinkOrATag static={props.static} to="/about">About</LinkOrATag>
+            </Menu.Item>
 
             <Menu.Item active={pathname === '/blog'} >
                 <LinkOrATag static={props.static} to="/blog">Blog</LinkOrATag>

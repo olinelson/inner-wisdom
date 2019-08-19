@@ -10,8 +10,8 @@ function Counselling(props) {
 
     return (
         <>
-            {/* <Jumbotron src="https://storage.googleapis.com/inner_wisdom_bucket/beautiful-bonsai-botany-1671256.jpg" /> */}
-            {/* <Divider hidden /> */}
+            <Jumbotron src="https://storage.googleapis.com/inner_wisdom_bucket/beautiful-bonsai-botany-1671256.jpg" />
+            <Divider hidden />
 
             <InfoContainer text >
                 {/* <div> */}
@@ -41,20 +41,7 @@ function Counselling(props) {
                     </ul>
 
                 </div>
-
-                {/* <Divider /> */}
-
-                {/* <InfoContainer textAlign="center">
-                <Button
-
-                    content="Schedule Appointment"
-                    onClick={() => props.history.push("/appointments")}
-                />
-            </InfoContainer> */}
-                {/* </div> */}
-                {/* <Jumbotron src="https://storage.googleapis.com/inner_wisdom_bucket/beautiful-bonsai-botany-1671256.jpg" /> */}
-                {/* <img style={{ gridArea: "img" }} src=" https://storage.googleapis.com/inner_wisdom_bucket/beautiful-bonsai-botany-1671256.jpg" /> */}
-                <div style={{ backgroundImage: "url(https://storage.googleapis.com/inner_wisdom_bucket/DSC_0022.jpg)", width: "100%", height: "100%", backgroundPosition: "center", backgroundSize: "cover", backgroundRepeat: "no-repeat", gridArea: "img" }} />
+                {/* <div style={{ backgroundImage: "url(https://storage.googleapis.com/inner_wisdom_bucket/DSC_0022.jpg)", width: "100%", height: "100%", backgroundPosition: "center", backgroundSize: "cover", backgroundRepeat: "no-repeat", gridArea: "img" }} /> */}
             </InfoContainer>
         </>
     )

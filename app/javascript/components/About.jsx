@@ -14,12 +14,12 @@ export default function About() {
         <Container>
 
             {/* <Header as="h1" content="About" /> */}
-            <Counselling />
+            {/* <Counselling />
             <Divider />
             <Supervision />
             <Divider />
             <Training />
-            <Divider />
+            <Divider /> */}
             <Memberships />
             <Divider />
             <FAQS />

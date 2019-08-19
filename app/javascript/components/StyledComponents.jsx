@@ -79,7 +79,7 @@ export const InfoContainer = styled(Container)`
         grid-gap: 1rem;
         grid-template-areas:
         "header header"
-        "p1 img"
+        "p1 p1"
         "quote quote"
         "p2 p2"
         "p3 p3"
@@ -87,4 +87,22 @@ export const InfoContainer = styled(Container)`
         ;
     `
 
+export const ImageDiv = styled.div`
+        width: ${props => props.width || "auto"} ;
+        height: ${props => props.height || "auto"};
+        background: ${props => `url('${props.src}')`};
+        background-size: cover;
+        grid-area: ${props => `${props.gridArea}`};
+        background-position: center;
 
+    `
+export const TwoColumnContainer = styled(Container)`
+        grid-template-rows: auto 1fr;
+        display: grid !important;
+        justify-contentt: center;
+        grid-template-columns: 2fr 3fr;
+        grid-template-areas: "heading ." "p1 img";
+        margin-top: 2rem;
+        height: 100vh;
+        grid-column-gap: 1rem;
+    `
