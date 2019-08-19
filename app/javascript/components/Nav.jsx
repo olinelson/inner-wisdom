@@ -40,6 +40,7 @@ function Nav(props) {
             pathname.includes('/appointments') ||
             pathname.includes('/supervision') ||
             pathname.includes('/training') ||
+            pathname.includes('/contact') ||
             pathname === ""
 
         ) return false
@@ -72,9 +73,8 @@ function Nav(props) {
         border: none !important;
         background: ${() => imageHeader() ? "linear-gradient(180deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,0) 100%) !important;" : "white !important"};
 
-        @media (max-width: 40rem) {
-            border: 1px solid red !important;
-            display: none !important;
+        @media (max-width: 50rem) {
+            visibility: hidden !important;
         }
          
     `
@@ -91,7 +91,7 @@ function Nav(props) {
         justify-content: flex-end;
         align-items: center;
         
-        @media(min-width: 40rem) {
+        @media(min-width: 50rem) {
             display: none!important;
         }
 `
@@ -122,6 +122,9 @@ function Nav(props) {
 
             <Menu.Item active={pathname === '/blog'} >
                 <LinkOrATag static={props.static} to="/blog">Blog</LinkOrATag>
+            </Menu.Item>
+            <Menu.Item active={pathname === '/contact'} >
+                <LinkOrATag static={props.static} to="/contact">Contact</LinkOrATag>
             </Menu.Item>
 
 

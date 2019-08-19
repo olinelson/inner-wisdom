@@ -103,6 +103,6 @@ export const TwoColumnContainer = styled(Container)`
         grid-template-columns: 2fr 3fr;
         grid-template-areas: "heading ." "p1 img";
         margin-top: 2rem;
-        height: 100vh;
         grid-column-gap: 1rem;
+
     `

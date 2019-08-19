@@ -11,4 +11,5 @@ export default function Training() {
         <ImageDiv height="50vh" gridArea="img" src="https://storage.googleapis.com/inner_wisdom_bucket/ballpen-blur-close-up-1925536.jpg" />
     </TwoColumnContainer>
 
+
 }

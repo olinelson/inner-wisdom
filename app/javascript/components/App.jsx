@@ -25,6 +25,7 @@ import Counselling from './Counselling'
 import Supervision from './Supervision'
 import Training from './Training'
 import About from './About';
+import Contact from './Contact';
 
 
 
@@ -157,6 +158,10 @@ export function App(props) {
                             <Route
                                 path="/training"
                                 render={props => <Training />}
+                            />
+                            <Route
+                                path="/contact"
+                                render={props => <Contact />}
                             />
                             <Route
                                 path="/myaccount"
