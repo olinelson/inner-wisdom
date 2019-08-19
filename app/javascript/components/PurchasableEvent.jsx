@@ -10,9 +10,6 @@ import Checkout from "./Checkout"
 import ReadOnlyEvent from './ReadOnlyEvent';
 
 function PurchasableEvent(props) {
-
-    console.log("in purchasable event")
-
     const event = props.event
     const [infoModal, setInfoModal] = useState(false)
     const [loading, setLoading] = useState(false)

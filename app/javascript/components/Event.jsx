@@ -227,10 +227,10 @@ function Event(props) {
                         {showEventAttendees()}
                     </div>
                     <Divider hidden />
-                    {/* {userPickerDropDown()} */}
-                    <UserPickerDropDown event={event} addAttendeeHandeler={(user) => addAttendeeToSelectedEvent(user)} />
-                </Modal.Description>
 
+
+                </Modal.Description>
+                {personal ? null : <UserPickerDropDown event={event} addAttendeeHandeler={(user) => addAttendeeToSelectedEvent(user)} />}
                 <Button content="delete" onClick={() => deleteEventHandeler()} />
                 <Button content="save" onClick={() => updateSelectedEventHandeler()} />
             </Modal.Content>

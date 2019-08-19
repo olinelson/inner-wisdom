@@ -7,7 +7,7 @@ function UserPickerDropDown(props) {
     const event = props.event
 
     const allUsersNotAttending = (event) => {
-        let users = props.users
+        let users = props.users.filter(u => u.email !== props.user.email)
         if (event == null) return users
 
         if (!event.attendees || event.attendees.length < 1) return users
@@ -65,7 +65,7 @@ const mapStateToProps = (state) => ({
     // events: state.events,
     // personalEvents: state.personalEvents,
     // allEvents: allEvents(state.events, state.personalEvents),
-    // user: state.user,
+    user: state.user,
     users: state.users,
     // csrfToken: state.csrfToken,
     // baseUrl: state.baseUrl,

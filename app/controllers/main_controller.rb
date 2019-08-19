@@ -20,7 +20,7 @@ class MainController < ApplicationController
     
 
     def createPersonalCalInstance
-        if current_user && current_user.google_calendar_email && current_user.google_calendar_refresh_token && current_user.google_calendar_refresh_token.length > 1
+        if current_user && current_user.admin && current_user.google_calendar_email && current_user.google_calendar_refresh_token && current_user.google_calendar_refresh_token.length > 1
 
             begin
                 calendar_address = current_user.google_calendar_email

@@ -9,8 +9,6 @@ import Checkout from "./Checkout"
 
 function ReadOnlyEvent(props) {
 
-    console.log("in read only event")
-
     const event = props.event
     const [modalOpen, setModalOpen] = useState(false)
     const [loading, setLoading] = useState(false)

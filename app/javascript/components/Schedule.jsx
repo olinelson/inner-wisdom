@@ -78,11 +78,6 @@ class Schedule extends Component {
             }
         })
             .then(response => response.json())
-            .then(r => {
-                console.log(r)
-                return r
-            })
-            // .catch(error => console.error('Error:', error))
             .then(res => this.props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { events: res.events, personalEvents: res.personalEvents, scrollToEvent: res.scrollToEvent } }))
 
 
@@ -222,7 +217,9 @@ class Schedule extends Component {
 
     creatingPersonalEventOptions = (e) => {
 
-        if (e && e.personal) return <Segment placeholder>
+        if (e && e.personal) return <Segment textAlign="center" placeholder>
+            {this.eventTimeSetter(e)}
+            <Divider hidden />
             <Form>
                 <Form.Field>
                     <label>Title</label>
@@ -324,8 +321,6 @@ class Schedule extends Component {
     }
 
     render() {
-        // console.log(moment.tz.zone('America/Los_Angeles'))
-        // console.log(this.props.personalEvents[0], "vs", this.props.events[0])
         return <>
 
             <FullWidthCalendarContainer fluid >
@@ -357,8 +352,7 @@ const allEvents = (events, personalEvents) => {
     let result = []
     if (events) result = result.concat(events)
     if (personalEvents) result = result.concat(personalEvents)
-    console.log(personalEvents)
-    // console.log(personalEvents.sort(a, b => new Date(a.start_time) < new Date(b.star_time)))
+
 
     // let demo = {
     //     attendees: null,

@@ -42,8 +42,6 @@ export const FullWidthCalendarContainer = styled(Container)`
 
 function Appointments(props) {
 
-
-
     return (
         <FullWidthCalendarContainer fluid>
             <div style={{ width: "100%", maxWidth: "95vw", justifySelf: "center" }}>
