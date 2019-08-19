@@ -11,13 +11,13 @@ import UserPickerDropDown from "./UserPickerDropDown"
 
 function Event(props) {
 
+
     const [event, setEvent] = useState(props.event);
     const [modalOpen, setModalOpen] = useState(false)
     const [loading, setLoading] = useState(false)
 
     let personal = false
     if (event.calendar.id === props.user.google_calendar_email) personal = true
-
 
     const isAnEmptySlot = () => {
         if (!personal && event.attendees == null) return true
@@ -122,8 +122,6 @@ function Event(props) {
         })
 
         const now = moment().hour(0).minute(0)
-
-
 
         return <>
 
@@ -248,6 +246,8 @@ function Event(props) {
         if (!personal && isAnEmptySlot()) return "grey"
         return "blue"
     }
+
+
 
     return <>
 

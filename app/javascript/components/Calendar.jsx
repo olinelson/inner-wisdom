@@ -52,7 +52,10 @@ function Calendar(props) {
   }
 
   const componentSwitch = () => {
-    if (props.admin) return AdminComponents
+
+    if (props.admin) {
+      return AdminComponents
+    }
 
     if (props.purchasable) return PurchasableComponents
 
@@ -60,7 +63,6 @@ function Calendar(props) {
 
     return ReadOnlyComponents
   }
-
 
 
   return <>

@@ -78,8 +78,12 @@ class Schedule extends Component {
             }
         })
             .then(response => response.json())
+            .then(r => {
+                console.log(r)
+                return r
+            })
+            // .catch(error => console.error('Error:', error))
             .then(res => this.props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { events: res.events, personalEvents: res.personalEvents, scrollToEvent: res.scrollToEvent } }))
-            .then(res => this.props.dispatch({ type: "SET_CALENDAR_SCROLL_TO_TIME", value: event.start_time }))
 
 
     }
@@ -320,6 +324,8 @@ class Schedule extends Component {
     }
 
     render() {
+        // console.log(moment.tz.zone('America/Los_Angeles'))
+        // console.log(this.props.personalEvents[0], "vs", this.props.events[0])
         return <>
 
             <FullWidthCalendarContainer fluid >
@@ -351,6 +357,27 @@ const allEvents = (events, personalEvents) => {
     let result = []
     if (events) result = result.concat(events)
     if (personalEvents) result = result.concat(personalEvents)
+    console.log(personalEvents)
+    // console.log(personalEvents.sort(a, b => new Date(a.start_time) < new Date(b.star_time)))
+
+    // let demo = {
+    //     attendees: null,
+    //     // end_time: "2015-11-29T23:30:00.000Z",
+    //     end_time: "2015-11-29T23:30:00.000Z",
+
+
+    //     d: "6kojep9n61ijeb9h6go3eb9k68om2b9ocpj62bb26kpm6c1l61h6ccr360",
+    //     // start_time: "2015-11-29T22:30:00.000Z",
+    //     start_time: "2015-11-29T22:30:00.000Z",
+    //     status: "tentative",
+    //     title: "Demo",
+    //     transparency: "transparent",
+    //     visibility: "default",
+    //     calendar: {
+    //         id: "susanjeanmct@gmail.com",
+    //     }
+    // }
+
     return result
 }
 
@@ -358,6 +385,7 @@ const mapStateToProps = (state) => ({
     events: state.events,
     personalEvents: state.personalEvents,
     allEvents: allEvents(state.events, state.personalEvents),
+    // allEvents: state.personalEvents,
     user: state.user,
     users: state.users,
     csrfToken: state.csrfToken,
@@ -366,3 +394,4 @@ const mapStateToProps = (state) => ({
 })
 
 export default connect(mapStateToProps)(Schedule)
+

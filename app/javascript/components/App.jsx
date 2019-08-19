@@ -59,7 +59,6 @@ function reducer(state = initialState, action) {
         case "SET_PERSONAL_EVENTS":
             return { ...state, personalEvents: action.value }
         case "SET_PERSONAL_AND_BUSINESS_EVENTS":
-
             return { ...state, personalEvents: action.value.personalEvents, events: action.value.events, calendarScrollToTime: new Date(action.value.scrollToEvent.start_time) }
         case "SET_USER":
             return { ...state, user: action.value }

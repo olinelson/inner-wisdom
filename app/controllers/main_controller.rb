@@ -7,7 +7,7 @@ class MainController < ApplicationController
                 :client_id     => ENV['GOOGLE_CLIENT_ID'], 
                 :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
                 :calendar      => ENV['GOOGLE_CALENDAR_ADDRESS'],
-                :redirect_url  => ENV['GOOGLE_REDIRECT_URL'],
+                :redirect_url  => ENV['GOOGLE_REDIRECT_URL']
                                 )
                 @businessCal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])               
             rescue
@@ -20,7 +20,7 @@ class MainController < ApplicationController
     
 
     def createPersonalCalInstance
-        if current_user && current_user.google_calendar_email
+        if current_user && current_user.google_calendar_email && current_user.google_calendar_refresh_token && current_user.google_calendar_refresh_token.length > 1
 
             begin
                 calendar_address = current_user.google_calendar_email
@@ -28,16 +28,22 @@ class MainController < ApplicationController
                     :client_id     => ENV['GOOGLE_CLIENT_ID'], 
                     :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
                     :calendar      => calendar_address,
-                    :redirect_url  => ENV['GOOGLE_REDIRECT_URL'],
+                    :redirect_url  => ENV['GOOGLE_REDIRECT_URL']
                                     )
 
                     @personalCal.login_with_refresh_token(current_user.google_calendar_refresh_token)               
                 rescue
-                    puts "login error"
+                    puts "personal login error"
             end
 
         end
         
+    end
+
+    def allPastAndTwoYearsAhead(cal)
+        now = DateTime.now
+        twoYearsAhead = now >> 24
+        cal.find_events_in_range(now,twoYearsAhead, options = {max_results: 2500})
     end
 
     def home
@@ -49,7 +55,9 @@ class MainController < ApplicationController
             user = current_user
         begin
             if user.google_calendar_email  && user.google_calendar_refresh_token
-                personalEvents = @personalCal.events
+                # personalEvents = @personalCal.events
+                # personalEvents = @personalCal.find_future_events
+                personalEvents = allPastAndTwoYearsAhead(@personalCal)
             end
         rescue
                 puts "error fetching personal events"
@@ -119,7 +127,8 @@ class MainController < ApplicationController
             e.reminders =  { "useDefault": false }
             e.attendees= attendees
         end
-         render json: {scrollToEvent: event, events: @businessCal.events, personalEvents: @personalCal.events}
+
+         render json: {scrollToEvent: event, events: @businessCal.events, personalEvents: @personalCal ? allPastAndTwoYearsAhead(@personalCal) : [] }
     end
 
    
@@ -129,7 +138,7 @@ class MainController < ApplicationController
         event = params["event"]
         fullName = user.first_name + " " + user.last_name
 
-        editedEvent = @businessCal.find_or_create_event_by_id(event["id"]) do |e|
+        editedEvent = @businessCal.find_event_by_id(event["id"]) do |e|
             e.title = fullName + " | session confirmed"
             e.color_id = 2
             e.location= "609 W 135 St New York, New York"
@@ -252,7 +261,7 @@ class MainController < ApplicationController
 
         found.first.delete
 
-        render json: {scrollToEvent: event, events: @businessCal.events, personalEvents: @personalCal.events}
+        render json: {scrollToEvent: event, events: @businessCal.events, personalEvents: allPastAndTwoYearsAhead(@personalCal)}
 
     end
 
