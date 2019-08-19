@@ -40,10 +40,11 @@ class MainController < ApplicationController
         
     end
 
-    def allPastAndTwoYearsAhead(cal)
-        now = DateTime.new(2018,1,1)
+    def eventsInDateWindow(cal)
+        now = DateTime.now
+        towYearsAgo = now << 24
         twoYearsAhead = now >> 24
-        cal.find_events_in_range(now,twoYearsAhead, options = {max_results: 2500})
+        cal.find_events_in_range(towYearsAgo,twoYearsAhead, options = {max_results: 2500})
     end
 
     def home
@@ -55,9 +56,7 @@ class MainController < ApplicationController
             user = current_user
         begin
             if user.google_calendar_email  && user.google_calendar_refresh_token
-                # personalEvents = @personalCal.events
-                # personalEvents = @personalCal.find_future_events
-                personalEvents = allPastAndTwoYearsAhead(@personalCal)
+                personalEvents = eventsInDateWindow(@personalCal)
             end
         rescue
                 puts "error fetching personal events"
@@ -69,7 +68,7 @@ class MainController < ApplicationController
         end
 
         begin
-            businessEvents = @businessCal.events
+            businessEvents = eventsInDateWindow(@businessCal)
             rescue
             businessEvents = []    
         end
@@ -128,7 +127,7 @@ class MainController < ApplicationController
             e.attendees= attendees
         end
 
-         render json: {scrollToEvent: event, events: @businessCal.events, personalEvents: @personalCal ? allPastAndTwoYearsAhead(@personalCal) : [] }
+         render json: {scrollToEvent: event, events: eventsInDateWindow(@businessCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
     end
 
    
@@ -145,9 +144,9 @@ class MainController < ApplicationController
             e.attendees= [
             {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
         end
-        byebug
 
-        render json: {events: @businessCal.events} 
+
+        render json: {events: eventsInDateWindow(@businessCal)} 
         jsonEvent = editedEvent.to_json
         NotificationMailer.user_appointment_confirmation(user, jsonEvent).deliver_later
         NotificationMailer.admin_appointment_confirmation(user, jsonEvent).deliver_later
@@ -240,7 +239,7 @@ class MainController < ApplicationController
             # e.notes= "one fine day in the middle of the night, two dead men got up to fight"
             e.attendees = attendees
         end
-         render json: {scrollToEvent: editedEvent, events: @businessCal.events} 
+         render json: {scrollToEvent: editedEvent, events: eventsInDateWindow(@businessCal)} 
     end
 
 
@@ -261,7 +260,7 @@ class MainController < ApplicationController
 
         found.first.delete
 
-        render json: {scrollToEvent: event, events: @businessCal.events, personalEvents: allPastAndTwoYearsAhead(@personalCal)}
+        render json: {scrollToEvent: event, events: eventsInDateWindow(@businessCal), personalEvents: eventsInDateWindow(@personalCal)}
 
     end
 
