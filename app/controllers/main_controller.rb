@@ -138,14 +138,14 @@ class MainController < ApplicationController
         event = params["event"]
         fullName = user.first_name + " " + user.last_name
 
-        editedEvent = @businessCal.find_event_by_id(event["id"]) do |e|
+        editedEvent = @businessCal.find_or_create_event_by_id(event["id"]) do |e|
             e.title = fullName + " | session confirmed"
             e.color_id = 2
             e.location= "609 W 135 St New York, New York"
             e.attendees= [
             {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
         end
-
+        byebug
 
         render json: {events: @businessCal.events} 
         jsonEvent = editedEvent.to_json
