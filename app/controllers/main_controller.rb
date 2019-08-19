@@ -81,7 +81,6 @@ class MainController < ApplicationController
 
 
     def createEvent
-
         newEvent = params["event"]
         title= ""
 

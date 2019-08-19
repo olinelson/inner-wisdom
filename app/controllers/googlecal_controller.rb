@@ -19,8 +19,6 @@ class GooglecalController < ApplicationController
         newEmail = params["newPersonalEmail"] + "@gmail.com"
         authCode = params["authCode"]
         user = current_user
-        byebug
-        
         cal = Google::Calendar.new(
                     :client_id     => ENV['GOOGLE_CLIENT_ID'], 
                     :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
@@ -30,7 +28,6 @@ class GooglecalController < ApplicationController
          
         
         refresh_token = cal.login_with_auth_code(authCode)   
-        byebug
         user.google_calendar_email = newEmail
         user.google_calendar_refresh_token = refresh_token
         user.save

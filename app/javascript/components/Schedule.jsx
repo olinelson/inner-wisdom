@@ -195,7 +195,7 @@ class Schedule extends Component {
 
     personalOrBusinessToggle = () => {
         let e = this.state.selectedEvent
-        if (!e || this.props.user.google_calendar_email.length < 1) return null
+        if (!e || !this.props.user.google_calendar_email || this.props.user.google_calendar_email.length < 1) return null
 
 
         let label = null

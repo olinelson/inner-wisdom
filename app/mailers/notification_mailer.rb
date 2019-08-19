@@ -5,24 +5,30 @@ class NotificationMailer < ApplicationMailer
         DateTime.parse(@event["start_time"]).strftime("%A, %d %b %Y %l:%M %p") + " till " + DateTime.parse(@event["end_time"]).strftime(" %l:%M %p")
     end
 
+    def alternatePrettyTime
+         DateTime.parse(@event["start"]["dateTime"]).strftime("%A, %d %b %Y %l:%M %p") + " till " + DateTime.parse(@event["end"]["dateTime"]).strftime(" %l:%M %p")
+    end
+
     def user_appointment_cancelation(user,event)
         @user = user
         @event = JSON.parse(event)
-        @time = prettyTime
+        # @time = prettyTime
         mail(to: @user.email, subject: 'Appointment Canceled')
     end
 
     def user_appointment_confirmation(user, event)
+        # byebug
         @user = user
         @event = JSON.parse(event)
-        @time = prettyTime
+        # @time = alternatePrettyTime
         mail(to: @user.email, subject: 'Booking Confirmation')
     end
 
     def admin_appointment_confirmation(user, event)
+        # byebug
         @user = user
         @event = JSON.parse(event)
-        @time = prettyTime
+        @time = alternatePrettyTime
         mail(to: ENV["EMAIL_ADDRESS"], subject: 'Booking Confirmation')
 
     end
