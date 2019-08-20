@@ -12,14 +12,22 @@ export const isUserAnAttendeeOfEvent = (event, user) => {
 }
 
 export const availableAndUserBookedAppointments = (events, user, personalEvents = []) => {
+
+
     let result = []
 
     if (!events) return result
 
     if (user) {
+
+
         result = events.filter(e => e.attendees == null || e.attendees.length < 1 || isUserAnAttendeeOfEvent(e, user))
 
+        if (!user.vetted) result = result.filter(e => e.title.includes("Phone Call Consultation") || isUserAnAttendeeOfEvent(e, user))
+
         if (personalEvents) result = result.concat(personalEvents)
+
+
 
 
     } else {
