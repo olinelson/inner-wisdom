@@ -80,7 +80,7 @@ function Calendar(props) {
         scrollToTime={props.calendarScrollToTime}
         defaultDate={props.calendarDisplayDate}
         popup
-        step={30}
+        step={15}
         timeslots={1}
         onSelectSlot={props.onSelectSlot}
       // min={new Date(2050, 1, 1, 9)}

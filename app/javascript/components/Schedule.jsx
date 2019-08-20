@@ -36,14 +36,17 @@ class Schedule extends Component {
     showEventAttendees = (event, onDelete) => {
         if (event && event.attendees) {
             let users = event.attendees
-            return users.map(u => <Label style={{ margin: ".1rem" }} key={u.id}>
-                <Icon name='user' />
-                {u.first_name + " " + u.last_name}
-                <Icon name='delete' onClick={() => onDelete(u)} />
-            </Label>
-            )
+            return <div style={{ height: "2rem", border: "1px solid red" }}>
+
+                {users.map(u => <Label style={{ margin: ".1rem" }} key={u.id}>
+                    <Icon name='user' />
+                    {u.first_name + " " + u.last_name}
+                    <Icon name='delete' onClick={() => onDelete(u)} />
+                </Label>
+                )}
+            </div>
         }
-        return null
+        return <div style={{ height: "2rem", border: "1px solid red" }}></div>
     }
 
 
@@ -61,14 +64,15 @@ class Schedule extends Component {
 
     // =====================================
 
-    createEventHandeler = (isAppointmentSlot) => {
+    createEventHandeler = (isAppointmentSlot, isConsultSlot) => {
         let event = { ...this.state.selectedEvent }
         this.setState({ creatingEvent: false })
         fetch(`${this.props.baseUrl}/create`, {
             method: "POST",
             body: JSON.stringify({
                 event: event,
-                appointmentSlot: isAppointmentSlot
+                appointmentSlot: isAppointmentSlot,
+                consultSlot: isConsultSlot,
             }),
             headers: {
                 "X-CSRF-Token": this.props.csrfToken,
@@ -244,9 +248,48 @@ class Schedule extends Component {
     }
 
     creatingBusinessEventOptions = (e) => {
-        if (e && e.personal === false) return <Segment placeholder>
-
+        if (e && e.personal === false) return <Segment textAlign="center" placeholder>
+            {this.eventTimeSetter(e)}
             <Grid columns={2} stackable textAlign='center'>
+
+
+                <Grid.Column centered style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div>
+                        <Header icon>
+                            <Icon name='bookmark' />
+                            Book New Appointment
+                             </Header>
+                        <Popup content='This will create a confirmed appointment slot that will only be visible to admin and its attendees.' trigger={<Button primary onClick={() => this.createEventHandeler(false)}>Create</Button>} />
+                        <Divider hidden />
+                        {/* {this.userPickerDropDown(e, this.addAttendeeToSelectedEvent)} */}
+                        {this.showEventAttendees(e, this.removeAttendeeFromSelectedEvent)}
+                        <UserPickerDropDown event={e} addAttendeeHandeler={this.addAttendeeToSelectedEvent} />
+                    </div>
+                </Grid.Column>
+
+                <Grid.Column>
+                    <Header icon>
+                        <Icon name='time' />
+                        New Appointment Slot
+                    </Header>
+                    <Popup content='This will create a "bookable" appointment slot visable to all clients.' trigger={<Button color="grey" onClick={() => this.createEventHandeler(true)} >Create</Button>} />
+
+                    <Divider />
+                    <Header icon>
+                        <Icon name='time' />
+                        New Consultation Slot
+                    </Header>
+                    <Popup content='This will create a "bookable" consultation slot visable to all clients.' trigger={<Button color="yellow" onClick={() => this.createEventHandeler(false, true)} >Create</Button>} />
+
+
+                </Grid.Column>
+
+
+            </Grid>
+            <div>
+                {/* {this.showEventAttendees(e, this.removeAttendeeFromSelectedEvent)} */}
+            </div>
+            {/* <Grid columns={2} stackable textAlign='center'>
                 <Divider vertical>Or</Divider>
 
                 <Grid.Row verticalAlign='top'>
@@ -255,27 +298,16 @@ class Schedule extends Component {
                         <Header icon>
                             <Icon name='bookmark' />
                             Book New Appointment
-                        </Header>
-
-                        {this.eventTimeSetter(e)}
-                        {/* <Divider hidden /> */}
-
+                             </Header>
                         <Divider hidden />
-
-                        {/* <p>This will create a confirmed appointment slot that will only be visible to admin and its attendees.</p> */}
-                        {/* <Button primary onClick={() => this.createEventHandeler(false)}>Create</Button> */}
                         <Popup content='This will create a confirmed appointment slot that will only be visible to admin and its attendees.' trigger={<Button primary onClick={() => this.createEventHandeler(false)}>Create</Button>} />
                         <Divider hidden />
-                        {/* {this.userPickerDropDown(e, this.addAttendeeToSelectedEvent)} */}
+
                         <UserPickerDropDown event={e} addAttendeeHandeler={this.addAttendeeToSelectedEvent} />
                         <Divider hidden />
                         <div>
                             {this.showEventAttendees(e, this.removeAttendeeFromSelectedEvent)}
                         </div>
-
-
-
-
                     </Grid.Column>
 
                     <Grid.Column  >
@@ -284,16 +316,16 @@ class Schedule extends Component {
                             New Appointment Slot
                          </Header>
 
-                        {this.eventTimeSetter(e)}
+
 
                         <Divider hidden />
-                        {/* <p>This will create a "bookable" appointment slot visable to all clients.</p> */}
-                        {/* <Button color="grey" onClick={() => this.createEventHandeler(true)} >Create</Button> */}
                         <Popup content='This will create a "bookable" appointment slot visable to all clients.' trigger={<Button color="grey" onClick={() => this.createEventHandeler(true)} >Create</Button>} />
+                        <Popup content='This will create a "bookable" consultation slot visable to all clients.' trigger={<Button color="yellow" onClick={() => this.createEventHandeler(false, true)} >Create</Button>} />
 
                     </Grid.Column>
                 </Grid.Row>
-            </Grid>
+            </Grid> */}
+
         </Segment>
     }
 

@@ -91,7 +91,7 @@ class MainController < ApplicationController
         end
 
         begin
-            byebug
+
             appointments = eventsInDateWindow(@appointmentsCal)
 
             rescue
@@ -144,6 +144,9 @@ class MainController < ApplicationController
 
         if params["appointmentSlot"]
             return createGoogleEvent(cal: @appointmentsCal,newEvent: newEvent, title: "Available Appointment")
+        end
+        if params["consultSlot"]
+            return createGoogleEvent(cal: @consultsCal,newEvent: newEvent, title: "Available Phone Consult")
         end
 
         return createGoogleEvent(cal: @appointmentsCal, newEvent: newEvent, title: title, attendees: attendees )
