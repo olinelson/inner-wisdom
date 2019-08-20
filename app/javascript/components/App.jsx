@@ -34,7 +34,8 @@ import Contact from './Contact';
 
 const initialState = {
     user: null,
-    events: [],
+    appointments: [],
+    consults: [],
     personalEvents: [],
     posts: [],
     myAccountPanel: "calendar",
@@ -60,7 +61,7 @@ function reducer(state = initialState, action) {
         case "SET_PERSONAL_EVENTS":
             return { ...state, personalEvents: action.value }
         case "SET_PERSONAL_AND_BUSINESS_EVENTS":
-            return { ...state, personalEvents: action.value.personalEvents, events: action.value.events, calendarScrollToTime: new Date(action.value.scrollToEvent.start_time) }
+            return { ...state, personalEvents: action.value.personalEvents, appointments: action.value.appointments, consults: action.value.consults, calendarScrollToTime: new Date(action.value.scrollToEvent.start_time) }
         case "SET_USER":
             return { ...state, user: action.value }
         case "SET_USERS":
@@ -78,7 +79,8 @@ function reducer(state = initialState, action) {
         case "SET_ALL":
             return {
                 ...state,
-                events: action.value.events,
+                appointments: action.value.appointments,
+                consults: action.value.consults,
                 personalEvents: action.value.personalEvents,
                 posts: action.value.posts,
                 user: action.value.user,
@@ -104,7 +106,8 @@ export function App(props) {
         type: "SET_ALL", value: {
             posts: props.posts,
             // events: formatEvents(props.events, "business"),
-            events: props.events,
+            appointments: props.appointments,
+            consults: props.consults,
             // personalEvents: formatEvents(props.personalEvents, "personal"),
             personalEvents: props.personalEvents,
             user: props.user,
@@ -118,7 +121,7 @@ export function App(props) {
 
     })
 
-
+    console.log(props)
 
 
     return (

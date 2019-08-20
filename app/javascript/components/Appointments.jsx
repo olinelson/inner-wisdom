@@ -11,29 +11,31 @@ export const isUserAnAttendeeOfEvent = (event, user) => {
     }
 }
 
-export const availableAndUserBookedAppointments = (events, user, personalEvents = []) => {
+export function flatten(arr) {
+    return [].concat(...arr)
+}
 
-
+export const relevantEvents = (appointments, consults, user) => {
     let result = []
 
-    if (!events) return result
+    if (!appointments) return result
+
+    let freeAppointments = appointments.filter(e => e.attendees == null || e.attendees.length < 1)
+    let freeConsults = consults.filter(e => e.attendees == null || e.attendees.length < 1)
+
 
     if (user) {
+        let usersAppointments = appointments.filter(e => isUserAnAttendeeOfEvent(e, user))
+        let usersConsults = consults.filter(e => isUserAnAttendeeOfEvent(e, user))
 
-
-        result = events.filter(e => e.attendees == null || e.attendees.length < 1 || isUserAnAttendeeOfEvent(e, user))
-
-        if (!user.vetted) result = result.filter(e => e.title.includes("Phone Call Consultation") || isUserAnAttendeeOfEvent(e, user))
-
-        if (personalEvents) result = result.concat(personalEvents)
-
-
-
+        if (user.vetted) result = flatten([...usersAppointments, usersConsults, freeAppointments])
+        else result = flatten([...freeConsults, usersConsults])
 
     } else {
-        result = events.filter(e => e.attendees == null || e.attendees.length < 1)
+        result = flatten([...freeConsults, freeAppointments])
     }
 
+    console.log(result)
     return result
 }
 
@@ -59,15 +61,17 @@ function Appointments(props) {
                 <Label circular color={"grey"} content="Bookable" />
             </div>
             <Divider style={{ gridArea: "divider" }} />
-            <Calendar fullWidth purchasable events={availableAndUserBookedAppointments(props.events, props.user, props.personalEvents)} />
+            <Calendar fullWidth purchasable events={relevantEvents(props.appointments, props.consults, props.user)} />
         </FullWidthCalendarContainer>
     )
 }
 
 const mapStateToProps = (state) => ({
-    events: state.events,
+    appointments: state.appointments,
+    consults: state.consults,
     user: state.user,
     personalEvents: state.personalEvents
+
 })
 
 export default connect(mapStateToProps)(Appointments)

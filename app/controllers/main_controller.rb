@@ -1,19 +1,37 @@
 class MainController < ApplicationController
-     before_action :createBusinessCalInstance, :createPersonalCalInstance
+     before_action :initAppointmentsCal, :initConsultsCal, :createPersonalCalInstance
     
-    def createBusinessCalInstance
+    def initAppointmentsCal
         begin
-            @businessCal = Google::Calendar.new(
+            @appointmentsCal = Google::Calendar.new(
                 :client_id     => ENV['GOOGLE_CLIENT_ID'], 
                 :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
-                :calendar      => ENV['GOOGLE_CALENDAR_ADDRESS'],
+                :calendar      => ENV['APPOINTMENTS_CALENDAR_ID'],
                 :redirect_url  => ENV['GOOGLE_REDIRECT_URL']
                                 )
-                @businessCal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])               
+                @appointmentsCal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])               
             rescue
                 puts "login error"
 
         end
+
+        
+    end
+
+     def initConsultsCal
+        begin
+            @consultsCal = Google::Calendar.new(
+                :client_id     => ENV['GOOGLE_CLIENT_ID'], 
+                :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
+                :calendar      => ENV['CONSULTS_CALENDAR_ID'],
+                :redirect_url  => ENV['GOOGLE_REDIRECT_URL']
+                                )
+                @consultsCal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])               
+            rescue
+                puts "login error"
+
+        end
+
         
     end
 
@@ -68,15 +86,22 @@ class MainController < ApplicationController
         end
 
         begin
-            businessEvents = eventsInDateWindow(@businessCal)
+            appointments = eventsInDateWindow(@appointmentsCal)
             rescue
-            businessEvents = []    
+            appointments = []    
+        end
+
+         begin
+            consults = eventsInDateWindow(@consultsCal)
+            rescue
+            consults = []    
         end
 
 
 
         render react_component: 'App', props: { 
-            events: businessEvents, 
+            appointments: appointments, 
+            consults: consults, 
             personalEvents: personalEvents, 
             posts: Post.all, 
             user: user, 
@@ -110,10 +135,10 @@ class MainController < ApplicationController
         end
 
         if params["appointmentSlot"]
-            return createGoogleEvent(cal: @businessCal,newEvent: newEvent, title: "Available Appointment")
+            return createGoogleEvent(cal: @appointmentsCal,newEvent: newEvent, title: "Available Appointment")
         end
 
-        return createGoogleEvent(cal: @businessCal, newEvent: newEvent, title: title, attendees: attendees )
+        return createGoogleEvent(cal: @appointmentsCal, newEvent: newEvent, title: title, attendees: attendees )
     end
 
 
@@ -127,7 +152,12 @@ class MainController < ApplicationController
             e.attendees= attendees
         end
 
-         render json: {scrollToEvent: event, events: eventsInDateWindow(@businessCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
+        #  render json: {scrollToEvent: event, events: eventsInDateWindow(@appointmentsCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
+        return appStateJson(scrollToEvent: event)
+    end
+
+    def appStateJson(scrollToEvent: [])
+         render json: {scrollToEvent: scrollToEvent, appointments: eventsInDateWindow(@appointmentsCal), consults: eventsInDateWindow(@consultsCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
     end
 
    
@@ -149,7 +179,7 @@ class MainController < ApplicationController
         end
 
         
-        editedEvent = @businessCal.find_or_create_event_by_id(event["id"]) do |e|
+        editedEvent = @appointmentsCal.find_or_create_event_by_id(event["id"]) do |e|
             e.title = newTitle
             e.color_id = 2
             e.location= "609 W 135 St New York, New York"
@@ -158,11 +188,14 @@ class MainController < ApplicationController
         end
 
 
-        render json: {events: eventsInDateWindow(@businessCal)} 
+
+        # render json: {events: eventsInDateWindow(@appointmentsCal)} 
         jsonEvent = editedEvent.to_json
         NotificationMailer.user_appointment_confirmation(user, jsonEvent).deliver_later
         NotificationMailer.admin_appointment_confirmation(user, jsonEvent).deliver_later
         
+        return appStateJson(scrollToEvent: event)
+
     end
 
     def cancelEvent
@@ -199,7 +232,7 @@ class MainController < ApplicationController
         # NotificationMailer.admin_appointment_confirmation(user, jsonEvent).deliver_later
         
 
-        return editGoogleCalEvent(cal: @businessCal, event: event, attendees: attendees)
+        return editGoogleCalEvent(cal: @appointmentsCal, event: event, attendees: attendees)
     end
 
 
@@ -234,8 +267,12 @@ class MainController < ApplicationController
         end
 
         # business
-        if event["calendar"]["id"] === ENV["GOOGLE_CALENDAR_ADDRESS"]
-                return editGoogleCalEvent(cal: @businessCal, event: event, attendees: attendees)
+        if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
+                return editGoogleCalEvent(cal: @appointmentsCal, event: event, attendees: attendees)
+        end
+
+        if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
+                return editGoogleCalEvent(cal: @consultsCal, event: event, attendees: attendees)
         end
     end
 
@@ -251,7 +288,9 @@ class MainController < ApplicationController
             # e.notes= "one fine day in the middle of the night, two dead men got up to fight"
             e.attendees = attendees
         end
-         render json: {scrollToEvent: editedEvent, events: eventsInDateWindow(@businessCal)} 
+
+        return appStateJson(scrollToEvent: editedEvent)
+        #  render json: {scrollToEvent: editedEvent, events: eventsInDateWindow(@appointmentsCal)} 
     end
 
 
@@ -264,7 +303,7 @@ class MainController < ApplicationController
         end
 
         if event["calendar"]["id"] === ENV["GOOGLE_CALENDAR_ADDRESS"]
-            cal = @businessCal
+            cal = @appointmentsCal
         end
 
        
@@ -272,7 +311,9 @@ class MainController < ApplicationController
 
         found.first.delete
 
-        render json: {scrollToEvent: event, events: eventsInDateWindow(@businessCal), personalEvents: eventsInDateWindow(@personalCal)}
+        return appStateJson(scrollToEvent: event)
+
+        # render json: {scrollToEvent: event, events: eventsInDateWindow(@appointmentsCal), personalEvents: eventsInDateWindow(@personalCal)}
 
     end
 
@@ -283,7 +324,7 @@ class MainController < ApplicationController
     # end
 
     def all 
-        puts @businessCal.events
+        puts @appointmentsCal.events
     end
 
 end
