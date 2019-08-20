@@ -18,22 +18,13 @@ function Event(props) {
     const [isCanceled, setIsCanceled] = useState(event.title.toLowerCase().includes("canceled"))
 
 
-    let isPersonal = false
-    if (event.calendar.id === props.user.google_calendar_email) isPersonal = true
+    let personal = false
+    if (event.calendar.id === props.user.google_calendar_email) personal = true
 
-    let isAppSlot = false
-    if (event.calendar.id === process.env.APPOINTMENT_SLOTS_CALENDAR_ID) isAppSlot = true
-
-    let isConsultSlot = false
-    if (event.calendar.id === process.env.CONSULTATION_SLOTS_CALENDAR_ID) isConsultSlot = true
-
-    let isAppointment = false
-    if (event.calendar.id === process.env.CONFIRMED_APPOINTMENTS_CALENDAR_ID) isAppointment = true
-
-    // const isAnEmptySlot = () => {
-    //     if (!personal && event.attendees == null) return true
-    //     return false
-    // }
+    const isAnEmptySlot = () => {
+        if (!personal && event.attendees == null) return true
+        return false
+    }
 
     const changeTitleHandeler = (e) => {
         setEvent({ ...event, title: e.target.value })
@@ -185,7 +176,9 @@ function Event(props) {
             }
         })
             .then(res => res.json())
-            .then(res => props.dispatch({ type: "SET_APP_CONSULT_AND_CONFIRMED", value: res }))
+            .then((res) => {
+                props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { scrollToEvent: res.scrollToEvent, events: res.events, personalEvents: res.personalEvents } })
+            })
 
     }
 
@@ -239,7 +232,7 @@ function Event(props) {
 
 
                 </Modal.Description>
-                {isPersonal ? null : <UserPickerDropDown event={event} addAttendeeHandeler={(user) => addAttendeeToSelectedEvent(user)} />}
+                {personal ? null : <UserPickerDropDown event={event} addAttendeeHandeler={(user) => addAttendeeToSelectedEvent(user)} />}
                 <Button content="delete" onClick={() => deleteEventHandeler()} />
                 <Button content="save" onClick={() => updateSelectedEventHandeler()} />
             </Modal.Content>
@@ -251,13 +244,10 @@ function Event(props) {
 
     `
     const colorPicker = () => {
-        if (isPersonal) return "green"
-        if (isAppSlot) return "grey"
-        if (isConsultSlot) return "yellow"
-        if (isAppointment) return "blue"
-
-        return "orange"
-
+        if (isCanceled) return "red"
+        if (personal) return "green"
+        if (!personal && isAnEmptySlot()) return "grey"
+        return "blue"
     }
 
 

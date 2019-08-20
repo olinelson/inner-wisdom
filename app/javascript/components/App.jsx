@@ -34,9 +34,7 @@ import Contact from './Contact';
 
 const initialState = {
     user: null,
-    appSlots: [],
-    appointments: [],
-    consultSlots: [],
+    events: [],
     personalEvents: [],
     posts: [],
     myAccountPanel: "calendar",
@@ -57,12 +55,12 @@ const initialState = {
 
 function reducer(state = initialState, action) {
     switch (action.type) {
-        case "SET_APP_CONSULT_AND_CONFIRMED":
-            return { ...state, appSlots: action.value.appSlots, consultSlots: action.value.consultSlots, appointments: action.value.appointments, personalEvents: action.value.personalEvents }
+        case "SET_EVENTS":
+            return { ...state, events: action.value }
         case "SET_PERSONAL_EVENTS":
             return { ...state, personalEvents: action.value }
-        // case "SET_PERSONAL_AND_BUSINESS_EVENTS":
-        //     return { ...state, personalEvents: action.value.personalEvents, events: action.value.events, calendarScrollToTime: new Date(action.value.scrollToEvent.start_time) }
+        case "SET_PERSONAL_AND_BUSINESS_EVENTS":
+            return { ...state, personalEvents: action.value.personalEvents, events: action.value.events, calendarScrollToTime: new Date(action.value.scrollToEvent.start_time) }
         case "SET_USER":
             return { ...state, user: action.value }
         case "SET_USERS":
@@ -80,9 +78,7 @@ function reducer(state = initialState, action) {
         case "SET_ALL":
             return {
                 ...state,
-                appSlots: action.value.appSlots,
-                consultSlots: action.value.consultSlots,
-                appointments: action.value.appointments,
+                events: action.value.events,
                 personalEvents: action.value.personalEvents,
                 posts: action.value.posts,
                 user: action.value.user,
@@ -104,15 +100,11 @@ const store = createStore(reducer);
 
 export function App(props) {
 
-
-
     store.dispatch({
         type: "SET_ALL", value: {
             posts: props.posts,
             // events: formatEvents(props.events, "business"),
-            appSlots: props.appSlots,
-            consultSlots: props.consultSlots,
-            appointments: props.appointments,
+            events: props.events,
             // personalEvents: formatEvents(props.personalEvents, "personal"),
             personalEvents: props.personalEvents,
             user: props.user,

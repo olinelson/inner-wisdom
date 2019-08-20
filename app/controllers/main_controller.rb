@@ -1,57 +1,19 @@
 class MainController < ApplicationController
-     before_action :initConfirmedCal, :initAppSlotCal, :initConsultSlotCal, :createPersonalCalInstance
+     before_action :createBusinessCalInstance, :createPersonalCalInstance
     
-   def initAppSlotCal
-
+    def createBusinessCalInstance
         begin
-            @appSlotCal = Google::Calendar.new(
+            @businessCal = Google::Calendar.new(
                 :client_id     => ENV['GOOGLE_CLIENT_ID'], 
                 :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
-                :calendar      => ENV['APPOINTMENT_SLOTS_CALENDAR_ID'],
+                :calendar      => ENV['GOOGLE_CALENDAR_ADDRESS'],
                 :redirect_url  => ENV['GOOGLE_REDIRECT_URL']
                                 )
-                @appSlotCal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])               
+                @businessCal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])               
             rescue
                 puts "login error"
 
         end
-
-        
-    end
-
-    def initConsultSlotCal
-
-        begin
-            @consultSlotCal = Google::Calendar.new(
-                :client_id     => ENV['GOOGLE_CLIENT_ID'], 
-                :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
-                :calendar      => ENV['CONSULTATION_SLOTS_CALENDAR_ID'],
-                :redirect_url  => ENV['GOOGLE_REDIRECT_URL']
-                                )
-                @consultSlotCal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])               
-            rescue
-                puts "login error"
-
-        end
-
-        
-    end
-
-     def initConfirmedCal
-
-        begin
-            @confirmedCal = Google::Calendar.new(
-                :client_id     => ENV['GOOGLE_CLIENT_ID'], 
-                :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
-                :calendar      => ENV['CONFIRMED_APPOINTMENTS_CALENDAR_ID'],
-                :redirect_url  => ENV['GOOGLE_REDIRECT_URL']
-                                )
-                @confirmedCal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])               
-            rescue
-                puts "login error"
-
-        end
-
         
     end
 
@@ -82,8 +44,7 @@ class MainController < ApplicationController
         now = DateTime.now
         towYearsAgo = now << 24
         twoYearsAhead = now >> 24
-
-       result = cal.find_events_in_range(towYearsAgo,twoYearsAhead, options = {max_results: 2500})
+        cal.find_events_in_range(towYearsAgo,twoYearsAhead, options = {max_results: 2500})
     end
 
     def home
@@ -106,23 +67,22 @@ class MainController < ApplicationController
 
         end
 
-        # begin
-        #     businessEvents = eventsInDateWindow(@businessCal)
-        #     rescue
-        #     businessEvents = []    
-        # end
+        begin
+            businessEvents = eventsInDateWindow(@businessCal)
+            rescue
+            businessEvents = []    
+        end
 
 
 
         render react_component: 'App', props: { 
-            appSlots: eventsInDateWindow(@appSlotCal),
-            consultSlots: eventsInDateWindow(@consultSlotCal),
-            appointments: eventsInDateWindow(@confirmedCal),
+            events: businessEvents, 
             personalEvents: personalEvents, 
             posts: Post.all, 
             user: user, 
             baseUrl: ENV["BASE_URL"], 
             users: users, 
+            businessCalendarAddress: ENV["GOOGLE_CALENDAR_ADDRESS"]
         }
     end
 
@@ -150,17 +110,10 @@ class MainController < ApplicationController
         end
 
         if params["appointmentSlot"]
-            return createGoogleEvent(cal: @appSlotCal,newEvent: newEvent, title: "Available Appointment")
-        end
-        if params["appointment"]
-            return createGoogleEvent(cal: @confirmedCal,newEvent: newEvent, title: title)
+            return createGoogleEvent(cal: @businessCal,newEvent: newEvent, title: "Available Appointment")
         end
 
-        if params["consultSlot"]
-            return createGoogleEvent(cal: @consultSlotCal,newEvent: newEvent, title: "Available Appointment")
-        end
-
-        # return createGoogleEvent(cal: @businessCal, newEvent: newEvent, title: title, attendees: attendees )
+        return createGoogleEvent(cal: @businessCal, newEvent: newEvent, title: title, attendees: attendees )
     end
 
 
@@ -174,11 +127,8 @@ class MainController < ApplicationController
             e.attendees= attendees
         end
 
-
-         render json: {scrollToEvent: event, appSlots: eventsInDateWindow(@appSlotCal), consultSlots: eventsInDateWindow(@consultSlotCal), appointments: eventsInDateWindow(@confirmedCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
+         render json: {scrollToEvent: event, events: eventsInDateWindow(@businessCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
     end
-
-
 
    
 
@@ -189,27 +139,17 @@ class MainController < ApplicationController
 
         fullName = user.first_name + " " + user.last_name
 
-        cal = nil
-        newTitle = ""
+        byebug
 
-         if event["calendar"]["id"] === ENV["CONSULTATION_SLOTS_CALENDAR_ID"]
-            cal = @consultSlotCal
+        if event["title"] === "Phone Call Consultation"
             newTitle = fullName + "| Phone Call Consultation"
-         end
-
-        if event["calendar"]["id"] === ENV["APPOINTMENT_SLOTS_CALENDAR_ID"]
-            cal = @appSlotCal
+        else
             newTitle = fullName + " | session confirmed"
+        
         end
 
-        found = cal.find_event_by_id(event["id"])
-
-        found.first.delete
-
         
-        editedEvent = @confirmedCal.create_event do |e|
-            e.start_time = event["start_time"]
-            e.end_time = event["end_time"]
+        editedEvent = @businessCal.find_or_create_event_by_id(event["id"]) do |e|
             e.title = newTitle
             e.color_id = 2
             e.location= "609 W 135 St New York, New York"
@@ -218,7 +158,7 @@ class MainController < ApplicationController
         end
 
 
-        render json: {appointments: eventsInDateWindow(@confirmedCal), appSlots: eventsInDateWindow(@appSlotCal), consultSlots: eventsInDateWindow(@consultSlotCal)  } 
+        render json: {events: eventsInDateWindow(@businessCal)} 
         jsonEvent = editedEvent.to_json
         NotificationMailer.user_appointment_confirmation(user, jsonEvent).deliver_later
         NotificationMailer.admin_appointment_confirmation(user, jsonEvent).deliver_later
@@ -318,31 +258,21 @@ class MainController < ApplicationController
 
     def deleteEvent
          event = params["event"]
-         cal = nil
 
          if event["calendar"]["id"] === current_user.google_calendar_email
                 cal = @personalCal
-            end
-
-        if event["calendar"]["id"] === ENV["CONFIRMED_APPOINTMENTS_CALENDAR_ID"]
-            cal = @confirmedCal
         end
 
-        if event["calendar"]["id"] === ENV["APPOINTMENT_SLOTS_CALENDAR_ID"]
-            cal = @appSlotCal
+        if event["calendar"]["id"] === ENV["GOOGLE_CALENDAR_ADDRESS"]
+            cal = @businessCal
         end
-    
-        if event["calendar"]["id"] === ENV["CONSULTATION_SLOTS_CALENDAR_ID"]
-            cal = @consultSlotCal
-        end
-
 
        
         found = cal.find_event_by_id(event["id"])
 
         found.first.delete
 
-        render json: {scrollToEvent: event, appSlots: eventsInDateWindow(@appSlotCal), consultSlots: eventsInDateWindow(@consultSlotCal), appointments: eventsInDateWindow(@confirmedCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
+        render json: {scrollToEvent: event, events: eventsInDateWindow(@businessCal), personalEvents: eventsInDateWindow(@personalCal)}
 
     end
 

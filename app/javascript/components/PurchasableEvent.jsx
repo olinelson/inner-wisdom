@@ -70,7 +70,7 @@ function PurchasableEvent(props) {
                 clearInterval(int)
 
                 return delay(1000).then(() => {
-                    props.dispatch({ type: "SET_APP_CONSULT_AND_CONFIRMED", value: res })
+                    props.dispatch({ type: "SET_EVENTS", value: res.events })
                     props.dispatch({ type: "SET_NOTIFICATIONS", value: [{ id: event.id, type: "notice", message: "Appointment Booked" }] })
 
                 })

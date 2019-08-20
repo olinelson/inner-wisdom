@@ -11,20 +11,19 @@ export const isUserAnAttendeeOfEvent = (event, user) => {
     }
 }
 
-export const availableAndUserBookedAppointments = (appSlots, consultSlots, appointments, user, personalEvents = []) => {
+export const availableAndUserBookedAppointments = (events, user, personalEvents = []) => {
+
+
     let result = []
 
-    // if (!events) return result
+    if (!events) return result
 
     if (user) {
 
 
-        if (user.vetted) result = result.concat(appSlots)
-        else result = result.concat(consultSlots)
+        result = events.filter(e => e.attendees == null || e.attendees.length < 1 || isUserAnAttendeeOfEvent(e, user))
 
-        let attendingEvents = appointments.filter(e => isUserAnAttendeeOfEvent(e, user))
-
-        result = result.concat(attendingEvents)
+        if (!user.vetted) result = result.filter(e => e.title.includes("Phone Call Consultation") || isUserAnAttendeeOfEvent(e, user))
 
         if (personalEvents) result = result.concat(personalEvents)
 
@@ -32,7 +31,7 @@ export const availableAndUserBookedAppointments = (appSlots, consultSlots, appoi
 
 
     } else {
-        result = appSlots.concat(consultSlots)
+        result = events.filter(e => e.attendees == null || e.attendees.length < 1)
     }
 
     return result
@@ -60,15 +59,13 @@ function Appointments(props) {
                 <Label circular color={"grey"} content="Bookable" />
             </div>
             <Divider style={{ gridArea: "divider" }} />
-            <Calendar fullWidth purchasable events={availableAndUserBookedAppointments(props.appSlots, props.consultSlots, props.appointments, props.user)} />
+            <Calendar fullWidth purchasable events={availableAndUserBookedAppointments(props.events, props.user, props.personalEvents)} />
         </FullWidthCalendarContainer>
     )
 }
 
 const mapStateToProps = (state) => ({
-    appSlots: state.appSlots,
-    consultSlots: state.consultSlots,
-    appointments: state.appointments,
+    events: state.events,
     user: state.user,
     personalEvents: state.personalEvents
 })
