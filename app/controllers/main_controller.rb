@@ -87,9 +87,6 @@ class MainController < ApplicationController
         end
 
         begin
-<<<<<<< HEAD
-            businessEvents = @businessCal.events
-=======
             appointments = eventsInDateWindow(@appointmentsCal)
             rescue
             appointments = []    
@@ -97,7 +94,6 @@ class MainController < ApplicationController
 
          begin
             consults = eventsInDateWindow(@consultsCal)
->>>>>>> new_master
             rescue
             consults = []    
         end
@@ -157,16 +153,12 @@ class MainController < ApplicationController
             e.attendees= attendees
         end
 
-<<<<<<< HEAD
-         render json: {scrollToEvent: event, events: @businessCal.events, personalEvents: @personalCal ? allPastAndTwoYearsAhead(@personalCal) : [] }
-=======
         #  render json: {scrollToEvent: event, events: eventsInDateWindow(@appointmentsCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
         return appStateJson(scrollToEvent: event)
     end
 
     def appStateJson(scrollToEvent: [])
          render json: {scrollToEvent: scrollToEvent, appointments: eventsInDateWindow(@appointmentsCal), consults: eventsInDateWindow(@consultsCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
->>>>>>> new_master
     end
 
    
@@ -176,10 +168,6 @@ class MainController < ApplicationController
         event = params["event"]
         fullName = user.first_name + " " + user.last_name
 
-<<<<<<< HEAD
-        editedEvent = @businessCal.find_or_create_event_by_id(event["id"]) do |e|
-            e.title = fullName + " | session confirmed"
-=======
         byebug
 
         if event["title"] === "Phone Call Consultation"
@@ -192,7 +180,6 @@ class MainController < ApplicationController
         
         editedEvent = @appointmentsCal.find_or_create_event_by_id(event["id"]) do |e|
             e.title = newTitle
->>>>>>> new_master
             e.color_id = 2
             e.location= "609 W 135 St New York, New York"
             e.attendees= [
@@ -200,13 +187,9 @@ class MainController < ApplicationController
         end
         byebug
 
-<<<<<<< HEAD
-        render json: {events: @businessCal.events} 
-=======
 
 
         # render json: {events: eventsInDateWindow(@appointmentsCal)} 
->>>>>>> new_master
         jsonEvent = editedEvent.to_json
         NotificationMailer.user_appointment_confirmation(user, jsonEvent).deliver_later
         NotificationMailer.admin_appointment_confirmation(user, jsonEvent).deliver_later
@@ -305,13 +288,9 @@ class MainController < ApplicationController
             # e.notes= "one fine day in the middle of the night, two dead men got up to fight"
             e.attendees = attendees
         end
-<<<<<<< HEAD
-         render json: {scrollToEvent: editedEvent, events: @businessCal.events} 
-=======
 
         return appStateJson(scrollToEvent: editedEvent)
         #  render json: {scrollToEvent: editedEvent, events: eventsInDateWindow(@appointmentsCal)} 
->>>>>>> new_master
     end
 
 
@@ -332,13 +311,9 @@ class MainController < ApplicationController
 
         found.first.delete
 
-<<<<<<< HEAD
-        render json: {scrollToEvent: event, events: @businessCal.events, personalEvents: allPastAndTwoYearsAhead(@personalCal)}
-=======
         return appStateJson(scrollToEvent: event)
 
         # render json: {scrollToEvent: event, events: eventsInDateWindow(@appointmentsCal), personalEvents: eventsInDateWindow(@personalCal)}
->>>>>>> new_master
 
     end
 
