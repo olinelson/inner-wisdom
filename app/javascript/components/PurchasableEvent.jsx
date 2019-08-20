@@ -47,7 +47,7 @@ function PurchasableEvent(props) {
 
 
 
-    const onTokenHandeler = () => {
+    const bookAppointment = () => {
         setInfoModal(false)
         setPurchased(true)
         incrementProgress()
@@ -90,13 +90,9 @@ function PurchasableEvent(props) {
     }
 
     const ifUserShowCheckout = () => {
-        if (props.user) return <Checkout
-            ammount={8000}
-            email={props.user.email}
-            onToken={onTokenHandeler}
-        />
+        if (props.user) return <Button content="Book Appointment" onClick={() => bookAppointment()} />
         return <>
-            <Button content="Pay With Card" disabled />
+            <Button content="Book Appointment" disabled />
             <Divider />
             <span><a href={`${props.baseUrl}/users/sign_in`}>Sign in</a> to make an appointment</span>
         </>
