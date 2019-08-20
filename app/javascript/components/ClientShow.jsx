@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { connect } from "react-redux"
 import { withRouter } from "react-router-dom"
 import { Container, Card, Item, Table, Label, Menu, Button, Icon, Checkbox, Modal, Form, Header } from 'semantic-ui-react';
-import { isUserAnAttendeeOfEvent, relevantEvents } from "./Appointments"
+import { isUserAnAttendeeOfEvent, relevantEvents, flatten } from "./Appointments"
 import moment from "moment"
 import AppointmentHistoryTable from './AppointmentHistoryTable';
 
@@ -12,7 +12,9 @@ function ClientShow(props) {
     let user = props.users.find(u => u.id == userId)
 
     if (!user) return props.history.push('/notfound')
-    let relevantAppointments = relevantEvents(props.appointments, props.consults, user)
+    console.log("this is user", user)
+    let relevantAppointments = flatten([...props.appointments, props.consults]).filter(e => isUserAnAttendeeOfEvent(e, user))
+    console.log(relevantAppointments)
 
     const [first_name, set_first_name] = useState(user.first_name || "")
     const [last_name, set_last_name] = useState(user.last_name || "")

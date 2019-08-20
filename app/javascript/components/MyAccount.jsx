@@ -8,7 +8,7 @@ import styled from "styled-components"
 import PostsList from './PostsList';
 import AppointmentHistoryTable from './AppointmentHistoryTable';
 
-import { relevantEvents } from "./Appointments"
+import { relevantEvents, flatten, isUserAnAttendeeOfEvent } from "./Appointments"
 
 const TwoColumnContainer = styled.div`
     display: grid;
@@ -185,7 +185,7 @@ function MyAccount(props) {
 
 const mapStateToProps = (state) => ({
 
-    relevantAppointments: relevantEvents(state.appointments, state.consults, state.user),
+    relevantAppointments: flatten([...state.appointments, state.consults]).filter(e => isUserAnAttendeeOfEvent(e, state.user)),
     user: state.user,
     users: state.users,
     myAccountPanel: state.myAccountPanel,
