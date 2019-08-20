@@ -105,7 +105,7 @@ export default function FAQS() {
             key: 'cant-make-it',
             title: 'What if I can’t make it to my appointment?',
             content: [
-                'If you are unable to attend for any reason, please notify me via mobile, text or email as soon as possible. Anything less than 24 hours’ notice or failing to attend a session will incur a cancelation fee of 100%. Late arrivals will result in a short session as I may have other clients booked in following you.',
+                'If you are unable to attend for any reason, please notify me via mobile, text or email as soon as possible. Anything less than 24 hours’ notice or failing to attend a session will incur a cancellation fee of 100%. Late arrivals will result in a short session as I may have other clients booked in following you.',
             ].join(' '),
         },
         {
