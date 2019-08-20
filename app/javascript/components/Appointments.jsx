@@ -18,7 +18,7 @@ export function flatten(arr) {
 export const relevantEvents = (appointments, consults, user) => {
     let result = []
 
-    if (!appointments) return result
+    // if (!appointments) return result
 
     let freeAppointments = appointments.filter(e => e.attendees == null || e.attendees.length < 1)
     let freeConsults = consults.filter(e => e.attendees == null || e.attendees.length < 1)

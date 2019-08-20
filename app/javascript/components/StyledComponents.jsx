@@ -106,3 +106,24 @@ export const TwoColumnContainer = styled(Container)`
         grid-column-gap: 1rem;
 
     `
+
+
+export const BusinessEventSegment = styled(Segment)`
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1rem;
+    justify-content: center;
+    justify-items: center;
+    grid-template-areas:
+        "timePicker timePicker"
+        "newAppointment newAppSlot"
+        "newAppointment newConsultSlot"
+    ;
+
+
+    `
+export const CenteredFlexDiv = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+`

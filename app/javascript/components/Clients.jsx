@@ -3,7 +3,7 @@ import { connect } from "react-redux"
 import { Card, Button, Modal, Search, Menu, Label, Form, Checkbox, Divider, Container } from "semantic-ui-react"
 import { withRouter } from "react-router-dom"
 import moment from "moment"
-import { isUserAnAttendeeOfEvent } from "./Appointments"
+import { isUserAnAttendeeOfEvent, relevantEvents } from "./Appointments"
 import { debounce } from "debounce";
 import styled from "styled-components"
 
@@ -110,7 +110,7 @@ function Clients(props) {
             <Card.Group stackable doubling centered>
 
                 {allUsersExceptMe.map(user => {
-                    let relevantAppointments = props.events.filter(e => isUserAnAttendeeOfEvent(e, user))
+                    let relevantAppointments = relevantEvents(props.appointments, props.consults, user)
                     let pastAppointments = relevantAppointments.filter(a => new Date(a.start_time) < new Date)
                     let futureAppointments = relevantAppointments.filter(a => new Date(a.start_time) > new Date)
 
@@ -174,7 +174,8 @@ function Clients(props) {
 
 const mapStateToProps = (state) => ({
     csrfToken: state.csrfToken,
-    events: state.events,
+    appointments: state.appointments,
+    consults: state.consults,
     personalEvents: state.personalEvents,
     user: state.user,
     users: state.users,

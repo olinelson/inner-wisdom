@@ -8,6 +8,8 @@ import styled from "styled-components"
 import PostsList from './PostsList';
 import AppointmentHistoryTable from './AppointmentHistoryTable';
 
+import { relevantEvents } from "./Appointments"
+
 const TwoColumnContainer = styled.div`
     display: grid;
     grid-gap: 1rem;
@@ -54,11 +56,11 @@ function MyAccount(props) {
         </Menu>
     }
 
-    const RelevantAppointments = () => {
+    // const RelevantAppointments = () => {
 
-        let events = props.events.filter(e => isUserAnAttendeeOfEvent(e))
-        return events
-    }
+    //     let events = props.events.filter(e => isUserAnAttendeeOfEvent(e))
+    //     return events
+    // }
 
     const isUserAnAttendeeOfEvent = (event) => {
         if (event.attendees === null) return false
@@ -71,7 +73,7 @@ function MyAccount(props) {
         switch (props.myAccountPanel) {
             case "history":
                 // return <Calendar readOnly events={RelevantAppointments()} />
-                return <AppointmentHistoryTable events={RelevantAppointments()} user={props.user} />
+                return <AppointmentHistoryTable events={props.relevantAppointments} user={props.user} />
             case "profile":
                 return profileSettingsLinks()
             case "posts":
@@ -166,14 +168,12 @@ function MyAccount(props) {
     }
 
 
-
+    console.log("this is myaccount props", props)
 
     return <Container >
         <h1>My Account</h1>
         <TwoColumnContainer>
             {props.user.admin ? showAdminMenu() : showUserMenu()}
-
-
             {panelSwitch()}
 
         </TwoColumnContainer>
@@ -184,8 +184,8 @@ function MyAccount(props) {
 }
 
 const mapStateToProps = (state) => ({
-    events: state.events,
-    personalEvents: state.personalEvents,
+
+    relevantAppointments: relevantEvents(state.appointments, state.consults, state.user),
     user: state.user,
     users: state.users,
     myAccountPanel: state.myAccountPanel,

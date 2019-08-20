@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { connect } from "react-redux"
 import { withRouter } from "react-router-dom"
 import { Container, Card, Item, Table, Label, Menu, Button, Icon, Checkbox, Modal, Form, Header } from 'semantic-ui-react';
-import { isUserAnAttendeeOfEvent } from "./Appointments"
+import { isUserAnAttendeeOfEvent, relevantEvents } from "./Appointments"
 import moment from "moment"
 import AppointmentHistoryTable from './AppointmentHistoryTable';
 
@@ -12,7 +12,7 @@ function ClientShow(props) {
     let user = props.users.find(u => u.id == userId)
 
     if (!user) return props.history.push('/notfound')
-    let relevantAppointments = props.events.filter(e => isUserAnAttendeeOfEvent(e, user))
+    let relevantAppointments = relevantEvents(props.appointments, props.consults, user)
 
     const [first_name, set_first_name] = useState(user.first_name || "")
     const [last_name, set_last_name] = useState(user.last_name || "")
@@ -28,6 +28,7 @@ function ClientShow(props) {
     const [modalOpen, setModalOpen] = useState(false)
     const [deleteModal, setDeleteModal] = useState(false)
     const [loading, setLoading] = useState(false)
+
     let chronologicalSorted = relevantAppointments.sort((b, a) => new Date(a.start_time) - new Date(b.end_time))
 
     const editUserHandeler = () => {
@@ -187,7 +188,8 @@ function ClientShow(props) {
 }
 
 const mapStateToProps = (state) => ({
-    events: state.events,
+    appointments: state.appointments,
+    consults: state.consults,
     // personalEvents: state.personalEvents,
     // user: state.user,
     users: state.users,

@@ -91,16 +91,13 @@ class MainController < ApplicationController
         end
 
         begin
-
             appointments = eventsInDateWindow(@appointmentsCal)
-
             rescue
             appointments = []    
         end
 
          begin
             consults = eventsInDateWindow(@consultsCal)
-
             rescue
             consults = []    
         end
@@ -177,33 +174,57 @@ class MainController < ApplicationController
         user = current_user
         event = params["event"]
         fullName = user.first_name + " " + user.last_name
+        newTitle = ""
 
+        cal = nil
 
+        if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
+             newTitle = fullName + " | session confirmed"
+            cal = @appointmentsCal
 
-        if event["title"] === "Phone Call Consultation"
-            newTitle = fullName + "| Phone Call Consultation"
-        else
-            newTitle = fullName + " | session confirmed"
-        
-        end
-
-        
-        editedEvent = @appointmentsCal.find_or_create_event_by_id(event["id"]) do |e|
+            editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
             e.title = newTitle
             e.color_id = 2
             e.location= "609 W 135 St New York, New York"
             e.attendees= [
             {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
+             end
+
+            jsonEvent = editedEvent.to_json
+            NotificationMailer.user_appointment_confirmation(user, jsonEvent).deliver_later
+            NotificationMailer.admin_appointment_confirmation(user, jsonEvent).deliver_later
+        
+        end
+
+        if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
+            newTitle = fullName + "| Phone Call Consultation"
+            cal = @consultsCal
+
+            editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
+            e.title = newTitle
+            e.color_id = 2
+            # e.location= "609 W 135 St New York, New York"
+            e.attendees= [
+            {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
+            end
+
+             jsonEvent = editedEvent.to_json
+             NotificationMailer.user_consult_confirmation(user, jsonEvent).deliver_later
+             NotificationMailer.admin_consult_confirmation(user, jsonEvent).deliver_later
+        
         end
 
 
-
+        # editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
+        #     e.title = newTitle
+        #     e.color_id = 2
+        #     e.location= "609 W 135 St New York, New York"
+        #     e.attendees= [
+        #     {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
+        # end
 
         # render json: {events: eventsInDateWindow(@appointmentsCal)} 
-        jsonEvent = editedEvent.to_json
-        NotificationMailer.user_appointment_confirmation(user, jsonEvent).deliver_later
-        NotificationMailer.admin_appointment_confirmation(user, jsonEvent).deliver_later
-        
+       
         return appStateJson(scrollToEvent: event)
 
     end

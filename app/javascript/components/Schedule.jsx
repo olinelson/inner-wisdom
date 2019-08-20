@@ -8,6 +8,8 @@ import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
 import TimePicker from 'rc-time-picker';
 
+import { BusinessEventSegment, CenteredFlexDiv } from "./StyledComponents"
+
 import { FullWidthCalendarContainer } from "./Appointments"
 import UserPickerDropDown from './UserPickerDropDown';
 
@@ -36,17 +38,14 @@ class Schedule extends Component {
     showEventAttendees = (event, onDelete) => {
         if (event && event.attendees) {
             let users = event.attendees
-            return <div style={{ height: "2rem", border: "1px solid red" }}>
-
-                {users.map(u => <Label style={{ margin: ".1rem" }} key={u.id}>
-                    <Icon name='user' />
-                    {u.first_name + " " + u.last_name}
-                    <Icon name='delete' onClick={() => onDelete(u)} />
-                </Label>
-                )}
-            </div>
+            return users.map(u => <Label style={{ margin: ".1rem" }} key={u.id}>
+                <Icon name='user' />
+                {u.first_name + " " + u.last_name}
+                <Icon name='delete' onClick={() => onDelete(u)} />
+            </Label>
+            )
         }
-        return <div style={{ height: "2rem", border: "1px solid red" }}></div>
+        return null
     }
 
 
@@ -161,7 +160,7 @@ class Schedule extends Component {
         const now = moment().hour(0).minute(0)
 
 
-        return <span>
+        return <>
 
             <Popup
                 on="click"
@@ -169,29 +168,31 @@ class Schedule extends Component {
                     onDayClick={this.changeDayHandeler}
                     selectedDays={new Date(event.start_time)}
                 />}
-                trigger={<h4 style={{ cursor: "pointer" }}>{moment(event.start_time).format('Do MMMM  YYYY')}<Icon name="caret down" /></h4>} />
+                trigger={<h4 style={{ textAlign: "center", cursor: "pointer" }}>{moment(event.start_time).format('Do MMMM  YYYY')}<Icon name="caret down" /></h4>} />
 
-            <TimePicker
-                showSecond={false}
+            <span>
+                <TimePicker
+                    showSecond={false}
 
-                value={startTime}
-                // className=" ui menu transition"
-                onChange={(e) => this.setState({ selectedEvent: { ...this.state.selectedEvent, start_time: e._d } })}
-                format='h:mm a'
-                use12Hours
-                inputReadOnly
-            />
-            <TimePicker
-                showSecond={false}
-                value={endTime}
-                // className="ui menu transition"
-                onChange={(e) => this.setState({ selectedEvent: { ...this.state.selectedEvent, end_time: e._d } })}
-                format='h:mm a'
-                use12Hours
-                inputReadOnly
-            />
+                    value={startTime}
+                    // className=" ui menu transition"
+                    onChange={(e) => this.setState({ selectedEvent: { ...this.state.selectedEvent, start_time: e._d } })}
+                    format='h:mm a'
+                    use12Hours
+                    inputReadOnly
+                />
+                <TimePicker
+                    showSecond={false}
+                    value={endTime}
+                    // className="ui menu transition"
+                    onChange={(e) => this.setState({ selectedEvent: { ...this.state.selectedEvent, end_time: e._d } })}
+                    format='h:mm a'
+                    use12Hours
+                    inputReadOnly
+                />
+            </span>
 
-        </span>
+        </>
     }
 
 
@@ -247,48 +248,60 @@ class Schedule extends Component {
         </Segment>
     }
 
+
+
     creatingBusinessEventOptions = (e) => {
-        if (e && e.personal === false) return <Segment textAlign="center" placeholder>
-            {this.eventTimeSetter(e)}
-            <Grid columns={2} stackable textAlign='center'>
+        if (e && e.personal === false) return <BusinessEventSegment>
 
-
-                <Grid.Column centered style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <div>
-                        <Header icon>
-                            <Icon name='bookmark' />
-                            Book New Appointment
-                             </Header>
-                        <Popup content='This will create a confirmed appointment slot that will only be visible to admin and its attendees.' trigger={<Button primary onClick={() => this.createEventHandeler(false)}>Create</Button>} />
-                        <Divider hidden />
-                        {/* {this.userPickerDropDown(e, this.addAttendeeToSelectedEvent)} */}
-                        {this.showEventAttendees(e, this.removeAttendeeFromSelectedEvent)}
-                        <UserPickerDropDown event={e} addAttendeeHandeler={this.addAttendeeToSelectedEvent} />
-                    </div>
-                </Grid.Column>
-
-                <Grid.Column>
-                    <Header icon>
-                        <Icon name='time' />
-                        New Appointment Slot
-                    </Header>
-                    <Popup content='This will create a "bookable" appointment slot visable to all clients.' trigger={<Button color="grey" onClick={() => this.createEventHandeler(true)} >Create</Button>} />
-
-                    <Divider />
-                    <Header icon>
-                        <Icon name='time' />
-                        New Consultation Slot
-                    </Header>
-                    <Popup content='This will create a "bookable" consultation slot visable to all clients.' trigger={<Button color="yellow" onClick={() => this.createEventHandeler(false, true)} >Create</Button>} />
-
-
-                </Grid.Column>
-
-
-            </Grid>
-            <div>
-                {/* {this.showEventAttendees(e, this.removeAttendeeFromSelectedEvent)} */}
+            {/* <div style={{ gridColumn: "1/3", justifyContent: "center" }}> */}
+            <div style={{ gridArea: "timePicker" }}>
+                {this.eventTimeSetter(e)}
             </div>
+
+            {/* </div> */}
+
+
+            <CenteredFlexDiv style={{ gridArea: "newAppointment" }} >
+                <Header icon>
+                    <Icon name='bookmark' />
+                    Book New Appointment
+                             </Header>
+                <Popup content='This will create a confirmed appointment slot that will only be visible to admin and its attendees.' trigger={<Button primary onClick={() => this.createEventHandeler(false)}>Create</Button>} />
+                <Divider hidden />
+                {/* {this.userPickerDropDown(e, this.addAttendeeToSelectedEvent)} */}
+                {/* <div height="2rem"> */}
+                <div>
+                    {this.showEventAttendees(e, this.removeAttendeeFromSelectedEvent)}
+                </div>
+
+
+                {/* </div> */}
+
+                <Divider hidden />
+                <UserPickerDropDown event={e} addAttendeeHandeler={this.addAttendeeToSelectedEvent} />
+            </CenteredFlexDiv>
+
+
+            <CenteredFlexDiv style={{ gridArea: "newAppSlot" }}>
+                <Header icon>
+                    <Icon name='time' />
+                    New Appointment Slot
+                    </Header>
+                <Popup content='This will create a "bookable" appointment slot visable to all clients.' trigger={<Button color="grey" onClick={() => this.createEventHandeler(true)} >Create</Button>} />
+
+
+            </CenteredFlexDiv>
+            <CenteredFlexDiv style={{ gridArea: "newConsultSlot" }}>
+                <Header icon>
+                    <Icon name='time' />
+                    New Consultation Slot
+                    </Header>
+                <Popup content='This will create a "bookable" consultation slot visable to all clients.' trigger={<Button color="yellow" onClick={() => this.createEventHandeler(false, true)} >Create</Button>} />
+
+
+            </CenteredFlexDiv>
+
+
             {/* <Grid columns={2} stackable textAlign='center'>
                 <Divider vertical>Or</Divider>
 
@@ -326,7 +339,7 @@ class Schedule extends Component {
                 </Grid.Row>
             </Grid> */}
 
-        </Segment>
+        </BusinessEventSegment>
     }
 
 
