@@ -9,7 +9,9 @@ class MainController < ApplicationController
                 :calendar      => ENV['APPOINTMENTS_CALENDAR_ID'],
                 :redirect_url  => ENV['GOOGLE_REDIRECT_URL']
                                 )
-                @appointmentsCal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])               
+                @appointmentsCal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])    
+                
+
             rescue
                 puts "login error"
 
@@ -26,7 +28,9 @@ class MainController < ApplicationController
                 :calendar      => ENV['CONSULTS_CALENDAR_ID'],
                 :redirect_url  => ENV['GOOGLE_REDIRECT_URL']
                                 )
-                @consultsCal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])               
+                @consultsCal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])       
+                
+
             rescue
                 puts "login error"
 
@@ -58,10 +62,11 @@ class MainController < ApplicationController
         
     end
 
-    def allPastAndTwoYearsAhead(cal)
+    def eventsInDateWindow(cal)
         now = DateTime.new(2018,1,1)
+        twoYearsAgo = now << 24
         twoYearsAhead = now >> 24
-        cal.find_events_in_range(now,twoYearsAhead, options = {max_results: 2500})
+        cal.find_events_in_range(twoYearsAgo,twoYearsAhead, options = {max_results: 2500})
     end
 
     def home
@@ -73,9 +78,8 @@ class MainController < ApplicationController
             user = current_user
         begin
             if user.google_calendar_email  && user.google_calendar_refresh_token
-                # personalEvents = @personalCal.events
-                # personalEvents = @personalCal.find_future_events
-                personalEvents = allPastAndTwoYearsAhead(@personalCal)
+
+                personalEvents = eventsInDateWindow(@personalCal)
             end
         rescue
                 puts "error fetching personal events"
@@ -87,13 +91,16 @@ class MainController < ApplicationController
         end
 
         begin
+            byebug
             appointments = eventsInDateWindow(@appointmentsCal)
+
             rescue
             appointments = []    
         end
 
          begin
             consults = eventsInDateWindow(@consultsCal)
+
             rescue
             consults = []    
         end
@@ -168,7 +175,7 @@ class MainController < ApplicationController
         event = params["event"]
         fullName = user.first_name + " " + user.last_name
 
-        byebug
+
 
         if event["title"] === "Phone Call Consultation"
             newTitle = fullName + "| Phone Call Consultation"
@@ -185,7 +192,7 @@ class MainController < ApplicationController
             e.attendees= [
             {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
         end
-        byebug
+
 
 
 
