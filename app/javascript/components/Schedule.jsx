@@ -78,7 +78,7 @@ class Schedule extends Component {
             }
         })
             .then(response => response.json())
-            .then(res => this.props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { events: res.events, personalEvents: res.personalEvents, scrollToEvent: res.scrollToEvent } }))
+            .then(res => this.props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
 
 
     }
@@ -347,39 +347,16 @@ class Schedule extends Component {
 
 }
 
-const allEvents = (events, personalEvents) => {
-
-    let result = []
-    if (events) result = result.concat(events)
-    if (personalEvents) result = result.concat(personalEvents)
-
-
-    // let demo = {
-    //     attendees: null,
-    //     // end_time: "2015-11-29T23:30:00.000Z",
-    //     end_time: "2015-11-29T23:30:00.000Z",
-
-
-    //     d: "6kojep9n61ijeb9h6go3eb9k68om2b9ocpj62bb26kpm6c1l61h6ccr360",
-    //     // start_time: "2015-11-29T22:30:00.000Z",
-    //     start_time: "2015-11-29T22:30:00.000Z",
-    //     status: "tentative",
-    //     title: "Demo",
-    //     transparency: "transparent",
-    //     visibility: "default",
-    //     calendar: {
-    //         id: "susanjeanmct@gmail.com",
-    //     }
-    // }
-
-    return result
+function flatten(arr) {
+    return [].concat(...arr)
 }
 
+
 const mapStateToProps = (state) => ({
-    events: state.events,
+    appointments: state.appointments,
+    consults: state.consults,
     personalEvents: state.personalEvents,
-    allEvents: allEvents(state.events, state.personalEvents),
-    // allEvents: state.personalEvents,
+    allEvents: flatten([...state.appointments, state.consults, state.personalEvents]),
     user: state.user,
     users: state.users,
     csrfToken: state.csrfToken,

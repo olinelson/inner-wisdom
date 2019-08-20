@@ -175,7 +175,7 @@ function Event(props) {
         })
             .then(res => res.json())
             .then((res) => {
-                props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { scrollToEvent: res.scrollToEvent, events: res.events, personalEvents: res.personalEvents } })
+                props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res })
             })
 
     }
@@ -196,7 +196,7 @@ function Event(props) {
             }
         })
             .then(response => response.json())
-            .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { scrollToEvent: res.scrollToEvent, events: res.events, personalEvents: res.personalEvents } }))
+            .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
 
     }
 

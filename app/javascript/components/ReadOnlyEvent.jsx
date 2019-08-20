@@ -67,7 +67,7 @@ function ReadOnlyEvent(props) {
             }
         })
             .then(response => response.json())
-            .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { scrollToEvent: res.scrollToEvent, events: res.events, personalEvents: res.personalEvents } }))
+            .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
     }
 
     const cancelationFee = () => {
