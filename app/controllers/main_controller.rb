@@ -133,24 +133,12 @@ class MainController < ApplicationController
    
 
     def purchase
-
         user = current_user
         event = params["event"]
-
         fullName = user.first_name + " " + user.last_name
 
-        byebug
-
-        if event["title"] === "Phone Call Consultation"
-            newTitle = fullName + "| Phone Call Consultation"
-        else
-            newTitle = fullName + " | session confirmed"
-        
-        end
-
-        
         editedEvent = @businessCal.find_or_create_event_by_id(event["id"]) do |e|
-            e.title = newTitle
+            e.title = fullName + " | session confirmed"
             e.color_id = 2
             e.location= "609 W 135 St New York, New York"
             e.attendees= [
