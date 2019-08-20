@@ -36,14 +36,11 @@ function ReadOnlyEvent(props) {
     const showPrettyStartAndEndTime = (selectedEvent) => {
         return <>
             <h4>{moment(selectedEvent.start_time).format('Do MMMM  YYYY')}</h4>
-            <p>{moment(selectedEvent.start_time).format('h:mm a')} to {moment(selectedEvent.end).format('h:mm a')}</p>
+            <p>{moment(selectedEvent.start_time).format('h:mm a')} to {moment(selectedEvent.end_time).format('h:mm a')}</p>
         </>
     }
 
-    // const isAnEmptySlot = () => {
-    //     if (!personal && event.attendees == null) return true
-    //     return false
-    // }
+
 
     const cancelEvent = () => {
         setLoading(true)

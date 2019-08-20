@@ -61,14 +61,16 @@ class Schedule extends Component {
 
     // =====================================
 
-    createEventHandeler = (isAppointmentSlot) => {
+    createEventHandeler = (isAppSlot, isConsultSlot, isAppointment) => {
         let event = { ...this.state.selectedEvent }
         this.setState({ creatingEvent: false })
         fetch(`${this.props.baseUrl}/create`, {
             method: "POST",
             body: JSON.stringify({
                 event: event,
-                appointmentSlot: isAppointmentSlot
+                appointmentSlot: isAppSlot,
+                consultSlot: isConsultSlot,
+                appointment: isAppointment,
             }),
             headers: {
                 "X-CSRF-Token": this.props.csrfToken,
@@ -78,7 +80,7 @@ class Schedule extends Component {
             }
         })
             .then(response => response.json())
-            .then(res => this.props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { events: res.events, personalEvents: res.personalEvents, scrollToEvent: res.scrollToEvent } }))
+            .then(res => this.props.dispatch({ type: "SET_APP_CONSULT_AND_CONFIRMED", value: res }))
 
 
     }
@@ -238,7 +240,7 @@ class Schedule extends Component {
                 </Form.Field>
 
 
-                <Button color="green" onClick={() => this.createEventHandeler(false)} type="submit">Create</Button>
+                <Button color="green" onClick={() => this.createEventHandeler(false, false, false)} type="submit">Create</Button>
             </Form>
         </Segment>
     }
@@ -264,7 +266,7 @@ class Schedule extends Component {
 
                         {/* <p>This will create a confirmed appointment slot that will only be visible to admin and its attendees.</p> */}
                         {/* <Button primary onClick={() => this.createEventHandeler(false)}>Create</Button> */}
-                        <Popup content='This will create a confirmed appointment slot that will only be visible to admin and its attendees.' trigger={<Button primary onClick={() => this.createEventHandeler(false)}>Create</Button>} />
+                        <Popup content='This will create a confirmed appointment slot that will only be visible to admin and its attendees.' trigger={<Button primary onClick={() => this.createEventHandeler(false, false, true)}>Create</Button>} />
                         <Divider hidden />
                         {/* {this.userPickerDropDown(e, this.addAttendeeToSelectedEvent)} */}
                         <UserPickerDropDown event={e} addAttendeeHandeler={this.addAttendeeToSelectedEvent} />
@@ -347,44 +349,21 @@ class Schedule extends Component {
 
 }
 
-const allEvents = (events, personalEvents) => {
-
-    let result = []
-    if (events) result = result.concat(events)
-    if (personalEvents) result = result.concat(personalEvents)
-
-
-    // let demo = {
-    //     attendees: null,
-    //     // end_time: "2015-11-29T23:30:00.000Z",
-    //     end_time: "2015-11-29T23:30:00.000Z",
-
-
-    //     d: "6kojep9n61ijeb9h6go3eb9k68om2b9ocpj62bb26kpm6c1l61h6ccr360",
-    //     // start_time: "2015-11-29T22:30:00.000Z",
-    //     start_time: "2015-11-29T22:30:00.000Z",
-    //     status: "tentative",
-    //     title: "Demo",
-    //     transparency: "transparent",
-    //     visibility: "default",
-    //     calendar: {
-    //         id: "susanjeanmct@gmail.com",
-    //     }
-    // }
-
-    return result
+function flatten(arr) {
+    return [].concat(...arr)
 }
 
+
 const mapStateToProps = (state) => ({
-    events: state.events,
     personalEvents: state.personalEvents,
-    allEvents: allEvents(state.events, state.personalEvents),
-    // allEvents: state.personalEvents,
+    appSlots: state.appSlots,
+    consultSlots: state.consultSlots,
+    appointments: state.appointments,
+    allEvents: flatten([...state.appointments, state.appSlots, state.consultSlots, state.personalEvents]),
     user: state.user,
     users: state.users,
     csrfToken: state.csrfToken,
     baseUrl: state.baseUrl,
-    businessCalendarAddress: state.businessCalendarAddress
 })
 
 export default connect(mapStateToProps)(Schedule)
