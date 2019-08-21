@@ -111,12 +111,6 @@ function PurchasableEvent(props) {
                     {showPrettyStartAndEndTime()}
                     <Divider hidden />
 
-                    <div>
-                        <p>$80</p>
-                        {/* {showEventAttendees()} */}
-                    </div>
-                    <Divider hidden />
-                    {/* {userPickerDropDown()} */}
                 </Modal.Description>
                 {ifUserShowCheckout()}
             </Modal.Content>
