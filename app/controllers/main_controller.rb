@@ -325,7 +325,7 @@ class MainController < ApplicationController
 
 
     def deleteEvent
-        byebug
+
          event = params["event"]
 
          if event["calendar"]["id"] === current_user.google_calendar_email
