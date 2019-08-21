@@ -71,7 +71,7 @@ class MainController < ApplicationController
 
     def home
         user = nil
-        personalEvents = nil
+        personalEvents = []
         users = User.all
 
         if current_user
@@ -83,7 +83,7 @@ class MainController < ApplicationController
             end
         rescue
                 puts "error fetching personal events"
-                personalEvents = nil
+                personalEvents = []
             end
         
         
@@ -140,10 +140,10 @@ class MainController < ApplicationController
         end
 
         if params["appointmentSlot"]
-            return createGoogleEvent(cal: @appointmentsCal,newEvent: newEvent, title: "Available Appointment")
+            return createGoogleEvent(cal: @appointmentsCal,newEvent: newEvent, title: "Appointment Slot")
         end
         if params["consultSlot"]
-            return createGoogleEvent(cal: @consultsCal,newEvent: newEvent, title: "Available Phone Consult")
+            return createGoogleEvent(cal: @consultsCal,newEvent: newEvent, title: "Phone Consult Slot")
         end
 
         return createGoogleEvent(cal: @appointmentsCal, newEvent: newEvent, title: title, attendees: attendees )
@@ -213,24 +213,22 @@ class MainController < ApplicationController
              NotificationMailer.admin_consult_confirmation(user, jsonEvent).deliver_later
         
         end
-
-
-        # editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
-        #     e.title = newTitle
-        #     e.color_id = 2
-        #     e.location= "609 W 135 St New York, New York"
-        #     e.attendees= [
-        #     {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
-        # end
-
-        # render json: {events: eventsInDateWindow(@appointmentsCal)} 
-       
         return appStateJson(scrollToEvent: event)
 
     end
 
     def cancelEvent
         event = params["event"]
+        cal = nil
+          if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
+            cal = @appointmentsCal
+        end
+
+        if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
+            cal = @consultsCal
+        end
+
+        
         inGracePeriod = params["inGracePeriod"]
         user = current_user
         attendees= []
@@ -263,7 +261,7 @@ class MainController < ApplicationController
         # NotificationMailer.admin_appointment_confirmation(user, jsonEvent).deliver_later
         
 
-        return editGoogleCalEvent(cal: @appointmentsCal, event: event, attendees: attendees)
+        return editGoogleCalEvent(cal: cal, event: event, attendees: attendees)
     end
 
 
@@ -327,14 +325,19 @@ class MainController < ApplicationController
 
 
     def deleteEvent
+        byebug
          event = params["event"]
 
          if event["calendar"]["id"] === current_user.google_calendar_email
                 cal = @personalCal
         end
 
-        if event["calendar"]["id"] === ENV["GOOGLE_CALENDAR_ADDRESS"]
+        if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
             cal = @appointmentsCal
+        end
+
+        if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
+            cal = @consultsCal
         end
 
        

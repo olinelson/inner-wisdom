@@ -28,7 +28,7 @@ export const relevantEvents = (appointments, consults, user) => {
         let usersAppointments = appointments.filter(e => isUserAnAttendeeOfEvent(e, user))
         let usersConsults = consults.filter(e => isUserAnAttendeeOfEvent(e, user))
 
-        if (user.vetted) result = flatten([...usersAppointments, usersConsults, freeAppointments])
+        if (user.approved) result = flatten([...usersAppointments, usersConsults, freeAppointments])
         else result = flatten([...freeConsults, usersConsults])
 
     } else {

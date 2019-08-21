@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { connect } from "react-redux"
 import { withRouter } from "react-router-dom"
 import { Container, Card, Item, Table, Label, Menu, Button, Icon, Checkbox, Modal, Form, Header } from 'semantic-ui-react';
@@ -12,9 +12,9 @@ function ClientShow(props) {
     let user = props.users.find(u => u.id == userId)
 
     if (!user) return props.history.push('/notfound')
-    console.log("this is user", user)
+
     let relevantAppointments = flatten([...props.appointments, props.consults]).filter(e => isUserAnAttendeeOfEvent(e, user))
-    console.log(relevantAppointments)
+
 
     const [first_name, set_first_name] = useState(user.first_name || "")
     const [last_name, set_last_name] = useState(user.last_name || "")
@@ -27,14 +27,48 @@ function ClientShow(props) {
     const [post_code, set_post_code] = useState(user.post_code || "")
 
     const [email, set_email] = useState(user.email || "")
-    const [modalOpen, setModalOpen] = useState(false)
+    const [editModal, setEditModal] = useState(false)
     const [deleteModal, setDeleteModal] = useState(false)
+    const [approveModal, setApproveModal] = useState(false)
     const [loading, setLoading] = useState(false)
+
+    const [approved, setApproved] = useState(user.approved)
 
     let chronologicalSorted = relevantAppointments.sort((b, a) => new Date(a.start_time) - new Date(b.end_time))
 
+    function useEffectSkipFirst(fn, arr) {
+        const isFirst = useRef(true);
+
+        useEffect(() => {
+            if (isFirst.current) {
+                isFirst.current = false;
+                return;
+            }
+
+            fn();
+        }, arr);
+    }
+
+    useEffectSkipFirst(
+        () => {
+            console.log("hi", approved);
+            editUserHandeler()
+        },
+        [approved]
+    );
+
+    const approveUserHandeler = () => {
+        setApproveModal(false)
+        setApproved(!user.approved)
+        // .then(() => console.log("done", approved))
+
+    }
+
+
+
+
     const editUserHandeler = () => {
-        let editedUser = { first_name, last_name, email, street_address, apartment_number, post_code, suburb, state: address_state }
+        let editedUser = { first_name, last_name, email, street_address, apartment_number, post_code, suburb, state: address_state, approved }
 
         fetch(`${props.baseUrl}/clients/${user.id}`, {
             method: "PATCH",
@@ -51,7 +85,7 @@ function ClientShow(props) {
             .then(res => res.json())
             .then((res) => {
                 setLoading(false)
-                setModalOpen(false)
+                setEditModal(false)
                 props.dispatch({ type: "SET_USERS", value: res.users })
             })
     }
@@ -73,6 +107,8 @@ function ClientShow(props) {
             })
     }
 
+
+
     return (
         <Container>
 
@@ -80,7 +116,7 @@ function ClientShow(props) {
             <Button
                 basic
                 content="edit"
-                onClick={() => setModalOpen(true)}
+                onClick={() => setEditModal(true)}
                 icon="edit"
             />
             <Button
@@ -90,6 +126,16 @@ function ClientShow(props) {
                 icon="delete"
 
             />
+
+            <Button as='div' labelPosition='right'>
+                <Button basic icon="check" content="approve" onClick={() => setApproveModal(true)} />
+                {user.approved ?
+                    <Label basic color='green' pointing='left' content="Approved" />
+                    :
+                    <Label basic color='red' pointing='left' content="Not Approved" />
+                }
+
+            </Button>
 
 
             <hr />
@@ -109,7 +155,7 @@ function ClientShow(props) {
 
 
 
-            <Modal onClose={() => setModalOpen(false)} open={modalOpen}>
+            <Modal onClose={() => setEditModal(false)} open={editModal}>
                 <Modal.Header>Edit Client</Modal.Header>
                 <Modal.Content image>
                     <Modal.Description>
@@ -183,11 +229,41 @@ function ClientShow(props) {
                 </Modal.Actions>
             </Modal>
 
+            <Modal onClose={() => setApproveModal(false)} open={approveModal} basic size='small'>
+                <Header icon='user' content='Approve User' />
+                <Modal.Content>
+                    {user.approved ?
+                        <p>Are you sure you would like to un approve this user? They will no loger be able to book appointments, only phone consultations.</p>
+                        :
+                        <p>Are you sure you would like to approve this user? This will enable them to book full appointments.</p>
+                    }
+
+                </Modal.Content>
+                <Modal.Actions>
+                    <Button
+                        onClick={() => approveUserHandeler()}
+                        color='red'
+                        inverted
+                        icon="checkmark"
+                        content={user.approved ? "Yes, Un Approve" : "Yes Approve"}
+                    />
+                    <Button
+                        onClick={() => setApproveModal(false)}
+                        basic
+                        color='green'
+                        inverted
+                        icon="remove"
+                        content="Cancel"
+                    />
+                </Modal.Actions>
+            </Modal>
+
 
 
         </Container>
     )
 }
+
 
 const mapStateToProps = (state) => ({
     appointments: state.appointments,

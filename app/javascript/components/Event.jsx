@@ -15,6 +15,7 @@ function Event(props) {
     const [event, setEvent] = useState(props.event);
     const [modalOpen, setModalOpen] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [isCanceled, setIsCanceled] = useState(event.title.toLowerCase().includes("canceled"))
 
     let personal = false
     if (event.calendar.id === props.user.google_calendar_email) personal = true
@@ -244,6 +245,7 @@ function Event(props) {
     const colorPicker = () => {
         if (personal) return "green"
         if (!personal && isAnEmptySlot()) return "grey"
+        if (isCanceled) return "red"
         return "blue"
     }
 

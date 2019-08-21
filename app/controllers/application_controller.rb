@@ -26,6 +26,7 @@ class ApplicationController < ActionController::Base
       :state,
       :post_code,
       :phone_number,
+      :approved
       ])
 
   end
