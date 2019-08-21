@@ -26,6 +26,7 @@ import Supervision from './Supervision'
 import Training from './Training'
 import About from './About';
 import Contact from './Contact';
+import FAQS from './FAQS';
 
 
 
@@ -151,8 +152,8 @@ export function App(props) {
                             />
 
                             <Route
-                                path="/about"
-                                render={props => <About />}
+                                path="/faqs"
+                                render={props => <FAQS />}
                             />
                             <Route
                                 path="/supervision"

@@ -7,7 +7,7 @@ export const Jumbotron = styled.div`
     background-size: cover !important;
     background-repeat: no-repeat !important;
      background: ${props => `url('${props.src}')`};
-     height: ${props => props.fullHeight ? "100vh !important" : "40vh"};
+     height: ${props => props.fullHeight ? "90vh !important" : "40vh"};
 
     display: grid;
 }
@@ -101,9 +101,10 @@ export const TwoColumnContainer = styled(Container)`
         display: grid !important;
         justify-contentt: center;
         grid-template-columns: 2fr 3fr;
-        grid-template-areas: "heading ." "p1 img";
+        grid-template-areas: ${props => props.imgLeft ? "'. heading' 'img p1'" : "'heading .' 'p1 img'"};
+        grid-column-gap: 2rem;
         margin-top: 2rem;
-        grid-column-gap: 1rem;
+
 
     `
 

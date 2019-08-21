@@ -13,7 +13,7 @@ import { Jumbotron, JumboMessage, ThreeColumnContainer, GridCard, ImageDivider }
 import Counselling from './Counselling';
 import Supervision from './Supervision';
 import Training from './Training';
-
+import Memberships from "./Memberships"
 function Home(props) {
 
 
@@ -63,7 +63,7 @@ function Home(props) {
 
         <Divider hidden />
 
-        <ThreeColumnContainer>
+        {/* <ThreeColumnContainer>
 
             <BasicCard onClick={() => props.history.push("/counselling")}>
                 <Image centered size="small" src="https://storage.googleapis.com/inner_wisdom_bucket/DSC_0022.jpg" />
@@ -80,17 +80,12 @@ function Home(props) {
                 <Header content="Training" />
 
             </BasicCard>
-            {/* <BasicCard onClick={() => props.history.push("/training")}>
-                <Image size="small" src="https://storage.googleapis.com/inner_wisdom_bucket/bonsai-garden-plant-1382195(1).jpg" />
-                <Header content="Memberships" />
 
-            </BasicCard> */}
-
-        </ThreeColumnContainer>
+        </ThreeColumnContainer> */}
 
         <Divider hidden />
-        <Divider />
-        <Divider hidden />
+
+
         {/* </Container> */}
         <Container text>
             {/* <Segment> */}
@@ -114,6 +109,10 @@ function Home(props) {
             </Item.Group>
             {/* </Segment> */}
         </Container>
+
+        <Divider hidden />
+
+        <Memberships />
 
 
 

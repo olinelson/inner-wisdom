@@ -41,6 +41,7 @@ function Nav(props) {
             pathname.includes('/supervision') ||
             pathname.includes('/training') ||
             pathname.includes('/contact') ||
+            pathname.includes('/faqs') ||
             pathname === ""
 
         ) return false
@@ -75,6 +76,8 @@ function Nav(props) {
 
         @media (max-width: 50rem) {
             visibility: hidden !important;
+            width: 100vw !important;
+            overflow: hidden !important;
         }
          
     `
@@ -86,10 +89,13 @@ function Nav(props) {
         right: 1rem;
         background: rgba(0, 0, 0, 0);
         font-size: 2.5rem !important;
-        color: #666666;
+        // color: #666666;
         display: flex;
         justify-content: flex-end;
         align-items: center;
+        color: white;
+        text-shadow: -1px -1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey;
+
         
         @media(min-width: 50rem) {
             display: none!important;
@@ -109,15 +115,11 @@ function Nav(props) {
             </Menu.Item>
 
             <Menu.Item active={pathname === '/supervision'} >
-                <LinkOrATag static={props.static} to="/supervision">Supervision</LinkOrATag>
+                <LinkOrATag static={props.static} to="/supervision">Supervision & Training</LinkOrATag>
             </Menu.Item>
 
-            <Menu.Item active={pathname === '/training'} >
-                <LinkOrATag static={props.static} to="/training">Training</LinkOrATag>
-            </Menu.Item>
-
-            <Menu.Item active={pathname === '/about'} >
-                <LinkOrATag static={props.static} to="/about">About</LinkOrATag>
+            <Menu.Item active={pathname === '/faqs'} >
+                <LinkOrATag static={props.static} to="/faqs">FAQs</LinkOrATag>
             </Menu.Item>
 
             <Menu.Item active={pathname === '/blog'} >
@@ -129,10 +131,12 @@ function Nav(props) {
 
 
 
-            {props.user && props.user.admin ? null :
-                <Menu.Item active={pathname === '/appointments'}>
-                    <LinkOrATag static={props.static} to="/appointments">Appointments</LinkOrATag>
-                </Menu.Item>
+            {
+                props.user && props.user.admin ? null :
+                    <Menu.Item active={pathname === '/appointments'}>
+
+                        <LinkOrATag static={props.static} to="/appointments">Appointments</LinkOrATag>
+                    </Menu.Item>
             }
 
         </>

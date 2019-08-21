@@ -20,7 +20,7 @@ export default function About() {
             <Divider />
             <Training />
             <Divider /> */}
-            <Memberships />
+            {/* <Memberships /> */}
             <Divider />
             <FAQS />
 
