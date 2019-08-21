@@ -90,6 +90,7 @@ export const InfoContainer = styled(Container)`
 export const ImageDiv = styled.div`
         width: ${props => props.width || "auto"} ;
         height: ${props => props.height || "auto"};
+        min-height: ${props => props.minHeight || "none"};
         background: ${props => `url('${props.src}')`};
         background-size: cover;
         grid-area: ${props => `${props.gridArea}`};
@@ -101,30 +102,39 @@ export const TwoColumnContainer = styled(Container)`
         display: grid !important;
         justify-contentt: center;
         grid-template-columns: 2fr 3fr;
-        grid-template-areas: ${props => props.imgLeft ? "'. heading' 'img p1'" : "'heading .' 'p1 img'"};
+        grid-template-areas: ${props => props.imgleft ? "'. heading' 'img p1'" : "'heading .' 'p1 img'"};
         grid-column-gap: 2rem;
         margin-top: 2rem;
 
+        @media(max-width: 40rem) {
+            // grid-template-columns: 1fr;
+            grid-template-areas:  "heading heading" "img img" "p1 p1";
+            // grid-template-rows: minmax(25vh, auto);
+            grid-template-rows: 1fr;
+            grid-gap: 1rem;
+            
 
-    `
+        }
+`
+
 
 
 export const BusinessEventSegment = styled(Segment)`
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 1rem;
-    justify-content: center;
-    justify-items: center;
-    grid-template-areas:
-        "timePicker timePicker"
-        "newAppointment newAppSlot"
-        "newAppointment newConsultSlot"
+display: grid;
+grid - template - columns: 1fr 1fr;
+grid - gap: 1rem;
+justify - content: center;
+justify - items: center;
+grid - template - areas:
+"timePicker timePicker"
+"newAppointment newAppSlot"
+"newAppointment newConsultSlot"
     ;
 
 
-    `
+`
 export const CenteredFlexDiv = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+display: flex;
+flex - direction: column;
+justify - content: center;
 `
