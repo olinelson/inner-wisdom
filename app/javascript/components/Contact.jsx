@@ -10,7 +10,7 @@ export default function Contact() {
             <Grid.Row>
                 <Grid.Column>
                     <h4>Email</h4>
-                    <a href="innerwisdompsychologist@gmail.com">innerwisdompsychologist@gmail.com</a>
+                    <a href="mailto:innerwisdompsychologist@gmail.com">innerwisdompsychologist@gmail.com</a>
                     <h4>Phone</h4>
                     <a href="tel:+61401057778‬">0401 057 778‬</a>
 

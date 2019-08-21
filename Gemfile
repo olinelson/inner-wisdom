@@ -71,8 +71,8 @@ gem 'google_calendar'
 
 gem 'webpacker-react'
 
-gem 'stripe'
-
 gem 'devise'
 
 gem 'google-cloud-storage'
+
+gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'

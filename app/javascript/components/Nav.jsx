@@ -31,11 +31,12 @@ function Nav(props) {
 
     const imageHeader = () => {
 
+        if (pathname.includes('/posts') && props.user && props.user.admin) return false
+
         if (
             pathname === '/schedule' ||
             pathname.includes('/clients') ||
             pathname === '/myaccount' ||
-            pathname.includes('/posts') ||
             pathname.includes('/users') ||
             pathname.includes('/appointments') ||
             pathname.includes('/supervision') ||
@@ -45,6 +46,7 @@ function Nav(props) {
             pathname === ""
 
         ) return false
+
 
         return true
     }
@@ -74,7 +76,7 @@ function Nav(props) {
         border: none !important;
         background: ${() => imageHeader() ? "linear-gradient(180deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,0) 100%) !important;" : "white !important"};
 
-        @media (max-width: 50rem) {
+        @media (max-width: 60rem) {
             visibility: hidden !important;
             width: 100vw !important;
             overflow: hidden !important;
@@ -97,7 +99,7 @@ function Nav(props) {
         text-shadow: -1px -1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey;
 
         
-        @media(min-width: 50rem) {
+        @media(min-width: 60rem) {
             display: none!important;
         }
 `
