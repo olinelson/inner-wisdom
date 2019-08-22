@@ -1,10 +1,8 @@
 Rails.application.routes.draw do
-
-  # devise_for :users
   devise_for :users, controllers: { registrations: "users/registrations",passwords: "users/passwords" }
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   root to: 'main#home'
 
+  # calendar event routes
   post '/create', to: 'main#createEvent'
 
   delete '/delete', to: 'main#deleteEvent'
@@ -17,8 +15,7 @@ Rails.application.routes.draw do
 
   post '/calendar_auth', to: 'main#calendarAuthLink'
 
-  # get '/pay', to: 'payment#pay'
-
+  # blog post routes
   patch '/posts/:id', to: 'posts#edit'
 
   delete '/posts/:id', to: 'posts#delete'
@@ -27,11 +24,14 @@ Rails.application.routes.draw do
 
   post '/attach/posts/:id', to: 'posts#attach'
 
+
+  # google personal cal set up
   post '/googlecal/url', to: 'googlecal#genNewCalAuthUrl'
 
   post '/googlecal/token', to: 'googlecal#setPersonalCalRefreshToken'
 
-  # post '/clients', to: 'users/registrations#create_user_with_admin'
+
+  # users
    devise_scope :user do
     post "/clients" => 'users/registrations#create_user_with_admin'
 
@@ -40,10 +40,12 @@ Rails.application.routes.draw do
     delete "/clients/:id" => 'users/registrations#destroy_with_admin'
   end
 
+  # stripe
+
+
+  get "/stripe/users/:user_id" => 'stripe#create_customer/' , :as => :create_customer
   
 
-  
 
-  # get '/posts/create', to: 'posts#create'
 
 end

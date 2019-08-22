@@ -176,6 +176,7 @@ class MainController < ApplicationController
         fullName = user.first_name + " " + user.last_name
         newTitle = ""
 
+
         cal = nil
 
         if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
@@ -189,6 +190,13 @@ class MainController < ApplicationController
             e.attendees= [
             {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
              end
+            Stripe.api_key = ENV["STRIPE_KEY"]
+            Stripe::InvoiceItem.create({
+            customer: user.stripe_id,
+            amount: 8000,
+            currency: 'aud',
+            description: 'Appointment',
+            })
 
             jsonEvent = editedEvent.to_json
             NotificationMailer.user_appointment_confirmation(user, jsonEvent).deliver_later
@@ -207,6 +215,14 @@ class MainController < ApplicationController
             e.attendees= [
             {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
             end
+
+            Stripe.api_key = ENV["STRIPE_KEY"]
+            Stripe::InvoiceItem.create({
+            customer: user.stripe_id,
+            amount: 0,
+            currency: 'aud',
+            description: 'Phone Consultation',
+            })
 
              jsonEvent = editedEvent.to_json
              NotificationMailer.user_consult_confirmation(user, jsonEvent).deliver_later
