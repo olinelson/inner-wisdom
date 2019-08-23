@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { connect } from "react-redux"
 import { withRouter } from "react-router-dom"
-import { Container, Card, Item, Table, Label, Menu, Button, Icon, Checkbox, Modal, Form, Header } from 'semantic-ui-react';
+import { Container, Card, Item, Table, Label, Menu, Button, Icon, Checkbox, Modal, Form, Header, Tab } from 'semantic-ui-react';
 import { isUserAnAttendeeOfEvent, relevantEvents, flatten } from "./Appointments"
 import moment from "moment"
 import AppointmentHistoryTable from './AppointmentHistoryTable';
+import InvoiceItems from './InvoiceItems';
+import Invoices from './Invoices';
 
 
 function ClientShow(props) {
@@ -107,7 +109,12 @@ function ClientShow(props) {
             })
     }
 
+    const panes = [
+        { menuItem: 'Appointment History', render: () => <Tab.Pane content={<AppointmentHistoryTable events={relevantAppointments} user={user} />} /> },
+        { menuItem: 'To Be Invoiced', render: () => <InvoiceItems user={user} /> },
+        { menuItem: 'Invoices', render: () => <Invoices user={user} /> },
 
+    ]
 
     return (
         <Container>
@@ -149,9 +156,10 @@ function ClientShow(props) {
             <h4>Email</h4>
             <p>{user.email}</p>
 
-            <h4>Appointment History</h4>
 
-            <AppointmentHistoryTable events={relevantAppointments} user={user} />
+            <Tab panes={panes} renderActiveOnly={true} />
+
+
 
 
 

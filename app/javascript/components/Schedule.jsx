@@ -350,9 +350,7 @@ class Schedule extends Component {
             open={this.state.creatingEvent}
             onClose={() => this.setState({ creatingEvent: false })}
         >
-            <Modal.Header>Create Event
-
-            </Modal.Header>
+            <Modal.Header>Create Event</Modal.Header>
             <Modal.Content >
                 {this.personalOrBusinessToggle(e)}
 
@@ -366,6 +364,8 @@ class Schedule extends Component {
     }
 
     render() {
+
+        console.log(this.props.appointments)
         return <>
 
             <FullWidthCalendarContainer fluid >

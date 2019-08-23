@@ -1,6 +1,63 @@
 class StripeController < ApplicationController
 Stripe.api_key = 'sk_test_leD90Sq6bZqN5loAEFF3XxBt00VD4BmzYE'
 
+def get_customer_invoice_items
+    invoice_items = Stripe::InvoiceItem.list(customer: params["user"]["stripe_id"], pending: true)
+    render json: {invoice_items: invoice_items}
+end
+
+def get_customer_invoices 
+    invoices = Stripe::Invoice.list(customer: params["user"]["stripe_id"])
+    render json: {invoices: invoices}
+end
+
+def update_invoice_item
+    item = params["invoice_item"]
+    updated_item = Stripe::InvoiceItem.update( item["id"],{ amount: item["amount"]})
+    render json: {updated_item: updated_item}
+end
+
+def create_invoice_item
+    stripe_id = params["user"]["stripe_id"]
+    event = params["event"]
+    # stripe_id = params["user"]["stripe_id"]
+    dateString =  DateTime.parse(event["start_time"])
+    description = "#{dateString.day}/#{dateString.month}/#{dateString.year} Appointment"
+
+
+
+    invoice_item = Stripe::InvoiceItem.create({
+        customer: stripe_id,
+        amount: 0,
+        currency: 'aud',
+        description: description,
+        metadata: {
+                    type: "Appointment",
+                    google_event_id: event["id"],
+                    start_time: event["start_time"],   
+                    end_time: event["end_time"],
+                }
+    })
+    
+
+    render json: { invoice_item: invoice_item }
+end
+
+def create_invoice
+    stripe_id = params["user"]["stripe_id"]
+    invoice = Stripe::Invoice.create({customer: stripe_id, collection_method: "send_invoice", days_until_due: 7})
+    
+    res = Stripe::Invoice.send_invoice(invoice.id)
+    
+    render json: {invoice: res}
+
+end
+
+def send_invoice
+    invoice_id = params["invoice"]["id"]
+    invoice = Stripe::Invoice.send_invoice(invoice_id)
+    render json: {invoice: invoice}
+end
 
 # # charge = Stripe::Charge.create({
 # #     amount: 999,
@@ -15,12 +72,7 @@ Stripe.api_key = 'sk_test_leD90Sq6bZqN5loAEFF3XxBt00VD4BmzYE'
 # #   email: 'olinelson93@gmail.com',
 # # })
 
-Stripe::InvoiceItem.create({
-  customer: "5",
-  amount: 2500,
-  currency: 'aud',
-  description: 'One-time setup fee',
-})
+
 
 
 
@@ -49,44 +101,44 @@ Stripe::InvoiceItem.create({
 
 # invoice = Stripe::Invoice.send_invoice('in_1FA1vgCk9T3T1VFkpS7PVuA1')
 
-def create_invoice_item(userId, ammount, description)
-    user = User.find(userId)
+# def create_invoice_item(userId, ammount, description)
+#     user = User.find(userId)
 
-    Stripe::InvoiceItem.create({
-        customer: user.stripe_id,
-        amount: ammount,
-        currency: "aud",
-        description: description,
-    })
-end
+#     Stripe::InvoiceItem.create({
+#         customer: user.stripe_id,
+#         amount: ammount,
+#         currency: "aud",
+#         description: description,
+#     })
+# end
 
-def create_and_send_invoice(userId)
-    user = User.find(userId)
+# def create_and_send_invoice(userId)
+#     user = User.find(userId)
 
-    inv = Stripe::Invoice.create({
-    customer: user.stripe_id,
-    collection_method: 'send_invoice',
-    days_until_due: 7
-    })
+#     inv = Stripe::Invoice.create({
+#     customer: user.stripe_id,
+#     collection_method: 'send_invoice',
+#     days_until_due: 7
+#     })
 
-    Stripe::Invoice.send_invoice(inv.id)
-end
+#     Stripe::Invoice.send_invoice(inv.id)
+# end
 
-def create_customer
-    byebug
+# def create_customer
+#     byebug
 
     
-    customer =  Stripe::Customer.create({
-    name: user.first_name + " " + user.last_name,
-    email: user.email,
-    phone: user.phone_number
-    })
+#     customer =  Stripe::Customer.create({
+#     name: user.first_name + " " + user.last_name,
+#     email: user.email,
+#     phone: user.phone_number
+#     })
 
-    if customer.id
-        user.update(stripe_id: customer.id)
-    end
+#     if customer.id
+#         user.update(stripe_id: customer.id)
+#     end
 
-end
+# end
 
 
 end

@@ -70,6 +70,7 @@ class MainController < ApplicationController
     end
 
     def home
+
         user = nil
         personalEvents = []
         users = User.all
@@ -158,6 +159,7 @@ class MainController < ApplicationController
             e.location= newEvent["location"]
             e.reminders =  { "useDefault": false }
             e.attendees= attendees
+            e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => ''}}
         end
 
         #  render json: {scrollToEvent: event, events: eventsInDateWindow(@appointmentsCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
@@ -182,7 +184,7 @@ class MainController < ApplicationController
         if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
              newTitle = fullName + " | session confirmed"
             cal = @appointmentsCal
-
+            
             editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
             e.title = newTitle
             e.color_id = 2
@@ -190,15 +192,25 @@ class MainController < ApplicationController
             e.attendees= [
             {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
              end
-            Stripe.api_key = ENV["STRIPE_KEY"]
-            Stripe::InvoiceItem.create({
-            customer: user.stripe_id,
-            amount: 8000,
-            currency: 'aud',
-            description: 'Appointment',
-            })
 
-            jsonEvent = editedEvent.to_json
+            # dateString =  DateTime.parse(editedEvent.start_time)
+            # description = "#{dateString.day}/#{dateString.month}/#{dateString.year} Appointment"
+
+            # Stripe.api_key = ENV["STRIPE_KEY"]
+            # Stripe::InvoiceItem.create({
+            #     customer: user.stripe_id,
+            #     amount: 8000,
+            #     currency: 'aud',
+            #     description: description,
+            #     metadata: {
+            #         type: "Appointment",
+            #         google_event_id: editedEvent.id,
+            #         start_time: editedEvent.start_time,   
+            #         end_time: editedEvent.end_time,
+            #     }
+            # })
+
+             jsonEvent = editedEvent.to_json
             NotificationMailer.user_appointment_confirmation(user, jsonEvent).deliver_later
             NotificationMailer.admin_appointment_confirmation(user, jsonEvent).deliver_later
         
@@ -216,13 +228,22 @@ class MainController < ApplicationController
             {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
             end
 
-            Stripe.api_key = ENV["STRIPE_KEY"]
-            Stripe::InvoiceItem.create({
-            customer: user.stripe_id,
-            amount: 0,
-            currency: 'aud',
-            description: 'Phone Consultation',
-            })
+            dateString =  DateTime.parse(editedEvent.start_time)
+            description = "#{dateString.day}/#{dateString.month}/#{dateString.year} Phone Consultation"
+
+            # Stripe.api_key = ENV["STRIPE_KEY"]
+            # Stripe::InvoiceItem.create({
+            #     customer: user.stripe_id,
+            #     amount: 8000,
+            #     currency: 'aud',
+            #     description: description,
+            #     metadata: {
+            #         type: "Phone Consultation",
+            #         google_event_id: editedEvent.id,
+            #         start_time: editedEvent.start_time,   
+            #         end_time: editedEvent.end_time,
+            #     }
+            # })
 
              jsonEvent = editedEvent.to_json
              NotificationMailer.user_consult_confirmation(user, jsonEvent).deliver_later
@@ -282,6 +303,7 @@ class MainController < ApplicationController
 
 
     def updateEvent
+        byebug
         event = params["event"]
 
         attendees= []
@@ -367,11 +389,11 @@ class MainController < ApplicationController
 
     end
 
-    # def deleteAllEvents(cal)
-    #     cal.events.each do |e|
-    #         e.delete
-    #     end
-    # end
+    def deleteAllEvents(cal)
+        cal.events.each do |e|
+            e.delete
+        end
+    end
 
     def all 
         puts @appointmentsCal.events

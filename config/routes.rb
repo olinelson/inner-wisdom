@@ -43,7 +43,16 @@ Rails.application.routes.draw do
   # stripe
 
 
-  get "/stripe/users/:user_id" => 'stripe#create_customer/' , :as => :create_customer
+  # get "/stripe/users/:user_id" => 'stripe#create_customer/' , :as => :create_customer
+  post "/stripe/invoice_items" => "stripe#get_customer_invoice_items"
+
+  post "/stripe/invoice_items/create" => "stripe#create_invoice_item"
+
+  patch "/stripe/invoice_items" => "stripe#update_invoice_item"
+
+  post "/stripe/invoices" => "stripe#get_customer_invoices"
+  post "/stripe/invoices/send" => "stripe#send_invoice"
+  post "/stripe/invoices/new" => "stripe#create_invoice"
   
 
 
