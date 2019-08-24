@@ -1,9 +1,31 @@
-import React from 'react'
-import { Table, Label, Icon, Button } from "semantic-ui-react"
+import React, { useState } from 'react'
+import { Table, Label, Icon, Button, Checkbox, Modal, Header, Input, Divider } from "semantic-ui-react"
 import moment from "moment"
 import { connect } from "react-redux"
 
 function AppointmentHistoryTable(props) {
+
+    const [selectedEvent, setSelectedEvent] = useState(null)
+    const [modalOpen, setModalOpen] = useState(false)
+
+    const toogleAppointmentPaid = (a) => {
+
+        let bool = a.extended_properties.private.paid === "true"
+
+        let editedEvent = {
+            ...a, extended_properties: {
+                private: {
+                    paid: !bool,
+                    stripe_id: ""
+
+                }
+            }
+        }
+
+
+        updateGoogleCalEvent(editedEvent)
+
+    }
 
     const updateGoogleCalEvent = (event) => {
         fetch(`${process.env.BASE_URL}/update`, {
@@ -68,7 +90,8 @@ function AppointmentHistoryTable(props) {
             if (a.calendar.id === process.env.APPOINTMENTS_CALENDAR_ID) type = "Appointment"
             if (a.calendar.id === process.env.CONSULTS_CALENDAR_ID) type = "Phone Consult"
 
-
+            let onAnInvoice = a.extended_properties && a.extended_properties.private.stripe_id.length > 0 ? true : false
+            let isPaid = a.extended_properties && a.extended_properties.private.paid === "true"
 
             let duration = moment.duration(moment(a.end_time) - moment(a.start_time))
 
@@ -84,7 +107,23 @@ function AppointmentHistoryTable(props) {
                     </Label>
                 </Table.Cell>
                 <Table.Cell>
-                    <Button onClick={() => addToInvoice(a)} content="add to invoice" />
+                    {onAnInvoice ? <Checkbox checked={false} /> :
+                        <Modal
+                            trigger={
+                                <Checkbox checked={isPaid} />
+                            }
+                            header={isPaid ? "Mark appointment as un paid" : "Mark appointment as paid"}
+                            content={"Are you sure you wish to mark this appointment as " + (isPaid ? " un paid." : " paid.")}
+                            actions={['Cancel', { key: 'yes', content: 'Yes', positive: true, onClick: () => toogleAppointmentPaid(a) }]}
+                        />
+                    }
+
+                </Table.Cell>
+                <Table.Cell>
+                    <Button
+                        disabled={onAnInvoice || isPaid ? true : false}
+                        onClick={() => addToInvoice(a)}
+                        content={onAnInvoice ? "Is Billable Item" : "Make Billable Item"} />
                 </Table.Cell>
             </Table.Row>
 
@@ -97,6 +136,8 @@ function AppointmentHistoryTable(props) {
     return (
         <>
             {/* <h2>Appointment History</h2> */}
+
+
             <Table style={{ gridArea: "panel" }} basic="very" >
                 <Table.Header>
                     <Table.Row>
@@ -104,6 +145,7 @@ function AppointmentHistoryTable(props) {
                         <Table.HeaderCell>Type</Table.HeaderCell>
                         <Table.HeaderCell>Duration</Table.HeaderCell>
                         <Table.HeaderCell>Attendees</Table.HeaderCell>
+                        <Table.HeaderCell>Paid</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
 
@@ -111,6 +153,11 @@ function AppointmentHistoryTable(props) {
                     {appointmentHistoryTableRows()}
                 </Table.Body>
             </Table>
+
+
+
+
+
         </>
     )
 }

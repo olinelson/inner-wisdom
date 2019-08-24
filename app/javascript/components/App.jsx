@@ -112,7 +112,6 @@ export function App(props) {
             // personalEvents: formatEvents(props.personalEvents, "personal"),
             personalEvents: props.personalEvents,
             user: props.user,
-            baseUrl: props.baseUrl,
             csrfToken: document.querySelectorAll('meta[name="csrf-token"]')[0].content,
             users: props.users,
             businessCalendarAddress: props.businessCalendarAddress,

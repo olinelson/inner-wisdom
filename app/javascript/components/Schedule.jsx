@@ -66,7 +66,7 @@ class Schedule extends Component {
     createEventHandeler = (isAppointmentSlot, isConsultSlot) => {
         let event = { ...this.state.selectedEvent }
         this.setState({ creatingEvent: false })
-        fetch(`${this.props.baseUrl}/create`, {
+        fetch(`${process.env.BASE_URL}/create`, {
             method: "POST",
             body: JSON.stringify({
                 event: event,

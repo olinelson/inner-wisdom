@@ -63,7 +63,7 @@ class PostEditor extends Component {
         this.setState({ saving: true })
         let post = this.state.editedPost
 
-        fetch(`${this.props.baseUrl}/posts/${post.id}`, {
+        fetch(`${process.env.BASE_URL}/posts/${post.id}`, {
             method: "PATCH",
             body: JSON.stringify({
                 post
@@ -86,7 +86,7 @@ class PostEditor extends Component {
 
     deletePost = () => {
 
-        fetch(`${this.props.baseUrl}/posts/${this.state.savedPost.id}`, {
+        fetch(`${process.env.BASE_URL}/posts/${this.state.savedPost.id}`, {
             method: "DELETE",
             headers: {
                 "X-CSRF-Token": this.props.csrfToken,
@@ -219,7 +219,7 @@ class PostEditor extends Component {
         let formData = new FormData();
         formData.append('file', acceptedFiles[0])
 
-        fetch(`${this.props.baseUrl}/attach/posts/${this.state.savedPost.id}`, {
+        fetch(`${process.env.BASE_URL}/attach/posts/${this.state.savedPost.id}`, {
             method: "POST",
             body: formData,
 

@@ -15,7 +15,7 @@ export default function Supervision() {
             <p>I draw on self-reflective practice, creative and expressive approaches to supervision and am particularly interested in how the personal experience of the health practitioner helps or hinders their work with clients.</p>
         </div>
     </TwoColumnContainer>
-        <TwoColumnContainer imgleft text  >
+        <TwoColumnContainer imgleft="true" text  >
             <h1 style={{ gridArea: "heading", textAlign: "left", alignSelf: "flex-end" }}>Training</h1>
             <div style={{ gridArea: "p1", textAlign: "left" }}>
                 <p>I have spent 20 years as a trainer of mental health professionals in a variety of areas, including: counselling skills and theories; grief and loss; mental health in adulthood; treating psychological and emotional trauma; practitioner well-being and  burnout and training pastoral and Clinical Supervisors.</p>

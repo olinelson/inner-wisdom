@@ -70,7 +70,6 @@ class MainController < ApplicationController
     end
 
     def home
-
         user = nil
         personalEvents = []
         users = User.all
@@ -159,7 +158,7 @@ class MainController < ApplicationController
             e.location= newEvent["location"]
             e.reminders =  { "useDefault": false }
             e.attendees= attendees
-            e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => ''}}
+            e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => ""}}
         end
 
         #  render json: {scrollToEvent: event, events: eventsInDateWindow(@appointmentsCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
@@ -189,6 +188,7 @@ class MainController < ApplicationController
             e.title = newTitle
             e.color_id = 2
             e.location= "609 W 135 St New York, New York"
+
             e.attendees= [
             {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
              end
@@ -303,7 +303,6 @@ class MainController < ApplicationController
 
 
     def updateEvent
-        byebug
         event = params["event"]
 
         attendees= []
@@ -354,6 +353,7 @@ class MainController < ApplicationController
             e.location= event["location"]
             # e.notes= "one fine day in the middle of the night, two dead men got up to fight"
             e.attendees = attendees
+            e.extended_properties = {'private' => {'paid' => event["extended_properties"]["private"]["paid"], 'stripe_id' => event["extended_properties"]["private"]["stripe_id"]}}
         end
 
         return appStateJson(scrollToEvent: editedEvent)
@@ -387,6 +387,31 @@ class MainController < ApplicationController
 
         # render json: {scrollToEvent: event, events: eventsInDateWindow(@appointmentsCal), personalEvents: eventsInDateWindow(@personalCal)}
 
+    end
+
+
+    def remove_stripe_id_from_event
+        invoice_item = params["invoice_item"]["metadata"]
+
+        cal = nil
+
+
+        if invoice_item["type"] === "Appointment"
+            cal = @appointmentsCal
+        end
+        if invoice_item["type"] === "Phone Consult"
+            cal = @appointmentsCal
+        end
+
+
+    
+        
+        editedEvent = cal.find_or_create_event_by_id(invoice_item["google_event_id"]) do |e|
+
+            e.extended_properties = {'private' => {'paid' => e.extended_properties["private"]["paid"], 'stripe_id' => ""}}
+        end
+
+        return appStateJson(scrollToEvent: editedEvent)
     end
 
     def deleteAllEvents(cal)

@@ -7,6 +7,7 @@ function InvoiceItem(props) {
     const [i, setI] = useState(props.item)
     const [loading, setLoading] = useState(false)
     const [modalOpen, setModalOpen] = useState(false)
+    const [deleted, setDeleted] = useState(false)
 
 
     const updateItemHandeler = () => {
@@ -33,6 +34,48 @@ function InvoiceItem(props) {
             })
     }
 
+    const removeStripeIdFromEvent = (invoice_item) => {
+        fetch(`${process.env.BASE_URL}/remove_stripe_id_from_event`, {
+            method: "POST",
+            body: JSON.stringify({
+                invoice_item
+            }),
+            headers: {
+                "X-CSRF-Token": props.csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(res => res.json())
+            .then(res => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
+            .then(() => {
+                setModalOpen(false)
+                setLoading(false)
+                setDeleted(true)
+            })
+    }
+
+
+    const deleteItemHandeler = () => {
+
+        setLoading(true)
+        fetch(`${process.env.BASE_URL}/stripe/invoice_items/delete`, {
+            method: "POST",
+            body: JSON.stringify({
+                invoice_item: i
+            }),
+            headers: {
+                "X-CSRF-Token": props.csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(res => res.json())
+            .then(() => removeStripeIdFromEvent(i))
+    }
+
     let strArray = i.amount.toString().split("")
     strArray.splice(strArray.length - 2, 0, ".")
     let prettyPrice = strArray.join("")
@@ -44,38 +87,33 @@ function InvoiceItem(props) {
 
 
     return <>
-        <Table.Row>
+        <Table.Row onClick={() => setModalOpen(true)} disabled={deleted}>
 
             <Table.Cell>{moment(i.metadata.start_time).format('Do MMMM YYYY, h:mm a')}</Table.Cell>
             <Table.Cell>{i.metadata.type}</Table.Cell>
             <Table.Cell>{"$" + prettyPrice}</Table.Cell>
             <Table.Cell>{prettyDuration}</Table.Cell>
             <Table.Cell>
-                <Label>
+                {/* <Label>
                     <Icon name='user' />
                     attendees
-                    </Label>
-            </Table.Cell>
-            <Table.Cell>
-                {i.invoice ? <Icon name="check" /> : null}
-            </Table.Cell>
-            <Table.Cell>
-                <Button basic onClick={() => setModalOpen(true)} content="edit" icon="edit" />
+                    </Label> */}
             </Table.Cell>
         </Table.Row>
 
         <Modal onClose={() => setModalOpen(false)} open={modalOpen} >
             <Modal.Header>{i.number}</Modal.Header>
             <Modal.Content>
-                <Table>
+
+                <Table >
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>Date</Table.HeaderCell>
                             <Table.HeaderCell>Type</Table.HeaderCell>
                             <Table.HeaderCell>Amount</Table.HeaderCell>
                             <Table.HeaderCell>Duration</Table.HeaderCell>
-                            <Table.HeaderCell>Attendees</Table.HeaderCell>
-                            <Table.HeaderCell>Invoiced</Table.HeaderCell>
+                            {/* <Table.HeaderCell>Attendees</Table.HeaderCell> */}
+                            {/* <Table.HeaderCell>Invoiced</Table.HeaderCell> */}
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -84,16 +122,11 @@ function InvoiceItem(props) {
                             <Table.Cell>{i.description}</Table.Cell>
                             <Table.Cell><Input onChange={(e) => setI({ ...i, amount: e.target.value })} value={i.amount} /></Table.Cell>
                             <Table.Cell>{prettyDuration}</Table.Cell>
-                            <Table.Cell>
-                                <Label>
-                                    <Icon name='user' />
-                                    attendees
-                             </Label>
-                            </Table.Cell>
                         </Table.Row>
                     </Table.Body>
                 </Table>
                 <Button loading={loading} onClick={() => updateItemHandeler()}>Save</Button>
+                <Button loading={loading} onClick={() => deleteItemHandeler()}>Delete Billable Item</Button>
             </Modal.Content>
         </Modal>
     </>

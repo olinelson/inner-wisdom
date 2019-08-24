@@ -30,7 +30,7 @@ function Clients(props) {
     const createUserHandeler = (e) => {
         setLoading(true)
         let newUser = { first_name, last_name, email, password: tempPassword, sendWelcomeEmail }
-        fetch(`${props.baseUrl}/clients`, {
+        fetch(`${process.env.BASE_URL}/clients`, {
             method: "POST",
             body: JSON.stringify({
                 user: newUser

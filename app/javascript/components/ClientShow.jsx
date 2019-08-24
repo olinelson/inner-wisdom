@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { connect } from "react-redux"
 import { withRouter } from "react-router-dom"
-import { Container, Card, Item, Table, Label, Menu, Button, Icon, Checkbox, Modal, Form, Header, Tab } from 'semantic-ui-react';
+import { Container, Card, Item, Table, Label, Menu, Button, Icon, Checkbox, Modal, Form, Header, Tab, Divider } from 'semantic-ui-react';
 import { isUserAnAttendeeOfEvent, relevantEvents, flatten } from "./Appointments"
 import moment from "moment"
 import AppointmentHistoryTable from './AppointmentHistoryTable';
@@ -11,12 +11,12 @@ import Invoices from './Invoices';
 
 function ClientShow(props) {
     let userId = props.match.params.id
-    let user = props.users.find(u => u.id == userId)
+
+    const user = props.users.find(u => u.id == userId)
 
     if (!user) return props.history.push('/notfound')
 
     let relevantAppointments = flatten([...props.appointments, props.consults]).filter(e => isUserAnAttendeeOfEvent(e, user))
-
 
     const [first_name, set_first_name] = useState(user.first_name || "")
     const [last_name, set_last_name] = useState(user.last_name || "")
@@ -29,50 +29,20 @@ function ClientShow(props) {
     const [post_code, set_post_code] = useState(user.post_code || "")
 
     const [email, set_email] = useState(user.email || "")
-    const [editModal, setEditModal] = useState(false)
-    const [deleteModal, setDeleteModal] = useState(false)
-    const [approveModal, setApproveModal] = useState(false)
     const [loading, setLoading] = useState(false)
 
     const [approved, setApproved] = useState(user.approved)
 
     let chronologicalSorted = relevantAppointments.sort((b, a) => new Date(a.start_time) - new Date(b.end_time))
 
-    function useEffectSkipFirst(fn, arr) {
-        const isFirst = useRef(true);
-
-        useEffect(() => {
-            if (isFirst.current) {
-                isFirst.current = false;
-                return;
-            }
-
-            fn();
-        }, arr);
-    }
-
-    useEffectSkipFirst(
-        () => {
-            console.log("hi", approved);
-            editUserHandeler()
-        },
-        [approved]
-    );
-
     const approveUserHandeler = () => {
-        setApproveModal(false)
-        setApproved(!user.approved)
-        // .then(() => console.log("done", approved))
-
+        editUserHandeler(!approved)
     }
 
-
-
-
-    const editUserHandeler = () => {
+    const editUserHandeler = (approved = approved) => {
         let editedUser = { first_name, last_name, email, street_address, apartment_number, post_code, suburb, state: address_state, approved }
 
-        fetch(`${props.baseUrl}/clients/${user.id}`, {
+        fetch(`${process.env.BASE_URL}/clients/${user.id}`, {
             method: "PATCH",
             body: JSON.stringify({
                 user: editedUser
@@ -87,13 +57,12 @@ function ClientShow(props) {
             .then(res => res.json())
             .then((res) => {
                 setLoading(false)
-                setEditModal(false)
                 props.dispatch({ type: "SET_USERS", value: res.users })
             })
     }
 
     const deleteUserHandeler = () => {
-        fetch(`${props.baseUrl}/clients/${user.id}`, {
+        fetch(`${process.env.BASE_URL}/clients/${user.id}`, {
             method: "DELETE",
             headers: {
                 "X-CSRF-Token": props.csrfToken,
@@ -107,11 +76,12 @@ function ClientShow(props) {
                 props.history.push('/clients')
                 props.dispatch({ type: "SET_USERS", value: res.users })
             })
+
     }
 
     const panes = [
         { menuItem: 'Appointment History', render: () => <Tab.Pane content={<AppointmentHistoryTable events={relevantAppointments} user={user} />} /> },
-        { menuItem: 'To Be Invoiced', render: () => <InvoiceItems user={user} /> },
+        { menuItem: 'Billable Items', render: () => <InvoiceItems user={user} /> },
         { menuItem: 'Invoices', render: () => <Invoices user={user} /> },
 
     ]
@@ -120,29 +90,81 @@ function ClientShow(props) {
         <Container>
 
             <h1>{user.first_name + " " + user.last_name}</h1>
-            <Button
-                basic
-                content="edit"
-                onClick={() => setEditModal(true)}
-                icon="edit"
-            />
-            <Button
-                basic
-                content="Delete User"
-                onClick={() => setDeleteModal(true)}
-                icon="delete"
 
-            />
-
-            <Button as='div' labelPosition='right'>
-                <Button basic icon="check" content="approve" onClick={() => setApproveModal(true)} />
-                {user.approved ?
-                    <Label basic color='green' pointing='left' content="Approved" />
-                    :
-                    <Label basic color='red' pointing='left' content="Not Approved" />
+            <Modal
+                size="small"
+                trigger={<Button basic content="edit" icon="edit" />}
+                actions={['Cancel', { key: 'save', content: "Save", positive: true, basic: true, onClick: () => editUserHandeler() }]}
+                header="Edit User"
+                content={
+                    <div style={{ margin: "1rem" }}>
+                        <Form >
+                            <Form.Field>
+                                <label>First Name</label>
+                                <input value={first_name} onChange={(e) => set_first_name(e.target.value)} required placeholder='First Name' />
+                            </Form.Field>
+                            <Form.Field>
+                                <label>Last Name</label>
+                                <input value={last_name} onChange={(e) => set_last_name(e.target.value)} required placeholder='Last Name' />
+                            </Form.Field>
+                            <Form.Field>
+                                <label>Email</label>
+                                <input value={email || ""} onChange={(e) => set_email(e.target.value)} required placeholder='newclient@gmail.com' />
+                            </Form.Field>
+                            <Form.Field>
+                                <label>Phone Number</label>
+                                <input value={phone_number || ""} onChange={(e) => set_phone_number(e.target.value)} />
+                            </Form.Field>
+                            <Form.Field>
+                                <label>Street Address</label>
+                                <input value={street_address || ""} onChange={(e) => set_street_address(e.target.value)} />
+                            </Form.Field>
+                            <Form.Field>
+                                <label>Apartment Number</label>
+                                <input value={apartment_number || ""} onChange={(e) => set_apartment_number(e.target.value)} />
+                            </Form.Field>
+                            <Form.Field>
+                                <label>Suburb/City</label>
+                                <input value={suburb || ""} onChange={(e) => set_suburb(e.target.value)} />
+                            </Form.Field>
+                            <Form.Field>
+                                <label>State</label>
+                                <input value={address_state || ""} onChange={(e) => set_address_state(e.target.value)} />
+                            </Form.Field>
+                            <Form.Field>
+                                <label>Post Code</label>
+                                <input value={post_code || ""} onChange={(e) => set_post_code(e.target.value)} />
+                            </Form.Field>
+                        </Form>
+                    </div>
                 }
+            />
 
-            </Button>
+
+
+            <Modal
+                basic
+                size="small"
+                trigger={<Button basic content="Delete User" icon="delete" />}
+                header={"Delete User"}
+                content="Are you sure you would like to delete this user? This cannot be undone."
+                actions={['Cancel', { key: 'delete', content: "Yes, Delete", negative: true, basic: true, onClick: () => deleteUserHandeler() }]}
+            />
+
+
+
+            <Modal
+                basic
+                size="small"
+                trigger={
+                    <Button as='div' labelPosition='right'>
+                        <Button basic icon="check" content="approve" />
+                        {user.approved ? <Label basic color='green' pointing='left' content="Approved" /> : <Label basic color='red' pointing='left' content="Not Approved" />}
+                    </Button>}
+                header={user.approved ? "Un Approve User" : "Approve User"}
+                content={user.approved ? "Are you sure you would like to un approve this user? They will no loger be able to book appointments, only phone consultations." : "Are you sure you would like to approve this user? This will enable them to book full appointments."}
+                actions={['Cancel', { key: 'done', content: user.approved ? "Yes, Un Approve" : "Yes Approve", positive: true, onClick: () => approveUserHandeler() }]}
+            />
 
 
             <hr />
@@ -163,7 +185,7 @@ function ClientShow(props) {
 
 
 
-            <Modal onClose={() => setEditModal(false)} open={editModal}>
+            {/* <Modal onClose={() => setEditModal(false)} open={editModal}>
                 <Modal.Header>Edit Client</Modal.Header>
                 <Modal.Content image>
                     <Modal.Description>
@@ -209,35 +231,11 @@ function ClientShow(props) {
                         </Form>
                     </Modal.Description>
                 </Modal.Content>
-            </Modal >
+            </Modal > */}
 
-            <Modal onClose={() => setDeleteModal(false)} open={deleteModal} basic size='small'>
-                <Header icon='user delete' content='Delete User' />
-                <Modal.Content>
-                    <p>
-                        Are you sure you would like to delete this user? This cannot be undone.
-            </p>
-                </Modal.Content>
-                <Modal.Actions>
-                    <Button
-                        onClick={() => deleteUserHandeler()}
-                        color='red'
-                        inverted
-                        icon="checkmark"
-                        content="Yes, Delete"
-                    />
-                    <Button
-                        onClick={() => setDeleteModal(false)}
-                        basic
-                        color='green'
-                        inverted
-                        icon="remove"
-                        content="Cancel"
-                    />
-                </Modal.Actions>
-            </Modal>
 
-            <Modal onClose={() => setApproveModal(false)} open={approveModal} basic size='small'>
+
+            {/* <Modal onClose={() => setApproveModal(false)} open={approveModal} basic size='small'>
                 <Header icon='user' content='Approve User' />
                 <Modal.Content>
                     {user.approved ?
@@ -264,7 +262,7 @@ function ClientShow(props) {
                         content="Cancel"
                     />
                 </Modal.Actions>
-            </Modal>
+            </Modal> */}
 
 
 

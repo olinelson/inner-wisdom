@@ -162,7 +162,7 @@ function Event(props) {
     const deleteEventHandeler = () => {
         setModalOpen(false)
         setLoading(true)
-        fetch(`${props.baseUrl}/delete`, {
+        fetch(`${process.env.BASE_URL}/delete`, {
             method: "DELETE",
             body: JSON.stringify({
                 event: event
@@ -184,7 +184,7 @@ function Event(props) {
     const updateSelectedEventHandeler = () => {
         setModalOpen(false)
         setLoading(true)
-        fetch(`${props.baseUrl}/update`, {
+        fetch(`${process.env.BASE_URL}/update`, {
             method: "POST",
             body: JSON.stringify({
                 event: event

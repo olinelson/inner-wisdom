@@ -93,8 +93,8 @@ function InvoiceItems(props) {
 
     return (
         <Tab.Pane loading={loading}>
-            <Button disabled={!invoiceItems || invoiceItems.data.length < 1 ? true : false} onClick={() => createAndSendNewInvoice()}>Send Invoice</Button>
-            <Table basic="very" >
+            <Button disabled={!invoiceItems || invoiceItems.data.length < 1 ? true : false} onClick={() => createAndSendNewInvoice()}>Add All To New Invoice</Button>
+            <Table selectable basic="very" >
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>Date</Table.HeaderCell>
@@ -102,7 +102,6 @@ function InvoiceItems(props) {
                         <Table.HeaderCell>Amount</Table.HeaderCell>
                         <Table.HeaderCell>Duration</Table.HeaderCell>
                         <Table.HeaderCell>Attendees</Table.HeaderCell>
-                        <Table.HeaderCell>Invoiced</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
 

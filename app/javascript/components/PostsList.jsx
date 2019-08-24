@@ -27,7 +27,7 @@ function PostsList(props) {
 
         let user = props.user
 
-        fetch(`${props.baseUrl}/posts`, {
+        fetch(`${process.env.BASE_URL}/posts`, {
             method: "POST",
             headers: {
                 "X-CSRF-Token": props.csrfToken,

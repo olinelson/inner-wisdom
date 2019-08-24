@@ -51,7 +51,7 @@ function PurchasableEvent(props) {
         setInfoModal(false)
         setPurchased(true)
         incrementProgress()
-        fetch(`${props.baseUrl}/purchase`, {
+        fetch(`${process.env.BASE_URL}/purchase`, {
             method: "POST",
             body: JSON.stringify({
                 event: event,
@@ -94,7 +94,7 @@ function PurchasableEvent(props) {
         return <>
             <Button content="Book Appointment" disabled />
             <Divider />
-            <span><a href={`${props.baseUrl}/users/sign_in`}>Sign in</a> to make an appointment</span>
+            <span><a href={`${process.env.BASE_URL}/users/sign_in`}>Sign in</a> to make an appointment</span>
         </>
     }
 

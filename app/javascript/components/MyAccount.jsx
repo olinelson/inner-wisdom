@@ -86,7 +86,7 @@ function MyAccount(props) {
     }
 
     const genNewCalAuthUrl = () => {
-        fetch(`${props.baseUrl}/googlecal/url`, {
+        fetch(`${process.env.BASE_URL}/googlecal/url`, {
             method: "POST",
             body: JSON.stringify({
                 newPersonalEmail
@@ -103,7 +103,7 @@ function MyAccount(props) {
     }
 
     const saveNewCredentials = () => {
-        fetch(`${props.baseUrl}/googlecal/token`, {
+        fetch(`${process.env.BASE_URL}/googlecal/token`, {
             method: "POST",
             body: JSON.stringify({
                 newPersonalEmail,
@@ -131,7 +131,7 @@ function MyAccount(props) {
             <h1>Account Details</h1>
             <h4>{user.first_name} {user.last_name}</h4>
             <h4>{user.email}</h4>
-            <a href={`${props.baseUrl}/users/edit`}>Change Details</a>
+            <a href={`${process.env.BASE_URL}/users/edit`}>Change Details</a>
             <Divider />
             <h2>Personal Google Calendar Settings</h2>
             <h4>{user.google_calendar_email}</h4>

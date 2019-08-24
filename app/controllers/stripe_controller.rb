@@ -17,6 +17,12 @@ def update_invoice_item
     render json: {updated_item: updated_item}
 end
 
+def delete_invoice_item
+    item = params["invoice_item"]
+    deleted_item = Stripe::InvoiceItem.delete(item["id"])
+    render json: {deleted_item: deleted_item}
+end
+
 def create_invoice_item
     stripe_id = params["user"]["stripe_id"]
     event = params["event"]
@@ -38,24 +44,31 @@ def create_invoice_item
                     end_time: event["end_time"],
                 }
     })
-    
-
     render json: { invoice_item: invoice_item }
 end
 
 def create_invoice
     stripe_id = params["user"]["stripe_id"]
     invoice = Stripe::Invoice.create({customer: stripe_id, collection_method: "send_invoice", days_until_due: 7})
-    
-    res = Stripe::Invoice.send_invoice(invoice.id)
-    
-    render json: {invoice: res}
+    render json: {invoice: invoice}
+end
 
+def void_invoice
+    invoice_id = params["invoice"]["id"]
+    invoice = Stripe::Invoice.void_invoice(invoice_id)
+    render json: {invoice: invoice}
 end
 
 def send_invoice
     invoice_id = params["invoice"]["id"]
     invoice = Stripe::Invoice.send_invoice(invoice_id)
+    render json: {invoice: invoice}
+end
+
+def delete_draft_invoice
+
+    invoice_id = params["invoice"]["id"]
+    invoice = Stripe::Invoice.delete(invoice_id)
     render json: {invoice: invoice}
 end
 

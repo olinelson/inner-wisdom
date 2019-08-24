@@ -54,6 +54,51 @@ function Invoices(props) {
             .then(() => setLoading(false))
     }
 
+    const voidInvoiceHandeler = () => {
+        fetch(`${process.env.BASE_URL}/stripe/invoices/void`, {
+            method: "POST",
+            body: JSON.stringify({
+                invoice: selectedInvoice
+            }),
+            headers: {
+                "X-CSRF-Token": props.csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(res => res.json())
+            .then((res) => {
+                if (res.invoice) {
+                    setLoading(true)
+                }
+            })
+            .then(() => setLoading(false))
+    }
+
+    const deleteInvoiceHandeler = () => {
+        fetch(`${process.env.BASE_URL}/stripe/invoices/delete`, {
+            method: "POST",
+            body: JSON.stringify({
+                invoice: selectedInvoice
+            }),
+            headers: {
+                "X-CSRF-Token": props.csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(res => res.json())
+            .then((res) => {
+                // this is to toggle the loading of the panel
+                if (res.invoice) {
+                    setLoading(true)
+                }
+            })
+            .then(() => setLoading(false))
+    }
+
 
     const getInvoices = () => {
         fetch(`${process.env.BASE_URL}/stripe/invoices`, {
@@ -85,17 +130,30 @@ function Invoices(props) {
     const showInvoiceModal = () => {
         if (selectedInvoice == null) return null
         let i = selectedInvoice
+        console.log(i)
         return <Modal closeIcon onClose={() => setSelectedInvoice(null)} closeOnDimmerClick open={selectedInvoice !== null}>
             <Modal.Header>Inv No. {i.number}</Modal.Header>
             <Modal.Content image>
                 <Modal.Description>
                     <Header>{i.customer_name}</Header>
-                    <Table>
+                    <Table selectable basic>
+                        <Table.Header>
+                            <Table.Row >
+                                <Table.HeaderCell>Created</Table.HeaderCell>
+                                <Table.HeaderCell>Type</Table.HeaderCell>
+                                <Table.HeaderCell>Amount</Table.HeaderCell>
+                                <Table.HeaderCell>Duration</Table.HeaderCell>
+
+                            </Table.Row>
+                        </Table.Header>
                         <Table.Body>
                             {i.lines.data.map(item => <InvoiceItem key={item.id} item={item} />)}
                         </Table.Body>
                     </Table>
                     <Button onClick={() => sendInvoiceHandeler()}>Send Invoice</Button>
+                    {i.status === "draft" ? <Button onClick={() => deleteInvoiceHandeler()}>Delete Invoice</Button> : null}
+                    {i.status === "open" ? <Button onClick={() => voidInvoiceHandeler()}>Void Invoice</Button> : null}
+
                 </Modal.Description>
             </Modal.Content>
         </Modal>
@@ -113,9 +171,10 @@ function Invoices(props) {
                 console.log(time)
 
 
-                return <Table.Row key={i.number} onClick={() => setSelectedInvoice(i)}>
+                return <Table.Row disabled={i.status === "void" ? true : false} key={i.number} onClick={() => setSelectedInvoice(i)}>
 
                     <Table.Cell>{moment(i.created).format('Do MMM YYYY')}</Table.Cell>
+                    <Table.Cell>{i.status}</Table.Cell>
                     <Table.Cell>{i.number}</Table.Cell>
                     <Table.Cell>{i.amount_due}</Table.Cell>
                     <Table.Cell>{i.amount_paid}</Table.Cell>
@@ -129,11 +188,11 @@ function Invoices(props) {
     return (
         <>
             <Tab.Pane loading={loading}>
-                <Button onClick={() => createNewInvoice()}>Create New</Button>
                 <Table selectable basic="very" >
                     <Table.Header>
                         <Table.Row >
                             <Table.HeaderCell>Created</Table.HeaderCell>
+                            <Table.HeaderCell>Status</Table.HeaderCell>
                             <Table.HeaderCell>Invoice No.</Table.HeaderCell>
                             <Table.HeaderCell>Amount Due</Table.HeaderCell>
                             <Table.HeaderCell>Amount Paid</Table.HeaderCell>
