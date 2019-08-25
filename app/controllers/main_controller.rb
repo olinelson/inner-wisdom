@@ -121,6 +121,7 @@ class MainController < ApplicationController
         newEvent = params["event"]
         title= ""
 
+
         if newEvent["attendees"]
              attendees = newEvent["attendees"].map do |a|
             {
@@ -140,17 +141,17 @@ class MainController < ApplicationController
         end
 
         if params["appointmentSlot"]
-            return createGoogleEvent(cal: @appointmentsCal,newEvent: newEvent, title: "Appointment Slot")
+            return createGoogleEvent(cal: @appointmentsCal,newEvent: newEvent, title: "Appointment Slot", recurrence:  newEvent["recurrence"])
         end
         if params["consultSlot"]
-            return createGoogleEvent(cal: @consultsCal,newEvent: newEvent, title: "Phone Consult Slot")
+            return createGoogleEvent(cal: @consultsCal,newEvent: newEvent, title: "Phone Consult Slot", recurrence:  newEvent["recurrence"])
         end
 
         return createGoogleEvent(cal: @appointmentsCal, newEvent: newEvent, title: title, attendees: attendees )
     end
 
 
-    def createGoogleEvent(cal:, newEvent:, title:, attendees: [])
+    def createGoogleEvent(cal:, newEvent:, title:, attendees: [], recurrence: nil)
         event = cal.create_event do |e|
             e.title = title
             e.start_time = newEvent["start_time"]
@@ -158,6 +159,9 @@ class MainController < ApplicationController
             e.location= newEvent["location"]
             e.reminders =  { "useDefault": false }
             e.attendees= attendees
+            # e.recurrence = recurrence
+            e.recurrence = {freq: recurrence["freq"]}
+            # e.recurrence = {freq: "daily"}
             e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => ""}}
         end
 
@@ -304,6 +308,7 @@ class MainController < ApplicationController
 
     def updateEvent
         event = params["event"]
+        byebug
 
         attendees= []
 
@@ -345,6 +350,7 @@ class MainController < ApplicationController
     def editGoogleCalEvent(cal:, event:, attendees: [])
 
         editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
+
             e.title = event["title"]
             e.color_id = 2
             e.start_time = event["start_time"]

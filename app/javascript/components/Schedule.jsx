@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Container, Divider, Modal, Popup, Button, Label, Icon, Segment, Grid, Header, Dropdown, Checkbox, Form } from 'semantic-ui-react'
+import { Container, Divider, Modal, Popup, Select, Button, Label, Icon, Segment, Grid, Header, Dropdown, Checkbox, Form } from 'semantic-ui-react'
 import Calendar from './Calendar';
 import { connect } from 'react-redux';
 import styled from "styled-components"
@@ -251,8 +251,20 @@ class Schedule extends Component {
 
 
     creatingBusinessEventOptions = (e) => {
+        const repeatOptions = [
+            { key: 'norepeat', value: null, text: 'no repeat' },
+            { key: 'daily', value: 'daily', text: 'daily' },
+            { key: 'weekly', value: 'weekly', text: 'weekly' },
+            { key: 'monthly', value: 'monthly', text: 'monthly' },
+            { key: 'yearly', value: 'yearly', text: 'yearly' },
+
+        ]
+
+
         if (e && e.personal === false) return <BusinessEventSegment>
 
+
+            <Dropdown onChange={(e, d) => this.setState({ selectedEvent: { ...this.state.selectedEvent, recurrence: { freq: d.value } } })} defaultValue={null} placeholder='No Repeat' options={repeatOptions} />
             {/* <div style={{ gridColumn: "1/3", justifyContent: "center" }}> */}
             <div style={{ gridArea: "timePicker" }}>
                 {this.eventTimeSetter(e)}
@@ -364,6 +376,7 @@ class Schedule extends Component {
     }
 
     render() {
+        console.log(this.state.selectedEvent)
         return <>
 
             <FullWidthCalendarContainer fluid >
