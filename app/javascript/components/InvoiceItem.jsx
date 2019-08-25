@@ -10,6 +10,15 @@ function InvoiceItem(props) {
     const [deleted, setDeleted] = useState(false)
 
 
+    const isEditable = () => {
+        if (props.invoice) {
+            if (props.invoice.status === "open" || props.invoice.status === "void") return false
+        }
+        return true
+    }
+
+    const [editable, setEditable] = useState(isEditable)
+
     const updateItemHandeler = () => {
         setLoading(true)
         fetch(`${process.env.BASE_URL}/stripe/invoice_items`, {
@@ -87,7 +96,7 @@ function InvoiceItem(props) {
 
 
     return <>
-        <Table.Row onClick={() => setModalOpen(true)} disabled={deleted}>
+        <Table.Row onClick={editable ? () => setModalOpen(true) : null} >
 
             <Table.Cell>{moment(i.metadata.start_time).format('Do MMMM YYYY, h:mm a')}</Table.Cell>
             <Table.Cell>{i.metadata.type}</Table.Cell>

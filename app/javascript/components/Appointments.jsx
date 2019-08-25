@@ -34,8 +34,6 @@ export const relevantEvents = (appointments, consults, user) => {
     } else {
         result = flatten([...freeConsults, freeAppointments])
     }
-
-    console.log(result)
     return result
 }
 

@@ -168,7 +168,6 @@ function MyAccount(props) {
     }
 
 
-    console.log("this is myaccount props", props)
 
     return <Container >
         <h1>My Account</h1>

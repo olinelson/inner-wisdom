@@ -23,13 +23,12 @@ function InvoiceItems(props) {
         })
             .then(res => res.json())
             .then((res) => {
-                console.log(res.invoice_items)
                 setInvoiceItems(res.invoice_items)
             })
             .then(() => setLoading(false))
     }
 
-    const createAndSendNewInvoice = () => {
+    const createNewInvoice = () => {
         fetch(`${process.env.BASE_URL}/stripe/invoices/new`, {
             method: "POST",
             body: JSON.stringify({
@@ -45,8 +44,7 @@ function InvoiceItems(props) {
             .then(res => res.json())
             .then((res) => {
                 if (res.invoice) {
-                    let data = [...invoices.data, res.invoice]
-                    setInvoices({ ...invoices, data })
+                    setInvoiceItems(null)
                 }
             })
             .then(() => setLoading(false))
@@ -93,7 +91,7 @@ function InvoiceItems(props) {
 
     return (
         <Tab.Pane loading={loading}>
-            <Button disabled={!invoiceItems || invoiceItems.data.length < 1 ? true : false} onClick={() => createAndSendNewInvoice()}>Add All To New Invoice</Button>
+            <Button disabled={!invoiceItems || invoiceItems.data.length < 1 ? true : false} onClick={() => createNewInvoice()}>Add All To New Invoice</Button>
             <Table selectable basic="very" >
                 <Table.Header>
                     <Table.Row>

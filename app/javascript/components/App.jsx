@@ -62,7 +62,10 @@ function reducer(state = initialState, action) {
         case "SET_PERSONAL_EVENTS":
             return { ...state, personalEvents: action.value }
         case "SET_PERSONAL_AND_BUSINESS_EVENTS":
-            return { ...state, personalEvents: action.value.personalEvents, appointments: action.value.appointments, consults: action.value.consults, calendarScrollToTime: new Date(action.value.scrollToEvent.start_time) }
+
+            let scrollToTime = new Date(action.value.scrollToEvent.start_time)
+            scrollToTime.setHours(scrollToTime.getHours() - 1)
+            return { ...state, personalEvents: action.value.personalEvents, appointments: action.value.appointments, consults: action.value.consults, calendarScrollToTime: scrollToTime }
         case "SET_USER":
             return { ...state, user: action.value }
         case "SET_USERS":
@@ -120,8 +123,6 @@ export function App(props) {
         }
 
     })
-
-    console.log(props)
 
 
     return (

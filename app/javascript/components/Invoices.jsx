@@ -9,6 +9,7 @@ function Invoices(props) {
     const [invoices, setInvoices] = useState(null)
     const [selectedInvoice, setSelectedInvoice] = useState(null)
 
+
     const createNewInvoice = () => {
         fetch(`${process.env.BASE_URL}/stripe/invoices/new`, {
             method: "POST",
@@ -49,6 +50,7 @@ function Invoices(props) {
             .then((res) => {
                 if (res.invoice) {
                     setLoading(true)
+                    setSelectedInvoice(null)
                 }
             })
             .then(() => setLoading(false))
@@ -93,6 +95,7 @@ function Invoices(props) {
             .then((res) => {
                 // this is to toggle the loading of the panel
                 if (res.invoice) {
+                    setSelectedInvoice(null)
                     setLoading(true)
                 }
             })
@@ -115,7 +118,6 @@ function Invoices(props) {
         })
             .then(res => res.json())
             .then((res) => {
-                console.log(res.invoices)
                 setInvoices(res.invoices)
             })
             .then(() => setLoading(false))
@@ -126,17 +128,59 @@ function Invoices(props) {
         getInvoices()
     }, [loading])
 
+    const showActionButtons = () => {
+        let i = selectedInvoice
+        switch (i.status) {
+            case "draft":
+                return <>
+                    <Modal
+                        basic
+                        size="small"
+                        trigger={<Button>Delete</Button>}
+                        header='Delete Invoice?'
+                        content='Are you sure you would like to delete this invoice? This cannot be undone.'
+                        actions={['Cancel', { key: 'yes', content: 'Yes, Delete', negative: true, onClick: () => deleteInvoiceHandeler() }]}
+                    />
+                    <Modal
+                        basic
+                        size="small"
+                        trigger={<Button>Finalize and Send</Button>}
+                        header='Finalize and Send Invoice?'
+                        content='Are you sure you would like to finalize and send this invoice?'
+                        actions={['Cancel', { key: 'yes', content: 'Yes', positive: true, onClick: () => sendInvoiceHandeler() }]}
+                    />
+                </>
+
+            case "open":
+                return <>
+                    <Modal
+                        basic
+                        size="small"
+                        trigger={<Button>Void Invoice</Button>}
+                        header='Void Invoice?'
+                        content='Are you sure you would like to void this invoice? This cannot be undone.'
+                        actions={['Cancel', { key: 'yes', content: 'Yes, Void It', negative: true, onClick: () => voidInvoiceHandeler() }]}
+                    />
+                    <Button as="a" href={i.invoice_pdf} content="PDF" />
+                    <Button as="a" href={i.hosted_invoice_url} content="Link" />
+                    <Button content="Send Invoice" onClick={() => sendInvoiceHandeler()} />
+                </>
+
+            default:
+                return null
+        }
+    }
+
 
     const showInvoiceModal = () => {
         if (selectedInvoice == null) return null
         let i = selectedInvoice
-        console.log(i)
         return <Modal closeIcon onClose={() => setSelectedInvoice(null)} closeOnDimmerClick open={selectedInvoice !== null}>
             <Modal.Header>Inv No. {i.number}</Modal.Header>
             <Modal.Content image>
                 <Modal.Description>
                     <Header>{i.customer_name}</Header>
-                    <Table selectable basic>
+                    <Table basic selectable={i.status === "draft" ? true : false}>
                         <Table.Header>
                             <Table.Row >
                                 <Table.HeaderCell>Created</Table.HeaderCell>
@@ -147,17 +191,17 @@ function Invoices(props) {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {i.lines.data.map(item => <InvoiceItem key={item.id} item={item} />)}
+                            {i.lines.data.map(item => <InvoiceItem invoice={i} key={item.id} item={item} />)}
                         </Table.Body>
                     </Table>
-                    <Button onClick={() => sendInvoiceHandeler()}>Send Invoice</Button>
-                    {i.status === "draft" ? <Button onClick={() => deleteInvoiceHandeler()}>Delete Invoice</Button> : null}
-                    {i.status === "open" ? <Button onClick={() => voidInvoiceHandeler()}>Void Invoice</Button> : null}
+                    {showActionButtons()}
 
                 </Modal.Description>
             </Modal.Content>
         </Modal>
     }
+
+
 
     const invoicesTableRows = () => {
 
@@ -168,17 +212,16 @@ function Invoices(props) {
             return invoices.data.map(i => {
 
                 let time = moment.duration(i.webhooks_delivered_at).humanize()
-                console.log(time)
 
 
-                return <Table.Row disabled={i.status === "void" ? true : false} key={i.number} onClick={() => setSelectedInvoice(i)}>
+                return <Table.Row key={i.number} onClick={() => setSelectedInvoice(i)}>
 
                     <Table.Cell>{moment(i.created).format('Do MMM YYYY')}</Table.Cell>
                     <Table.Cell>{i.status}</Table.Cell>
                     <Table.Cell>{i.number}</Table.Cell>
                     <Table.Cell>{i.amount_due}</Table.Cell>
                     <Table.Cell>{i.amount_paid}</Table.Cell>
-                    <Table.Cell>{moment(i.webhooks_delivered_at).format('Do MMM YYYY @ h:mm a')}</Table.Cell>
+                    <Table.Cell>{i.status_transitions.finalized_at ? moment(i.status_transitions.finalized_at).format('Do MMM YYYY @ h:mm a') : "No"}</Table.Cell>
                 </Table.Row>
             }
             )

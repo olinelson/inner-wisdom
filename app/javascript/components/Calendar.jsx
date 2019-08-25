@@ -78,7 +78,7 @@ function Calendar(props) {
         onView={changeDefaultViewHandeler}
         defaultView={props.defaultCalendarView}
         scrollToTime={props.calendarScrollToTime}
-        defaultDate={props.calendarDisplayDate}
+        defaultDate={props.calendarScrollToTime}
         popup
         step={15}
         timeslots={1}

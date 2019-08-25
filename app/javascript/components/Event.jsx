@@ -15,7 +15,7 @@ function Event(props) {
     const [event, setEvent] = useState(props.event);
     const [modalOpen, setModalOpen] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [isCanceled, setIsCanceled] = useState(event.title.toLowerCase().includes("canceled"))
+    const [isCanceled, setIsCanceled] = useState(event.title ? event.title.toLowerCase().includes("canceled") : "")
 
     let personal = false
     if (event.calendar.id === props.user.google_calendar_email) personal = true
