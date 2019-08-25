@@ -5,7 +5,7 @@ import { Container, Card, Item, Table, Label, Menu, Button, Icon, Checkbox, Moda
 import { isUserAnAttendeeOfEvent, relevantEvents, flatten } from "./Appointments"
 import moment from "moment"
 import AppointmentHistoryTable from './AppointmentHistoryTable';
-import InvoiceItems from './InvoiceItems';
+import InvoiceItems from './BillableItems';
 import Invoices from './Invoices';
 
 

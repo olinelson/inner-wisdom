@@ -23,21 +23,20 @@ class Users::RegistrationsController < Devise::RegistrationsController
       if resource.active_for_authentication?
 
         if params["user"]["sendWelcomeEmail"]
-        user = resource
-        user.send_reset_password_instructions
-        NotificationMailer.account_created_by_admin_notification(user).deliver
+        resource.send_reset_password_instructions
+        NotificationMailer.account_created_by_admin_notification(resource).deliver
        end
-
        begin
           Stripe.api_key = ENV["STRIPE_KEY"]
           customer =  Stripe::Customer.create({
-          name: user.first_name + " " + user.last_name,
-          email: user.email,
-          phone: user.phone_number
+          name: resource.first_name + " " + resource.last_name,
+          email: resource.email,
+          phone: resource.phone_number
           })
 
+
           if customer.id
-          user.update(stripe_id: customer.id)
+          resource.update(stripe_id: customer.id)
           end
         rescue
           puts "Stripe customer creation error"
@@ -163,6 +162,13 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # DELETE /resource
   def destroy
+    begin
+    Stripe.api_key = ENV["STRIPE_KEY"]
+    Stripe::Customer.delete(resource.stripe_id)
+    rescue 
+      puts "Delete stripe customer error"
+    end
+
     resource.destroy
     Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name)
     set_flash_message! :notice, :destroyed
@@ -173,12 +179,18 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def destroy_with_admin
     if current_user.admin
       user = User.find(params["id"])
+      begin
+      Stripe.api_key = ENV["STRIPE_KEY"]
+      Stripe::Customer.delete(user.stripe_id)
+      rescue 
+        puts "Delete stripe customer error"
+      end
       user.destroy
     end
-    # Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name)
+
     set_flash_message! :notice, :destroyed
-    # yield resource if block_given?
-    # respond_with_navigational(resource){ redirect_to after_sign_out_path_for(resource_name) }
+
+
     render json: {users: User.all}
   end
 

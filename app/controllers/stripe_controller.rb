@@ -2,12 +2,26 @@ class StripeController < ApplicationController
 Stripe.api_key = ENV["STRIPE_KEY"]
 
 def get_customer_invoice_items
-    invoice_items = Stripe::InvoiceItem.list(customer: params["user"]["stripe_id"], pending: true)
+
+    customer = params["user"]["stripe_id"]
+
+    invoice_items = nil
+
+    if customer && customer.length > 1
+        invoice_items = Stripe::InvoiceItem.list(customer: params["user"]["stripe_id"], pending: true)
+    end
+    
+
     render json: {invoice_items: invoice_items}
 end
 
 def get_customer_invoices 
-    invoices = Stripe::Invoice.list(customer: params["user"]["stripe_id"])
+    customer = params["user"]["stripe_id"]
+    invoices = nil
+
+    if customer && customer.length > 1
+     invoices = Stripe::Invoice.list(customer: params["user"]["stripe_id"])
+    end
     render json: {invoices: invoices}
 end
 

@@ -4,7 +4,7 @@ import { Tab, Table, Label, Icon, Button } from "semantic-ui-react"
 import moment from "moment"
 import InvoiceItem from './InvoiceItem';
 
-function InvoiceItems(props) {
+function BillableItems(props) {
     const [loading, setLoading] = useState(true)
     const [invoiceItems, setInvoiceItems] = useState(null)
 
@@ -127,4 +127,4 @@ const mapStateToProps = (state) => ({
 
 
 
-export default connect(mapStateToProps)(InvoiceItems)
+export default connect(mapStateToProps)(BillableItems)
