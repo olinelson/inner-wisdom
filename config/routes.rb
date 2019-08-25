@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   post '/calendar_auth', to: 'main#calendarAuthLink'
   
   post '/remove_stripe_id_from_event', to: 'main#remove_stripe_id_from_event' 
+  post '/remove_many_stripe_ids', to: 'main#remove_many_stripe_ids'
 
   
 

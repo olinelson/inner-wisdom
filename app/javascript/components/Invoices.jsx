@@ -78,6 +78,23 @@ function Invoices(props) {
             .then(() => setLoading(false))
     }
 
+    const deleteStripeIdsFromEvents = () => {
+        fetch(`${process.env.BASE_URL}/remove_many_stripe_ids`, {
+            method: "POST",
+            body: JSON.stringify({
+                invoice: selectedInvoice
+            }),
+            headers: {
+                "X-CSRF-Token": props.csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(res => res.json())
+            .then(res => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
+    }
+
     const deleteInvoiceHandeler = () => {
         fetch(`${process.env.BASE_URL}/stripe/invoices/delete`, {
             method: "POST",
@@ -93,10 +110,10 @@ function Invoices(props) {
         })
             .then(res => res.json())
             .then((res) => {
-                // this is to toggle the loading of the panel
                 if (res.invoice) {
                     setSelectedInvoice(null)
                     setLoading(true)
+                    deleteStripeIdsFromEvents(res.invoice)
                 }
             })
             .then(() => setLoading(false))

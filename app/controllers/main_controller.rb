@@ -200,23 +200,6 @@ class MainController < ApplicationController
             {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
              end
 
-            # dateString =  DateTime.parse(editedEvent.start_time)
-            # description = "#{dateString.day}/#{dateString.month}/#{dateString.year} Appointment"
-
-            # Stripe.api_key = ENV["STRIPE_KEY"]
-            # Stripe::InvoiceItem.create({
-            #     customer: user.stripe_id,
-            #     amount: 8000,
-            #     currency: 'aud',
-            #     description: description,
-            #     metadata: {
-            #         type: "Appointment",
-            #         google_event_id: editedEvent.id,
-            #         start_time: editedEvent.start_time,   
-            #         end_time: editedEvent.end_time,
-            #     }
-            # })
-
              jsonEvent = editedEvent.to_json
             NotificationMailer.user_appointment_confirmation(user, jsonEvent).deliver_later
             NotificationMailer.admin_appointment_confirmation(user, jsonEvent).deliver_later
@@ -237,20 +220,6 @@ class MainController < ApplicationController
 
             dateString =  DateTime.parse(editedEvent.start_time)
             description = "#{dateString.day}/#{dateString.month}/#{dateString.year} Phone Consultation"
-
-            # Stripe.api_key = ENV["STRIPE_KEY"]
-            # Stripe::InvoiceItem.create({
-            #     customer: user.stripe_id,
-            #     amount: 8000,
-            #     currency: 'aud',
-            #     description: description,
-            #     metadata: {
-            #         type: "Phone Consultation",
-            #         google_event_id: editedEvent.id,
-            #         start_time: editedEvent.start_time,   
-            #         end_time: editedEvent.end_time,
-            #     }
-            # })
 
              jsonEvent = editedEvent.to_json
              NotificationMailer.user_consult_confirmation(user, jsonEvent).deliver_later
@@ -396,6 +365,31 @@ class MainController < ApplicationController
 
         # render json: {scrollToEvent: event, events: eventsInDateWindow(@appointmentsCal), personalEvents: eventsInDateWindow(@personalCal)}
 
+    end
+
+    def remove_many_stripe_ids
+        invoiceItems = params["invoice"]["lines"]["data"]
+        cal = nil
+        invoiceItems.each do |item|
+            if item["metadata"]["type"] === "Appointment"
+                cal = @appointmentsCal
+            end
+            if item["metadata"]["type"] === "Consult"
+                cal = @consultsCal
+            end
+
+            foundItems = cal.find_events_by_extended_properties({ 'private' => {'stripe_id' => item["id"]} })
+            
+            # just incase there are multiple matches
+            foundItems.each do |item|
+                item.extended_properties = {'private' => {'paid' => false, 'stripe_id' => ""}}
+                item.save
+            end
+        end
+
+        return appStateJson()
+
+        
     end
 
 

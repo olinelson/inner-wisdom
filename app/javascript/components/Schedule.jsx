@@ -376,6 +376,7 @@ class Schedule extends Component {
     }
 
     render() {
+        console.log(this.props.appointments)
         return <>
 
             <FullWidthCalendarContainer fluid >

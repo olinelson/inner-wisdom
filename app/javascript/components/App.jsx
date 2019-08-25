@@ -27,6 +27,7 @@ import Training from './Training'
 import About from './About';
 import Contact from './Contact';
 import FAQS from './FAQS';
+import Footer from './Footer';
 
 
 
@@ -140,7 +141,7 @@ export function App(props) {
                             <Route
                                 exact
                                 path="/"
-                                render={props => <Home />}
+                                render={props => <><Home /><Footer /></>}
                             />
                             <Route
                                 path="/appointments"
@@ -191,7 +192,7 @@ export function App(props) {
                             />
                             <Route
                                 path="/clients/:id"
-                                render={props => <ClientShow />}
+                                render={props => <><ClientShow /><Footer /></>}
                             />
                             <Route render={props => <NotFound />} />
 
@@ -201,16 +202,9 @@ export function App(props) {
                         <Notification />
                     </div>
 
-                    <Divider hidden />
 
-                    <div style={{ backgroundColor: "rgba(128,128,128,0.1)", height: "20rem", display: "flex", alignItems: "center", justifyContent: "center" }} >
-                        {/* <Divider hidden /> */}
-                        {/* <Container textAlign="center" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}> */}
-                        <span><Icon name="copyright" /> Inner Wisdom {new Date().getFullYear()}</span>
+                    {/* Footer */}
 
-                        {/* </Container> */}
-
-                    </div>
 
 
                 </>
