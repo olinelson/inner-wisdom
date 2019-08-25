@@ -28,6 +28,21 @@ class Users::RegistrationsController < Devise::RegistrationsController
         NotificationMailer.account_created_by_admin_notification(user).deliver
        end
 
+       begin
+          Stripe.api_key = ENV["STRIPE_KEY"]
+          customer =  Stripe::Customer.create({
+          name: user.first_name + " " + user.last_name,
+          email: user.email,
+          phone: user.phone_number
+          })
+
+          if customer.id
+          user.update(stripe_id: customer.id)
+          end
+        rescue
+          puts "Stripe customer creation error"
+        end
+
 
        render json: {users: User.all}
       end
