@@ -131,76 +131,77 @@ export function App(props) {
 
             <HashRouter basename="/" >
                 <>
-                    <div style={{ minHeight: "90vh" }}>
+                    {/* <div style={{ minHeight: "90vh" }}> */}
 
+                    <Route
+                        render={rProps => <Nav {...store} {...rProps} user={store.getState().user} />}
+                    />
+
+                    <Switch>
                         <Route
-                            render={rProps => <Nav {...store} {...rProps} user={store.getState().user} />}
+
+                            exact
+                            path="/"
+                            render={props => <><Home /><Footer /></>}
+                        />
+                        <Route
+                            path="/appointments"
+                            render={props => <Appointments />}
+                        />
+                        <Route
+                            path="/counselling"
+                            render={props => <Counselling />}
                         />
 
-                        <Switch>
-                            <Route
-                                exact
-                                path="/"
-                                render={props => <><Home /><Footer /></>}
-                            />
-                            <Route
-                                path="/appointments"
-                                render={props => <Appointments />}
-                            />
-                            <Route
-                                path="/counselling"
-                                render={props => <Counselling />}
-                            />
+                        <Route
+                            path="/faqs"
+                            render={props => <FAQS />}
+                        />
+                        <Route
+                            path="/supervision"
+                            render={props => <Supervision />}
+                        />
+                        <Route
+                            path="/training"
+                            render={props => <Training />}
+                        />
+                        <Route
+                            path="/contact"
+                            render={props => <Contact />}
+                        />
+                        <Route
+                            path="/myaccount"
+                            render={props => <MyAccount />}
+                        />
+                        <Route
+                            path="/schedule"
+                            render={props => <Schedule />}
+                        />
+                        <Route
+                            path="/blog"
+                            render={props => <Blog />}
+                        />
 
-                            <Route
-                                path="/faqs"
-                                render={props => <FAQS />}
-                            />
-                            <Route
-                                path="/supervision"
-                                render={props => <Supervision />}
-                            />
-                            <Route
-                                path="/training"
-                                render={props => <Training />}
-                            />
-                            <Route
-                                path="/contact"
-                                render={props => <Contact />}
-                            />
-                            <Route
-                                path="/myaccount"
-                                render={props => <MyAccount />}
-                            />
-                            <Route
-                                path="/schedule"
-                                render={props => <Schedule />}
-                            />
-                            <Route
-                                path="/blog"
-                                render={props => <Blog />}
-                            />
-
-                            <Route
-                                path="/posts/:id"
-                                render={props => <PostEditor />}
-                            />
-                            <Route
-                                path="/clients"
-                                exact
-                                render={props => <Clients />}
-                            />
-                            <Route
-                                path="/clients/:id"
-                                render={props => <><ClientShow /><Footer /></>}
-                            />
-                            <Route render={props => <NotFound />} />
+                        <Route
+                            path="/posts/:id"
+                            render={props => <PostEditor />}
+                        />
+                        <Route
+                            path="/clients"
+                            exact
+                            render={props => <Clients />}
+                        />
+                        <Route
+                            path="/clients/:id"
+                            render={props => <><ClientShow /><Footer /></>}
+                        />
+                        <Route render={props => <NotFound />} />
 
 
 
-                        </Switch>
-                        <Notification />
-                    </div>
+                    </Switch>
+                    <Notification />
+                    {/* </div> */}
 
 
                     {/* Footer */}

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Container, Header, Button, Image, Divider } from "semantic-ui-react"
 import { withRouter } from "react-router-dom"
 import { Quote, Jumbotron } from "./StyledComponents"
@@ -7,6 +7,14 @@ import { InfoContainer } from "./StyledComponents"
 
 function Counselling(props) {
 
+
+    useEffect(() => {
+        window.scroll({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        })
+    }, []);
 
     return (
         <>

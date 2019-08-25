@@ -4,7 +4,7 @@
 /*  */
 .medium-editor-element:focus{
 
-    outline: none;
+    outline: 1px solid blue;
 }
 
 .medium-editor-element blockquote{
@@ -14,6 +14,13 @@
   color:  	grey;
   font-size: 2rem;
 }
+
+.medium-editor-element b{
+    border: 1px solid red;
+    width: auto;
+}
+
+
 
 
 /* .medium-editor-element blockquote:before {

@@ -382,9 +382,9 @@ class Schedule extends Component {
             <FullWidthCalendarContainer fluid >
                 <div style={{ width: "100%", maxWidth: "95vw", justifySelf: "center" }}>
                     <h1>Schedule</h1>
-                    <Label circular color={"blue"} content="Business" />
-                    <Label circular color={"green"} content="Personal" />
-                    <Label circular color={"grey"} content="Bookable" />
+                    {/* <Label circular color={"blue"} content="Business" /> */}
+                    {/* <Label circular color={"green"} content="Personal" /> */}
+                    {/* <Label circular color={"grey"} content="Bookable" /> */}
                 </div>
 
 

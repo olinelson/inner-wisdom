@@ -53,9 +53,9 @@ function Appointments(props) {
         <FullWidthCalendarContainer fluid>
             <div style={{ width: "100%", maxWidth: "95vw", justifySelf: "center" }}>
                 <h1>Appointments</h1>
-                <Label circular color={"blue"} content="My Appointments" />
+                {/* <Label circular color={"blue"} content="My Appointments" /> */}
                 {/* <Label circular color={"green"} content="Personal" /> */}
-                <Label circular color={"grey"} content="Bookable" />
+                {/* <Label circular color={"grey"} content="Bookable" /> */}
             </div>
             <Divider style={{ gridArea: "divider" }} />
             <Calendar fullWidth purchasable events={relevantEvents(props.appointments, props.consults, props.user)} />

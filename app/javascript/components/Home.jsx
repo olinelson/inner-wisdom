@@ -1,4 +1,4 @@
-import React, { Component, useRef } from 'react'
+import React, { Component, useRef, useEffect } from 'react'
 
 import { Menu, Header, Container, Card, Button, Segment, Icon, Item, Image, Divider, Label } from "semantic-ui-react"
 
@@ -15,6 +15,14 @@ import Supervision from './Supervision';
 import Training from './Training';
 import Memberships from "./Memberships"
 function Home(props) {
+
+    useEffect(() => {
+        window.scroll({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        })
+    }, []);
 
 
 
