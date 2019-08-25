@@ -20,6 +20,7 @@ function Event(props) {
     let personal = false
     if (event.calendar.id === props.user.google_calendar_email) personal = true
 
+    console.log(event)
     const isAnEmptySlot = () => {
         if (!personal && event.attendees == null) return true
         return false
@@ -65,17 +66,21 @@ function Event(props) {
         return "not_found"
     }
 
-
+    const userDisplayNameSwitch = (u) => {
+        if (u.displayName) return u.displayName
+        if (u.first_name) return u.first_name + " " + u.last_name
+        return u.email
+    }
 
     const showEventAttendees = () => {
         if (event && event.attendees) {
             let users = event.attendees
             return users.map(u => {
                 let linkToClientPage = `${findUserIdByEmail(u.email)}`
-
+                console.log("user", u, findUserIdByEmail(u.email))
                 return <Label key={"label" + u.email}>
                     <Icon style={{ cursor: "pointer" }} onClick={() => props.history.push(linkToClientPage)} name='user' />
-                    <span style={{ cursor: "pointer" }} onClick={() => props.history.push(linkToClientPage)}>{u.displayName || u.first_name + " " + u.last_name}</span>
+                    <span style={{ cursor: "pointer" }} onClick={() => props.history.push(linkToClientPage)}>{userDisplayNameSwitch(u)}</span>
                     <Icon name='delete' onClick={() => removeAttendeeFromEvent(u)} />
                 </Label>
             }

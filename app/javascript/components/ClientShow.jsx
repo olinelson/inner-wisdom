@@ -56,6 +56,7 @@ function ClientShow(props) {
         })
             .then(res => res.json())
             .then((res) => {
+                setApproved(approved)
                 setLoading(false)
                 props.dispatch({ type: "SET_USERS", value: res.users })
             })
