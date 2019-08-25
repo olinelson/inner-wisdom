@@ -160,11 +160,14 @@ class MainController < ApplicationController
             e.reminders =  { "useDefault": false }
             e.attendees= attendees
             # e.recurrence = recurrence
-            e.recurrence = {freq: recurrence["freq"]}
+            if recurrence
+                e.recurrence = {freq: recurrence["freq"]}
+            end
+            
             # e.recurrence = {freq: "daily"}
             e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => ""}}
         end
-
+       
         #  render json: {scrollToEvent: event, events: eventsInDateWindow(@appointmentsCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
         return appStateJson(scrollToEvent: event)
     end

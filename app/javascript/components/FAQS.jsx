@@ -131,6 +131,6 @@ export default function FAQS() {
 
     return <Container text>
         <Header as="h1" content="Frequently Asked Questions" />
-        <Accordion fluid styled panels={panels} />
+        <Accordion defaultActiveIndex={0} fluid styled panels={panels} />
     </Container>
 }
