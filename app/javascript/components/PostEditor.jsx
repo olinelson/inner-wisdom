@@ -20,6 +20,8 @@ export const FeatureImageSegment = styled(Segment)`
 
 class PostEditor extends Component {
 
+
+
     constructor(props) {
         super()
         let post = props.posts.find(p => p.id == props.match.params.id)
@@ -41,6 +43,7 @@ class PostEditor extends Component {
         }
 
     }
+
 
 
 
@@ -173,7 +176,7 @@ class PostEditor extends Component {
 
             <Dropzone onDrop={(acceptedFiles) => this.uploadFiles(acceptedFiles)}>
                 {({ getRootProps, getInputProps }) => (
-                    <Container fluid>
+                    <Container fluid >
                         <div {...getRootProps()}>
                             <input {...getInputProps()} />
                             {this.state.featureImage && this.state.featureImage.length > 0 ?
@@ -199,7 +202,7 @@ class PostEditor extends Component {
                 )}
             </Dropzone>
 
-            <Container text>
+            <Container text >
 
 
 
@@ -207,7 +210,29 @@ class PostEditor extends Component {
                 <Editor
                     text={this.state.editedPost.body}
                     onChange={this.handleChange}
-                    options={{ disableEditing: this.state.editingDisabled, toolbar: { buttons: ['bold', 'italic', 'underline', 'anchor', 'h2', 'h3', 'quote'] } }}
+                    options={{
+                        disableEditing: this.state.editingDisabled, toolbar: {
+                            buttons: [
+                                'bold',
+                                'italic',
+                                'underline',
+                                'anchor',
+                                'h2',
+                                'h3',
+                                'quote',
+                                'subscript',
+                                'orderedlist',
+                                'unorderedlist',
+                                'indent',
+                                'outdent',
+                                'justifyCenter',
+                                'justifyFull',
+                                'justifyLeft',
+                                'justifyRight',
+                                'html'
+                            ]
+                        }
+                    }}
                 />
 
             </Container>

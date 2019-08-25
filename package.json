@@ -9,6 +9,7 @@
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "debounce": "^1.2.0",
     "dotenv": "^8.0.0",
+    "medium-editor": "^5.23.3",
     "mini-css-extract-plugin": "^0.8.0",
     "moment": "^2.24.0",
     "prop-types": "^15.7.2",

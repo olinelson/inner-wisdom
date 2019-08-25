@@ -1,44 +1,24 @@
-/* a{
-    color: inherit!important;
-} */
-/*  */
-.medium-editor-element:focus{
 
-    outline: 1px solid blue;
+.medium-editor-element:focus{
+    outline: 1px solid #1E70BF;
 }
 
-.medium-editor-element blockquote{
-  border-left: .5rem solid  	#8EC03E;
-  padding-left: .5rem;
+/* .medium-editor-element blockquote{
+  border-right: .5rem solid  	#8EC03E;
+  padding-right: .5rem;
   margin: 0 0 1rem -1rem;
   color:  	grey;
   font-size: 2rem;
-}
-
-.medium-editor-element b{
-    border: 1px solid red;
-    width: auto;
-}
-
-
-
-
-/* .medium-editor-element blockquote:before {
-     content: '"';
-     font-size: 2rem;
+  text-align: right;
 } */
 
- p {
-    display: grid;
-}
 
- p img {
-    /* border: 1px solid red; */
-     width: 450px;
-  height: auto;
-  font-size: 1.14285714rem;
-  justify-self: center;
-}
+
+
+
+
+
+
 
 .rbc-event-label{
     display: none;

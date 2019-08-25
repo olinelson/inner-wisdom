@@ -107,6 +107,8 @@ const store = createStore(reducer);
 
 export function App(props) {
 
+
+
     store.dispatch({
         type: "SET_ALL", value: {
             posts: props.posts,
@@ -126,7 +128,10 @@ export function App(props) {
     })
 
 
+
+
     return (
+
         <Provider store={store}>
 
             <HashRouter basename="/" >
@@ -212,6 +217,7 @@ export function App(props) {
             </HashRouter>
 
         </Provider>
+
     )
 
 }
