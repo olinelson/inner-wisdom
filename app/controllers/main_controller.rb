@@ -308,7 +308,7 @@ class MainController < ApplicationController
 
     def updateEvent
         event = params["event"]
-        byebug
+
 
         attendees= []
 

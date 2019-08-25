@@ -20,7 +20,6 @@ function Event(props) {
     let personal = false
     if (event.calendar.id === props.user.google_calendar_email) personal = true
 
-    console.log(event)
     const isAnEmptySlot = () => {
         if (!personal && event.attendees == null) return true
         return false
@@ -77,7 +76,6 @@ function Event(props) {
             let users = event.attendees
             return users.map(u => {
                 let linkToClientPage = `${findUserIdByEmail(u.email)}`
-                console.log("user", u, findUserIdByEmail(u.email))
                 return <Label key={"label" + u.email}>
                     <Icon style={{ cursor: "pointer" }} onClick={() => props.history.push(linkToClientPage)} name='user' />
                     <span style={{ cursor: "pointer" }} onClick={() => props.history.push(linkToClientPage)}>{userDisplayNameSwitch(u)}</span>

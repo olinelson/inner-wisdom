@@ -1,5 +1,5 @@
 class StripeController < ApplicationController
-Stripe.api_key = 'sk_test_leD90Sq6bZqN5loAEFF3XxBt00VD4BmzYE'
+Stripe.api_key = ENV["STRIPE_KEY"]
 
 def get_customer_invoice_items
     invoice_items = Stripe::InvoiceItem.list(customer: params["user"]["stripe_id"], pending: true)

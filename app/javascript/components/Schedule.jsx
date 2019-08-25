@@ -376,7 +376,6 @@ class Schedule extends Component {
     }
 
     render() {
-        console.log(this.state.selectedEvent)
         return <>
 
             <FullWidthCalendarContainer fluid >
