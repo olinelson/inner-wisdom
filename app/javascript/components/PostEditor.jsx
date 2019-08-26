@@ -1,11 +1,12 @@
-import React, { Component } from 'react'
-import Editor from 'react-medium-editor';
+import React, { useState } from 'react'
+import { Editor, EditorState, RichUtils, convertToRaw, convertFromRaw } from 'draft-js';
 import { connect } from 'react-redux';
 import { Container, Input, Divider, Menu, Checkbox, Label, Dropdown, Modal, Popup, Header, Button, Icon, Image, Segment, Placeholder, Dimmer } from "semantic-ui-react"
 import PostViewer from './PostViewer';
 import Dropzone from 'react-dropzone'
 import styled from "styled-components"
 import { withRouter } from "react-router-dom"
+import { Jumbotron } from './StyledComponents';
 
 export const FeatureImageSegment = styled(Segment)`
     background-position: center !important;
@@ -18,61 +19,61 @@ export const FeatureImageSegment = styled(Segment)`
 }
 `
 
-class PostEditor extends Component {
+function PostEditor(props) {
+    const [savedPost, setSavedPost] = useState(props.posts.find(p => p.id == props.match.params.id))
+    const [post, setPost] = useState(savedPost)
+
+    const [editorState, setEditorState] = useState(
+        post.body && post.body.length > 0 ?
+            EditorState.createWithContent(convertFromRaw(JSON.parse(post.body)))
+            :
+            EditorState.createEmpty()
+    );
+    // const [savedRawState, setSavedRawState] = useState(
+    //     JSON.stringify(convertToRaw(editorState.getCurrentContent()))
+    // )
+
+    const editingDisabled = props.user && props.user.id == post.user_id ? false : true
+
+    let saved = true
+    savedPost.body !== JSON.stringify(convertToRaw(editorState.getCurrentContent())) ? saved = false : null
+    savedPost.published !== post.published ? saved = false : null
+    savedPost.title !== post.title ? saved = false : null
 
 
 
-    constructor(props) {
-        super()
-        let post = props.posts.find(p => p.id == props.match.params.id)
 
-        let editingDisabled = true
-        if (props.user && props.user.id == post.user_id) editingDisabled = false
+    const [deleteModalShown, setDeleteModalShown] = useState(false)
 
+    const [featureImage, setFeatureImage] = useState(post.feature_image)
 
-        this.state = {
-            savedPost: post,
-            editedPost: post,
-            editingDisabled: editingDisabled,
-            unsavedChanges: false,
-            deleteModalShown: false,
-            featureImage: post.feature_image,
-            featureImageLoading: false,
-            featureImageHovering: false,
-            saving: false,
+    const [featureImageLoading, setFeatureImageLoading] = useState(false)
+    const [featureImageHovering, setFeatureImageHovering] = useState(false)
+    const [saving, setSaving] = useState(false)
+
+    const handleKeyCommand = (command, editorState) => {
+        const newState = RichUtils.handleKeyCommand(editorState, command);
+        if (newState) {
+            setEditorState(newState)
+
+            return 'handled';
         }
-
+        return 'not-handled';
     }
 
+    const saveChanges = () => {
+        setSaving(true)
 
+        let body = JSON.stringify(convertToRaw(editorState.getCurrentContent()))
 
-
-    handleChange = (text, medium) => {
-        let unsavedChanges = false
-        if (this.state.savedPost.body !== text) unsavedChanges = true
-        this.setState({ editedPost: { ...this.state.editedPost, body: text }, unsavedChanges });
-    }
-
-    handlePublishChange = () => {
-        this.setState({ editedPost: { ...this.state.editedPost, published: !this.state.editedPost.published }, unsavedChanges: true })
-    }
-
-    handleTitleChange = (e) => {
-        this.setState({ editedPost: { ...this.state.editedPost, title: e.target.value }, unsavedChanges: true })
-    }
-
-    saveChanges = () => {
-
-        this.setState({ saving: true })
-        let post = this.state.editedPost
-
+        let editedPost = { ...post, body }
         fetch(`${process.env.BASE_URL}/posts/${post.id}`, {
             method: "PATCH",
             body: JSON.stringify({
-                post
+                editedPost
             }),
             headers: {
-                "X-CSRF-Token": this.props.csrfToken,
+                "X-CSRF-Token": props.csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -81,203 +82,222 @@ class PostEditor extends Component {
 
             .then(response => response.json())
             .then((e) => {
-                this.setState({ saving: false, unsavedChanges: false })
-                this.props.dispatch({ type: "SET_POSTS", value: e.posts })
+                setSaving(false)
+                setSavedPost(editedPost)
+                props.dispatch({ type: "SET_POSTS", value: e.posts })
             })
 
     }
 
-    deletePost = () => {
-
-        fetch(`${process.env.BASE_URL}/posts/${this.state.savedPost.id}`, {
-            method: "DELETE",
-            headers: {
-                "X-CSRF-Token": this.props.csrfToken,
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        })
-            .then(response => response.json())
-            .then((e) => {
-                this.props.history.push("/myaccount")
-                this.props.dispatch({ type: "SET_POSTS", value: e.posts })
-            })
-
+    // style button controls
+    const onStyleClick = (command) => {
+        setEditorState(RichUtils.toggleInlineStyle(editorState, command))
     }
 
-    deletePostModal = () => {
-        return <Modal trigger={<Button basic icon="trash" content='Delete' />} basic size='small'>
-            <Header icon='trash' content='Delete Post' />
-            <Modal.Content>
-                <p>Are you sure you want to delete this post? This action is irreversable.</p>
-            </Modal.Content>
-            <Modal.Actions>
-                <Button onClick={this.deletePost} color='red' inverted>
-                    <Icon name='remove' /> Yes, Delete
-                            </Button>
-                <Button color='green' inverted>
-                    <Icon name='checkmark' /> Cancel
-                            </Button>
-            </Modal.Actions>
-        </Modal>
+    const onBlockTypeClick = command => {
+        setEditorState(RichUtils.toggleBlockType(editorState, command))
     }
 
-    toggleFeatureImageHovering = () => {
-        this.setState({ featureImageHovering: !this.state.featureImageHovering })
-    }
 
-    showEditor = () => {
+    // deletePost = () => {
 
-        return <>
-            <Menu secondary>
-                <Menu.Item >
-                    {/* <Button
-                        content="save changes"
-                        disabled={!this.state.unsavedChanges}
-                        onClick={this.saveChanges}
-                    /> */}
-                    <Button as='div' labelPosition='right'>
-                        <Button
-                            basic
-                            content="Save"
-                            icon="save"
-                            disabled={!this.state.unsavedChanges}
-                            onClick={this.saveChanges}
-                            loading={this.state.saving}
-                        />
-                        <Label as='a'
-                            basic
-                            color={this.state.unsavedChanges ? "red" : "green"}
-                            pointing='left'
-                            content={this.state.unsavedChanges ? "Unsaved Changes" : "Changes Saved"}
-                        />
+    //     fetch(`${process.env.BASE_URL}/posts/${savedPost.id}`, {
+    //         method: "DELETE",
+    //         headers: {
+    //             "X-CSRF-Token": props.csrfToken,
+    //             "Content-Type": "application/json",
+    //             Accept: "application/json",
+    //             "X-Requested-With": "XMLHttpRequest"
+    //         }
+    //     })
+    //         .then(response => response.json())
+    //         .then((e) => {
+    //             props.history.push("/myaccount")
+    //             props.dispatch({ type: "SET_POSTS", value: e.posts })
+    //         })
 
-                    </Button>
+    // }
 
-                </Menu.Item>
-                <Menu.Menu position="right">
+    // deletePostModal = () => {
+    //     return <Modal trigger={<Button basic icon="trash" content='Delete' />} basic size='small'>
+    //         <Header icon='trash' content='Delete Post' />
+    //         <Modal.Content>
+    //             <p>Are you sure you want to delete this post? This action is irreversable.</p>
+    //         </Modal.Content>
+    //         <Modal.Actions>
+    //             <Button onClick={deletePost} color='red' inverted>
+    //                 <Icon name='remove' /> Yes, Delete
+    //                             </Button>
+    //             <Button color='green' inverted>
+    //                 <Icon name='checkmark' /> Cancel
+    //                             </Button>
+    //         </Modal.Actions>
+    //     </Modal>
+    // }
 
-
-                    <Menu.Item>
-                        <Checkbox checked={this.state.editedPost.published} slider onChange={this.handlePublishChange} />
-                        <Label>{this.state.editedPost.published === true ?
-                            <><Icon name='share alternate' /> Published</>
-                            :
-                            <><Icon name='user secret' /> Private</>
-                        }</Label>
-                    </Menu.Item>
-                    <Menu.Item>
-
-                        {this.deletePostModal()}
-                    </Menu.Item>
-                </Menu.Menu>
-            </Menu>
-
-            <Dropzone onDrop={(acceptedFiles) => this.uploadFiles(acceptedFiles)}>
-                {({ getRootProps, getInputProps }) => (
-                    <Container fluid >
-                        <div {...getRootProps()}>
-                            <input {...getInputProps()} />
-                            {this.state.featureImage && this.state.featureImage.length > 0 ?
-
-                                <FeatureImageSegment onMouseEnter={this.toggleFeatureImageHovering} onMouseLeave={this.toggleFeatureImageHovering} loading={this.state.featureImageLoading} tertiary style={{ backgroundImage: `url('${this.state.featureImage}') ` }}>
-                                    {this.state.featureImageHovering === true ?
-                                        <Dimmer active >
-                                            <h4>Drag an image here to set featured image</h4>
-                                            <small>or click here</small>
-                                        </Dimmer>
-                                        : null
-                                    }
-                                </FeatureImageSegment>
-
-                                :
-                                <Placeholder >
-                                    {/* <Placeholder.Image /> */}
-                                </Placeholder>
-                            }
-
-                        </div>
-                    </Container>
-                )}
-            </Dropzone>
-
-            <Container text >
+    // toggleFeatureImageHovering = () => {
+    //     setState({ featureImageHovering: !featureImageHovering })
+    // }
 
 
 
-                <Input transparent onChange={this.handleTitleChange} style={{ fontSize: "3rem", margin: "1rem 0" }} value={this.state.editedPost.title} />
-                <Editor
-                    text={this.state.editedPost.body}
-                    onChange={this.handleChange}
-                    options={{
-                        disableEditing: this.state.editingDisabled, toolbar: {
-                            buttons: [
-                                'bold',
-                                'italic',
-                                'underline',
-                                'anchor',
-                                'h2',
-                                'h3',
-                                'quote',
-                                'subscript',
-                                'orderedlist',
-                                'unorderedlist',
-                                'indent',
-                                'outdent',
-                                'justifyCenter',
-                                'justifyFull',
-                                'justifyLeft',
-                                'justifyRight',
-                                'html'
-                            ]
-                        }
-                    }}
-                />
 
-            </Container>
-        </>
-    }
 
-    uploadFiles = (acceptedFiles) => {
-        this.setState({ featureImageLoading: true })
+
+    const uploadFiles = (acceptedFiles) => {
+        setFeatureImageLoading(true)
         let formData = new FormData();
         formData.append('file', acceptedFiles[0])
 
-        fetch(`${process.env.BASE_URL}/attach/posts/${this.state.savedPost.id}`, {
+        fetch(`${process.env.BASE_URL}/attach/posts/${savedPost.id}`, {
             method: "POST",
             body: formData,
 
 
 
             headers: {
-                "X-CSRF-Token": this.props.csrfToken,
+                "X-CSRF-Token": props.csrfToken,
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
             .then(response => response.json())
             .then((e) => {
-                this.props.dispatch({ type: "SET_POSTS", value: e.posts })
-                this.setState({ featureImage: e.feature_image, featureImageLoading: false })
+                props.dispatch({ type: "SET_POSTS", value: e.posts })
+                setFeatureImage(e.feature_image)
+                setFeatureImageLoading(false)
             })
 
     }
+    console.log(editorState.getCurrentContent())
+
+    return <>
+        {editingDisabled ?
+            <Jumbotron src={featureImage} />
+            :
+            <>
+                <Menu secondary>
+                    <Menu.Item >
+                        {/* <Button
+                        content="save changes"
+                        disabled={!unsavedChanges}
+                        onClick={saveChanges}
+                    /> */}
+                        <Button as='div' labelPosition='right'>
+                            <Button
+                                basic
+                                content="Save"
+                                icon="save"
+                                disabled={saved}
+                                onClick={() => saveChanges()}
+                                loading={saving}
+                            />
+                            <Label as='a'
+                                basic
+                                color={!saved ? "red" : "green"}
+                                pointing='left'
+                                content={!saved ? "Unsaved Changes" : "Changes Saved"}
+                            />
+
+                        </Button>
+
+                    </Menu.Item>
+                    <Menu.Menu position="right">
 
 
-    render() {
-        if (this.state.editingDisabled === false) return this.showEditor()
+                        <Menu.Item>
+                            <Checkbox checked={post.published} slider onClick={() => setPost({ ...post, published: !post.published })} />
+                            <Label>{post.published === true ?
+                                <><Icon name='share alternate' /> Published</>
+                                :
+                                <><Icon name='user secret' /> Private</>
+                            }</Label>
+                        </Menu.Item>
+                        <Menu.Item>
 
-        return <PostViewer post={this.state.savedPost} />
+                            {/* {deletePostModal()} */}
+                        </Menu.Item>
+                    </Menu.Menu>
+                </Menu>
+
+                <Dropzone onDrop={(acceptedFiles) => uploadFiles(acceptedFiles)}>
+                    {({ getRootProps, getInputProps }) => (
+                        <Container fluid >
+                            <div {...getRootProps()}>
+                                <input {...getInputProps()} />
+                                {featureImage && featureImage.length > 0 ?
+
+                                    <FeatureImageSegment onMouseEnter={() => setFeatureImageHovering(true)} onMouseLeave={() => setFeatureImageHovering(false)} loading={featureImageLoading} tertiary style={{ backgroundImage: `url('${featureImage}') ` }}>
+                                        {featureImageHovering === true ?
+                                            <Dimmer active >
+                                                <h4>Drag an image here to set featured image</h4>
+                                                <small>or click here</small>
+                                            </Dimmer>
+                                            : null
+                                        }
+                                    </FeatureImageSegment>
+
+                                    :
+                                    <Placeholder >
+                                        {/* <Placeholder.Image /> */}
+                                    </Placeholder>
+                                }
+
+                            </div>
+                        </Container>
+                    )}
+                </Dropzone>
+            </>
+        }
 
 
-    }
+        <Container text >
+            <Container textAlign="center">
+                <Button.Group
+                    buttons={[
+                        { key: 'H1', content: 'H1', onClick: () => onBlockTypeClick('header-one') },
+                        { key: 'H1', content: 'H2', onClick: () => onBlockTypeClick('header-two') },
+                        { key: 'ul', icon: 'list ul', onClick: () => onBlockTypeClick('unordered-list-item') },
+                        { key: 'ol', icon: 'list ol', onClick: () => onBlockTypeClick('ordered-list-item') },
+                        { key: 'quote', icon: 'quote left', onClick: () => onBlockTypeClick('blockquote') },
+
+                    ]}
+                />{' '}
+                <Button.Group
+                    buttons={[
+                        { key: 'bold', icon: 'bold', onClick: () => onStyleClick('BOLD') },
+                        { key: 'underline', icon: 'underline', onClick: () => onStyleClick('UNDERLINE') },
+                        { key: 'italic', icon: 'italic', onClick: () => onStyleClick('ITALIC') },
+                    ]}
+                />
+            </Container>
+
+
+            {editingDisabled ? <h1>{post.title}</h1> :
+                <Input transparent onChange={(e) => setPost({ ...post, title: e.target.value })} style={{ fontSize: "3rem", margin: "1rem 0" }} value={post.title} />
+            }
+
+
+
+
+            <Editor
+                editorState={editorState}
+                onChange={setEditorState}
+                handleKeyCommand={(c, es) => handleKeyCommand(c, es)}
+                spellCheck
+                readOnly={editingDisabled}
+            />
+
+        </Container>
+    </>
+
+
 }
+
 
 const mapStateToProps = (state) => ({
     posts: state.posts,
     user: state.user,
-    baseUrl: state.baseUrl,
     csrfToken: state.csrfToken
 })
 

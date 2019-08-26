@@ -1,8 +1,8 @@
 class PostsController < ApplicationController
     def edit
         @post = Post.find(params[:id])
-        newPost = params[:post]
-        @post.update(body: newPost["body"], published: newPost["published"], title: newPost["title"])
+        editedPost = params[:editedPost]
+        @post.update(body: editedPost["body"], published: editedPost["published"], title: editedPost["title"])
         render json: {posts: Post.all} 
     end
 

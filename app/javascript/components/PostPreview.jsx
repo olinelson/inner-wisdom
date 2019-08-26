@@ -1,19 +1,27 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from "styled-components"
-import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
+// import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import { Card, Image, Label, Icon, Item, Button, Divider } from "semantic-ui-react"
 import moment from "moment"
 import { withRouter } from 'react-router-dom'
 import { connect } from "react-redux"
+import { Editor, EditorState, RichUtils, convertToRaw, convertFromRaw, getFirstBlock } from 'draft-js';
+import editor from 'react-medium-editor/dist/editor';
 
 function PostPreview(props) {
-
+    const p = props.post
     const handleCardClick = (id) => {
         props.history.push(`/posts/${id}`)
     }
 
-    let p = props.post
-    let firstParagraph = ReactHtmlParser(p.body)[0]
+    const [editorState, setEditorState] = useState(
+        props.post.body && props.post.body.length > 0 ?
+            EditorState.createWithContent(convertFromRaw(JSON.parse(props.post.body)))
+            :
+            EditorState.createEmpty()
+    );
+
+    const firstParagraph = editorState.getCurrentContent().getFirstBlock().getText()
     return (
 
 
@@ -45,16 +53,10 @@ function PostPreview(props) {
 
                 </Item.Meta>
                 <Item.Description>
-                    {firstParagraph}
+                    <p>{firstParagraph}</p>
                     {props.readMoreButton ? <a onClick={() => handleCardClick(p.id)}>Read more.</a> : null}
                 </Item.Description>
-
-
-
             </Item.Content>
-
-
-
         </Item>
 
     )

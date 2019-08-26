@@ -28,6 +28,7 @@ import About from './About';
 import Contact from './Contact';
 import FAQS from './FAQS';
 import Footer from './Footer';
+import DraftEditor from './DraftEditor';
 
 
 
@@ -200,6 +201,12 @@ export function App(props) {
                             path="/clients/:id"
                             render={props => <><ClientShow /><Footer /></>}
                         />
+                        <Route
+                            path="/draft"
+                            render={props => <><DraftEditor /> <Footer /></>}
+                        />
+
+
                         <Route render={props => <NotFound />} />
 
 
