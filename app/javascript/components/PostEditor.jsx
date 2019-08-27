@@ -118,20 +118,13 @@ function PostEditor(props) {
     // }
 
     // deletePostModal = () => {
-    //     return <Modal trigger={<Button basic icon="trash" content='Delete' />} basic size='small'>
-    //         <Header icon='trash' content='Delete Post' />
-    //         <Modal.Content>
-    //             <p>Are you sure you want to delete this post? This action is irreversable.</p>
-    //         </Modal.Content>
-    //         <Modal.Actions>
-    //             <Button onClick={deletePost} color='red' inverted>
-    //                 <Icon name='remove' /> Yes, Delete
-    //                             </Button>
-    //             <Button color='green' inverted>
-    //                 <Icon name='checkmark' /> Cancel
-    //                             </Button>
-    //         </Modal.Actions>
-    //     </Modal>
+    //     return <Modal
+    //         trigger={<Button basic icon="trash" content='Delete' />}
+    //         header='Delete Post'
+    //         content='Are you sure you want to delete this post?'
+    //         actions={['Cancel', { key: 'delete', content: 'Yes, Delete', negative: true, onClick: () => deletePost() }]}
+    //     />
+
     // }
 
     // toggleFeatureImageHovering = () => {
@@ -232,6 +225,8 @@ function PostEditor(props) {
                         buttons={[
                             { key: 'ul', icon: 'list ul', onClick: () => onBlockTypeClick('unordered-list-item') },
                             { key: 'ol', icon: 'list ol', onClick: () => onBlockTypeClick('ordered-list-item') },
+                            { key: 'un', icon: 'close', onClick: () => onBlockTypeClick('unstyled') },
+                            // { key: 'atomic', icon: 'world', onClick: () => onBlockTypeClick('atomic') },
                         ]}
                     />{" "}
                     <Button.Group
@@ -250,6 +245,15 @@ function PostEditor(props) {
                         :
                         <><Icon name='user secret' /> Private</>
                     }</Label>
+
+                    <Modal
+                        basic
+                        size="small"
+                        trigger={<Button basic icon="trash" content='Delete' />}
+                        header='Delete Post'
+                        content='Are you sure you want to delete this post?'
+                        actions={['Cancel', { key: 'delete', content: 'Yes, Delete', basic: true, negative: true, onClick: () => deletePost() }]}
+                    />
                 </div>
             </EditorButtons>
             <Container text>

@@ -1,31 +1,26 @@
-
+@import url(https://fonts.googleapis.com/css?family=Noto+Sans:400,700);
+@import url(https://fonts.googleapis.com/css?family=Sanchez:400italic,400);
+@import url(https://fonts.googleapis.com/css?family=Roboto:100);
 
 blockquote {
-  /* background: #f9f9f9; */
-  margin: 1rem -.75rem;
-  border-left: .75rem solid #BAF09A;
-  /* margin: 1.5em 10px; */
-  padding: 0 1rem;
-  /* quotes: "\201C""\201D""\2018""\2019"; */
-  color: grey;
-  display: flex;
-  flex-direction: column;
-  font-size: 2rem;
+  /* position: relative; */
+  margin: 1rem 0 1rem -.5rem;
+  padding:  0 1rem;
+  border-left: 0.5rem solid #4d91b3;
+  font-family: 'Roboto', serif;
+  font-size: 3rem;
+  line-height: 3rem;
+  font-weight: 100;
 
 }
 blockquote:before {
-  color: #ccc;
-  align-self: flex-start;
-  margin-top: -1rem;
-  content: url("data:image/svg+xml; utf8, <svg aria-hidden='true' focusable='false' data-prefix='fas' data-icon='quote-left' class='svg-inline--fa fa-quote-left fa-w-16' role='img' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' width='20px' height='20px'><path fill='gainsboro' d='M464 256h-80v-64c0-35.3 28.7-64 64-64h8c13.3 0 24-10.7 24-24V56c0-13.3-10.7-24-24-24h-8c-88.4 0-160 71.6-160 160v240c0 26.5 21.5 48 48 48h128c26.5 0 48-21.5 48-48V304c0-26.5-21.5-48-48-48zm-288 0H96v-64c0-35.3 28.7-64 64-64h8c13.3 0 24-10.7 24-24V56c0-13.3-10.7-24-24-24h-8C71.6 32 0 103.6 0 192v240c0 26.5 21.5 48 48 48h128c26.5 0 48-21.5 48-48V304c0-26.5-21.5-48-48-48z'></path></svg>");
-  /* font-size: 2rem; */
-  /* line-height: 0.1em; */
-  /* margin-right: 0.25em; */
-  /* vertical-align: -0.4em; */
+  font-size: 5rem;
+  content: '\201C';
+  font-family: 'Sanchez';
+  color: #4d91b3;
+
 }
-blockquote p {
-  display: inline;
-}
+
 
 
 
