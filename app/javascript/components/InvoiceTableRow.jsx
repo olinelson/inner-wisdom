@@ -33,6 +33,27 @@ function InvoiceTableRow(props) {
             })
     }
 
+    const deleteStripeIdsFromEvents = () => {
+        fetch(`${process.env.BASE_URL}/remove_many_stripe_ids`, {
+            method: "POST",
+            body: JSON.stringify({
+                invoice: i
+            }),
+            headers: {
+                "X-CSRF-Token": props.csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(res => res.json())
+            .then(res => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
+            .then(() => {
+                setDeleting(false)
+                props.refreshAction()
+            })
+    }
+
     const sendInvoiceHandeler = () => {
         setSending(true)
         fetch(`${process.env.BASE_URL}/stripe/invoices/send`, {
