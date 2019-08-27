@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Editor, EditorState, RichUtils, convertToRaw, convertFromRaw } from 'draft-js';
 import { connect } from 'react-redux';
 import { Container, Input, Divider, Menu, Checkbox, Label, Dropdown, Modal, Popup, Header, Button, Icon, Image, Segment, Placeholder, Dimmer } from "semantic-ui-react"
-import PostViewer from './PostViewer';
 import Dropzone from 'react-dropzone'
 import styled from "styled-components"
 import { withRouter } from "react-router-dom"

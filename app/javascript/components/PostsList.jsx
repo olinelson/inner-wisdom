@@ -14,7 +14,6 @@ function PostsList(props) {
     }
 
     const cardMapper = (p) => {
-        let firstParagraph = ReactHtmlParser(p.body)[0]
 
         return <PostsPreview blogView={props.blogView} key={p.id + "preview"} post={p} />
 

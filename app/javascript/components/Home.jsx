@@ -3,7 +3,6 @@ import React, { Component, useRef, useEffect } from 'react'
 import { Menu, Header, Container, Card, Button, Segment, Icon, Item, Image, Divider, Label } from "semantic-ui-react"
 
 import { Link } from "react-router-dom"
-import PostViewer from './PostViewer';
 import { connect } from 'react-redux';
 import PostPreview from './PostPreview';
 import styled from "styled-components"

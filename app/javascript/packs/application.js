@@ -12,20 +12,11 @@
 
 
 import WebpackerReact from 'webpacker-react'
-// components
-// import Calendar from 'components/Calendar'
-// import Checkout from 'components/Checkout'
+
 import App from 'components/App'
-// import Home from 'components/Home'
+
 import FlashNotification from 'components/FlashNotification'
 import Nav from "components/Nav"
-// import Appointments from "components/Appointments"
-// import PostEditor from "components/PostEditor"
-// import PostsList from "components/PostsList"
-// import PostViewer from "components/PostViewer"
-// import PostPreview from "components/PostViewer"
-// import Blog from "components/Blog"
-
 
 
 import "styled-components"
