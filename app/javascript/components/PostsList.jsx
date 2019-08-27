@@ -2,7 +2,6 @@ import React from 'react'
 import { Card, Menu, Image, Icon, Label, Button, Item } from "semantic-ui-react"
 import { Link } from "react-router-dom"
 import moment from 'moment'
-import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import PostsPreview from "./PostPreview"
 import { connect } from "react-redux"
 import { withRouter } from 'react-router-dom'

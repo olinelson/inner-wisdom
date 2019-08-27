@@ -1,7 +1,6 @@
 // import React from 'react'
 // import { Container, Divider } from "semantic-ui-react"
 // import { Placeholder, Dimmer } from "semantic-ui-react"
-// import ReactHtmlParser from 'react-html-parser';
 // import { FeatureImageSegment } from "./PostEditor"
 
 // export default function PostViewer(props) {

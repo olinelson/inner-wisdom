@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import styled from "styled-components"
-// import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import { Card, Image, Label, Icon, Item, Button, Divider } from "semantic-ui-react"
 import moment from "moment"
 import { withRouter } from 'react-router-dom'
