@@ -89,7 +89,6 @@ function InvoiceItem(props) {
     let duration = moment(i.metadata.end_time) - moment(i.metadata.start_time)
     let prettyDuration = moment.duration(duration).humanize()
 
-    console.log(props)
 
 
     return <>

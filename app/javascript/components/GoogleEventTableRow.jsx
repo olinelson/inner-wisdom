@@ -121,7 +121,7 @@ function GoogleEventTableRow(props) {
                 {onAnInvoice ? <Icon name="check" />
                     :
                     <Button
-                        disabled={onAnInvoice || isPaid ? true : false}
+                        disabled={onAnInvoice || isPaid ? true : false || loading}
                         onClick={() => createInvoiceItem(a)}
                         content={"Bill Item"} />}
 

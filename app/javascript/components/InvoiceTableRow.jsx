@@ -1,14 +1,18 @@
 import React, { useState } from 'react'
-import { Modal, Button, Table } from "semantic-ui-react"
+import { Modal, Button, Table, Label, Dimmer, Placeholder, Loader } from "semantic-ui-react"
 import InvoiceItem from "./InvoiceItem"
 import moment from 'moment'
 import { connect } from "react-redux"
 
 function InvoiceTableRow(props) {
     const [modalOpen, setModalOpen] = useState(false)
+    const [voiding, setVoiding] = useState(false)
+    const [sending, setSending] = useState(false)
+    const [deleting, setDeleting] = useState(false)
     let i = props.invoice
 
     const deleteInvoiceHandeler = () => {
+        setDeleting(true)
         fetch(`${process.env.BASE_URL}/stripe/invoices/delete`, {
             method: "POST",
             body: JSON.stringify({
@@ -24,15 +28,13 @@ function InvoiceTableRow(props) {
             .then(res => res.json())
             .then((res) => {
                 if (res.invoice) {
-                    setSelectedInvoice(null)
-                    setLoading(true)
                     deleteStripeIdsFromEvents(res.invoice)
                 }
             })
-            .then(() => setLoading(false))
     }
 
     const sendInvoiceHandeler = () => {
+        setSending(true)
         fetch(`${process.env.BASE_URL}/stripe/invoices/send`, {
             method: "POST",
             body: JSON.stringify({
@@ -45,16 +47,19 @@ function InvoiceTableRow(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-        // .then(res => res.json())
-        // .then((res) => {
-        //     if (res.invoice) {
-        //         setLoading(true)
-        //     }
-        // })
+            .then(res => res.json())
+            .then((res) => {
+                if (res.invoice) {
+                    setModalOpen(false)
+                    setSending(false)
+                    props.refreshAction()
+                }
+            })
         // .then(() => setLoading(false))
     }
 
     const voidInvoiceHandeler = () => {
+        setVoiding(true)
         fetch(`${process.env.BASE_URL}/stripe/invoices/void`, {
             method: "POST",
             body: JSON.stringify({
@@ -70,10 +75,37 @@ function InvoiceTableRow(props) {
             .then(res => res.json())
             .then((res) => {
                 if (res.invoice) {
-                    setLoading(true)
+                    setVoiding(false)
+                    setModalOpen(false)
+                    props.refreshAction()
                 }
             })
         // .then(() => setLoading(false))
+    }
+
+    const invoiceIconSwitch = (status) => {
+        switch (status) {
+            case "draft":
+                return "edit"
+            case "open":
+                return "payment"
+            case "paid":
+                return "dollar sign"
+            case "void":
+                return "trash"
+
+        }
+    }
+    const invoiceColorSwitch = (status) => {
+        switch (status) {
+            case "open":
+                return "orange"
+            case "paid":
+                return "green"
+            case "void":
+                return "red"
+
+        }
     }
 
     const showActionButtons = () => {
@@ -84,7 +116,7 @@ function InvoiceTableRow(props) {
                         closeIcon
                         basic
                         size="small"
-                        trigger={<Button icon="delete" content="Delete" />}
+                        trigger={<Button loading={deleting} icon="delete" content="Delete" />}
                         header='Delete Invoice?'
                         content='Are you sure you would like to delete this invoice? This cannot be undone.'
                         actions={['Cancel', { key: 'yes', content: 'Yes, Delete', negative: true, onClick: () => deleteInvoiceHandeler() }]}
@@ -93,7 +125,7 @@ function InvoiceTableRow(props) {
                         closeIcon
                         basic
                         size="small"
-                        trigger={<Button icon="paper plane" content="Finalize and Send" />}
+                        trigger={<Button loading={sending} icon="paper plane" content="Finalize and Send" />}
                         header='Finalize and Send Invoice?'
                         content='Are you sure you would like to finalize and send this invoice?'
                         actions={['Cancel', { key: 'yes', content: 'Yes', positive: true, onClick: () => sendInvoiceHandeler() }]}
@@ -101,20 +133,30 @@ function InvoiceTableRow(props) {
                 </Button.Group>
 
             case "open":
-                return <Button.Group basic>
+                return <>
                     <Modal
                         closeIcon
                         basic
                         size="small"
-                        trigger={<Button icon="delete" content="Void Invoice" />}
+                        trigger={<Button basic loading={voiding} icon="delete" content="Void Invoice" />}
                         header='Void Invoice?'
                         content='Are you sure you would like to void this invoice? This cannot be undone.'
                         actions={['Cancel', { key: 'yes', content: 'Yes, Void It', negative: true, onClick: () => voidInvoiceHandeler() }]}
                     />
-                    <Button as="a" icon="download" href={i.invoice_pdf} content="PDF" />
-                    <Button as="a" icon="chain" href={i.hosted_invoice_url} content="Link" />
-                    <Button icon="mail" content="Send Invoice" onClick={() => sendInvoiceHandeler()} />
-                </Button.Group>
+                    <Button basic as="a" icon="download" href={i.invoice_pdf} content="PDF" />
+                    <Button basic as="a" icon="chain" href={i.hosted_invoice_url} content="Link" />
+                    {/* <Button icon="mail" content="Send Invoice" onClick={() => sendInvoiceHandeler()} /> */}
+
+                    <Button
+                        loading={sending}
+                        basic
+                        content="Re Send"
+                        icon='mail'
+                        label={{ basic: true, content: i.webhooks_delivered_at ? moment(i.webhooks_delivered_at).fromNow() : "No" }}
+                        labelPosition='right'
+                        onClick={() => sendInvoiceHandeler()}
+                    />
+                </>
 
             default:
                 return null
@@ -126,7 +168,7 @@ function InvoiceTableRow(props) {
 
         <Table.Row
             onClick={() => setModalOpen(true)}
-            warning={i.status === "open" || i.status == "draft"}
+            warning={i.status === "open"}
             positive={i.status === "paid"}
             negative={i.status === "void"}
             key={i.number}>
@@ -145,9 +187,19 @@ function InvoiceTableRow(props) {
             onClose={() => setModalOpen(false)}
             closeIcon
         >
-            <Modal.Header>Invoice</Modal.Header>
+
+
+            <Modal.Header>
+                <h1>Invoice</h1>
+                <Label
+                    content={i.status}
+                    color={invoiceColorSwitch(i.status)}
+                    icon={invoiceIconSwitch(i.status)}
+                />
+            </Modal.Header>
             <Modal.Content>
                 <h4>{i.customer_name}</h4>
+
 
                 <Modal.Description>
 

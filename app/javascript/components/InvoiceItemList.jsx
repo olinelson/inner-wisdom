@@ -23,7 +23,12 @@ function InvoiceItemList(props) {
         })
             .then(res => res.json())
             .then((res) => {
-                setInvoiceItems(res.invoice_items)
+                if (res.invoice_items.data) {
+                    setInvoiceItems(res.invoice_items)
+                } else {
+                    setInvoiceItems(null)
+                }
+
             })
             .then(() => setLoading(false))
     }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux';
 import { Tab, Table, Label, Icon, Modal, Header, Button } from "semantic-ui-react"
 import moment from "moment"
-import BillableItem from './InvoiceItem';
+import InvoiceItem from './InvoiceItem';
 import InvoiceTableRow from './InvoiceTableRow';
 
 function InvoiceList(props) {
@@ -144,7 +144,7 @@ function InvoiceList(props) {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {i.lines.data.map(item => <BillableItem invoice={i} key={item.id} item={item} />)}
+                            {i.lines.data.map(item => <InvoiceItem key={item.id} item={item} />)}
                         </Table.Body>
                     </Table>
                     {showActionButtons()}
@@ -166,21 +166,21 @@ function InvoiceList(props) {
 
                 let time = moment.duration(i.webhooks_delivered_at).humanize()
 
-                return <InvoiceTableRow key={i.id} invoice={i} />
+                return <InvoiceTableRow refreshAction={() => setLoading(true)} invoice={i} key={i.id} invoice={i} />
 
-                return <Table.Row
-                    warning={i.status === "open" || i.status == "draft"}
-                    positive={i.status === "paid"}
-                    negative={i.status === "void"}
-                    key={i.number} onClick={() => setSelectedInvoice(i)}>
+                // return <Table.Row
+                //     warning={i.status === "open" || i.status == "draft"}
+                //     positive={i.status === "paid"}
+                //     negative={i.status === "void"}
+                //     key={i.number} onClick={() => setSelectedInvoice(i)}>
 
-                    <Table.Cell>{moment(i.created).format('Do MMM YYYY')}</Table.Cell>
-                    <Table.Cell>{i.status}</Table.Cell>
-                    <Table.Cell>{i.number}</Table.Cell>
-                    <Table.Cell>{i.amount_due}</Table.Cell>
-                    <Table.Cell>{i.amount_paid}</Table.Cell>
-                    <Table.Cell>{i.status_transitions.finalized_at ? moment(i.status_transitions.finalized_at).format('Do MMM YYYY @ h:mm a') : "No"}</Table.Cell>
-                </Table.Row>
+                //     <Table.Cell>{moment(i.created).format('Do MMM YYYY')}</Table.Cell>
+                //     <Table.Cell>{i.status}</Table.Cell>
+                //     <Table.Cell>{i.number}</Table.Cell>
+                //     <Table.Cell>{i.amount_due}</Table.Cell>
+                //     <Table.Cell>{i.amount_paid}</Table.Cell>
+                //     <Table.Cell>{i.status_transitions.finalized_at ? moment(i.status_transitions.finalized_at).format('Do MMM YYYY @ h:mm a') : "No"}</Table.Cell>
+                // </Table.Row>
             }
             )
         }

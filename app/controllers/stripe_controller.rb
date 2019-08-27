@@ -3,9 +3,12 @@ Stripe.api_key = ENV["STRIPE_KEY"]
 
     def get_customer_invoice_items
         customer = params["user"]["stripe_id"]
-        invoice_items = nil
+        invoice_items = []
         if customer && customer.length > 1
+            begin
             invoice_items = Stripe::InvoiceItem.list(customer: params["user"]["stripe_id"], pending: true)
+            rescue
+            end
         end
         render json: {invoice_items: invoice_items}
     end
@@ -14,7 +17,10 @@ Stripe.api_key = ENV["STRIPE_KEY"]
         customer = params["user"]["stripe_id"]
         invoices = nil
         if customer && customer.length > 1
+            begin
             invoices = Stripe::Invoice.list(customer: params["user"]["stripe_id"])
+            rescue 
+            end
         end
         render json: {invoices: invoices}
     end
