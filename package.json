@@ -10,6 +10,7 @@
     "debounce": "^1.2.0",
     "dotenv": "^8.0.0",
     "draft-js": "^0.11.0",
+    "es6-shim": "^0.35.5",
     "medium-editor": "^5.23.3",
     "mini-css-extract-plugin": "^0.8.0",
     "moment": "^2.24.0",
@@ -21,8 +22,6 @@
     "react-dom": "^16.9.0",
     "react-dropzone": "^10.1.6",
     "react-hot-loader": "4",
-    "react-html-parser": "^2.0.2",
-    "react-medium-editor": "^1.8.1",
     "react-redux": "^7.1.0",
     "react-router-dom": "^5.0.1",
     "redux": "^4.0.4",
@@ -35,6 +34,7 @@
     "webpacker-react": "^0.3.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.5.5",
     "webpack-dev-server": "^3.7.2"
   }
 }

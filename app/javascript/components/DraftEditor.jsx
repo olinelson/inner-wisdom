@@ -25,9 +25,6 @@ export default function DraftEditor(props) {
         return 'not-handled';
     }
 
-    // const rawDraftContentState = JSON.stringify(convertToRaw(editorState.getCurrentContent()))
-
-    console.log(savedRawState)
     return (
         <Container text>
             <Button onClick={() => setSavedRawState(JSON.stringify(convertToRaw(editorState.getCurrentContent())))} content="see state" />

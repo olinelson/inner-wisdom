@@ -169,7 +169,6 @@ function PostEditor(props) {
             })
 
     }
-    console.log(editorState.getCurrentContent())
 
     const editingView = () => {
         return <>

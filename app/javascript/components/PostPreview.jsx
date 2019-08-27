@@ -6,7 +6,7 @@ import moment from "moment"
 import { withRouter } from 'react-router-dom'
 import { connect } from "react-redux"
 import { Editor, EditorState, RichUtils, convertToRaw, convertFromRaw, getFirstBlock } from 'draft-js';
-import editor from 'react-medium-editor/dist/editor';
+
 
 function PostPreview(props) {
     const p = props.post

@@ -35,7 +35,6 @@ class NotificationMailer < ApplicationMailer
     end
 
     def admin_consult_confirmation(user, event)
-        # byebug
         @user = user
         @event = JSON.parse(event)
         @time = alternatePrettyTime
