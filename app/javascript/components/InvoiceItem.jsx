@@ -89,7 +89,7 @@ function InvoiceItem(props) {
     let duration = moment(i.metadata.end_time) - moment(i.metadata.start_time)
     let prettyDuration = moment.duration(duration).humanize()
 
-
+    console.log("in invoice item", editable)
 
     return <>
         {editable ?
@@ -114,7 +114,14 @@ function InvoiceItem(props) {
                         <Table.Row>
                             <Table.Cell>{moment(i.metadata.start_time).format('Do MMMM YYYY, h:mm a')}</Table.Cell>
                             <Table.Cell><Input onChange={(e) => setI({ ...i, description: e.target.value })} value={i.description} /></Table.Cell>
-                            <Table.Cell><Input onChange={(e) => setI({ ...i, amount: e.target.value })} value={i.amount} /></Table.Cell>
+                            <Table.Cell>
+                                <Input labelPosition='right' type='text' placeholder='80'>
+                                    <Label basic>$</Label>
+                                    <input onChange={(e) => setI({ ...i, amount: e.target.value * 100 })} value={parseInt(i.amount) / 100} />
+                                    <Label>.00</Label>
+                                </Input>
+                            </Table.Cell>
+                            {/* <Input onChange={(e) => setI({ ...i, amount: e.target.value })} value={i.amount} /></Table.Cell> */}
                             <Table.Cell>{prettyDuration}</Table.Cell>
                         </Table.Row>
                     </Table.Body>

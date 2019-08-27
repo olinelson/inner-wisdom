@@ -71,12 +71,11 @@ function InvoiceTableRow(props) {
             .then(res => res.json())
             .then((res) => {
                 if (res.invoice) {
-                    setModalOpen(false)
                     setSending(false)
+                    setModalOpen(false)
                     props.refreshAction()
                 }
             })
-        // .then(() => setLoading(false))
     }
 
     const voidInvoiceHandeler = () => {
@@ -165,7 +164,7 @@ function InvoiceTableRow(props) {
                         actions={['Cancel', { key: 'yes', content: 'Yes, Void It', negative: true, onClick: () => voidInvoiceHandeler() }]}
                     />
                     <Button basic as="a" icon="download" href={i.invoice_pdf} content="PDF" />
-                    <Button basic as="a" icon="chain" href={i.hosted_invoice_url} content="Link" />
+                    <Button basic onClick={() => window.open(i.hosted_invoice_url, '_blank')} icon="chain" content="Link" />
                     {/* <Button icon="mail" content="Send Invoice" onClick={() => sendInvoiceHandeler()} /> */}
 
                     <Button
