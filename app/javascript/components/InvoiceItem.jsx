@@ -99,7 +99,7 @@ function InvoiceItem(props) {
         <Table.Row onClick={editable ? () => setModalOpen(true) : null} >
 
             <Table.Cell>{moment(i.metadata.start_time).format('Do MMMM YYYY, h:mm a')}</Table.Cell>
-            <Table.Cell>{i.metadata.type}</Table.Cell>
+            <Table.Cell>{i.description}</Table.Cell>
             <Table.Cell>{"$" + prettyPrice}</Table.Cell>
             <Table.Cell>{prettyDuration}</Table.Cell>
             <Table.Cell>
@@ -118,7 +118,7 @@ function InvoiceItem(props) {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>Date</Table.HeaderCell>
-                            <Table.HeaderCell>Type</Table.HeaderCell>
+                            <Table.HeaderCell>Description</Table.HeaderCell>
                             <Table.HeaderCell>Amount</Table.HeaderCell>
                             <Table.HeaderCell>Duration</Table.HeaderCell>
                             {/* <Table.HeaderCell>Attendees</Table.HeaderCell> */}
@@ -128,7 +128,7 @@ function InvoiceItem(props) {
                     <Table.Body>
                         <Table.Row>
                             <Table.Cell>{moment(i.metadata.start_time).format('Do MMMM YYYY, h:mm a')}</Table.Cell>
-                            <Table.Cell>{i.description}</Table.Cell>
+                            <Table.Cell><Input onChange={(e) => setI({ ...i, description: e.target.value })} value={i.description} /></Table.Cell>
                             <Table.Cell><Input onChange={(e) => setI({ ...i, amount: e.target.value })} value={i.amount} /></Table.Cell>
                             <Table.Cell>{prettyDuration}</Table.Cell>
                         </Table.Row>

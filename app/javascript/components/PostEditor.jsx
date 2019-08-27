@@ -6,7 +6,7 @@ import PostViewer from './PostViewer';
 import Dropzone from 'react-dropzone'
 import styled from "styled-components"
 import { withRouter } from "react-router-dom"
-import { Jumbotron } from './StyledComponents';
+import { Jumbotron, EditorButtons } from './StyledComponents';
 
 export const FeatureImageSegment = styled(Segment)`
     background-position: center !important;
@@ -171,111 +171,117 @@ function PostEditor(props) {
     }
     console.log(editorState.getCurrentContent())
 
-    return <>
-        {editingDisabled ?
-            <Jumbotron src={featureImage} />
-            :
-            <>
-                <Menu secondary>
-                    <Menu.Item >
-                        {/* <Button
-                        content="save changes"
-                        disabled={!unsavedChanges}
-                        onClick={saveChanges}
-                    /> */}
-                        <Button as='div' labelPosition='right'>
-                            <Button
-                                basic
-                                content="Save"
-                                icon="save"
-                                disabled={saved}
-                                onClick={() => saveChanges()}
-                                loading={saving}
-                            />
-                            <Label as='a'
-                                basic
-                                color={!saved ? "red" : "green"}
-                                pointing='left'
-                                content={!saved ? "Unsaved Changes" : "Changes Saved"}
-                            />
-
-                        </Button>
-
-                    </Menu.Item>
-                    <Menu.Menu position="right">
+    const editingView = () => {
+        return <>
 
 
-                        <Menu.Item>
-                            <Checkbox checked={post.published} slider onClick={() => setPost({ ...post, published: !post.published })} />
-                            <Label>{post.published === true ?
-                                <><Icon name='share alternate' /> Published</>
+            <Dropzone onDrop={(acceptedFiles) => uploadFiles(acceptedFiles)}>
+                {({ getRootProps, getInputProps }) => (
+                    <Container fluid >
+                        <div {...getRootProps()}>
+                            <input {...getInputProps()} />
+                            {featureImage && featureImage.length > 0 ?
+
+                                <FeatureImageSegment onMouseEnter={() => setFeatureImageHovering(true)} onMouseLeave={() => setFeatureImageHovering(false)} loading={featureImageLoading} tertiary style={{ backgroundImage: `url('${featureImage}') ` }}>
+                                    {featureImageHovering === true ?
+                                        <Dimmer active >
+                                            <h4>Drag an image here to set featured image</h4>
+                                            <small>or click here</small>
+                                        </Dimmer>
+                                        : null
+                                    }
+                                </FeatureImageSegment>
+
                                 :
-                                <><Icon name='user secret' /> Private</>
-                            }</Label>
-                        </Menu.Item>
-                        <Menu.Item>
+                                <Placeholder >
+                                    {/* <Placeholder.Image /> */}
+                                </Placeholder>
+                            }
 
-                            {/* {deletePostModal()} */}
-                        </Menu.Item>
-                    </Menu.Menu>
-                </Menu>
-
-                <Dropzone onDrop={(acceptedFiles) => uploadFiles(acceptedFiles)}>
-                    {({ getRootProps, getInputProps }) => (
-                        <Container fluid >
-                            <div {...getRootProps()}>
-                                <input {...getInputProps()} />
-                                {featureImage && featureImage.length > 0 ?
-
-                                    <FeatureImageSegment onMouseEnter={() => setFeatureImageHovering(true)} onMouseLeave={() => setFeatureImageHovering(false)} loading={featureImageLoading} tertiary style={{ backgroundImage: `url('${featureImage}') ` }}>
-                                        {featureImageHovering === true ?
-                                            <Dimmer active >
-                                                <h4>Drag an image here to set featured image</h4>
-                                                <small>or click here</small>
-                                            </Dimmer>
-                                            : null
-                                        }
-                                    </FeatureImageSegment>
-
-                                    :
-                                    <Placeholder >
-                                        {/* <Placeholder.Image /> */}
-                                    </Placeholder>
-                                }
-
-                            </div>
-                        </Container>
-                    )}
-                </Dropzone>
-            </>
-        }
+                        </div>
+                    </Container>
+                )}
+            </Dropzone>
 
 
-        <Container text >
-            <Container textAlign="center">
-                <Button.Group
-                    buttons={[
-                        { key: 'H1', content: 'H1', onClick: () => onBlockTypeClick('header-one') },
-                        { key: 'H1', content: 'H2', onClick: () => onBlockTypeClick('header-two') },
-                        { key: 'ul', icon: 'list ul', onClick: () => onBlockTypeClick('unordered-list-item') },
-                        { key: 'ol', icon: 'list ol', onClick: () => onBlockTypeClick('ordered-list-item') },
-                        { key: 'quote', icon: 'quote left', onClick: () => onBlockTypeClick('blockquote') },
 
-                    ]}
-                />{' '}
-                <Button.Group
-                    buttons={[
-                        { key: 'bold', icon: 'bold', onClick: () => onStyleClick('BOLD') },
-                        { key: 'underline', icon: 'underline', onClick: () => onStyleClick('UNDERLINE') },
-                        { key: 'italic', icon: 'italic', onClick: () => onStyleClick('ITALIC') },
-                    ]}
-                />
+            <EditorButtons textAlign="center">
+                <Button as='div' labelPosition='right'>
+                    <Button
+                        basic
+                        content="Save"
+                        icon="save"
+                        disabled={saved}
+                        onClick={() => saveChanges()}
+                        loading={saving}
+                    />
+                    <Label as='a'
+                        basic
+                        color={!saved ? "red" : "green"}
+                        pointing='left'
+                        content={!saved ? "Unsaved Changes" : "Changes Saved"}
+                    />
+
+                </Button>
+                <div>
+                    <Button.Group
+                        buttons={[
+                            { key: 'H2', icon: 'header', onClick: () => onBlockTypeClick('header-two') },
+                            { key: 'quote', icon: 'quote left', onClick: () => onBlockTypeClick('blockquote') },
+                        ]}
+                    />{" "}
+                    <Button.Group
+                        buttons={[
+                            { key: 'ul', icon: 'list ul', onClick: () => onBlockTypeClick('unordered-list-item') },
+                            { key: 'ol', icon: 'list ol', onClick: () => onBlockTypeClick('ordered-list-item') },
+                        ]}
+                    />{" "}
+                    <Button.Group
+                        buttons={[
+                            { key: 'bold', icon: 'bold', onClick: () => onStyleClick('BOLD') },
+                            { key: 'underline', icon: 'underline', onClick: () => onStyleClick('UNDERLINE') },
+                            { key: 'italic', icon: 'italic', onClick: () => onStyleClick('ITALIC') },
+                        ]}
+                    />
+                </div>
+
+                <div style={{ display: "flex", alignItems: "center" }}>
+                    <Checkbox checked={post.published} slider onClick={() => setPost({ ...post, published: !post.published })} />
+                    <Label>{post.published === true ?
+                        <><Icon name='share alternate' /> Published</>
+                        :
+                        <><Icon name='user secret' /> Private</>
+                    }</Label>
+                </div>
+            </EditorButtons>
+            <Container text>
+                <Input placeholder="Post Title" transparent onChange={(e) => setPost({ ...post, title: e.target.value })} style={{ fontSize: "3rem", margin: "1rem 0" }} value={post.title} />
             </Container>
 
+        </>
+    }
 
-            {editingDisabled ? <h1>{post.title}</h1> :
-                <Input transparent onChange={(e) => setPost({ ...post, title: e.target.value })} style={{ fontSize: "3rem", margin: "1rem 0" }} value={post.title} />
-            }
+    const nonEditingView = () => {
+        return <>
+            <Jumbotron src={featureImage} />
+            <Divider hidden />
+            <Container text>
+                <h1>{post.title}</h1>
+            </Container>
+
+        </>
+    }
+
+    return <>
+        {editingDisabled ?
+
+            nonEditingView()
+
+            :
+            editingView()
+        }
+
+        <Container text>
 
 
 
@@ -286,14 +292,14 @@ function PostEditor(props) {
                 handleKeyCommand={(c, es) => handleKeyCommand(c, es)}
                 spellCheck
                 readOnly={editingDisabled}
+                placeholder="start writing your post here..."
             />
-
         </Container>
     </>
 
 
-}
 
+}
 
 const mapStateToProps = (state) => ({
     posts: state.posts,

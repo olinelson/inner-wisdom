@@ -70,7 +70,7 @@ function Nav(props) {
     const FixedMenu = styled(Menu)`
         position: ${() => imageHeader() ? "absolute" : "sticky"};
         // position: sticky ;
-        z-index: 1;
+        z-index: 3;
         width: 100vw;
         top:0rem !important;
         border: none !important;
@@ -86,7 +86,7 @@ function Nav(props) {
 
     const MobileMenu = styled.div`
         position: fixed;
-        z-index: 2;
+        z-index: 3;
         top: 1.5rem;
         right: 1rem;
         background: rgba(0, 0, 0, 0);

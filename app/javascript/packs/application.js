@@ -28,16 +28,12 @@ import Nav from "components/Nav"
 
 
 
-
-
-// import 'reset-css'
-import 'medium-editor/dist/css/medium-editor.css'
-import 'medium-editor/dist/css/themes/default.css'
 import "styled-components"
 // import 'react-big-calendar/lib/sass/styles';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'semantic-ui-css/semantic.min.css'
 import "components/stylesheet.css"
+import 'draft-js/dist/Draft.css';
 
 
 

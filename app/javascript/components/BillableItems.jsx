@@ -96,7 +96,7 @@ function BillableItems(props) {
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>Date</Table.HeaderCell>
-                        <Table.HeaderCell>Type</Table.HeaderCell>
+                        <Table.HeaderCell>Description</Table.HeaderCell>
                         <Table.HeaderCell>Amount</Table.HeaderCell>
                         <Table.HeaderCell>Duration</Table.HeaderCell>
                         <Table.HeaderCell>Attendees</Table.HeaderCell>

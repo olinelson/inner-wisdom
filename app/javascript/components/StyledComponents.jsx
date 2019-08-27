@@ -137,3 +137,18 @@ display: flex;
 flex-direction: column;
 justify-content: center;
 `
+
+export const EditorButtons = styled.div`
+        margin-top: 1rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        justify-content: center;
+        justify-items: center;
+        align-items: center;
+        position: sticky;
+        top: 1rem;
+        z-index: 2;
+        @media (min-width: 60rem) {
+            top: 3.5rem;
+        }
+`

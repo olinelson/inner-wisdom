@@ -21,7 +21,7 @@ Stripe.api_key = ENV["STRIPE_KEY"]
 
     def update_invoice_item
         item = params["invoice_item"]
-        updated_item = Stripe::InvoiceItem.update( item["id"],{ amount: item["amount"]})
+        updated_item = Stripe::InvoiceItem.update( item["id"],{ amount: item["amount"], description: item["description"]})
         render json: {updated_item: updated_item}
     end
 
@@ -35,7 +35,7 @@ Stripe.api_key = ENV["STRIPE_KEY"]
         stripe_id = params["user"]["stripe_id"]
         event = params["event"]
         dateString =  DateTime.parse(event["start_time"])
-        description = "#{dateString.day}/#{dateString.month}/#{dateString.year} Appointment"
+        description = "#{dateString.day}/#{dateString.month}/#{dateString.year} Psychological services"
 
         invoice_item = Stripe::InvoiceItem.create({
             customer: stripe_id,
