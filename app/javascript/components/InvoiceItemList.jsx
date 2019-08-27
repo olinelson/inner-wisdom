@@ -7,6 +7,7 @@ import InvoiceItem from './InvoiceItem'
 function InvoiceItemList(props) {
     const [loading, setLoading] = useState(true)
     const [invoiceItems, setInvoiceItems] = useState(null)
+    const [creating, setCreating] = useState(false)
 
     const getInvoiceItems = () => {
         fetch(`${process.env.BASE_URL}/stripe/invoice_items`, {
@@ -34,6 +35,7 @@ function InvoiceItemList(props) {
     }
 
     const createNewInvoice = () => {
+        setCreating(true)
         fetch(`${process.env.BASE_URL}/stripe/invoices/new`, {
             method: "POST",
             body: JSON.stringify({
@@ -52,6 +54,7 @@ function InvoiceItemList(props) {
                     setInvoiceItems(null)
                 }
             })
+            .then(() => setCreating(false))
             .then(() => setLoading(false))
     }
 
@@ -81,7 +84,7 @@ function InvoiceItemList(props) {
 
     return (
         <Tab.Pane loading={loading}>
-            <Button disabled={!invoiceItems || invoiceItems.data.length < 1 ? true : false} onClick={() => createNewInvoice()}>Add All To New Invoice</Button>
+            <Button loading={creating} disabled={!invoiceItems || invoiceItems.data.length < 1 ? true : false} onClick={() => createNewInvoice()}>Add All To New Invoice</Button>
             <Table selectable basic="very" >
                 <Table.Header>
                     <Table.Row>
