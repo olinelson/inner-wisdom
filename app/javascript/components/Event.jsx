@@ -217,6 +217,7 @@ function Event(props) {
     const editableEventModal = () => {
 
         return <Modal
+            closeIcon
             open={modalOpen}
             onClose={() => setModalOpen(false)}
         >

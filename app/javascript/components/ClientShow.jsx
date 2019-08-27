@@ -5,8 +5,8 @@ import { Container, Card, Item, Table, Label, Menu, Button, Icon, Checkbox, Moda
 import { isUserAnAttendeeOfEvent, relevantEvents, flatten } from "./Appointments"
 import moment from "moment"
 import AppointmentHistoryTable from './AppointmentHistoryTable';
-import InvoiceItems from './BillableItems';
-import Invoices from './Invoices';
+import InvoiceItemList from './InvoiceItemList';
+import InvoiceList from './InvoiceList';
 
 
 function ClientShow(props) {
@@ -82,8 +82,8 @@ function ClientShow(props) {
 
     const panes = [
         { menuItem: 'Appointment History', render: () => <Tab.Pane content={<AppointmentHistoryTable events={relevantAppointments} user={user} />} /> },
-        { menuItem: 'Billable Items', render: () => <InvoiceItems user={user} /> },
-        { menuItem: 'Invoices', render: () => <Invoices user={user} /> },
+        { menuItem: 'Billable Items', render: () => <InvoiceItemList user={user} /> },
+        { menuItem: 'Invoices', render: () => <InvoiceList user={user} /> },
 
     ]
 
@@ -93,6 +93,7 @@ function ClientShow(props) {
             <h1>{user.first_name + " " + user.last_name}</h1>
 
             <Modal
+                closeIcon
                 size="small"
                 trigger={<Button basic content="edit" icon="edit" />}
                 actions={['Cancel', { key: 'save', content: "Save", positive: true, basic: true, onClick: () => editUserHandeler() }]}
@@ -144,6 +145,7 @@ function ClientShow(props) {
 
 
             <Modal
+                closeIcon
                 basic
                 size="small"
                 trigger={<Button basic content="Delete User" icon="delete" />}
@@ -156,6 +158,7 @@ function ClientShow(props) {
 
             <Modal
                 basic
+                closeIcon
                 size="small"
                 trigger={
                     <Button as='div' labelPosition='right'>

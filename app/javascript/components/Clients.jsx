@@ -141,7 +141,7 @@ function Clients(props) {
 
 
 
-            <Modal onClose={() => setModalOpen(false)} open={modalOpen}>
+            <Modal closeIcon onClose={() => setModalOpen(false)} open={modalOpen}>
                 <Modal.Header>Create New Client</Modal.Header>
                 <Modal.Content image>
                     <Modal.Description>

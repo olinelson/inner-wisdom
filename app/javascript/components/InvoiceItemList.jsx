@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux';
 import { Tab, Table, Label, Icon, Button } from "semantic-ui-react"
 import moment from "moment"
-import InvoiceItem from './InvoiceItem';
+import InvoiceItem from './InvoiceItem'
 
-function BillableItems(props) {
+function InvoiceItemList(props) {
     const [loading, setLoading] = useState(true)
     const [invoiceItems, setInvoiceItems] = useState(null)
 
@@ -68,22 +68,7 @@ function BillableItems(props) {
                 let prettyDuration = moment.duration(duration).humanize()
 
                 return <InvoiceItem key={i.id} customer={props.user} item={i} />
-                // return <Table.Row key={i.id}>
 
-                //     <Table.Cell>{moment(i.metadata.start_time).format('Do MMMM YYYY, h:mm a')}</Table.Cell>
-                //     <Table.Cell>{i.description}</Table.Cell>
-                //     <Table.Cell>{"$" + prettyPrice}</Table.Cell>
-                //     <Table.Cell>{prettyDuration}</Table.Cell>
-                //     <Table.Cell>
-                //         <Label>
-                //             <Icon name='user' />
-                //             attendees
-                //     </Label>
-                //     </Table.Cell>
-                //     <Table.Cell>
-                //         {i.invoice ? <Icon name="check" /> : null}
-                //     </Table.Cell>
-                // </Table.Row>
             }
             )
         }
@@ -127,4 +112,4 @@ const mapStateToProps = (state) => ({
 
 
 
-export default connect(mapStateToProps)(BillableItems)
+export default connect(mapStateToProps)(InvoiceItemList)

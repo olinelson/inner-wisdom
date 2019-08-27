@@ -247,6 +247,7 @@ function PostEditor(props) {
                     }</Label>
 
                     <Modal
+                        closeIcon
                         basic
                         size="small"
                         trigger={<Button basic icon="trash" content='Delete' />}

@@ -140,7 +140,7 @@ function MyAccount(props) {
 
 
 
-            <Modal trigger={<Button>Connect Personal Google Calendar</Button>}>
+            <Modal closeIcon trigger={<Button>Connect Personal Google Calendar</Button>}>
                 <Modal.Header>Select a Photo</Modal.Header>
                 <Modal.Content>
 

@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux';
 import { Tab, Table, Label, Icon, Modal, Header, Button } from "semantic-ui-react"
 import moment from "moment"
-import InvoiceItem from './InvoiceItem';
+import BillableItem from './InvoiceItem';
+import InvoiceTableRow from './InvoiceTableRow';
 
-function Invoices(props) {
+function InvoiceList(props) {
     const [loading, setLoading] = useState(true)
     const [invoices, setInvoices] = useState(null)
     const [selectedInvoice, setSelectedInvoice] = useState(null)
@@ -33,50 +34,7 @@ function Invoices(props) {
             .then(() => setLoading(false))
     }
 
-    const sendInvoiceHandeler = () => {
-        fetch(`${process.env.BASE_URL}/stripe/invoices/send`, {
-            method: "POST",
-            body: JSON.stringify({
-                invoice: selectedInvoice
-            }),
-            headers: {
-                "X-CSRF-Token": props.csrfToken,
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        })
-            .then(res => res.json())
-            .then((res) => {
-                if (res.invoice) {
-                    setLoading(true)
-                    setSelectedInvoice(null)
-                }
-            })
-            .then(() => setLoading(false))
-    }
 
-    const voidInvoiceHandeler = () => {
-        fetch(`${process.env.BASE_URL}/stripe/invoices/void`, {
-            method: "POST",
-            body: JSON.stringify({
-                invoice: selectedInvoice
-            }),
-            headers: {
-                "X-CSRF-Token": props.csrfToken,
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        })
-            .then(res => res.json())
-            .then((res) => {
-                if (res.invoice) {
-                    setLoading(true)
-                }
-            })
-            .then(() => setLoading(false))
-    }
 
     const deleteStripeIdsFromEvents = () => {
         fetch(`${process.env.BASE_URL}/remove_many_stripe_ids`, {
@@ -95,29 +53,7 @@ function Invoices(props) {
             .then(res => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
     }
 
-    const deleteInvoiceHandeler = () => {
-        fetch(`${process.env.BASE_URL}/stripe/invoices/delete`, {
-            method: "POST",
-            body: JSON.stringify({
-                invoice: selectedInvoice
-            }),
-            headers: {
-                "X-CSRF-Token": props.csrfToken,
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        })
-            .then(res => res.json())
-            .then((res) => {
-                if (res.invoice) {
-                    setSelectedInvoice(null)
-                    setLoading(true)
-                    deleteStripeIdsFromEvents(res.invoice)
-                }
-            })
-            .then(() => setLoading(false))
-    }
+
 
 
     const getInvoices = () => {
@@ -208,7 +144,7 @@ function Invoices(props) {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {i.lines.data.map(item => <InvoiceItem invoice={i} key={item.id} item={item} />)}
+                            {i.lines.data.map(item => <BillableItem invoice={i} key={item.id} item={item} />)}
                         </Table.Body>
                     </Table>
                     {showActionButtons()}
@@ -230,8 +166,13 @@ function Invoices(props) {
 
                 let time = moment.duration(i.webhooks_delivered_at).humanize()
 
+                return <InvoiceTableRow key={i.id} invoice={i} />
 
-                return <Table.Row key={i.number} onClick={() => setSelectedInvoice(i)}>
+                return <Table.Row
+                    warning={i.status === "open" || i.status == "draft"}
+                    positive={i.status === "paid"}
+                    negative={i.status === "void"}
+                    key={i.number} onClick={() => setSelectedInvoice(i)}>
 
                     <Table.Cell>{moment(i.created).format('Do MMM YYYY')}</Table.Cell>
                     <Table.Cell>{i.status}</Table.Cell>
@@ -288,4 +229,4 @@ const mapStateToProps = (state) => ({
 
 
 
-export default connect(mapStateToProps)(Invoices)
+export default connect(mapStateToProps)(InvoiceList)

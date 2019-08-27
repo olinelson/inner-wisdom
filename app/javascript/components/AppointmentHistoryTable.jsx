@@ -2,30 +2,14 @@ import React, { useState } from 'react'
 import { Table, Label, Icon, Button, Checkbox, Modal, Header, Input, Divider } from "semantic-ui-react"
 import moment from "moment"
 import { connect } from "react-redux"
+import GoogleEventTableRow from './GoogleEventTableRow';
 
 function AppointmentHistoryTable(props) {
 
     const [selectedEvent, setSelectedEvent] = useState(null)
     const [modalOpen, setModalOpen] = useState(false)
 
-    const toogleAppointmentPaid = (a) => {
 
-        let bool = a.extended_properties.private.paid === "true"
-
-        let editedEvent = {
-            ...a, extended_properties: {
-                private: {
-                    paid: !bool,
-                    stripe_id: ""
-
-                }
-            }
-        }
-
-
-        updateGoogleCalEvent(editedEvent)
-
-    }
 
     const updateGoogleCalEvent = (event) => {
         fetch(`${process.env.BASE_URL}/update`, {
@@ -45,29 +29,7 @@ function AppointmentHistoryTable(props) {
 
     }
 
-    const addToInvoice = (event) => {
-        fetch(`${process.env.BASE_URL}/stripe/invoice_items/create`, {
-            method: "POST",
-            body: JSON.stringify({
-                event: event,
-                user: props.user,
-            }),
-            headers: {
-                "X-CSRF-Token": props.csrfToken,
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        })
-            .then(res => res.json())
-            .then((res) => {
-                if (res.invoice_item) {
-                    let editedEvent = { ...event, extended_properties: { private: { paid: false, stripe_id: res.invoice_item.id } } }
-                    updateGoogleCalEvent(editedEvent)
-                }
 
-            })
-    }
 
     let chronologicalSorted = props.events.sort((b, a) => new Date(a.start_time) - new Date(b.end_time))
 
@@ -83,53 +45,53 @@ function AppointmentHistoryTable(props) {
     }
 
     const appointmentHistoryTableRows = () => {
-        return chronologicalSorted.map(a => {
+        return chronologicalSorted.map(a => <GoogleEventTableRow key={a.id} user={props.user} event={a} />)
+        // let type = ""
 
-            let type = ""
+        // if (a.calendar.id === process.env.APPOINTMENTS_CALENDAR_ID) type = "Appointment"
+        // if (a.calendar.id === process.env.CONSULTS_CALENDAR_ID) type = "Phone Consult"
 
-            if (a.calendar.id === process.env.APPOINTMENTS_CALENDAR_ID) type = "Appointment"
-            if (a.calendar.id === process.env.CONSULTS_CALENDAR_ID) type = "Phone Consult"
+        // let onAnInvoice = a.extended_properties && a.extended_properties.private.stripe_id.length > 0 ? true : false
+        // let isPaid = a.extended_properties && a.extended_properties.private.paid === "true"
 
-            let onAnInvoice = a.extended_properties && a.extended_properties.private.stripe_id.length > 0 ? true : false
-            let isPaid = a.extended_properties && a.extended_properties.private.paid === "true"
+        // let duration = moment.duration(moment(a.end_time) - moment(a.start_time))
 
-            let duration = moment.duration(moment(a.end_time) - moment(a.start_time))
+        // return <Table.Row key={a.id}>
 
-            return <Table.Row key={a.id}>
+        //     <Table.Cell>{moment(a.start_time).format('Do MMMM  YYYY h:mm a')}</Table.Cell>
+        //     <Table.Cell>{type}</Table.Cell>
+        //     <Table.Cell>{formattedDuration(duration)}</Table.Cell>
+        //     <Table.Cell>
+        //         <Label>
+        //             <Icon name='user' />
+        //             {props.user.first_name + " " + props.user.last_name}
+        //         </Label>
+        //     </Table.Cell>
+        //     <Table.Cell>
+        //         {onAnInvoice ? <Checkbox checked={false} /> :
+        //             <Modal
+        //                 trigger={
+        //                     <Checkbox checked={isPaid} />
+        //                 }
+        //                 header={isPaid ? "Mark appointment as un paid" : "Mark appointment as paid"}
+        //                 content={"Are you sure you wish to mark this appointment as " + (isPaid ? " un paid." : " paid.")}
+        //                 actions={['Cancel', { key: 'yes', content: 'Yes', positive: true, onClick: () => toogleAppointmentPaid(a) }]}
+        //             />
+        //         }
 
-                <Table.Cell>{moment(a.start_time).format('Do MMMM  YYYY h:mm a')}</Table.Cell>
-                <Table.Cell>{type}</Table.Cell>
-                <Table.Cell>{formattedDuration(duration)}</Table.Cell>
-                <Table.Cell>
-                    <Label>
-                        <Icon name='user' />
-                        {props.user.first_name + " " + props.user.last_name}
-                    </Label>
-                </Table.Cell>
-                <Table.Cell>
-                    {onAnInvoice ? <Checkbox checked={false} /> :
-                        <Modal
-                            trigger={
-                                <Checkbox checked={isPaid} />
-                            }
-                            header={isPaid ? "Mark appointment as un paid" : "Mark appointment as paid"}
-                            content={"Are you sure you wish to mark this appointment as " + (isPaid ? " un paid." : " paid.")}
-                            actions={['Cancel', { key: 'yes', content: 'Yes', positive: true, onClick: () => toogleAppointmentPaid(a) }]}
-                        />
-                    }
+        //     </Table.Cell>
+        //     <Table.Cell>
+        //         <Button
+        //             loading={loading}
+        //             disabled={onAnInvoice || isPaid ? true : false}
+        //             onClick={() => createInvoiceItem(a)}
+        //             content={onAnInvoice ? "Is Billable Item" : "Make Billable Item"} />
+        //     </Table.Cell>
+        // </Table.Row>
 
-                </Table.Cell>
-                <Table.Cell>
-                    <Button
-                        disabled={onAnInvoice || isPaid ? true : false}
-                        onClick={() => addToInvoice(a)}
-                        content={onAnInvoice ? "Is Billable Item" : "Make Billable Item"} />
-                </Table.Cell>
-            </Table.Row>
 
-        }
 
-        )
+
     }
 
 
@@ -146,6 +108,7 @@ function AppointmentHistoryTable(props) {
                         <Table.HeaderCell>Duration</Table.HeaderCell>
                         <Table.HeaderCell>Attendees</Table.HeaderCell>
                         <Table.HeaderCell>Paid</Table.HeaderCell>
+                        <Table.HeaderCell>Billable Item</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
 

@@ -38,8 +38,6 @@ function InvoiceItem(props) {
                 setLoading(false)
                 setI(res.updated_item)
                 setModalOpen(false)
-                // setModalOpen(false)
-                // props.dispatch({ type: "SET_USERS", value: res.users })
             })
     }
 
@@ -61,14 +59,13 @@ function InvoiceItem(props) {
             .then(() => {
                 setModalOpen(false)
                 setLoading(false)
-                setDeleted(true)
+
             })
     }
 
 
     const deleteItemHandeler = () => {
-
-        setLoading(true)
+        setDeleted(true)
         fetch(`${process.env.BASE_URL}/stripe/invoice_items/delete`, {
             method: "POST",
             body: JSON.stringify({
@@ -92,37 +89,26 @@ function InvoiceItem(props) {
     let duration = moment(i.metadata.end_time) - moment(i.metadata.start_time)
     let prettyDuration = moment.duration(duration).humanize()
 
-
+    console.log(props)
 
 
     return <>
-        <Table.Row onClick={editable ? () => setModalOpen(true) : null} >
-
-            <Table.Cell>{moment(i.metadata.start_time).format('Do MMMM YYYY, h:mm a')}</Table.Cell>
-            <Table.Cell>{i.description}</Table.Cell>
-            <Table.Cell>{"$" + prettyPrice}</Table.Cell>
-            <Table.Cell>{prettyDuration}</Table.Cell>
-            <Table.Cell>
-                {/* <Label>
-                    <Icon name='user' />
-                    attendees
-                    </Label> */}
-            </Table.Cell>
-        </Table.Row>
-
-        <Modal onClose={() => setModalOpen(false)} open={modalOpen} >
-            <Modal.Header>{i.number}</Modal.Header>
-            <Modal.Content>
-
-                <Table >
+        {editable ?
+            <Modal
+                trigger={<Table.Row disabled={deleted} >
+                    <Table.Cell>{moment(i.metadata.start_time).format('Do MMMM YYYY, h:mm a')}</Table.Cell>
+                    <Table.Cell>{i.description}</Table.Cell>
+                    <Table.Cell>{"$" + prettyPrice}</Table.Cell>
+                    <Table.Cell>{prettyDuration}</Table.Cell>
+                </Table.Row>}
+                header={i.number}
+                content={<Table >
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>Date</Table.HeaderCell>
                             <Table.HeaderCell>Description</Table.HeaderCell>
                             <Table.HeaderCell>Amount</Table.HeaderCell>
                             <Table.HeaderCell>Duration</Table.HeaderCell>
-                            {/* <Table.HeaderCell>Attendees</Table.HeaderCell> */}
-                            {/* <Table.HeaderCell>Invoiced</Table.HeaderCell> */}
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -133,11 +119,18 @@ function InvoiceItem(props) {
                             <Table.Cell>{prettyDuration}</Table.Cell>
                         </Table.Row>
                     </Table.Body>
-                </Table>
-                <Button loading={loading} onClick={() => updateItemHandeler()}>Save</Button>
-                <Button loading={loading} onClick={() => deleteItemHandeler()}>Delete Billable Item</Button>
-            </Modal.Content>
-        </Modal>
+                </Table>}
+                actions={['Cancel', { key: 'save', content: 'Save', positive: true, onClick: () => updateItemHandeler() }, { key: 'delete', content: 'Delete', negative: true, onClick: () => deleteItemHandeler() }]}
+            />
+            :
+            <Table.Row disabled={deleted} >
+
+                <Table.Cell>{moment(i.metadata.start_time).format('Do MMMM YYYY, h:mm a')}</Table.Cell>
+                <Table.Cell>{i.description}</Table.Cell>
+                <Table.Cell>{"$" + prettyPrice}</Table.Cell>
+                <Table.Cell>{prettyDuration}</Table.Cell>
+            </Table.Row>
+        }
     </>
 }
 
