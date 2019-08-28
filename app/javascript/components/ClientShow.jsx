@@ -29,13 +29,17 @@ function ClientShow(props) {
     const [post_code, set_post_code] = useState(user.post_code || "")
 
     const [email, set_email] = useState(user.email || "")
-    const [loading, setLoading] = useState(false)
+    // const [loading, setLoading] = useState(true)
+
+    const [approving, setApproving] = useState(false)
+    const [deleting, setDeleting] = useState(false)
 
     const [approved, setApproved] = useState(user.approved)
 
     let chronologicalSorted = relevantAppointments.sort((b, a) => new Date(a.start_time) - new Date(b.end_time))
 
     const approveUserHandeler = () => {
+        setApproving(true)
         editUserHandeler(!approved)
     }
 
@@ -57,12 +61,13 @@ function ClientShow(props) {
             .then(res => res.json())
             .then((res) => {
                 setApproved(approved)
-                setLoading(false)
+                setApproving(false)
                 props.dispatch({ type: "SET_USERS", value: res.users })
             })
     }
 
     const deleteUserHandeler = () => {
+        setDeleting(true)
         fetch(`${process.env.BASE_URL}/clients/${user.id}`, {
             method: "DELETE",
             headers: {
@@ -148,7 +153,7 @@ function ClientShow(props) {
                 closeIcon
                 basic
                 size="small"
-                trigger={<Button basic content="Delete User" icon="delete" />}
+                trigger={<Button loading={deleting} basic content="Delete User" icon="delete" />}
                 header={"Delete User"}
                 content="Are you sure you would like to delete this user? This cannot be undone."
                 actions={['Cancel', { key: 'delete', content: "Yes, Delete", negative: true, basic: true, onClick: () => deleteUserHandeler() }]}
@@ -162,8 +167,11 @@ function ClientShow(props) {
                 size="small"
                 trigger={
                     <Button as='div' labelPosition='right'>
-                        <Button basic icon="check" content="approve" />
-                        {user.approved ? <Label basic color='green' pointing='left' content="Approved" /> : <Label basic color='red' pointing='left' content="Not Approved" />}
+
+                        {user.approved ?
+                            <><Button loading={approving} basic icon="delete" content="Un Approve" /><Label basic color='green' pointing='left' content="Approved" /></>
+                            :
+                            <><Button loading={approving} basic icon="check" content="Approve" /><Label basic color='red' pointing='left' content="Not Approved" /></>}
                     </Button>}
                 header={user.approved ? "Un Approve User" : "Approve User"}
                 content={user.approved ? "Are you sure you would like to un approve this user? They will no loger be able to book appointments, only phone consultations." : "Are you sure you would like to approve this user? This will enable them to book full appointments."}
@@ -184,92 +192,6 @@ function ClientShow(props) {
 
 
             <Tab panes={panes} renderActiveOnly={true} />
-
-
-
-
-
-            {/* <Modal onClose={() => setEditModal(false)} open={editModal}>
-                <Modal.Header>Edit Client</Modal.Header>
-                <Modal.Content image>
-                    <Modal.Description>
-                        <Form onSubmit={(e) => editUserHandeler(e)}>
-                            <Form.Field>
-                                <label>First Name</label>
-                                <input value={first_name} onChange={(e) => set_first_name(e.target.value)} required placeholder='First Name' />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Last Name</label>
-                                <input value={last_name} onChange={(e) => set_last_name(e.target.value)} required placeholder='Last Name' />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Email</label>
-                                <input value={email || ""} onChange={(e) => set_email(e.target.value)} required placeholder='newclient@gmail.com' />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Phone Number</label>
-                                <input value={phone_number || ""} onChange={(e) => set_phone_number(e.target.value)} />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Street Address</label>
-                                <input value={street_address || ""} onChange={(e) => set_street_address(e.target.value)} />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Apartment Number</label>
-                                <input value={apartment_number || ""} onChange={(e) => set_apartment_number(e.target.value)} />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Suburb/City</label>
-                                <input value={suburb || ""} onChange={(e) => set_suburb(e.target.value)} />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>State</label>
-                                <input value={address_state || ""} onChange={(e) => set_address_state(e.target.value)} />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Post Code</label>
-                                <input value={post_code || ""} onChange={(e) => set_post_code(e.target.value)} />
-                            </Form.Field>
-
-                            <Button loading={loading} type="submit">Submit</Button>
-                        </Form>
-                    </Modal.Description>
-                </Modal.Content>
-            </Modal > */}
-
-
-
-            {/* <Modal onClose={() => setApproveModal(false)} open={approveModal} basic size='small'>
-                <Header icon='user' content='Approve User' />
-                <Modal.Content>
-                    {user.approved ?
-                        <p>Are you sure you would like to un approve this user? They will no loger be able to book appointments, only phone consultations.</p>
-                        :
-                        <p>Are you sure you would like to approve this user? This will enable them to book full appointments.</p>
-                    }
-
-                </Modal.Content>
-                <Modal.Actions>
-                    <Button
-                        onClick={() => approveUserHandeler()}
-                        color='red'
-                        inverted
-                        icon="checkmark"
-                        content={user.approved ? "Yes, Un Approve" : "Yes Approve"}
-                    />
-                    <Button
-                        onClick={() => setApproveModal(false)}
-                        basic
-                        color='green'
-                        inverted
-                        icon="remove"
-                        content="Cancel"
-                    />
-                </Modal.Actions>
-            </Modal> */}
-
-
-
         </Container>
     )
 }

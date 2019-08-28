@@ -3,6 +3,7 @@ import { Modal, Button, Table, Label, Dimmer, Placeholder, Loader } from "semant
 import InvoiceItem from "./InvoiceItem"
 import moment from 'moment'
 import { connect } from "react-redux"
+import { parse } from 'url';
 
 function InvoiceTableRow(props) {
     const [modalOpen, setModalOpen] = useState(false)
@@ -196,8 +197,8 @@ function InvoiceTableRow(props) {
             <Table.Cell>{moment(i.created).format('Do MMM YYYY')}</Table.Cell>
             <Table.Cell>{i.status}</Table.Cell>
             <Table.Cell>{i.number}</Table.Cell>
-            <Table.Cell>{i.amount_due}</Table.Cell>
-            <Table.Cell>{i.amount_paid}</Table.Cell>
+            <Table.Cell>{"$" + i.amount_due / 100}</Table.Cell>
+            <Table.Cell>{"$" + parseInt(i.amount_paid) / 100}</Table.Cell>
             <Table.Cell>{i.status_transitions.finalized_at ? moment(i.status_transitions.finalized_at).format('Do MMM YYYY @ h:mm a') : "No"}</Table.Cell>
         </Table.Row>
 

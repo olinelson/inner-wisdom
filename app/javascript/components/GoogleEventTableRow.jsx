@@ -106,13 +106,15 @@ function GoogleEventTableRow(props) {
 
                 {onAnInvoice ? <Checkbox checked={false} /> :
                     <Modal
+                        basic
+                        size="small"
                         closeIcon
                         trigger={
                             <Checkbox checked={isPaid} />
                         }
                         header={isPaid ? "Mark appointment as un paid" : "Mark appointment as paid"}
                         content={"Are you sure you wish to mark this appointment as " + (isPaid ? " un paid." : " paid.")}
-                        actions={['Cancel', { key: 'yes', content: 'Yes', positive: true, onClick: () => toogleAppointmentPaid(a) }]}
+                        actions={[{ basic: true, content: "cancel", key: "cancel", negative: true }, { basic: true, key: 'yes', content: 'Yes', positive: true, onClick: () => toogleAppointmentPaid(a) }]}
                     />
                 }
 
