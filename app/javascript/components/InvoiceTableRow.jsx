@@ -10,6 +10,8 @@ function InvoiceTableRow(props) {
     const [voiding, setVoiding] = useState(false)
     const [sending, setSending] = useState(false)
     const [deleting, setDeleting] = useState(false)
+    const [paying, setPaying] = useState(false)
+
     let i = props.invoice
 
     const deleteInvoiceHandeler = () => {
@@ -73,6 +75,29 @@ function InvoiceTableRow(props) {
             .then((res) => {
                 if (res.invoice) {
                     setSending(false)
+                    setModalOpen(false)
+                    props.refreshAction()
+                }
+            })
+    }
+    const markInvoiceAsPaidHandeler = () => {
+        setPaying(true)
+        fetch(`${process.env.BASE_URL}/stripe/invoices/mark_as_paid`, {
+            method: "POST",
+            body: JSON.stringify({
+                invoice: i
+            }),
+            headers: {
+                "X-CSRF-Token": props.csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(res => res.json())
+            .then((res) => {
+                if (res.invoice) {
+                    setPaying(false)
                     setModalOpen(false)
                     props.refreshAction()
                 }
@@ -151,6 +176,15 @@ function InvoiceTableRow(props) {
                         content='Are you sure you would like to finalize and send this invoice?'
                         actions={['Cancel', { key: 'yes', content: 'Yes', positive: true, onClick: () => sendInvoiceHandeler() }]}
                     />
+                    <Modal
+                        closeIcon
+                        basic
+                        size="small"
+                        trigger={<Button loading={paying} icon="dollar" content="Mark As Paid" />}
+                        header='Mark As Paid?'
+                        content='Are you sure you would like to mark this invoice as paid?'
+                        actions={['Cancel', { key: 'yes', content: 'Yes', positive: true, onClick: () => markInvoiceAsPaidHandeler() }]}
+                    />
                 </Button.Group>
 
             case "open":
@@ -177,6 +211,15 @@ function InvoiceTableRow(props) {
                         labelPosition='right'
                         onClick={() => sendInvoiceHandeler()}
                     />
+                    <Modal
+                        closeIcon
+                        basic
+                        size="small"
+                        trigger={<Button basic loading={paying} icon="dollar" content="Mark As Paid" />}
+                        header='Mark As Paid?'
+                        content='Are you sure you would like to mark this invoice as paid?'
+                        actions={['Cancel', { key: 'yes', content: 'Yes', positive: true, onClick: () => markInvoiceAsPaidHandeler() }]}
+                    />
                 </>
 
             default:
@@ -198,8 +241,7 @@ function InvoiceTableRow(props) {
             <Table.Cell>{i.status}</Table.Cell>
             <Table.Cell>{i.number}</Table.Cell>
             <Table.Cell>{"$" + i.amount_due / 100}</Table.Cell>
-            <Table.Cell>{"$" + parseInt(i.amount_paid) / 100}</Table.Cell>
-            <Table.Cell>{i.status_transitions.finalized_at ? moment(i.status_transitions.finalized_at).format('Do MMM YYYY @ h:mm a') : "No"}</Table.Cell>
+            <Table.Cell>{i.webhooks_delivered_at ? moment(i.webhooks_delivered_at).format('Do MMM YYYY @ h:mm a') : "No"}</Table.Cell>
         </Table.Row>
 
         <Modal

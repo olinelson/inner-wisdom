@@ -16,9 +16,10 @@ Stripe.api_key = ENV["STRIPE_KEY"]
     def get_customer_invoices 
         customer = params["user"]["stripe_id"]
         invoices = nil
+        status = params["invoice_status"]
         if customer && customer.length > 1
             begin
-            invoices = Stripe::Invoice.list(customer: params["user"]["stripe_id"])
+            invoices = Stripe::Invoice.list(customer: params["user"]["stripe_id"], status: status)
             rescue 
             end
         end
@@ -36,6 +37,9 @@ Stripe.api_key = ENV["STRIPE_KEY"]
         deleted_item = Stripe::InvoiceItem.delete(item["id"])
         render json: {deleted_item: deleted_item}
     end
+
+    
+
 
     def create_invoice_item
         stripe_id = params["user"]["stripe_id"]
@@ -67,6 +71,12 @@ Stripe.api_key = ENV["STRIPE_KEY"]
     def void_invoice
         invoice_id = params["invoice"]["id"]
         invoice = Stripe::Invoice.void_invoice(invoice_id)
+        render json: {invoice: invoice}
+    end
+
+    def mark_invoice_as_paid
+        invoice_id = params["invoice"]["id"]
+        invoice = Stripe::Invoice.pay(invoice_id,  {paid_out_of_band: true})
         render json: {invoice: invoice}
     end
 

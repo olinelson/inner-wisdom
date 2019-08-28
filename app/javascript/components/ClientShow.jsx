@@ -4,7 +4,7 @@ import { withRouter } from "react-router-dom"
 import { Container, Card, Item, Table, Label, Menu, Button, Icon, Checkbox, Modal, Form, Header, Tab, Divider } from 'semantic-ui-react';
 import { isUserAnAttendeeOfEvent, relevantEvents, flatten } from "./Appointments"
 import moment from "moment"
-import AppointmentHistoryTable from './AppointmentHistoryTable';
+import AdminAppointmentHistoryTable from './AdminAppointmentHistoryTable';
 import InvoiceItemList from './InvoiceItemList';
 import InvoiceList from './InvoiceList';
 
@@ -86,7 +86,7 @@ function ClientShow(props) {
     }
 
     const panes = [
-        { menuItem: 'Appointment History', render: () => <Tab.Pane content={<AppointmentHistoryTable events={relevantAppointments} user={user} />} /> },
+        { menuItem: 'Appointment History', render: () => <Tab.Pane content={<AdminAppointmentHistoryTable events={relevantAppointments} user={user} />} /> },
         { menuItem: 'Billable Items', render: () => <InvoiceItemList user={user} /> },
         { menuItem: 'Invoices', render: () => <InvoiceList user={user} /> },
 

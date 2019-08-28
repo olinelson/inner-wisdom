@@ -70,6 +70,7 @@ class MainController < ApplicationController
     end
 
     def home
+        byebug
         user = nil
         personalEvents = []
         users = User.all
@@ -233,22 +234,28 @@ class MainController < ApplicationController
     def cancelEvent
         event = params["event"]
         cal = nil
+        inGracePeriod = params["inGracePeriod"]
+
           if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
             cal = @appointmentsCal
+            if inGracePeriod
+                event["title"] =  "Available Appointment"
+            end
         end
 
         if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
             cal = @consultsCal
+            if inGracePeriod
+                event["title"] =  "Phone Consult Slot"
+            end
         end
 
         
-        inGracePeriod = params["inGracePeriod"]
+        
         user = current_user
         attendees= []
 
-         if inGracePeriod
-            event["title"] = "Available Appointment"
-        end
+         
 
          if !inGracePeriod && event["attendees"] 
             attendees = event["attendees"].map{|a| 

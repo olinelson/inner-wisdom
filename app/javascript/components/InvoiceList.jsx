@@ -181,7 +181,7 @@ function InvoiceList(props) {
                             <Table.HeaderCell>Status</Table.HeaderCell>
                             <Table.HeaderCell>Invoice No.</Table.HeaderCell>
                             <Table.HeaderCell>Amount Due</Table.HeaderCell>
-                            <Table.HeaderCell>Amount Paid</Table.HeaderCell>
+                            {/* <Table.HeaderCell>Amount Paid</Table.HeaderCell> */}
                             <Table.HeaderCell>Email Delivered</Table.HeaderCell>
 
                         </Table.Row>

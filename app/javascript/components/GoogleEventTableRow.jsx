@@ -102,7 +102,7 @@ function GoogleEventTableRow(props) {
                     {props.user.first_name + " " + props.user.last_name}
                 </Label>
             </Table.Cell>
-            <Table.Cell>
+            {/* <Table.Cell>
 
                 {onAnInvoice ? <Checkbox checked={false} /> :
                     <Modal
@@ -118,21 +118,22 @@ function GoogleEventTableRow(props) {
                     />
                 }
 
-            </Table.Cell>
+            </Table.Cell> */}
             <Table.Cell>
                 {onAnInvoice ? <Icon name="check" />
                     :
                     <Button
+                        loading={loading}
                         disabled={onAnInvoice || isPaid ? true : false || loading}
                         onClick={() => createInvoiceItem(a)}
                         content={"Bill Item"} />}
 
             </Table.Cell>
-            <Table.Cell>
+            {/* <Table.Cell>
                 {loading ? <Loader active={loading} inline size="tiny" /> :
                     <div style={{ width: "1.5rem" }} />
                 }
-            </Table.Cell>
+            </Table.Cell> */}
         </Table.Row>
     )
 }

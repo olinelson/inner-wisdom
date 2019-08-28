@@ -11,6 +11,25 @@ function AdminAppointmentHistoryTable(props) {
 
 
 
+    const updateGoogleCalEvent = (event) => {
+        fetch(`${process.env.BASE_URL}/update`, {
+            method: "POST",
+            body: JSON.stringify({
+                event: event
+            }),
+            headers: {
+                "X-CSRF-Token": props.csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(response => response.json())
+            .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
+
+    }
+
+
 
     let chronologicalSorted = props.events.sort((b, a) => new Date(a.start_time) - new Date(b.end_time))
 
@@ -25,9 +44,9 @@ function AdminAppointmentHistoryTable(props) {
 
     }
 
-    // const appointmentHistoryTableRows = () => {
-    //     return chronologicalSorted.map(a => <GoogleEventTableRow key={a.id} user={props.user} event={a} />)
-    // }
+    const appointmentHistoryTableRows = () => {
+        return chronologicalSorted.map(a => <GoogleEventTableRow key={a.id} user={props.user} event={a} />)
+    }
 
 
     return (
@@ -42,38 +61,13 @@ function AdminAppointmentHistoryTable(props) {
                         <Table.HeaderCell>Type</Table.HeaderCell>
                         <Table.HeaderCell>Duration</Table.HeaderCell>
                         <Table.HeaderCell>Attendees</Table.HeaderCell>
+                        {/* <Table.HeaderCell>Paid</Table.HeaderCell> */}
+                        <Table.HeaderCell>Billable Item</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
 
                 <Table.Body>
-                    {chronologicalSorted.map(a => {
-                        let type = ""
-
-                        if (a.calendar.id === process.env.APPOINTMENTS_CALENDAR_ID) type = "Appointment"
-                        if (a.calendar.id === process.env.CONSULTS_CALENDAR_ID) type = "Phone Consult"
-                        let duration = moment.duration(moment(a.end_time) - moment(a.start_time))
-
-                        return <Table.Row key={a.id}>
-                            <Table.Cell>{moment(a.start_time).format('Do MMMM  YYYY h:mm a')}</Table.Cell>
-                            <Table.Cell>{type}</Table.Cell>
-                            <Table.Cell>{formattedDuration(duration)}</Table.Cell>
-                            <Table.Cell>
-                                <Label>
-                                    <Icon name='user' />
-                                    {props.user.first_name + " " + props.user.last_name}
-                                </Label>
-                            </Table.Cell>
-                            {/* <Table.Cell>
-                                {a.extended_properties.private.paid === "true" ? <Icon name="check" /> : null}
-                            </Table.Cell>
-                            <Table.Cell>
-                                {console.log(a)}
-                                {a.extended_properties.private.stripe_id.length > 2 ? <Icon name="check" /> : null}
-                            </Table.Cell> */}
-                        </Table.Row>
-
-                    }
-                    )}
+                    {appointmentHistoryTableRows()}
                 </Table.Body>
             </Table>
 

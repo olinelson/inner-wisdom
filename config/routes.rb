@@ -50,6 +50,7 @@ Rails.application.routes.draw do
   post "/stripe/invoices/new" => "stripe#create_invoice"
   post "/stripe/invoices/void" => "stripe#void_invoice"
   post "/stripe/invoices/delete" => "stripe#delete_draft_invoice"
+  post "/stripe/invoices/mark_as_paid" => "stripe#mark_invoice_as_paid"
   
 
 

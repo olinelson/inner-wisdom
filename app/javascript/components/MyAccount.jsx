@@ -7,6 +7,7 @@ import styled from "styled-components"
 
 import PostsList from './PostsList';
 import AppointmentHistoryTable from './AppointmentHistoryTable';
+import ClientInvoiceList from './ClientInvoiceList';
 
 import { relevantEvents, flatten, isUserAnAttendeeOfEvent } from "./Appointments"
 
@@ -53,6 +54,7 @@ function MyAccount(props) {
         return <Menu fluid style={{ gridArea: "sideMenu" }} vertical  >
             <Menu.Item name='Profile' active={props.myAccountPanel === 'profile'} onClick={() => handleTabClick("profile")} />
             <Menu.Item name='Appointment History' active={props.myAccountPanel === 'history'} onClick={() => handleTabClick("history")} />
+            <Menu.Item name='Invoices' active={props.myAccountPanel === 'invoices'} onClick={() => handleTabClick("invoices")} />
         </Menu>
     }
 
@@ -78,6 +80,8 @@ function MyAccount(props) {
                 return profileSettingsLinks()
             case "posts":
                 return <PostsList creatable posts={props.user.posts} />
+            case "invoices":
+                return <ClientInvoiceList client={props.user} />
             default:
                 return profileSettingsLinks()
         }
