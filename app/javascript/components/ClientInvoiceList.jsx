@@ -54,7 +54,6 @@ function InvoiceList(props) {
                     <Table.Cell>{"$" + i.amount_due / 100}</Table.Cell>
                     <Table.Cell>{<Button basic icon="chain" onClick={() => window.open(i.hosted_invoice_url, '_blank')} />}</Table.Cell>
                     <Table.Cell>{<Button basic icon="download" as="a" href={i.invoice_pdf} />}</Table.Cell>
-                    <Table.Cell>{console.log(i)}</Table.Cell>
                 </Table.Row>
 
             }

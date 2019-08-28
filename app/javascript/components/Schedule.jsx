@@ -64,6 +64,9 @@ class Schedule extends Component {
     // =====================================
 
     createEventHandeler = (isAppointmentSlot, isConsultSlot) => {
+        let placeholder = { ...this.state.selectedEvent, placeholder: true }
+        // let combined = [...this.props.appointments, placeholder]
+        this.props.dispatch({ type: "ADD_APPOINTMENT", value: placeholder })
         let event = { ...this.state.selectedEvent }
         this.setState({ creatingEvent: false })
         fetch(`${process.env.BASE_URL}/create`, {

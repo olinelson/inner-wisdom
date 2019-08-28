@@ -70,7 +70,6 @@ class MainController < ApplicationController
     end
 
     def home
-        byebug
         user = nil
         personalEvents = []
         users = User.all

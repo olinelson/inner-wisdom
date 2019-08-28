@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { withRouter } from "react-router-dom"
 import styled from "styled-components"
-import { Card, Label, Popup, Rating, Segment, Input, Loader, Divider, Dropdown, Modal, Grid, Header, Icon, Button } from 'semantic-ui-react';
+import { Card, Label, Popup, Rating, Segment, Input, Placeholder, Loader, Divider, Dropdown, Modal, Grid, Header, Icon, Button } from 'semantic-ui-react';
 import { connect } from "react-redux"
 import moment from 'moment'
 import DayPicker from 'react-day-picker';
@@ -17,8 +17,28 @@ function Event(props) {
     const [loading, setLoading] = useState(false)
     const [isCanceled, setIsCanceled] = useState(event.title ? event.title.toLowerCase().includes("canceled") : "")
 
+    const CustomLabel = styled(Label)`
+        opacity: ${() => loading ? "0.5" : "1"} !important;
+        height: 100%;
+        width: 100%;
+
+
+    `
+    const colorPicker = () => {
+        if (personal) return "green"
+        if (!personal && isAnEmptySlot()) return "grey"
+        if (isCanceled) return "red"
+        return "blue"
+    }
+
+
     let personal = false
-    if (event.calendar.id === props.user.google_calendar_email) personal = true
+    if (event.calendar && event.calendar.id === props.user.google_calendar_email) personal = true
+
+    if (event.placeholder) return <Placeholder style={{ border: "1px solid orange", height: "100%", width: "100%" }}>
+        <Placeholder.Image />
+    </Placeholder>
+
 
     const isAnEmptySlot = () => {
         if (!personal && event.attendees == null) return true
@@ -242,23 +262,12 @@ function Event(props) {
         </Modal>
     }
 
-    const CustomLabel = styled(Label)`
-        opacity: ${() => loading ? "0.5" : "1"} !important;
-
-    `
-    const colorPicker = () => {
-        if (personal) return "green"
-        if (!personal && isAnEmptySlot()) return "grey"
-        if (isCanceled) return "red"
-        return "blue"
-    }
 
 
 
     return <>
 
         <CustomLabel
-            style={{ height: "100%", width: "100%" }}
             color={colorPicker()}
             onClick={() => setModalOpen(true)}
         >

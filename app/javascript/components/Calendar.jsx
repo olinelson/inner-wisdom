@@ -25,7 +25,7 @@ let ReadOnlyComponents = {
 }
 
 function Calendar(props) {
-
+  console.log("cal props", props)
   let allViews = Object.keys(Views).map(k => Views[k])
 
   const CalendarContainer = styled.div`

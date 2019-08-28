@@ -63,13 +63,7 @@ function AdminAppointmentHistoryTable(props) {
                                     {props.user.first_name + " " + props.user.last_name}
                                 </Label>
                             </Table.Cell>
-                            {/* <Table.Cell>
-                                {a.extended_properties.private.paid === "true" ? <Icon name="check" /> : null}
-                            </Table.Cell>
-                            <Table.Cell>
-                                {console.log(a)}
-                                {a.extended_properties.private.stripe_id.length > 2 ? <Icon name="check" /> : null}
-                            </Table.Cell> */}
+
                         </Table.Row>
 
                     }

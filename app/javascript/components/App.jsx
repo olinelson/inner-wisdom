@@ -59,12 +59,13 @@ const initialState = {
 
 function reducer(state = initialState, action) {
     switch (action.type) {
-        case "SET_EVENTS":
-            return { ...state, events: action.value }
+        // case "SET_EVENTS":
+        //     return { ...state, events: action.value }
         case "SET_PERSONAL_EVENTS":
             return { ...state, personalEvents: action.value }
+        case "ADD_APPOINTMENT":
+            return { ...state, appointments: [...state.appointments, action.value] }
         case "SET_PERSONAL_AND_BUSINESS_EVENTS":
-
             let scrollToTime = new Date(action.value.scrollToEvent.start_time)
             scrollToTime.setHours(scrollToTime.getHours() - 1)
             return { ...state, personalEvents: action.value.personalEvents, appointments: action.value.appointments, consults: action.value.consults, calendarScrollToTime: scrollToTime }
