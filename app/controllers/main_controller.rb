@@ -70,6 +70,7 @@ class MainController < ApplicationController
     end
 
     def home
+        
         user = nil
         personalEvents = []
         users = User.all
@@ -168,12 +169,13 @@ class MainController < ApplicationController
             e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => ""}}
         end
        
-        #  render json: {scrollToEvent: event, events: eventsInDateWindow(@appointmentsCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
-        return appStateJson(scrollToEvent: event)
+        #  render json: {, events: eventsInDateWindow(@appointmentsCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
+        return appStateJson()
     end
 
-    def appStateJson(scrollToEvent: [])
-         render json: {scrollToEvent: scrollToEvent, appointments: eventsInDateWindow(@appointmentsCal), consults: eventsInDateWindow(@consultsCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
+    def appStateJson()
+        byebug
+         render json: { appointments: eventsInDateWindow(@appointmentsCal), consults: eventsInDateWindow(@consultsCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
     end
 
    
@@ -226,7 +228,7 @@ class MainController < ApplicationController
              NotificationMailer.admin_consult_confirmation(user, jsonEvent).deliver_later
         
         end
-        return appStateJson(scrollToEvent: event)
+        return appStateJson()
 
     end
 
@@ -285,6 +287,7 @@ class MainController < ApplicationController
 
 
     def updateEvent
+        byebug
         event = params["event"]
 
 
@@ -309,6 +312,8 @@ class MainController < ApplicationController
              }
             }
         end
+
+        byebug
 
         #  personal
         if event["calendar"]["id"] === current_user.google_calendar_email
@@ -340,14 +345,14 @@ class MainController < ApplicationController
             e.extended_properties = {'private' => {'paid' => event["extended_properties"]["private"]["paid"], 'stripe_id' => event["extended_properties"]["private"]["stripe_id"]}}
         end
 
-        return appStateJson(scrollToEvent: editedEvent)
+        return appStateJson()
         #  render json: {scrollToEvent: editedEvent, events: eventsInDateWindow(@appointmentsCal)} 
     end
 
 
 
     def deleteEvent
-
+        byebug
          event = params["event"]
 
          if event["calendar"]["id"] === current_user.google_calendar_email
@@ -362,14 +367,16 @@ class MainController < ApplicationController
             cal = @consultsCal
         end
 
+        byebug
+
        
         found = cal.find_event_by_id(event["id"])
 
         found.first.delete
 
-        return appStateJson(scrollToEvent: event)
+        return appStateJson()
 
-        # render json: {scrollToEvent: event, events: eventsInDateWindow(@appointmentsCal), personalEvents: eventsInDateWindow(@personalCal)}
+        # render json: {, events: eventsInDateWindow(@appointmentsCal), personalEvents: eventsInDateWindow(@personalCal)}
 
     end
 
@@ -420,13 +427,11 @@ class MainController < ApplicationController
             e.extended_properties = {'private' => {'paid' => e.extended_properties["private"]["paid"], 'stripe_id' => ""}}
         end
 
-        return appStateJson(scrollToEvent: editedEvent)
+        return appStateJson()
     end
 
     def deleteAllEvents(cal)
-        cal.events.each do |e|
-            e.delete
-        end
+        cal.events.each { |e| byebug e.delete}
     end
 
     def all 

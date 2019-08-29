@@ -13,9 +13,10 @@ function Event(props) {
 
 
     const [event, setEvent] = useState(props.event);
-    const [modalOpen, setModalOpen] = useState(false)
+    // const [modalOpen, setModalOpen] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [isCanceled, setIsCanceled] = useState(event.title ? event.title.toLowerCase().includes("canceled") : "")
+    // const [isCanceled, setIsCanceled] = useState(event.title ? event.title.toLowerCase().includes("canceled") : "")
+    const [isCanceled, setIsCanceled] = useState(false)
     const CustomLabel = styled(Label)`
         opacity: ${() => loading ? "0.5" : "1"} !important;
         height: 100%;
@@ -146,44 +147,34 @@ function Event(props) {
         const now = moment().hour(0).minute(0)
 
         return <>
+            <Popup
+                on="click"
+                content={<DayPicker
+                    onDayClick={changeDayHandeler}
+                    selectedDays={new Date(event.start_time)}
+                />}
+                trigger={<h4 style={{ cursor: "pointer" }}>{moment(event.start_time).format('Do MMMM  YYYY')}<Icon name="caret down" /></h4>} />
 
-            {event.placeholder ?
-                <Placeholder style={{ border: "1px solid orange", height: "100%", width: "100%" }}>
-                    <Placeholder.Image />
-                </Placeholder>
-                :
-                <>
-                    <Popup
-                        on="click"
-                        content={<DayPicker
-                            onDayClick={changeDayHandeler}
-                            selectedDays={new Date(event.start_time)}
-                        />}
-                        trigger={<h4 style={{ cursor: "pointer" }}>{moment(event.start_time).format('Do MMMM  YYYY')}<Icon name="caret down" /></h4>} />
+            <TimePicker
+                showSecond={false}
 
-                    <TimePicker
-                        showSecond={false}
-
-                        value={startTime}
-                        // className=" ui menu transition"
-                        onChange={(e) => setEvent({ ...event, start_time: e._d })}
-                        format='h:mm a'
-                        use12Hours
-                        inputReadOnly
-                    />
-                    {/* to{" "} */}
-                    <TimePicker
-                        showSecond={false}
-                        value={endTime}
-                        // className="ui menu transition"
-                        onChange={(e) => setEvent({ ...event, end_time: e._d })}
-                        format='h:mm a'
-                        use12Hours
-                        inputReadOnly
-                    />
-
-                </>
-            }
+                value={startTime}
+                // className=" ui menu transition"
+                onChange={(e) => setEvent({ ...event, start_time: e._d })}
+                format='h:mm a'
+                use12Hours
+                inputReadOnly
+            />
+            {/* to{" "} */}
+            <TimePicker
+                showSecond={false}
+                value={endTime}
+                // className="ui menu transition"
+                onChange={(e) => setEvent({ ...event, end_time: e._d })}
+                format='h:mm a'
+                use12Hours
+                inputReadOnly
+            />
         </>
 
 
@@ -191,8 +182,9 @@ function Event(props) {
 
 
     const deleteEventHandeler = () => {
-        setModalOpen(false)
-        setLoading(true)
+        // setLoading(true)
+        console.log("Deleting", event.title)
+
         fetch(`${process.env.BASE_URL}/delete`, {
             method: "DELETE",
             body: JSON.stringify({
@@ -207,13 +199,13 @@ function Event(props) {
         })
             .then(res => res.json())
             .then((res) => {
+                console.log(res)
                 props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res })
             })
 
     }
 
     const updateSelectedEventHandeler = () => {
-        setModalOpen(false)
         setLoading(true)
         fetch(`${process.env.BASE_URL}/update`, {
             method: "POST",
@@ -243,9 +235,65 @@ function Event(props) {
         />
     }
 
-    const editableEventModal = () => {
+    // const editableEventModal = () => {
 
-        return <Modal
+    //     return <Modal
+    //         closeIcon
+    //         open={modalOpen}
+    //         onClose={() => setModalOpen(false)}
+    //     >
+
+    //         <Modal.Content >
+    //             <Input fluid size="massive" onChange={(e) => changeTitleHandeler(e)} transparent value={event ? event.title : null} />
+    //             <Modal.Description>
+    //                 {appointmentTimeSetter()}
+    //                 <Divider hidden />
+    //                 {eventLocation()}
+    //                 <div>
+    //                     {showEventAttendees()}
+    //                 </div>
+    //                 <Divider hidden />
+
+
+    //             </Modal.Description>
+    //             {personal ? null : <UserPickerDropDown event={event} addAttendeeHandeler={(user) => addAttendeeToSelectedEvent(user)} />}
+    //             <Button content="delete" onClick={() => deleteEventHandeler()} />
+    //             <Button content="save" onClick={() => updateSelectedEventHandeler()} />
+    //         </Modal.Content>
+    //     </Modal>
+    // }
+
+
+    return <CustomLabel color={colorPicker()}>
+        <Loader size="mini" inverted active={loading} inline style={{ marginRight: ".5rem", marginLeft: "-.25rem" }} />
+        {event.title}
+    </CustomLabel>
+
+    return <Modal
+        key={event.id}
+        trigger={<CustomLabel color={colorPicker()}>
+            <Loader size="mini" inverted active={loading} inline style={{ marginRight: ".5rem", marginLeft: "-.25rem" }} />
+            {event.title}
+        </CustomLabel>}
+        header={<Input transparent value={event.title} onChange={(e) => setEvent({ ...event, title: e.target.value })} />}
+        content={<>{appointmentTimeSetter()}
+            <Divider hidden />
+            {eventLocation()}
+            <div>
+                {showEventAttendees()}
+            </div>
+            <Divider hidden />
+            {personal ? null : <UserPickerDropDown event={event} addAttendeeHandeler={(user) => addAttendeeToSelectedEvent(user)} />}
+        </>}
+        actions={[
+            { key: "delete", content: "Delete", onClick: () => deleteEventHandeler() },
+            { key: "save", content: "save", onClick: () => updateSelectedEventHandeler() }
+
+        ]}
+
+    />
+
+    {/* <Modal
             closeIcon
             open={modalOpen}
             onClose={() => setModalOpen(false)}
@@ -268,15 +316,9 @@ function Event(props) {
                 <Button content="delete" onClick={() => deleteEventHandeler()} />
                 <Button content="save" onClick={() => updateSelectedEventHandeler()} />
             </Modal.Content>
-        </Modal>
-    }
+        </Modal> */}
 
-
-
-
-    return <>
-
-        <CustomLabel
+    {/* <CustomLabel
             color={colorPicker()}
             onClick={() => setModalOpen(true)}
         >
@@ -284,11 +326,11 @@ function Event(props) {
             {event.title}
 
 
-        </CustomLabel>
+        </CustomLabel> */}
 
-        {editableEventModal()}
+    {/* {editableEventModal()} */ }
 
-    </>
+
 
 }
 

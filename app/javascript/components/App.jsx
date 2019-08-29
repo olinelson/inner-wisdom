@@ -66,6 +66,7 @@ function reducer(state = initialState, action) {
         case "ADD_APPOINTMENT":
             return { ...state, appointments: [...state.appointments, action.value] }
         case "SET_PERSONAL_AND_BUSINESS_EVENTS":
+            console.log('setting everything', action.value)
             return { ...state, personalEvents: action.value.personalEvents, appointments: action.value.appointments, consults: action.value.consults }
         case "SET_USER":
             return { ...state, user: action.value }

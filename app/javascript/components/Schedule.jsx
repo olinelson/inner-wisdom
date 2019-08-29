@@ -355,8 +355,32 @@ class Schedule extends Component {
         </Modal >
     }
 
-    render() {
+    deleteEventHandeler = () => {
+        // setLoading(true)
+        // console.log("Deleting", event.title)
 
+        fetch(`${process.env.BASE_URL}/delete`, {
+            method: "DELETE",
+            body: JSON.stringify({
+                event: this.state.selectedEvent
+            }),
+            headers: {
+                "X-CSRF-Token": this.props.csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(res => res.json())
+            .then((res) => {
+                console.log(res)
+                this.props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res })
+            })
+
+    }
+
+    render() {
+        console.log("this is all events in schedule", this.props.allEvents)
         return <>
 
             <FullWidthCalendarContainer fluid >
@@ -377,12 +401,14 @@ class Schedule extends Component {
                         selectable
                         localizer={localizer}
                         // events={props.events}
-                        events={this.props.allEvents}
-                        // events={this.props.appointments}
+                        // events={this.props.allEvents}
+                        onSelectEvent={(e) => this.setState({ selectedEvent: e })}
+                        events={this.props.appointments}
                         // onView={changeDefaultViewHandeler}
                         defaultView={this.props.defaultCalendarView}
                         // scrollToTime={props.calendarScrollToTime}
-                        // defaultDate={props.calendarScrollToTime}
+                        defaultDate={new Date}
+                        // scrollToTime={new Date}
                         popup
                         step={15}
                         timeslots={1}
@@ -392,6 +418,12 @@ class Schedule extends Component {
                     />
                 </CalendarContainer>
                 {this.creatingEventModal()}
+                <Modal
+                    onClose={() => this.setState({ selectedEvent: null })}
+                    open={this.state.selectedEvent ? true : false}
+                    header={this.state.selectedEvent ? this.state.selectedEvent.title : null}
+                    actions={[{ key: "delete", content: "delete", onClick: () => this.deleteEventHandeler() }]}
+                />
             </FullWidthCalendarContainer>
         </>
     }

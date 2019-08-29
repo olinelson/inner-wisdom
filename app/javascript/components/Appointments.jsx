@@ -78,6 +78,7 @@ function Appointments(props) {
                     localizer={localizer}
                     events={relevantEvents(props.appointments, props.consults, props.user)}
                     defaultView={props.defaultCalendarView}
+                    // scrollToTime={new Date}
                     popup
                     step={15}
                     timeslots={1}

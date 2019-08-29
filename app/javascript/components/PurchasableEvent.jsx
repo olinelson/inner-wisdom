@@ -108,10 +108,13 @@ function PurchasableEvent(props) {
 
     const cancelEvent = () => {
         setLoading(true)
+        setPurchased(false)
         let baseUrl = process.env.BASE_URL
 
         let newTitle = "*Canceled " + event.title
         let editedEvent = { ...event, title: newTitle }
+
+        if (!inGracePeriod) setIsCanceled(true)
 
         fetch(`${baseUrl}/cancel`, {
             method: "POST",
@@ -240,7 +243,6 @@ function PurchasableEvent(props) {
         return now < eventTime
     }
 
-    console.log("this is event", props.event)
 
     // if bookable
     // if in the future
