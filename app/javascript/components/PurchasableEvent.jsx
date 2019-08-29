@@ -15,6 +15,12 @@ function PurchasableEvent(props) {
     const [loading, setLoading] = useState(false)
     const [purchased, setPurchased] = useState(false)
     const [progress, setProgress] = useState(1)
+    const [isCanceled, setIsCanceled] = useState(event.title.toLowerCase().includes("canceled"))
+
+    let currentTime = new Date
+    let eventTime = new Date(event.start_time)
+    let hours = (eventTime.getTime() - currentTime.getTime()) / 3600000;
+    const [inGracePeriod, setInGracePeriod] = useState(hours > 24)
 
     // if (props.user)
 
@@ -100,6 +106,62 @@ function PurchasableEvent(props) {
         </>
     }
 
+    const cancelEvent = () => {
+        setLoading(true)
+        let baseUrl = process.env.BASE_URL
+
+        let newTitle = "*Canceled " + event.title
+        let editedEvent = { ...event, title: newTitle }
+
+        fetch(`${baseUrl}/cancel`, {
+            method: "POST",
+            body: JSON.stringify({
+                inGracePeriod,
+                event: editedEvent
+            }),
+            headers: {
+                "X-CSRF-Token": props.csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(response => response.json())
+            .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
+            .then(() => setLoading(false))
+    }
+
+    const cancelationFee = () => {
+        // let currentTime = new Date
+        // let eventTime = new Date(event.start_time)
+        // let hours = (eventTime.getTime() - currentTime.getTime()) / 3600000;
+
+        if (!inGracePeriod) return <>
+            <p>As this is less than 24 hours notice you will be charged in full</p>
+        </>
+
+        return <p>As this is more than 24 hours notice this cancellation is free.</p>
+    }
+
+    const cancelEventModal = () => {
+        return <Modal trigger={<Button basic icon="trash" content='Cancel Appoitment' />} basic size='small'>
+            <Header icon='trash' content='Delete Post' />
+            <Modal.Content>
+                <p>Are you sure you want to cancel this appointment?</p>
+
+                {cancelationFee()}
+            </Modal.Content>
+            <Modal.Actions>
+                <Button onClick={() => cancelEvent()} color='red' inverted>
+                    <Icon name='remove' /> Cancel Appointment
+                            </Button>
+                <Button color='green' inverted>
+                    <Icon name='checkmark' /> Never Mind
+                            </Button>
+            </Modal.Actions>
+        </Modal>
+    }
+
     const modal = () => {
 
         return <Modal
@@ -164,31 +226,109 @@ function PurchasableEvent(props) {
         return "blue"
     }
 
+    const cancelConfirm = () => {
+        return <Modal key="cancel confirm" trigger={<Button basic icon="trash" content='Cancel Appoitment' />} basic size='small'
+            header={'Delete Post'}
+            content={<><p>Are you sure you would like to cancel this appointment?</p>{cancelationFee()}</>}
+            actions={['Never Mind', { key: 'yes', content: 'Yes, Cancel', negative: true, onClick: () => cancelEvent() }]}
+        />
+    }
+
+    const isInTheFuture = () => {
+        let now = new Date
+        let eventTime = new Date(event.start_time)
+        return now < eventTime
+    }
+
+    console.log("this is event", props.event)
+
+    // if bookable
+    // if in the future
+    // if not attending
+    // if not canceled
+    // purchasable event
+    if (isInTheFuture() && !isUserAnAttendeeOfEvent(event, props.user) && !isCanceled) {
+        return <>
+
+            <Label
+                style={{ height: "100%", width: "100%" }}
+                color="grey"
+                onClick={() => setInfoModal(true)}
+            >
+                <Loader size="mini" inverted active={loading} inline style={{ marginRight: ".5rem", marginLeft: "-.25rem" }} />
+                {event.title}
 
 
-    return (
-        isUserAnAttendeeOfEvent(event, props.user) ? <ReadOnlyEvent event={event} /> :
 
-            <>
+            </Label>
 
-                <Label
-                    style={{ height: "100%", width: "100%" }}
-                    color="grey"
-                    onClick={() => setInfoModal(true)}
-                >
-                    <Loader size="mini" inverted active={loading} inline style={{ marginRight: ".5rem", marginLeft: "-.25rem" }} />
-                    {event.title}
+            {modal()}
+            {purchasedModal()}
 
 
+        </>
+    }
 
-                </Label>
+    // an event that I am attending that I can cancel
+    // i'm an attendee
+    // it's not cancelled
+    // is in the future
 
-                {modal()}
-                {purchasedModal()}
+    // cancelable event
+    if (isUserAnAttendeeOfEvent(event, props.user) && !isCanceled && isInTheFuture()) {
+        return <Modal
+            trigger={<Label
+                style={{ height: "100%", width: "100%" }}
+                color="blue"
+            >
+                <Loader size="mini" inverted active={loading} inline style={{ marginRight: ".5rem", marginLeft: "-.25rem" }} />
+                {event.title}
+            </Label>}
+            header={event.title}
+            content={showPrettyStartAndEndTime()}
+            actions={[cancelConfirm()]}
+        />
+    }
+
+    // historical event
+    if (isUserAnAttendeeOfEvent(event, props.user) && !isCanceled && !isInTheFuture()) {
+        return <Modal
+            trigger={<Label
+                style={{ height: "100%", width: "100%", opacity: "0.5" }}
+                color="blue"
+            >
+                <Loader size="mini" inverted active={loading} inline style={{ marginRight: ".5rem", marginLeft: "-.25rem" }} />
+                {event.title}
+            </Label>}
+            header={event.title}
+            content={showPrettyStartAndEndTime()}
+        />
+    }
 
 
-            </>
-    )
+
+
+    if (isCanceled) return <Modal
+        trigger={<Label
+            style={{ height: "100%", width: "100%", opacity: isInTheFuture() ? "100%" : "0.5" }}
+            color="red"
+        >
+            <Loader size="mini" inverted active={loading} inline style={{ marginRight: ".5rem", marginLeft: "-.25rem" }} />
+            {event.title}
+        </Label>}
+        header={event.title}
+        content={showPrettyStartAndEndTime()}
+    />
+
+
+
+
+    // view only event
+    // return 
+
+    // return null
+
+
 }
 
 

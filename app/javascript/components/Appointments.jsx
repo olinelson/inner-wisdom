@@ -20,13 +20,19 @@ export function flatten(arr) {
     return [].concat(...arr)
 }
 
+export const isInTheFuture = (event) => {
+    let now = new Date
+    let eventTime = new Date(event.start_time)
+    return now < eventTime
+}
+
 export const relevantEvents = (appointments, consults, user) => {
     let result = []
 
     // if (!appointments) return result
 
-    let freeAppointments = appointments.filter(e => e.attendees == null || e.attendees.length < 1)
-    let freeConsults = consults.filter(e => e.attendees == null || e.attendees.length < 1)
+    let freeAppointments = appointments.filter(e => (e.attendees == null || e.attendees.length < 1) && isInTheFuture(e))
+    let freeConsults = consults.filter(e => (e.attendees == null || e.attendees.length < 1) && isInTheFuture(e))
 
 
     if (user) {
@@ -56,44 +62,26 @@ export const FullWidthCalendarContainer = styled(Container)`
 function Appointments(props) {
     const localizer = momentLocalizer(moment)
 
-    const userComponents = () => {
-        // if (props.user) return { event: PurchasableEvent }
-        return { event: PurchasableEvent }
-
-        // return { event: ReadOnlyEvent }
-    }
-
-
     return (
         <FullWidthCalendarContainer fluid>
             <div style={{ width: "100%", maxWidth: "95vw", justifySelf: "center" }}>
                 <h1>Appointments</h1>
-                {/* <Label circular color={"blue"} content="My Appointments" /> */}
-                {/* <Label circular color={"green"} content="Personal" /> */}
-                {/* <Label circular color={"grey"} content="Bookable" /> */}
             </div>
             <Divider style={{ gridArea: "divider" }} />
             {/* <Calendar fullWidth purchasable events={relevantEvents(props.appointments, props.consults, props.user)} /> */}
             <CalendarContainer fullWidth>
                 <BigCalendar
-                    components={userComponents()}
+                    components={{ event: PurchasableEvent }}
                     startAccessor={event => new Date(event.start_time)}
                     endAccessor={event => new Date(event.end_time)}
                     selectable
                     localizer={localizer}
-                    // events={props.events}
-                    // events={this.props.allEvents}
                     events={relevantEvents(props.appointments, props.consults, props.user)}
-                    // onView={changeDefaultViewHandeler}
                     defaultView={props.defaultCalendarView}
-                    // scrollToTime={props.calendarScrollToTime}
-                    // defaultDate={props.calendarScrollToTime}
                     popup
                     step={15}
                     timeslots={1}
-                // onSelectSlot={this.selectSlotHandeler}
-                // min={new Date(2050, 1, 1, 9)}
-                // max={new Date(2050, 1, 1, 22)}
+                    onSelecting={() => false}
                 />
             </CalendarContainer>
         </FullWidthCalendarContainer>
