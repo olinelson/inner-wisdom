@@ -16,6 +16,8 @@ function PurchasableEvent(props) {
     const [purchased, setPurchased] = useState(false)
     const [progress, setProgress] = useState(1)
 
+    // if (props.user)
+
     const showPrettyStartAndEndTime = () => {
 
         return <>

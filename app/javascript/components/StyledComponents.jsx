@@ -152,3 +152,20 @@ export const EditorButtons = styled.div`
             top: 3.5rem;
         }
 `
+
+export const CalendarContainer = styled.div`
+          grid-area: panel;
+          height: 70vh;
+
+        width: 500rem;
+        min-height: 50rem;
+        justify-self: center;
+        max-width: ${(props) => props.fullWidth === true ? "95vw" : "60vw"};
+
+    //    @media (max-width: 50rem) {
+    //       max-width: 95vw;
+    //   ;
+    // }
+
+  }
+      `

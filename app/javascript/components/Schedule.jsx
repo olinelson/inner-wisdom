@@ -7,11 +7,24 @@ import moment from "moment"
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
 import TimePicker from 'rc-time-picker';
+import Event from "./Event"
+import { Calendar as BigCalendar, momentLocalizer, Views } from 'react-big-calendar'
 
-import { BusinessEventSegment, CenteredFlexDiv } from "./StyledComponents"
+import { BusinessEventSegment, CenteredFlexDiv, CalendarContainer } from "./StyledComponents"
 
 import { FullWidthCalendarContainer } from "./Appointments"
 import UserPickerDropDown from './UserPickerDropDown';
+const localizer = momentLocalizer(moment)
+const AdminComponents = {
+    event: Event // used by each view (Month, Day, Week)
+}
+// let PurchasableComponents = {
+//     event: PurchasableEvent
+// }
+// let ReadOnlyComponents = {
+//     event: ReadOnlyEvent
+
+// }
 
 class Schedule extends Component {
 
@@ -23,6 +36,7 @@ class Schedule extends Component {
             dialogOpen: false,
             creatingEvent: false,
             newAppointment: null,
+            loading: false,
         }
     }
 
@@ -64,11 +78,11 @@ class Schedule extends Component {
     // =====================================
 
     createEventHandeler = (isAppointmentSlot, isConsultSlot) => {
-        let placeholder = { ...this.state.selectedEvent, placeholder: true }
-        // let combined = [...this.props.appointments, placeholder]
-        this.props.dispatch({ type: "ADD_APPOINTMENT", value: placeholder })
+        // let placeholder = { ...this.state.selectedEvent, placeholder: true }
+        // this.props.dispatch({ type: "ADD_APPOINTMENT", value: placeholder })
+        this.setState({ loading: true })
         let event = { ...this.state.selectedEvent }
-        this.setState({ creatingEvent: false })
+
         fetch(`${process.env.BASE_URL}/create`, {
             method: "POST",
             body: JSON.stringify({
@@ -85,6 +99,7 @@ class Schedule extends Component {
         })
             .then(response => response.json())
             .then(res => this.props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
+            .then(res => this.setState({ creatingEvent: false, loading: false }))
 
 
     }
@@ -246,7 +261,7 @@ class Schedule extends Component {
                 </Form.Field>
 
 
-                <Button color="green" onClick={() => this.createEventHandeler(false)} type="submit">Create</Button>
+                <Button loading={this.state.loading} color="green" onClick={() => this.createEventHandeler(false)} type="submit">Create</Button>
             </Form>
         </Segment>
     }
@@ -281,7 +296,7 @@ class Schedule extends Component {
                     <Icon name='bookmark' />
                     Book New Appointment
                              </Header>
-                <Popup content='This will create a confirmed appointment slot that will only be visible to admin and its attendees.' trigger={<Button primary onClick={() => this.createEventHandeler(false)}>Create</Button>} />
+                <Popup content='This will create a confirmed appointment slot that will only be visible to admin and its attendees.' trigger={<Button loading={this.state.loading} primary onClick={() => this.createEventHandeler(false)}>Create</Button>} />
                 <Divider hidden />
                 {/* {this.userPickerDropDown(e, this.addAttendeeToSelectedEvent)} */}
                 {/* <div height="2rem"> */}
@@ -302,7 +317,7 @@ class Schedule extends Component {
                     <Icon name='time' />
                     New Appointment Slot
                     </Header>
-                <Popup content='This will create a "bookable" appointment slot visable to all clients.' trigger={<Button color="grey" onClick={() => this.createEventHandeler(true)} >Create</Button>} />
+                <Popup content='This will create a "bookable" appointment slot visable to all clients.' trigger={<Button loading={this.state.loading} color="grey" onClick={() => this.createEventHandeler(true)} >Create</Button>} />
 
 
             </CenteredFlexDiv>
@@ -311,48 +326,10 @@ class Schedule extends Component {
                     <Icon name='time' />
                     New Consultation Slot
                     </Header>
-                <Popup content='This will create a "bookable" consultation slot visable to all clients.' trigger={<Button color="yellow" onClick={() => this.createEventHandeler(false, true)} >Create</Button>} />
+                <Popup content='This will create a "bookable" consultation slot visable to all clients.' trigger={<Button loading={this.state.loading} color="yellow" onClick={() => this.createEventHandeler(false, true)} >Create</Button>} />
 
 
             </CenteredFlexDiv>
-
-
-            {/* <Grid columns={2} stackable textAlign='center'>
-                <Divider vertical>Or</Divider>
-
-                <Grid.Row verticalAlign='top'>
-
-                    <Grid.Column >
-                        <Header icon>
-                            <Icon name='bookmark' />
-                            Book New Appointment
-                             </Header>
-                        <Divider hidden />
-                        <Popup content='This will create a confirmed appointment slot that will only be visible to admin and its attendees.' trigger={<Button primary onClick={() => this.createEventHandeler(false)}>Create</Button>} />
-                        <Divider hidden />
-
-                        <UserPickerDropDown event={e} addAttendeeHandeler={this.addAttendeeToSelectedEvent} />
-                        <Divider hidden />
-                        <div>
-                            {this.showEventAttendees(e, this.removeAttendeeFromSelectedEvent)}
-                        </div>
-                    </Grid.Column>
-
-                    <Grid.Column  >
-                        <Header icon>
-                            <Icon name='time' />
-                            New Appointment Slot
-                         </Header>
-
-
-
-                        <Divider hidden />
-                        <Popup content='This will create a "bookable" appointment slot visable to all clients.' trigger={<Button color="grey" onClick={() => this.createEventHandeler(true)} >Create</Button>} />
-                        <Popup content='This will create a "bookable" consultation slot visable to all clients.' trigger={<Button color="yellow" onClick={() => this.createEventHandeler(false, true)} >Create</Button>} />
-
-                    </Grid.Column>
-                </Grid.Row>
-            </Grid> */}
 
         </BusinessEventSegment>
     }
@@ -392,13 +369,28 @@ class Schedule extends Component {
 
 
                 <Divider style={{ gridArea: "divider" }} />
-
-                <Calendar
-                    admin
-                    fullWidth
-                    events={this.props.allEvents}
-                    onSelectSlot={this.selectSlotHandeler}
-                />
+                <CalendarContainer fullWidth>
+                    <BigCalendar
+                        components={AdminComponents}
+                        startAccessor={event => new Date(event.start_time)}
+                        endAccessor={event => new Date(event.end_time)}
+                        selectable
+                        localizer={localizer}
+                        // events={props.events}
+                        events={this.props.allEvents}
+                        // events={this.props.appointments}
+                        // onView={changeDefaultViewHandeler}
+                        defaultView={this.props.defaultCalendarView}
+                        // scrollToTime={props.calendarScrollToTime}
+                        // defaultDate={props.calendarScrollToTime}
+                        popup
+                        step={15}
+                        timeslots={1}
+                        onSelectSlot={this.selectSlotHandeler}
+                    // min={new Date(2050, 1, 1, 9)}
+                    // max={new Date(2050, 1, 1, 22)}
+                    />
+                </CalendarContainer>
                 {this.creatingEventModal()}
             </FullWidthCalendarContainer>
         </>
@@ -420,7 +412,8 @@ const mapStateToProps = (state) => ({
     users: state.users,
     csrfToken: state.csrfToken,
     baseUrl: state.baseUrl,
-    businessCalendarAddress: state.businessCalendarAddress
+    businessCalendarAddress: state.businessCalendarAddress,
+    defaultCalendarView: state.defaultCalendarView
 })
 
 export default connect(mapStateToProps)(Schedule)
