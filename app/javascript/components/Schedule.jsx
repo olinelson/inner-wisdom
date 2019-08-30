@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 // components / styles
 import { Divider, Modal, Popup, Button, Input, Label, Icon, Segment, Header, Dropdown, Checkbox, Form } from 'semantic-ui-react'
-import { BusinessEventSegment, CenteredFlexDiv, CalendarContainer, MondalContent } from "./StyledComponents"
+import { BusinessEventSegment, CenteredFlexDiv, CalendarContainer, ModalContent } from "./StyledComponents"
 import { FullWidthCalendarContainer } from "./Appointments"
 import Event from "./Event"
 import UserPickerDropDown from './UserPickerDropDown';
@@ -304,24 +304,26 @@ function Schedule(props) {
         return <Modal
             open={selectedEvent ? true : false}
             onClose={() => setSelectedEvent(null)}
-        >
-            <Modal.Header><Input value={e.title} onChange={(e) => setSelectedEvent({ ...selectedEvent, title: e.target.value })} /></Modal.Header>
-            <Modal.Content >
-                {props.user.google_calendar_email && props.user.google_calendar_email === e.calendar.id ? null :
-                    <p>Business Event Options</p>
-                }
-                <Dropdown onChange={(e, d) => setSelectedEvent({ ...selectedEvent, recurrence: { freq: d.value } })} defaultValue={null} placeholder='No Repeat' options={repeatOptions} />
-                {eventTimeSetter(selectedEvent, setSelectedEvent)}
-                <div>
-                    {showEventAttendees(e, removeAttendeeFromEvent, setSelectedEvent)}
-                </div>
-                <UserPickerDropDown event={e} addAttendeeHandeler={(u) => addAttendeeToEvent(u, selectedEvent, setSelectedEvent)} />
-            </Modal.Content>
-            <Modal.Actions>
-                <Button loading={loading} onClick={() => updateSelectedEventHandeler()}>Save</Button>
-                <Button loading={loading} onClick={() => deleteSelectedEventHandeler()}>Delete</Button>
-            </Modal.Actions>
-        </Modal >
+            header={<Input value={e.title} onChange={(e) => setSelectedEvent({ ...selectedEvent, title: e.target.value })} />}
+            content={
+                <ModalContent>
+                    {props.user.google_calendar_email && props.user.google_calendar_email === e.calendar.id ? null :
+                        <p>Business Event Options</p>
+                    }
+                    <Dropdown onChange={(e, d) => setSelectedEvent({ ...selectedEvent, recurrence: { freq: d.value } })} defaultValue={null} placeholder='No Repeat' options={repeatOptions} />
+                    {eventTimeSetter(selectedEvent, setSelectedEvent)}
+                    <div>
+                        {showEventAttendees(e, removeAttendeeFromEvent, setSelectedEvent)}
+                    </div>
+                    <UserPickerDropDown event={e} addAttendeeHandeler={(u) => addAttendeeToEvent(u, selectedEvent, setSelectedEvent)} />
+                </ModalContent>
+            }
+            actions={[
+                { key: "delete", content: "Delete", onClick: () => deleteSelectedEventHandeler() },
+                { key: "Cancel", content: "Cancel", onClick: () => setSelectedEvent(null) },
+                { key: "save", content: "Save", onClick: () => updateSelectedEventHandeler() }
+            ]}
+        />
     }
 
     const creatingEventModal = () => {
@@ -329,18 +331,14 @@ function Schedule(props) {
         return <Modal
             open={selectedSlot ? true : false}
             onClose={() => setSelectedSlot(null)}
-        >
-            <Modal.Header>Create Event</Modal.Header>
-            <Modal.Content >
-                {personalOrBusinessToggle(e)}
-
-                {creatingBusinessEventOptions(e)}
-
-                {creatingPersonalEventOptions(e)}
-
-            </Modal.Content>
-
-        </Modal >
+            header="Create Event"
+            content={
+                <ModalContent>
+                    {personalOrBusinessToggle(e)}
+                    {creatingBusinessEventOptions(e)}
+                    {creatingPersonalEventOptions(e)}
+                </ModalContent>}
+        />
     }
 
     return <>
