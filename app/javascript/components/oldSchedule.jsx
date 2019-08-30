@@ -351,7 +351,7 @@ class Schedule extends Component {
 
     deleteEventHandeler = () => {
         // setLoading(true)
-        // console.log("Deleting", event.title)
+
 
         fetch(`${process.env.BASE_URL}/delete`, {
             method: "DELETE",
@@ -367,14 +367,12 @@ class Schedule extends Component {
         })
             .then(res => res.json())
             .then((res) => {
-                console.log(res)
                 this.props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res })
             })
 
     }
 
     render() {
-        console.log("this is all events in schedule", this.props.allEvents)
         return <>
 
             <FullWidthCalendarContainer fluid >

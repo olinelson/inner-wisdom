@@ -3,10 +3,11 @@ import { connect } from 'react-redux';
 
 // components / styles
 import { Divider, Modal, Popup, Button, Input, Label, Icon, Segment, Header, Dropdown, Checkbox, Form } from 'semantic-ui-react'
-import { BusinessEventSegment, CenteredFlexDiv, CalendarContainer } from "./StyledComponents"
+import { BusinessEventSegment, CenteredFlexDiv, CalendarContainer, MondalContent } from "./StyledComponents"
 import { FullWidthCalendarContainer } from "./Appointments"
 import Event from "./Event"
 import UserPickerDropDown from './UserPickerDropDown';
+
 
 // packages
 import moment from "moment"
@@ -18,6 +19,14 @@ import { Calendar as BigCalendar, momentLocalizer, Views } from 'react-big-calen
 
 
 const localizer = momentLocalizer(moment)
+
+const repeatOptions = [
+    { key: 'norepeat', value: null, text: 'no repeat' },
+    { key: 'daily', value: 'daily', text: 'daily' },
+    { key: 'weekly', value: 'weekly', text: 'weekly' },
+    { key: 'monthly', value: 'monthly', text: 'monthly' },
+    { key: 'yearly', value: 'yearly', text: 'yearly' },
+]
 
 function Schedule(props) {
     const [selectedEvent, setSelectedEvent] = useState(null)
@@ -109,9 +118,8 @@ function Schedule(props) {
 
     const showEventAttendees = (event, onDelete, setStateAction) => {
         if (event && event.attendees) {
-            console.log("has users", event)
             let users = event.attendees
-            return users.map(u => <Label key={u.email} style={{ margin: ".1rem" }} key={u.id}>
+            return users.map(u => <Label key={u.email} style={{ margin: ".1rem" }}>
                 <Icon name='user' />
                 {u.first_name ? u.first_name + " " + u.last_name : u.displayName}
                 <Icon name='delete' onClick={() => onDelete(u, event, setStateAction)} />
@@ -245,13 +253,7 @@ function Schedule(props) {
     }
 
     const creatingBusinessEventOptions = (e) => {
-        const repeatOptions = [
-            { key: 'norepeat', value: null, text: 'no repeat' },
-            { key: 'daily', value: 'daily', text: 'daily' },
-            { key: 'weekly', value: 'weekly', text: 'weekly' },
-            { key: 'monthly', value: 'monthly', text: 'monthly' },
-            { key: 'yearly', value: 'yearly', text: 'yearly' },
-        ]
+
 
 
         if (e && e.personal === false) return <BusinessEventSegment>

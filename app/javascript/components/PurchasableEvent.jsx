@@ -55,41 +55,41 @@ function PurchasableEvent(props) {
 
 
 
-    const bookAppointment = () => {
-        setInfoModal(false)
-        setPurchased(true)
-        incrementProgress()
-        fetch(`${process.env.BASE_URL}/purchase`, {
-            method: "POST",
-            body: JSON.stringify({
-                event: event,
-                user: props.user
-            }),
-            headers: {
-                "X-CSRF-Token": props.csrfToken,
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        })
-            .then(res => res.json())
-            .then(res => {
-                setProgress(100)
-                clearInterval(int)
+    // const bookAppointment = () => {
+    //     setInfoModal(false)
+    //     setPurchased(true)
+    //     incrementProgress()
+    //     fetch(`${process.env.BASE_URL}/purchase`, {
+    //         method: "POST",
+    //         body: JSON.stringify({
+    //             event: event,
+    //             user: props.user
+    //         }),
+    //         headers: {
+    //             "X-CSRF-Token": props.csrfToken,
+    //             "Content-Type": "application/json",
+    //             Accept: "application/json",
+    //             "X-Requested-With": "XMLHttpRequest"
+    //         }
+    //     })
+    //         .then(res => res.json())
+    //         .then(res => {
+    //             setProgress(100)
+    //             clearInterval(int)
 
-                return delay(1000).then(() => {
-                    props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res })
-                    props.dispatch({ type: "SET_NOTIFICATIONS", value: [{ id: event.id, type: "notice", message: "Appointment Booked" }] })
+    //             return delay(1000).then(() => {
+    //                 props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res })
+    //                 props.dispatch({ type: "SET_NOTIFICATIONS", value: [{ id: event.id, type: "notice", message: "Appointment Booked" }] })
 
-                })
-            })
-        // .then((res) => props.dispatch({ type: "SET_EVENTS", value: res.events }))
-        // .then(() => setInfoModal(false))
-        // .then(() => setPurchased(true))
-        // .then(() => props.history.push("/myAccount"))
+    //             })
+    //         })
+    //     // .then((res) => props.dispatch({ type: "SET_EVENTS", value: res.events }))
+    //     // .then(() => setInfoModal(false))
+    //     // .then(() => setPurchased(true))
+    //     // .then(() => props.history.push("/myAccount"))
 
 
-    }
+    // }
 
     const delay = (t, v) => {
         return new Promise(function (resolve) {
@@ -106,33 +106,33 @@ function PurchasableEvent(props) {
         </>
     }
 
-    const cancelEvent = () => {
-        setLoading(true)
-        setPurchased(false)
-        let baseUrl = process.env.BASE_URL
+    // const cancelEvent = () => {
+    //     setLoading(true)
+    //     setPurchased(false)
+    //     let baseUrl = process.env.BASE_URL
 
-        let newTitle = "*Canceled " + event.title
-        let editedEvent = { ...event, title: newTitle }
+    //     let newTitle = "*Canceled " + event.title
+    //     let editedEvent = { ...event, title: newTitle }
 
-        if (!inGracePeriod) setIsCanceled(true)
+    //     if (!inGracePeriod) setIsCanceled(true)
 
-        fetch(`${baseUrl}/cancel`, {
-            method: "POST",
-            body: JSON.stringify({
-                inGracePeriod,
-                event: editedEvent
-            }),
-            headers: {
-                "X-CSRF-Token": props.csrfToken,
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        })
-            .then(response => response.json())
-            .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
-            .then(() => setLoading(false))
-    }
+    //     fetch(`${baseUrl}/cancel`, {
+    //         method: "POST",
+    //         body: JSON.stringify({
+    //             inGracePeriod,
+    //             event: editedEvent
+    //         }),
+    //         headers: {
+    //             "X-CSRF-Token": props.csrfToken,
+    //             "Content-Type": "application/json",
+    //             Accept: "application/json",
+    //             "X-Requested-With": "XMLHttpRequest"
+    //         }
+    //     })
+    //         .then(response => response.json())
+    //         .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
+    //         .then(() => setLoading(false))
+    // }
 
     const cancelationFee = () => {
         // let currentTime = new Date

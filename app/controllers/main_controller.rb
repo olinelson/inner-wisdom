@@ -233,10 +233,12 @@ class MainController < ApplicationController
     end
 
     def cancelEvent
+        
         event = params["event"]
         cal = nil
         inGracePeriod = params["inGracePeriod"]
 
+        
           if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
             cal = @appointmentsCal
             if inGracePeriod
@@ -282,7 +284,7 @@ class MainController < ApplicationController
         # NotificationMailer.admin_appointment_confirmation(user, jsonEvent).deliver_later
         
 
-        return editGoogleCalEvent(cal: cal, event: event, attendees: attendees)
+        return editGoogleCalEvent(cal: cal, event: event, attendees: attendees, inGracePeriod: inGracePeriod)
     end
 
 
@@ -329,10 +331,12 @@ class MainController < ApplicationController
         end
     end
 
-    def editGoogleCalEvent(cal:, event:, attendees: [])
+    def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true)
 
+
+        
         editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
-
+            
             e.title = event["title"]
             e.color_id = 2
             e.start_time = event["start_time"]
@@ -341,9 +345,14 @@ class MainController < ApplicationController
             e.location= event["location"]
             # e.notes= "one fine day in the middle of the night, two dead men got up to fight"
             e.attendees = attendees
-            e.extended_properties = {'private' => {'paid' => event["extended_properties"]["private"]["paid"], 'stripe_id' => event["extended_properties"]["private"]["stripe_id"]}}
+            e.extended_properties = {'private' => {
+                'paid' => event["extended_properties"]["private"]["paid"],
+                 'stripe_id' => event["extended_properties"]["private"]["stripe_id"],
+                 'cancelation' => inGracePeriod === false ? true : false,
+                }}
         end
 
+        
         return appStateJson()
         #  render json: {scrollToEvent: editedEvent, events: eventsInDateWindow(@appointmentsCal)} 
     end

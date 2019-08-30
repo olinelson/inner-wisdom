@@ -4,15 +4,20 @@ import { Label } from 'semantic-ui-react';
 import { connect } from "react-redux"
 
 function Event(props) {
-    const isCanceled = props.event.title.toLowerCase().includes("cancel")
+    // const isCanceled = props.event.title.toLowerCase().includes("cancel")
+    let isCanceled = false
 
+    if (props.event && props.event.extended_properties.private.cancelation === "true") isCanceled = true
+    console.log("is canceled", isCanceled)
     const CustomLabel = styled(Label)`
         height: 100%;
         width: 100%;
     `
 
     const colorPicker = () => {
+        if (isCanceled) return "red"
         let personal = false
+        if (!props.user) return "grey"
         if (props.event.calendar && props.event.calendar.id === props.user.google_calendar_email) personal = true
         if (personal) return "green"
 
@@ -22,7 +27,7 @@ function Event(props) {
         }
 
         if (!personal && isAnEmptySlot()) return "grey"
-        if (isCanceled) return "red"
+
         return "blue"
     }
 

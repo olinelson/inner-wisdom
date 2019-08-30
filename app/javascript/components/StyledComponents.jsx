@@ -169,3 +169,7 @@ export const CalendarContainer = styled.div`
 
   }
       `
+
+export const ModalContent = styled.div`
+        margin: 1.5rem
+      `

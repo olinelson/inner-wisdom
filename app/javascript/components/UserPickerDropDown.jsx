@@ -3,7 +3,6 @@ import { connect } from "react-redux"
 import { Dropdown } from "semantic-ui-react"
 
 function UserPickerDropDown(props) {
-    console.log("in user picker dropdown")
     const event = props.event
 
     const allUsersNotAttending = (event) => {
