@@ -174,7 +174,7 @@ class MainController < ApplicationController
     end
 
     def appStateJson()
-        byebug
+        
          render json: { appointments: eventsInDateWindow(@appointmentsCal), consults: eventsInDateWindow(@consultsCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
     end
 
@@ -287,7 +287,6 @@ class MainController < ApplicationController
 
 
     def updateEvent
-        byebug
         event = params["event"]
 
 
@@ -313,7 +312,7 @@ class MainController < ApplicationController
             }
         end
 
-        byebug
+        
 
         #  personal
         if event["calendar"]["id"] === current_user.google_calendar_email
@@ -352,7 +351,7 @@ class MainController < ApplicationController
 
 
     def deleteEvent
-        byebug
+        
          event = params["event"]
 
          if event["calendar"]["id"] === current_user.google_calendar_email
@@ -367,7 +366,7 @@ class MainController < ApplicationController
             cal = @consultsCal
         end
 
-        byebug
+        
 
        
         found = cal.find_event_by_id(event["id"])
@@ -431,7 +430,7 @@ class MainController < ApplicationController
     end
 
     def deleteAllEvents(cal)
-        cal.events.each { |e| byebug e.delete}
+        cal.events.each { |e|  e.delete}
     end
 
     def all 

@@ -1,87 +1,33 @@
-import React, { Component } from 'react'
-import { Container, Divider, Modal, Popup, Select, Button, Label, Icon, Segment, Grid, Header, Dropdown, Checkbox, Form } from 'semantic-ui-react'
-import Calendar from './Calendar';
+import React, { useState } from 'react'
 import { connect } from 'react-redux';
-import styled from "styled-components"
+
+// components / styles
+import { Divider, Modal, Popup, Button, Input, Label, Icon, Segment, Header, Dropdown, Checkbox, Form } from 'semantic-ui-react'
+import { BusinessEventSegment, CenteredFlexDiv, CalendarContainer } from "./StyledComponents"
+import { FullWidthCalendarContainer } from "./Appointments"
+import Event from "./Event"
+import UserPickerDropDown from './UserPickerDropDown';
+
+// packages
 import moment from "moment"
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
 import TimePicker from 'rc-time-picker';
-import Event from "./Event"
+import "rc-time-picker/assets/index.css"
 import { Calendar as BigCalendar, momentLocalizer, Views } from 'react-big-calendar'
 
-import { BusinessEventSegment, CenteredFlexDiv, CalendarContainer } from "./StyledComponents"
 
-import { FullWidthCalendarContainer } from "./Appointments"
-import UserPickerDropDown from './UserPickerDropDown';
 const localizer = momentLocalizer(moment)
-const AdminComponents = {
-    event: Event // used by each view (Month, Day, Week)
-}
-// let PurchasableComponents = {
-//     event: PurchasableEvent
-// }
-// let ReadOnlyComponents = {
-//     event: ReadOnlyEvent
 
-// }
+function Schedule(props) {
+    const [selectedEvent, setSelectedEvent] = useState(null)
+    const [selectedSlot, setSelectedSlot] = useState(null)
+    const [loading, setLoading] = useState(false)
 
-class Schedule extends Component {
-
-    constructor(props) {
-        super(props)
-        this.state = {
-            selectedEvent: null,
-            showCheckout: false,
-            dialogOpen: false,
-            creatingEvent: false,
-            newAppointment: null,
-            loading: false,
-        }
-    }
-
-    showPrettyStartAndEndTime = (selectedEvent) => {
-
-        return <>
-            <h4>{moment(selectedEvent.start_time).format('Do MMMM  YYYY')}</h4>
-            <p>{moment(selectedEvent.start_time).format('h:mm a')} to {moment(selectedEvent.end).format('h:mm a')}</p>
-        </>
-    }
-
-
-    showEventAttendees = (event, onDelete) => {
-        if (event && event.attendees) {
-            let users = event.attendees
-            return users.map(u => <Label style={{ margin: ".1rem" }} key={u.id}>
-                <Icon name='user' />
-                {u.first_name + " " + u.last_name}
-                <Icon name='delete' onClick={() => onDelete(u)} />
-            </Label>
-            )
-        }
-        return null
-    }
-
-
-    addAttendeeToSelectedEvent = (user) => {
-        let attendees = this.state.selectedEvent.attendees
-        if (attendees == null) this.setState({ selectedEvent: { ...this.state.selectedEvent, attendees: [user] } })
-        else this.setState({ selectedEvent: { ...this.state.selectedEvent, attendees: [...this.state.selectedEvent.attendees, user] } })
-    }
-
-    removeAttendeeFromSelectedEvent = (user) => {
-        let attendees = this.state.selectedEvent.attendees.filter(a => a.id !== user.id)
-        this.setState({ selectedEvent: { ...this.state.selectedEvent, attendees } })
-    }
-
-
-    // =====================================
-
-    createEventHandeler = (isAppointmentSlot, isConsultSlot) => {
-        // let placeholder = { ...this.state.selectedEvent, placeholder: true }
-        // this.props.dispatch({ type: "ADD_APPOINTMENT", value: placeholder })
-        this.setState({ loading: true })
-        let event = { ...this.state.selectedEvent }
+    // fetch handelers
+    const createEventHandeler = (isAppointmentSlot, isConsultSlot) => {
+        setLoading(true)
+        let event = { ...selectedSlot }
 
         fetch(`${process.env.BASE_URL}/create`, {
             method: "POST",
@@ -91,32 +37,93 @@ class Schedule extends Component {
                 consultSlot: isConsultSlot,
             }),
             headers: {
-                "X-CSRF-Token": this.props.csrfToken,
+                "X-CSRF-Token": props.csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
             .then(response => response.json())
-            .then(res => this.props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
-            .then(res => this.setState({ creatingEvent: false, loading: false }))
-
-
+            .then(res => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
+            .then(res => {
+                setSelectedSlot(null)
+                setLoading(false)
+            })
     }
 
-    eventClickHandeler = (event) => {
-
-        this.setState({ selectedEvent: event, dialogOpen: true })
+    const updateSelectedEventHandeler = () => {
+        setLoading(true)
+        fetch(`${process.env.BASE_URL}/update`, {
+            method: "POST",
+            body: JSON.stringify({
+                event: selectedEvent
+            }),
+            headers: {
+                "X-CSRF-Token": props.csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(response => response.json())
+            .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
+            .then(() => {
+                setSelectedEvent(null)
+                setLoading(false)
+            })
     }
 
-    selectSlotHandeler = (e) => {
-        if (this.props.user.admin) this.setState({ creatingEvent: true, selectedEvent: { ...e, title: "", location: "", start_time: e.start, end_time: e.end, personal: false } })
-
+    const deleteSelectedEventHandeler = () => {
+        setLoading(true)
+        fetch(`${process.env.BASE_URL}/delete`, {
+            method: "DELETE",
+            body: JSON.stringify({
+                event: selectedEvent
+            }),
+            headers: {
+                "X-CSRF-Token": props.csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(res => res.json())
+            .then((res) => {
+                props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res })
+                setLoading(false)
+                setSelectedEvent(null)
+            })
     }
 
-    changeDayHandeler = (dt) => {
-        let event = this.state.selectedEvent
+    // attendee helper methods
+    const addAttendeeToEvent = (user, event, setStateAction) => {
+        let attendees = event.attendees
+        if (attendees == null) setStateAction({ ...event, attendees: [user] })
+        else setStateAction({ ...event, attendees: [...event.attendees, user] })
+    }
 
+    const removeAttendeeFromEvent = (user, event, setStateAction) => {
+        let attendees = event.attendees.filter(a => a.email !== user.email)
+        setStateAction({ ...event, attendees })
+    }
+
+    const showEventAttendees = (event, onDelete, setStateAction) => {
+        if (event && event.attendees) {
+            console.log("has users", event)
+            let users = event.attendees
+            return users.map(u => <Label key={u.email} style={{ margin: ".1rem" }} key={u.id}>
+                <Icon name='user' />
+                {u.first_name ? u.first_name + " " + u.last_name : u.displayName}
+                <Icon name='delete' onClick={() => onDelete(u, event, setStateAction)} />
+            </Label>
+            )
+        }
+        return null
+    }
+
+
+    // time setting components
+    const changeDayHandeler = (dt, event, setStateAction) => {
         let dateTime = new Date(dt)
         let newMonth = dateTime.getMonth()
         let newDay = dateTime.getDate()
@@ -128,24 +135,15 @@ class Schedule extends Component {
         let end_time = new Date(event.end_time)
         end_time.setMonth(newMonth)
         end_time.setDate(newDay)
-
-        this.setState({ selectedEvent: { ...this.state.selectedEvent, start_time, end_time } })
+        setStateAction({ ...event, start_time, end_time })
     }
 
-    changeTitleHandeler = (e) => {
-        this.setState({ selectedEvent: { ...this.state.selectedEvent, title: e.target.value } })
-    }
-
-    eventTimeSetter = () => {
-        let event = this.state.selectedEvent
-
+    const eventTimeSetter = (event, setStateAction) => {
         let startTime = moment(event.start_time)
         let endTime = moment(event.end_time)
 
         let startTimeOptions = [startTime]
         let endTimeOptions = [endTime]
-
-
 
         for (let i = 0; i < 22; i++) {
             let addEndTime = moment(endTimeOptions[endTimeOptions.length - 1]).add(30, 'm')
@@ -154,47 +152,31 @@ class Schedule extends Component {
             let addStartTime = moment(startTimeOptions[startTimeOptions.length - 1]).add(30, 'm')
             let subStartTime = moment(startTimeOptions[0]).subtract(30, 'm')
 
-
             startTimeOptions = [subStartTime, ...startTimeOptions, addStartTime]
             endTimeOptions = [subEndTime, ...endTimeOptions, addEndTime]
         }
 
-        let formattedendEndTimeOptions = endTimeOptions.map(op => {
-            return {
-                key: op._d,
-                text: moment(op._d).format("h:mm a"),
-                value: op._d.toString(),
-            }
-        })
-
-        let formattedendStartTimeOptions = startTimeOptions.map(op => {
-            return {
-                key: op._d,
-                text: moment(op._d).format("h:mm a"),
-                value: op._d.toString(),
-            }
-        })
-
         const now = moment().hour(0).minute(0)
-
 
         return <>
 
             <Popup
                 on="click"
-                content={<DayPicker
-                    onDayClick={this.changeDayHandeler}
-                    selectedDays={new Date(event.start_time)}
-                />}
-                trigger={<h4 style={{ textAlign: "center", cursor: "pointer" }}>{moment(event.start_time).format('Do MMMM  YYYY')}<Icon name="caret down" /></h4>} />
-
+                content={
+                    <DayPicker
+                        onDayClick={(dt) => changeDayHandeler(dt, event, setStateAction)}
+                        selectedDays={new Date(event.start_time)}
+                    />
+                }
+                trigger={
+                    <h4 style={{ textAlign: "center", cursor: "pointer" }}>{moment(event.start_time).format('Do MMMM  YYYY')}<Icon name="caret down" /></h4>
+                }
+            />
             <span>
                 <TimePicker
                     showSecond={false}
-
                     value={startTime}
-                    // className=" ui menu transition"
-                    onChange={(e) => this.setState({ selectedEvent: { ...this.state.selectedEvent, start_time: e._d } })}
+                    onChange={(e) => setStateAction({ ...event, start_time: e._d })}
                     format='h:mm a'
                     use12Hours
                     inputReadOnly
@@ -202,23 +184,23 @@ class Schedule extends Component {
                 <TimePicker
                     showSecond={false}
                     value={endTime}
-                    // className="ui menu transition"
-                    onChange={(e) => this.setState({ selectedEvent: { ...this.state.selectedEvent, end_time: e._d } })}
+                    onChange={(e) => setStateAction({ ...event, end_time: e._d })}
                     format='h:mm a'
                     use12Hours
                     inputReadOnly
                 />
             </span>
-
         </>
     }
 
+    // creating event helpers
+    const selectSlotHandeler = (e) => {
+        if (props.user.admin) setSelectedSlot({ ...e, title: "", location: "", start_time: e.start, end_time: e.end, personal: false })
+    }
 
-
-    personalOrBusinessToggle = () => {
-        let e = this.state.selectedEvent
-        if (!e || !this.props.user.google_calendar_email || this.props.user.google_calendar_email.length < 1) return null
-
+    const personalOrBusinessToggle = () => {
+        let e = selectedSlot
+        if (!e || !props.user.google_calendar_email || props.user.google_calendar_email.length < 1) return null
 
         let label = null
         if (e.personal) {
@@ -232,92 +214,73 @@ class Schedule extends Component {
         return <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
 
             {label}
-            <Checkbox onChange={() => this.setState({ selectedEvent: { ...this.state.selectedEvent, personal: !this.state.selectedEvent.personal } })} toggle />
+            <Checkbox onChange={() => setSelectedSlot({ ...selectedSlot, personal: !selectedSlot.personal })} toggle />
         </div>
-
     }
 
-
-    creatingPersonalEventOptions = (e) => {
-
+    // modal options
+    const creatingPersonalEventOptions = (e) => {
         if (e && e.personal) return <Segment textAlign="center" placeholder>
-            {this.eventTimeSetter(e)}
+            {eventTimeSetter(selectedSlot, setSelectedSlot)}
             <Divider hidden />
             <Form>
                 <Form.Field>
                     <label>Title</label>
-                    <input
-                        placeholder='New Event Name' value={this.state.selectedEvent.title}
-                        onChange={(e) => this.setState({ selectedEvent: { ...this.state.selectedEvent, title: e.target.value } })}
+                    <Input
+                        placeholder='New Event Name' value={selectedSlot.title || ""}
+                        onChange={(e) => setSelectedSlot({ ...selectedSlot, title: e.target.value })}
                     />
                 </Form.Field>
                 <Form.Field>
                     <label>Location</label>
-                    <input
-                        value={this.state.selectedEvent.location}
-                        onChange={(e) => this.setState({ selectedEvent: { ...this.state.selectedEvent, location: e.target.value } })}
+                    <Input
+                        value={selectedSlot.location || ""}
+                        onChange={(e) => setSelectedSlot({ ...selectedSlot, location: e.target.value })}
                         placeholder='42 Wallaby Way Sydney'
                     />
                 </Form.Field>
-
-
-                <Button loading={this.state.loading} color="green" onClick={() => this.createEventHandeler(false)} type="submit">Create</Button>
+                <Button loading={loading} color="green" onClick={() => createEventHandeler(false)} type="submit">Create</Button>
             </Form>
         </Segment>
     }
 
-
-
-    creatingBusinessEventOptions = (e) => {
+    const creatingBusinessEventOptions = (e) => {
         const repeatOptions = [
             { key: 'norepeat', value: null, text: 'no repeat' },
             { key: 'daily', value: 'daily', text: 'daily' },
             { key: 'weekly', value: 'weekly', text: 'weekly' },
             { key: 'monthly', value: 'monthly', text: 'monthly' },
             { key: 'yearly', value: 'yearly', text: 'yearly' },
-
         ]
 
 
         if (e && e.personal === false) return <BusinessEventSegment>
-
-
-            <Dropdown onChange={(e, d) => this.setState({ selectedEvent: { ...this.state.selectedEvent, recurrence: { freq: d.value } } })} defaultValue={null} placeholder='No Repeat' options={repeatOptions} />
-            {/* <div style={{ gridColumn: "1/3", justifyContent: "center" }}> */}
+            <Dropdown onChange={(e, d) => setSelectedSlot({ ...selectedSlot, recurrence: { freq: d.value } })} defaultValue={null} placeholder='No Repeat' options={repeatOptions} />
             <div style={{ gridArea: "timePicker" }}>
-                {this.eventTimeSetter(e)}
+                {eventTimeSetter(selectedSlot, setSelectedSlot)}
             </div>
-
-            {/* </div> */}
-
-
             <CenteredFlexDiv style={{ gridArea: "newAppointment" }} >
                 <Header icon>
                     <Icon name='bookmark' />
                     Book New Appointment
                              </Header>
-                <Popup content='This will create a confirmed appointment slot that will only be visible to admin and its attendees.' trigger={<Button loading={this.state.loading} primary onClick={() => this.createEventHandeler(false)}>Create</Button>} />
+                <Popup content='This will create a confirmed appointment slot that will only be visible to admin and its attendees.' trigger={<Button loading={loading} primary onClick={() => createEventHandeler(false)}>Create</Button>} />
                 <Divider hidden />
-                {/* {this.userPickerDropDown(e, this.addAttendeeToSelectedEvent)} */}
-                {/* <div height="2rem"> */}
+
                 <div>
-                    {this.showEventAttendees(e, this.removeAttendeeFromSelectedEvent)}
+                    {showEventAttendees(e, removeAttendeeFromEvent, setSelectedSlot)}
                 </div>
 
-
-                {/* </div> */}
-
                 <Divider hidden />
-                <UserPickerDropDown event={e} addAttendeeHandeler={this.addAttendeeToSelectedEvent} />
+                <UserPickerDropDown event={e} addAttendeeHandeler={(u) => addAttendeeToEvent(u, selectedSlot, setSelectedSlot)} />
             </CenteredFlexDiv>
-
 
             <CenteredFlexDiv style={{ gridArea: "newAppSlot" }}>
                 <Header icon>
                     <Icon name='time' />
                     New Appointment Slot
                     </Header>
-                <Popup content='This will create a "bookable" appointment slot visable to all clients.' trigger={<Button loading={this.state.loading} color="grey" onClick={() => this.createEventHandeler(true)} >Create</Button>} />
+                <Popup content='This will create a "bookable" appointment slot visable to all clients.' trigger={<Button loading={loading} color="grey" onClick={() => createEventHandeler(true)} >Create</Button>} />
 
 
             </CenteredFlexDiv>
@@ -326,109 +289,91 @@ class Schedule extends Component {
                     <Icon name='time' />
                     New Consultation Slot
                     </Header>
-                <Popup content='This will create a "bookable" consultation slot visable to all clients.' trigger={<Button loading={this.state.loading} color="yellow" onClick={() => this.createEventHandeler(false, true)} >Create</Button>} />
-
-
+                <Popup content='This will create a "bookable" consultation slot visable to all clients.' trigger={<Button loading={loading} color="yellow" onClick={() => createEventHandeler(false, true)} >Create</Button>} />
             </CenteredFlexDiv>
 
         </BusinessEventSegment>
     }
 
-
-    creatingEventModal = () => {
-
-        let e = this.state.selectedEvent
+    // modals
+    const editingEventModal = () => {
+        let e = selectedEvent
+        if (!e) return null
         return <Modal
-            open={this.state.creatingEvent}
-            onClose={() => this.setState({ creatingEvent: false })}
+            open={selectedEvent ? true : false}
+            onClose={() => setSelectedEvent(null)}
+        >
+            <Modal.Header><Input value={e.title} onChange={(e) => setSelectedEvent({ ...selectedEvent, title: e.target.value })} /></Modal.Header>
+            <Modal.Content >
+                {props.user.google_calendar_email && props.user.google_calendar_email === e.calendar.id ? null :
+                    <p>Business Event Options</p>
+                }
+                <Dropdown onChange={(e, d) => setSelectedEvent({ ...selectedEvent, recurrence: { freq: d.value } })} defaultValue={null} placeholder='No Repeat' options={repeatOptions} />
+                {eventTimeSetter(selectedEvent, setSelectedEvent)}
+                <div>
+                    {showEventAttendees(e, removeAttendeeFromEvent, setSelectedEvent)}
+                </div>
+                <UserPickerDropDown event={e} addAttendeeHandeler={(u) => addAttendeeToEvent(u, selectedEvent, setSelectedEvent)} />
+            </Modal.Content>
+            <Modal.Actions>
+                <Button loading={loading} onClick={() => updateSelectedEventHandeler()}>Save</Button>
+                <Button loading={loading} onClick={() => deleteSelectedEventHandeler()}>Delete</Button>
+            </Modal.Actions>
+        </Modal >
+    }
+
+    const creatingEventModal = () => {
+        let e = selectedSlot
+        return <Modal
+            open={selectedSlot ? true : false}
+            onClose={() => setSelectedSlot(null)}
         >
             <Modal.Header>Create Event</Modal.Header>
             <Modal.Content >
-                {this.personalOrBusinessToggle(e)}
+                {personalOrBusinessToggle(e)}
 
-                {this.creatingBusinessEventOptions(e)}
+                {creatingBusinessEventOptions(e)}
 
-                {this.creatingPersonalEventOptions(e)}
+                {creatingPersonalEventOptions(e)}
 
             </Modal.Content>
 
         </Modal >
     }
 
-    deleteEventHandeler = () => {
-        // setLoading(true)
-        // console.log("Deleting", event.title)
+    return <>
 
-        fetch(`${process.env.BASE_URL}/delete`, {
-            method: "DELETE",
-            body: JSON.stringify({
-                event: this.state.selectedEvent
-            }),
-            headers: {
-                "X-CSRF-Token": this.props.csrfToken,
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        })
-            .then(res => res.json())
-            .then((res) => {
-                console.log(res)
-                this.props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res })
-            })
+        <FullWidthCalendarContainer fluid >
+            <div style={{ width: "100%", maxWidth: "95vw", justifySelf: "center" }}>
+                <h1>Schedule</h1>
+            </div>
 
-    }
-
-    render() {
-        console.log("this is all events in schedule", this.props.allEvents)
-        return <>
-
-            <FullWidthCalendarContainer fluid >
-                <div style={{ width: "100%", maxWidth: "95vw", justifySelf: "center" }}>
-                    <h1>Schedule</h1>
-                    {/* <Label circular color={"blue"} content="Business" /> */}
-                    {/* <Label circular color={"green"} content="Personal" /> */}
-                    {/* <Label circular color={"grey"} content="Bookable" /> */}
-                </div>
-
-
-                <Divider style={{ gridArea: "divider" }} />
-                <CalendarContainer fullWidth>
-                    <BigCalendar
-                        components={AdminComponents}
-                        startAccessor={event => new Date(event.start_time)}
-                        endAccessor={event => new Date(event.end_time)}
-                        selectable
-                        localizer={localizer}
-                        // events={props.events}
-                        // events={this.props.allEvents}
-                        onSelectEvent={(e) => this.setState({ selectedEvent: e })}
-                        events={this.props.appointments}
-                        // onView={changeDefaultViewHandeler}
-                        defaultView={this.props.defaultCalendarView}
-                        // scrollToTime={props.calendarScrollToTime}
-                        defaultDate={new Date}
-                        // scrollToTime={new Date}
-                        popup
-                        step={15}
-                        timeslots={1}
-                        onSelectSlot={this.selectSlotHandeler}
-                    // min={new Date(2050, 1, 1, 9)}
-                    // max={new Date(2050, 1, 1, 22)}
-                    />
-                </CalendarContainer>
-                {this.creatingEventModal()}
-                <Modal
-                    onClose={() => this.setState({ selectedEvent: null })}
-                    open={this.state.selectedEvent ? true : false}
-                    header={this.state.selectedEvent ? this.state.selectedEvent.title : null}
-                    actions={[{ key: "delete", content: "delete", onClick: () => this.deleteEventHandeler() }]}
+            <Divider style={{ gridArea: "divider" }} />
+            <CalendarContainer fullWidth>
+                <BigCalendar
+                    components={{ event: Event }}
+                    startAccessor={event => new Date(event.start_time)}
+                    endAccessor={event => new Date(event.end_time)}
+                    selectable
+                    localizer={localizer}
+                    onSelectEvent={(e) => setSelectedEvent(e)}
+                    events={props.allEvents}
+                    defaultView={props.defaultCalendarView}
+                    defaultDate={new Date}
+                    popup
+                    step={15}
+                    timeslots={1}
+                    onSelectSlot={(e) => selectSlotHandeler(e)}
                 />
-            </FullWidthCalendarContainer>
-        </>
-    }
+            </CalendarContainer>
+        </FullWidthCalendarContainer>
 
+        {creatingEventModal()}
+        {editingEventModal()}
+
+    </>
 }
+
 
 function flatten(arr) {
     return [].concat(...arr)

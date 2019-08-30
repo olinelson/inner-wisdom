@@ -3,7 +3,7 @@ import { connect } from "react-redux"
 import { Dropdown } from "semantic-ui-react"
 
 function UserPickerDropDown(props) {
-
+    console.log("in user picker dropdown")
     const event = props.event
 
     const allUsersNotAttending = (event) => {
@@ -15,6 +15,7 @@ function UserPickerDropDown(props) {
         const isAnAttendee = (user) => {
             for (let u of event.attendees) {
                 if (u.id === user.id) return false
+                if (u.email === user.email) return false
             }
             return true
         }
