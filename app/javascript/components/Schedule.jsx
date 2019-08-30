@@ -35,8 +35,11 @@ function Schedule(props) {
 
     // fetch handelers
     const createEventHandeler = (isAppointmentSlot, isConsultSlot) => {
-        setLoading(true)
+        // setLoading(true)
+        setSelectedSlot(null)
         let event = { ...selectedSlot }
+        props.dispatch({ type: "ADD_APPOINTMENT", value: { ...event, placeholder: true } })
+
 
         fetch(`${process.env.BASE_URL}/create`, {
             method: "POST",
@@ -55,8 +58,8 @@ function Schedule(props) {
             .then(response => response.json())
             .then(res => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
             .then(res => {
-                setSelectedSlot(null)
-                setLoading(false)
+                // setSelectedSlot(null)
+                // setLoading(false)
             })
     }
 

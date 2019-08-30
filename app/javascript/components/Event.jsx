@@ -1,18 +1,20 @@
 import React from 'react'
 import styled from "styled-components"
-import { Label } from 'semantic-ui-react';
+import { Label, Placeholder, Dimmer, Segment, Loader } from 'semantic-ui-react';
 import { connect } from "react-redux"
 
 function Event(props) {
     // const isCanceled = props.event.title.toLowerCase().includes("cancel")
     let isCanceled = false
 
-    if (props.event && props.event.extended_properties.private.cancelation === "true") isCanceled = true
-    console.log("is canceled", isCanceled)
     const CustomLabel = styled(Label)`
-        height: 100%;
-        width: 100%;
-    `
+            height: 100%;
+            width: 100%;
+            opacity: ${() => props.event.placeholder ? "0.5" : "1"};
+        `
+
+    if (props.event && props.event.extended_properties && props.event.extended_properties.private.cancelation === "true") isCanceled = true
+    console.log("is canceled", isCanceled)
 
     const colorPicker = () => {
         if (isCanceled) return "red"
@@ -32,6 +34,7 @@ function Event(props) {
     }
 
     return <CustomLabel color={colorPicker()}>
+        <Loader inverted size="tiny" active={props.event.placeholder ? true : false} inline></Loader>
         {props.event.title}
     </CustomLabel>
 }
