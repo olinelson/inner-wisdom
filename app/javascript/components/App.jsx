@@ -61,7 +61,6 @@ const initialState = {
 function reducer(state = initialState, action) {
     switch (action.type) {
         case "SET_LOADING_EVENT":
-            console.log("setting loading event", action.value)
             return { ...state, loadingEvent: action.value }
         case "SET_PERSONAL_EVENTS":
             return { ...state, personalEvents: action.value }

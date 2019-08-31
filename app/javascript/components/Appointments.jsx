@@ -118,7 +118,6 @@ function Appointments(props) {
             }
         })
             .then(response => response.json())
-            .then((e) => { console.log(e); return e })
             .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
             .then(() => {
                 setConfirmation({ type: "cancelation", event: { ...selectedEvent } })
