@@ -60,8 +60,9 @@ function Appointments(props) {
     const [selectedEvent, setSelectedEvent] = useState(null)
     const [eventModalOpen, setEventModalOpen] = useState(false)
     const [booking, setBooking] = useState(false)
-    const [creating, setCreating] = useState(false)
+    // const [creating, setCreating] = useState(false)
     const [canceling, setCanceling] = useState(false)
+    const [confirmation, setConfirmation] = useState(null)
 
     // fetch handelers
     const bookAppointment = () => {
@@ -84,10 +85,10 @@ function Appointments(props) {
                 props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res })
                 props.dispatch({ type: "SET_NOTIFICATIONS", value: [{ id: selectedEvent.id, type: "notice", message: "Appointment Booked" }] })
                 setBooking(false)
-                setSelectedEvent(null)
                 setEventModalOpen(false)
-
+                setConfirmation({ type: "booking", event: { ...selectedEvent } })
             })
+            .then(() => setSelectedEvent(null))
 
 
     }
@@ -120,10 +121,11 @@ function Appointments(props) {
             .then((e) => { console.log(e); return e })
             .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
             .then(() => {
-                setSelectedEvent(null)
+                setConfirmation({ type: "cancelation", event: { ...selectedEvent } })
                 setEventModalOpen(false)
                 setCanceling(false)
             })
+            .then(() => setSelectedEvent(null))
     }
 
     const showPrettyStartAndEndTime = (selectedEvent) => {
@@ -196,6 +198,39 @@ function Appointments(props) {
         />
     }
 
+    const showConfirmationModal = () => {
+        if (confirmation) {
+            if (confirmation.type === "booking") return <Modal
+                defaultOpen
+                onClose={() => setConfirmation(null)}
+                header="Appointment Confirmed"
+                content={<ModalContent>
+                    <p>This is confirmation that your booking has been confirmed. Here are the details. You will receive an email confirmation.</p>
+                    {showPrettyStartAndEndTime(confirmation.event)}
+                    <p>{confirmation.event.location}</p>
+                </ModalContent>}
+                actions={["Close"]}
+            />
+
+            if (confirmation.type === "cancelation") return <Modal
+                defaultOpen
+                onClose={() => setConfirmation(null)}
+                header="Appointment Canceled"
+                content={<ModalContent>
+                    <p>This is confirmation that your appointment has been canceled. Here are the details. You will receive an email confirmation.</p>
+                    {showPrettyStartAndEndTime(confirmation.event)}
+                    <p>{confirmation.event.location}</p>
+                </ModalContent>}
+                actions={["Close"]}
+            />
+
+
+        } else return null
+
+
+
+    }
+
     const selectEventHandeler = (event) => {
         setSelectedEvent(event)
         setEventModalOpen(true)
@@ -227,6 +262,7 @@ function Appointments(props) {
 
         </FullWidthCalendarContainer>
         {showSelectedEventModal()}
+        {showConfirmationModal()}
     </>
 
 }
