@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from "styled-components"
 import { Label, Placeholder, Dimmer, Segment, Loader } from 'semantic-ui-react';
 import { connect } from "react-redux"
 
 function Event(props) {
-    // const isCanceled = props.event.title.toLowerCase().includes("cancel")
+
     let isCanceled = false
 
     const CustomLabel = styled(Label)`
@@ -14,7 +14,6 @@ function Event(props) {
         `
 
     if (props.event && props.event.extended_properties && props.event.extended_properties.private.cancelation === "true") isCanceled = true
-    console.log("is canceled", isCanceled)
 
     const colorPicker = () => {
         if (isCanceled) return "red"
@@ -33,8 +32,13 @@ function Event(props) {
         return "blue"
     }
 
+    if (props.loadingEvent && (props.loadingEvent.id === props.event.id)) return <CustomLabel color={colorPicker()}>
+        <Loader inverted size="tiny" active={true} inline></Loader>
+        {props.loadingEvent.title}
+    </CustomLabel>
+
     return <CustomLabel color={colorPicker()}>
-        <Loader inverted size="tiny" active={props.event.placeholder ? true : false} inline></Loader>
+        <Loader inverted size="tiny" active={props.event.placeholder} inline></Loader>
         {props.event.title}
     </CustomLabel>
 }
@@ -42,6 +46,7 @@ function Event(props) {
 const mapStateToProps = (state, props) => ({
     user: state.user,
     users: state.users,
+    loadingEvent: state.loadingEvent
 })
 
 

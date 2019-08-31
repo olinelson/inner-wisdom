@@ -50,6 +50,7 @@ const initialState = {
     defaultCalendarView: Views.WEEK,
     calendarScrollToTime: new Date,
     calendarDisplayDate: new Date,
+    loadingEvent: null
 }
 
 
@@ -59,14 +60,15 @@ const initialState = {
 
 function reducer(state = initialState, action) {
     switch (action.type) {
-        // case "SET_EVENTS":
-        //     return { ...state, events: action.value }
+        case "SET_LOADING_EVENT":
+            console.log("setting loading event", action.value)
+            return { ...state, loadingEvent: action.value }
         case "SET_PERSONAL_EVENTS":
             return { ...state, personalEvents: action.value }
         case "ADD_APPOINTMENT":
             return { ...state, appointments: [...state.appointments, action.value] }
         case "SET_PERSONAL_AND_BUSINESS_EVENTS":
-            return { ...state, personalEvents: action.value.personalEvents, appointments: action.value.appointments, consults: action.value.consults }
+            return { ...state, personalEvents: action.value.personalEvents, appointments: action.value.appointments, consults: action.value.consults, loadingEvent: null }
         case "SET_USER":
             return { ...state, user: action.value }
         case "SET_USERS":

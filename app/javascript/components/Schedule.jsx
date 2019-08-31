@@ -35,7 +35,6 @@ function Schedule(props) {
 
     // fetch handelers
     const createEventHandeler = (isAppointmentSlot, isConsultSlot) => {
-        // setLoading(true)
         setSelectedSlot(null)
         let event = { ...selectedSlot }
         props.dispatch({ type: "ADD_APPOINTMENT", value: { ...event, placeholder: true } })
@@ -57,14 +56,15 @@ function Schedule(props) {
         })
             .then(response => response.json())
             .then(res => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
-            .then(res => {
-                // setSelectedSlot(null)
-                // setLoading(false)
-            })
     }
 
     const updateSelectedEventHandeler = () => {
-        setLoading(true)
+        // setLoading(true)
+
+        let event = { ...selectedEvent }
+
+        props.dispatch({ type: "SET_LOADING_EVENT", value: { ...event } })
+        setSelectedEvent(null)
         fetch(`${process.env.BASE_URL}/update`, {
             method: "POST",
             body: JSON.stringify({
@@ -79,14 +79,11 @@ function Schedule(props) {
         })
             .then(response => response.json())
             .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
-            .then(() => {
-                setSelectedEvent(null)
-                setLoading(false)
-            })
+
     }
 
     const deleteSelectedEventHandeler = () => {
-        setLoading(true)
+        props.dispatch({ type: "SET_LOADING_EVENT", value: { ...selectedEvent } })
         fetch(`${process.env.BASE_URL}/delete`, {
             method: "DELETE",
             body: JSON.stringify({
@@ -102,8 +99,6 @@ function Schedule(props) {
             .then(res => res.json())
             .then((res) => {
                 props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res })
-                setLoading(false)
-                setSelectedEvent(null)
             })
     }
 
