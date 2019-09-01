@@ -86,7 +86,7 @@ function Appointments(props) {
                 props.dispatch({ type: "SET_NOTIFICATIONS", value: [{ id: selectedEvent.id, type: "notice", message: "Appointment Booked" }] })
                 setBooking(false)
                 setEventModalOpen(false)
-                setConfirmation({ type: "booking", event: { ...selectedEvent } })
+                setConfirmation({ type: "booking", event: res.bookedEvent })
             })
             .then(() => setSelectedEvent(null))
 
@@ -184,7 +184,9 @@ function Appointments(props) {
         if (props.user && isUserAnAttendeeOfEvent(selectedEvent, props.user)) return <Modal
             open={eventModalOpen}
             header={selectedEvent.title}
-            content={<ModalContent>{showPrettyStartAndEndTime(selectedEvent)}</ModalContent>}
+            content={<ModalContent>{showPrettyStartAndEndTime(selectedEvent)}
+                <p>{selectedEvent.location}</p>
+            </ModalContent>}
             actions={[maybeShowCancelButtons(selectedEvent), { key: "Close", content: "Close", onClick: () => setEventModalOpen(false) }]}
         />
 
@@ -219,6 +221,7 @@ function Appointments(props) {
                 content={<ModalContent>
                     <p>This is confirmation that your booking has been confirmed. Here are the details. You will receive an email confirmation.</p>
                     {showPrettyStartAndEndTime(confirmation.event)}
+                    {console.log(confirmation)}
                     <p>{confirmation.event.location}</p>
                 </ModalContent>}
                 actions={["Close"]}

@@ -147,7 +147,7 @@ class MainController < ApplicationController
             return createGoogleEvent(cal: @appointmentsCal,newEvent: newEvent, title: "Appointment Slot", recurrence:  newEvent["recurrence"])
         end
         if params["consultSlot"]
-            return createGoogleEvent(cal: @consultsCal,newEvent: newEvent, title: "Phone Consult Slot", recurrence:  newEvent["recurrence"])
+            return createGoogleEvent(cal: @consultsCal,newEvent: newEvent, title: "Consult Slot", recurrence:  newEvent["recurrence"])
         end
         # if booked appointment
         return createGoogleEvent(cal: @appointmentsCal, newEvent: newEvent, title: title, attendees: attendees, recurrence:  newEvent["recurrence"])
@@ -176,9 +176,9 @@ class MainController < ApplicationController
         return appStateJson()
     end
 
-    def appStateJson()
+    def appStateJson(bookedEvent: nil)
         
-         render json: { appointments: eventsInDateWindow(@appointmentsCal), consults: eventsInDateWindow(@consultsCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
+         render json: {bookedEvent: bookedEvent, appointments: eventsInDateWindow(@appointmentsCal), consults: eventsInDateWindow(@consultsCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
     end
 
    
@@ -205,7 +205,7 @@ class MainController < ApplicationController
             editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
             e.title = newTitle
             e.color_id = 2
-            e.location= skype ? "N/A" : "609 W 135 St New York, New York"
+            e.location= skype ? "Skype Appointment" : "609 W 135 St New York, New York"
                   
             e.attendees= [
             {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
@@ -240,7 +240,7 @@ class MainController < ApplicationController
              NotificationMailer.admin_consult_confirmation(user, jsonEvent).deliver_later
         
         end
-        return appStateJson()
+        return appStateJson(bookedEvent: editedEvent)
 
     end
 
@@ -260,7 +260,7 @@ class MainController < ApplicationController
         if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
             cal = @consultsCal
             if inGracePeriod
-                event["title"] =  "Phone Consult Slot"
+                event["title"] =  "Consult Slot"
             end
         end
 

@@ -116,7 +116,7 @@ function InvoiceItem(props) {
                             <Table.Cell>
                                 <Input labelPosition='right' type='text' placeholder='80'>
                                     <Label basic>$</Label>
-                                    <input onChange={(e) => setI({ ...i, amount: e.target.value * 100 })} value={parseInt(i.amount) / 100} />
+                                    <input type="number" onChange={(e) => setI({ ...i, amount: e.target.value * 100 })} value={parseInt(i.amount) / 100 === 0 ? "" : parseInt(i.amount) / 100} />
                                     <Label>.00</Label>
                                 </Input>
                             </Table.Cell>

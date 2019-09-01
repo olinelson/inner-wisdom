@@ -32,14 +32,26 @@ function Event(props) {
         return "blue"
     }
 
+    const iconPicker = () => {
+        if (props.event.calendar) {
+            if (props.event.calendar.id === process.env.CONSULTS_CALENDAR_ID) return <Icon name="phone" />
+        }
+        if (props.event.extended_properties) {
+            if (props.event.extended_properties.private.skype === "true") return <Icon name="skype" />
+
+        }
+
+        return null
+    }
+
     if (props.loadingEvent && (props.loadingEvent.id === props.event.id)) return <CustomLabel color={colorPicker()}>
         <Loader inverted size="tiny" active={true} inline></Loader>
         {props.loadingEvent.title}
     </CustomLabel>
 
     return <CustomLabel color={colorPicker()}>
-        {props.event.extended_properties.private && props.event.extended_properties.private.skype === "true" ? <Icon name="skype" /> : null}
         <Loader inverted size="tiny" active={props.event.placeholder} inline></Loader>
+        {iconPicker()}
         {props.event.title}
     </CustomLabel>
 }

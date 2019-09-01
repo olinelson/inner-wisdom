@@ -302,11 +302,13 @@ function Schedule(props) {
                 <ModalContent>
                     {eventTimeSetter(selectedEvent, setSelectedEvent)}
                     <Divider hidden />
+                    <Input iconPosition="left" placeholder="42 Wallaby Way, Sydney, Australia" icon="building" value={e.location || ""} onChange={(e) => setSelectedEvent({ ...selectedEvent, location: e.target.value })} />
+                    <Divider hidden />
                     <div>
                         {showEventAttendees(e, removeAttendeeFromEvent, setSelectedEvent)}
                     </div>
-                    {console.log(e)}
-                    <Input iconPosition="left" placeholder="42 Wallaby Way, Sydney, Australia" icon="building" value={e.location || ""} onChange={(e) => setSelectedEvent({ ...selectedEvent, location: e.target.value })} />
+
+
 
                     {e.calendar.id === props.user.google_calendar_email ? null :
                         <>
