@@ -66,9 +66,10 @@ class MainController < ApplicationController
         now = DateTime.new(2018,1,1)
         twoYearsAgo = now << 24
         twoYearsAhead = now >> 24
-        cal.find_events_in_range(twoYearsAgo,twoYearsAhead, options = {max_results: 2500})
+        cal.find_events_in_range(twoYearsAgo,twoYearsAhead, options = {max_results: 2500, expand_recurring_events: true})
+       
     end
-
+# all.length.select{ |e| e.raw["recurringEventId"] === "4vcujasnbbhhla5i6o1b4uiin4"}
     def home
         
         user = nil
@@ -121,7 +122,7 @@ class MainController < ApplicationController
     def createEvent
         newEvent = params["event"]
         title= ""
-
+        
 
         if newEvent["attendees"]
              attendees = newEvent["attendees"].map do |a|
@@ -147,8 +148,8 @@ class MainController < ApplicationController
         if params["consultSlot"]
             return createGoogleEvent(cal: @consultsCal,newEvent: newEvent, title: "Phone Consult Slot", recurrence:  newEvent["recurrence"])
         end
-
-        return createGoogleEvent(cal: @appointmentsCal, newEvent: newEvent, title: title, attendees: attendees )
+        # if booked appointment
+        return createGoogleEvent(cal: @appointmentsCal, newEvent: newEvent, title: title, attendees: attendees, recurrence:  newEvent["recurrence"])
     end
 
 
@@ -161,9 +162,10 @@ class MainController < ApplicationController
             e.reminders =  { "useDefault": false }
             e.attendees= attendees
             # e.recurrence = recurrence
-            if recurrence
-                e.recurrence = {freq: recurrence["freq"]}
-            end
+            # if recurrence
+            e.recurrence = recurrence ? {freq: recurrence["freq"], count: 50} : nil
+
+            # end
             
             # e.recurrence = {freq: "daily"}
             e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => ""}}
@@ -233,7 +235,6 @@ class MainController < ApplicationController
     end
 
     def cancelEvent
-        
         event = params["event"]
         cal = nil
         inGracePeriod = params["inGracePeriod"]
@@ -318,20 +319,20 @@ class MainController < ApplicationController
 
         #  personal
         if event["calendar"]["id"] === current_user.google_calendar_email
-                return editGoogleCalEvent(cal: @personalCal, event: event)
+                return editGoogleCalEvent(cal: @personalCal, event: event, recurrence:  event["recurrence"])
         end
 
         # business
         if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
-                return editGoogleCalEvent(cal: @appointmentsCal, event: event, attendees: attendees)
+                return editGoogleCalEvent(cal: @appointmentsCal, event: event, attendees: attendees, recurrence:  event["recurrence"])
         end
 
         if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
-                return editGoogleCalEvent(cal: @consultsCal, event: event, attendees: attendees)
+                return editGoogleCalEvent(cal: @consultsCal, event: event, attendees: attendees, recurrence:  event["recurrence"])
         end
     end
 
-    def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true)
+    def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true, recurrence: nil)
 
 
         
@@ -341,29 +342,38 @@ class MainController < ApplicationController
             e.color_id = 2
             e.start_time = event["start_time"]
             e.end_time = event["end_time"]
-            # e.end_time = Time.now + (60 * 60 * 2) # seconds * min * hours
             e.location= event["location"]
-            # e.notes= "one fine day in the middle of the night, two dead men got up to fight"
             e.attendees = attendees
-            e.extended_properties = {'private' => {
+            e.recurrence = recurrence ? {freq: recurrence["freq"], count: 50} : nil
+
+            begin
+             e.extended_properties = {'private' => {
                 'paid' => event["extended_properties"]["private"]["paid"],
                  'stripe_id' => event["extended_properties"]["private"]["stripe_id"],
                  'cancelation' => inGracePeriod === false ? true : false,
                 }}
+            rescue
+                e.extended_properties = {'private' => {
+                'paid' => false,
+                 'stripe_id' => "",
+                 'cancelation' => inGracePeriod === false ? true : false,
+                }}
+            end
         end
 
         
         return appStateJson()
-        #  render json: {scrollToEvent: editedEvent, events: eventsInDateWindow(@appointmentsCal)} 
     end
 
+   
 
 
     def deleteEvent
-        
          event = params["event"]
+         deleteFutureReps = params["deleteFutureReps"]
+         deleteAllReps = params["deleteFutureReps"]
 
-         if event["calendar"]["id"] === current_user.google_calendar_email
+        if event["calendar"]["id"] === current_user.google_calendar_email
                 cal = @personalCal
         end
 
@@ -374,18 +384,39 @@ class MainController < ApplicationController
         if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
             cal = @consultsCal
         end
-
         
+        results = cal.find_event_by_id(event["id"])
 
-       
-        found = cal.find_event_by_id(event["id"])
+        foundEvent = results.first
 
-        found.first.delete
+        # delete future reps
+        if foundEvent.raw["recurringEventId"]
+            if deleteFutureReps
+
+                start = DateTime.parse(foundEvent.start_time)
+                twoYearsAhead = start >> 24
+                futureEvents = cal.find_events_in_range(start, twoYearsAhead, options = {max_results: 2500})
+                futureReps = futureEvents.select{ |e| e.raw["recurringEventId"] === foundEvent.raw["recurringEventId"]}
+                futureReps.each {|r| r.delete}
+                # foundEvent.delete
+                 return appStateJson()
+            end
+
+            if deleteAllReps
+                allEvents = eventsInDateWindow(cal)
+                repeats = allEvents.select{ |e| e.raw["recurringEventId"] === foundEvent.raw["recurringEventId"]}
+                repeats.each {|r| r.delete}
+                # foundEvent.delete
+                return appStateJson()
+            end
+
+            
+        end
+
+
+        foundEvent.delete
 
         return appStateJson()
-
-        # render json: {, events: eventsInDateWindow(@appointmentsCal), personalEvents: eventsInDateWindow(@personalCal)}
-
     end
 
     def remove_many_stripe_ids

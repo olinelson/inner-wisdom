@@ -52,6 +52,16 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+
+  # google_calendar
+  gem 'minitest', '~> 5.11', '>= 5.11.3'
+  gem 'minitest-reporters', '~> 1.3', '>= 1.3.8'
+  gem 'mocha', '~> 1.9'
+  gem 'rake', '~> 12.3', '>= 12.3.3'
+  gem 'rb-fsevent', '~> 0.10.3'
+  gem 'rdoc', '~> 6.2'
+  gem 'shoulda-context', '~> 1.2', '>= 1.2.2'
+gem 'terminal-notifier-guard', '~> 1.7'
 end
 
 group :test do
@@ -67,7 +77,15 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'google-api-client'
 
+
 gem 'google_calendar'
+
+# required byt google_calendar
+
+gem 'signet', '~> 0.11.0'
+
+
+# ==============================
 
 gem 'webpacker-react'
 
@@ -76,3 +94,4 @@ gem 'devise'
 gem 'google-cloud-storage'
 
 gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'
+

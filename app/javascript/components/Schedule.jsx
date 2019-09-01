@@ -16,6 +16,7 @@ import 'react-day-picker/lib/style.css';
 import TimePicker from 'rc-time-picker';
 import "rc-time-picker/assets/index.css"
 import { Calendar as BigCalendar, momentLocalizer, Views } from 'react-big-calendar'
+import { withRouter } from "react-router-dom"
 
 
 const localizer = momentLocalizer(moment)
@@ -82,12 +83,15 @@ function Schedule(props) {
 
     }
 
-    const deleteSelectedEventHandeler = () => {
+    const deleteSelectedEventHandeler = (deleteReps) => {
+        let deleteFutureReps = deleteReps === "future"
+
         props.dispatch({ type: "SET_LOADING_EVENT", value: { ...selectedEvent } })
         fetch(`${process.env.BASE_URL}/delete`, {
             method: "DELETE",
             body: JSON.stringify({
-                event: selectedEvent
+                event: selectedEvent,
+                deleteFutureReps
             }),
             headers: {
                 "X-CSRF-Token": props.csrfToken,
@@ -114,12 +118,27 @@ function Schedule(props) {
         setStateAction({ ...event, attendees })
     }
 
+    const showUserName = (input) => {
+        let foundUser = props.users.find(u => u.email === input.email)
+        console.log(foundUser)
+        if (foundUser) return <>
+            <Icon name='user' />
+            <span style={{ cursor: "pointer" }} onClick={() => props.history.push(`/clients/${foundUser.id}`)}>{foundUser.first_name + " " + foundUser.last_name}</span>
+        </>
+
+        return <>
+            <Icon name='question circle' />
+            <span>{input.email}</span>
+        </>
+    }
+
     const showEventAttendees = (event, onDelete, setStateAction) => {
         if (event && event.attendees) {
             let users = event.attendees
             return users.map(u => <Label key={u.email} style={{ margin: ".1rem" }}>
-                <Icon name='user' />
-                {u.first_name ? u.first_name + " " + u.last_name : u.displayName}
+
+
+                {showUserName(u)}
                 <Icon name='delete' onClick={() => onDelete(u, event, setStateAction)} />
             </Label>
             )
@@ -251,46 +270,20 @@ function Schedule(props) {
     }
 
     const creatingBusinessEventOptions = (e) => {
-
-
-
         if (e && e.personal === false) return <BusinessEventSegment>
+            {eventTimeSetter(selectedSlot, setSelectedSlot)}
             <Dropdown onChange={(e, d) => setSelectedSlot({ ...selectedSlot, recurrence: { freq: d.value } })} defaultValue={null} placeholder='No Repeat' options={repeatOptions} />
-            <div style={{ gridArea: "timePicker" }}>
-                {eventTimeSetter(selectedSlot, setSelectedSlot)}
+
+            <div>
+                <Button content="Create New Appointment" icon="bookmark" loading={loading} disabled={!selectedSlot.attendees || selectedSlot.attendees.length < 1 ? true : false} primary onClick={() => createEventHandeler(false)} />
+                <Popup content='This will create a "bookable" appointment slot visable to all clients.' trigger={<Button disabled={selectedSlot.attendees && selectedSlot.attendees.length > 0 ? true : false} icon="calendar" loading={loading} color="grey" onClick={() => createEventHandeler(true)} content="Create Appointment Slot" />} />
+                <Popup content='This will create a "bookable" consultation slot visable to all clients.' trigger={<Button disabled={selectedSlot.attendees && selectedSlot.attendees.length > 0 ? true : false} loading={loading} color="yellow" onClick={() => createEventHandeler(false, true)} icon="phone" content="Create Consult Slot" />} />
             </div>
-            <CenteredFlexDiv style={{ gridArea: "newAppointment" }} >
-                <Header icon>
-                    <Icon name='bookmark' />
-                    Book New Appointment
-                             </Header>
-                <Popup content='This will create a confirmed appointment slot that will only be visible to admin and its attendees.' trigger={<Button loading={loading} primary onClick={() => createEventHandeler(false)}>Create</Button>} />
-                <Divider hidden />
+            <div >
+                {showEventAttendees(e, removeAttendeeFromEvent, setSelectedSlot)}
+            </div>
+            <UserPickerDropDown event={e} addAttendeeHandeler={(u) => addAttendeeToEvent(u, selectedSlot, setSelectedSlot)} />
 
-                <div>
-                    {showEventAttendees(e, removeAttendeeFromEvent, setSelectedSlot)}
-                </div>
-
-                <Divider hidden />
-                <UserPickerDropDown event={e} addAttendeeHandeler={(u) => addAttendeeToEvent(u, selectedSlot, setSelectedSlot)} />
-            </CenteredFlexDiv>
-
-            <CenteredFlexDiv style={{ gridArea: "newAppSlot" }}>
-                <Header icon>
-                    <Icon name='time' />
-                    New Appointment Slot
-                    </Header>
-                <Popup content='This will create a "bookable" appointment slot visable to all clients.' trigger={<Button loading={loading} color="grey" onClick={() => createEventHandeler(true)} >Create</Button>} />
-
-
-            </CenteredFlexDiv>
-            <CenteredFlexDiv style={{ gridArea: "newConsultSlot" }}>
-                <Header icon>
-                    <Icon name='time' />
-                    New Consultation Slot
-                    </Header>
-                <Popup content='This will create a "bookable" consultation slot visable to all clients.' trigger={<Button loading={loading} color="yellow" onClick={() => createEventHandeler(false, true)} >Create</Button>} />
-            </CenteredFlexDiv>
 
         </BusinessEventSegment>
     }
@@ -302,22 +295,21 @@ function Schedule(props) {
         return <Modal
             open={selectedEvent ? true : false}
             onClose={() => setSelectedEvent(null)}
-            header={<Input value={e.title} onChange={(e) => setSelectedEvent({ ...selectedEvent, title: e.target.value })} />}
+            header={<Input fluid size="big" value={e.title} onChange={(e) => setSelectedEvent({ ...selectedEvent, title: e.target.value })} />}
             content={
                 <ModalContent>
-                    {props.user.google_calendar_email && props.user.google_calendar_email === e.calendar.id ? null :
-                        <p>Business Event Options</p>
-                    }
-                    <Dropdown onChange={(e, d) => setSelectedEvent({ ...selectedEvent, recurrence: { freq: d.value } })} defaultValue={null} placeholder='No Repeat' options={repeatOptions} />
                     {eventTimeSetter(selectedEvent, setSelectedEvent)}
+                    <Divider hidden />
                     <div>
                         {showEventAttendees(e, removeAttendeeFromEvent, setSelectedEvent)}
                     </div>
+                    <Divider hidden />
                     <UserPickerDropDown event={e} addAttendeeHandeler={(u) => addAttendeeToEvent(u, selectedEvent, setSelectedEvent)} />
                 </ModalContent>
             }
             actions={[
                 { key: "delete", content: "Delete", onClick: () => deleteSelectedEventHandeler() },
+                { key: "deleteFuture", content: "Delete All Repeats", onClick: () => deleteSelectedEventHandeler("future") },
                 { key: "Cancel", content: "Cancel", onClick: () => setSelectedEvent(null) },
                 { key: "save", content: "Save", onClick: () => updateSelectedEventHandeler() }
             ]}
@@ -391,5 +383,5 @@ const mapStateToProps = (state) => ({
     defaultCalendarView: state.defaultCalendarView
 })
 
-export default connect(mapStateToProps)(Schedule)
+export default withRouter(connect(mapStateToProps)(Schedule))
 

@@ -161,7 +161,7 @@ function Appointments(props) {
     }
 
     const maybeShowCancelButtons = (event) => {
-        if (event.extended_properties.private && event.extended_properties.private.cancelation === "true") {
+        if (event.extended_properties && event.extended_properties.private && event.extended_properties.private.cancelation === "true") {
             return null
         }
         if (isInTheFuture(event)) return cancelEventConfirm(event)

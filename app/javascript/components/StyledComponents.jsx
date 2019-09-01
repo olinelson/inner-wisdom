@@ -121,16 +121,9 @@ export const TwoColumnContainer = styled(Container)`
 
 export const BusinessEventSegment = styled(Segment)`
     display: grid;
-    grid-template-columns: 1fr 1fr;
-
-    grid-gap: 1rem;
-    justify-content: center;
+    grid-template-columns: 1fr;
+    grid-gap: 1.5rem;
     justify-items: center;
-    grid-template-areas:
-    "timePicker timePicker"
-    "newAppointment newAppSlot"
-    "newAppointment newConsultSlot"
-        ;
 `
 export const CenteredFlexDiv = styled.div`
 display: flex;
@@ -172,4 +165,7 @@ export const CalendarContainer = styled.div`
 
 export const ModalContent = styled.div`
         margin: 1.5rem
+        display: grid;
+        grid-template-columns: 1fr;
+        justify-items:center;
       `
