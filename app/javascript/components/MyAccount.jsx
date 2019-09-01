@@ -58,12 +58,6 @@ function MyAccount(props) {
         </Menu>
     }
 
-    // const RelevantAppointments = () => {
-
-    //     let events = props.events.filter(e => isUserAnAttendeeOfEvent(e))
-    //     return events
-    // }
-
     const isUserAnAttendeeOfEvent = (event) => {
         if (event.attendees === null) return false
         for (let att of event.attendees) {
@@ -137,37 +131,40 @@ function MyAccount(props) {
             <h4>{user.email}</h4>
             <a href={`${process.env.BASE_URL}/users/edit`}>Change Details</a>
             <Divider />
-            <h2>Personal Google Calendar Settings</h2>
-            <h4>{user.google_calendar_email}</h4>
-            <h4>{user.google_calendar_refresh_token}</h4>
+
+            {user.admin ?
+                <>
+                    <h2>Personal Google Calendar Settings</h2>
+                    <h4>{user.google_calendar_email}</h4>
+                    <h4>{user.google_calendar_refresh_token}</h4>
+                    <Modal closeIcon trigger={<Button>Connect Personal Google Calendar</Button>}>
+                        <Modal.Header>Select a Photo</Modal.Header>
+                        <Modal.Content>
+
+                            <Modal.Description>
+                                <Input
+                                    onChange={(e) => setNewPersonalEmail(e.target.value)}
+                                    value={newPersonalEmail}
+                                    label={{ basic: true, content: '@gmail.com' }}
+                                    labelPosition='right'
+                                    placeholder='froid'
+                                />
+                            </Modal.Description>
+                            <Button onClick={genNewCalAuthUrl}>Add Personal Google Calendar</Button>
+                            <Input
+                                value={authCode}
+                                placeholder='paste your code here'
+                                onChange={(e) => setAuthCode(e.target.value)}
+                            />
+                            <Button
+                                content="Save Token"
+                                onClick={() => saveNewCredentials()} />
+                        </Modal.Content>
+                    </Modal>
+                </>
+                : null}
 
 
-
-
-            <Modal closeIcon trigger={<Button>Connect Personal Google Calendar</Button>}>
-                <Modal.Header>Select a Photo</Modal.Header>
-                <Modal.Content>
-
-                    <Modal.Description>
-                        <Input
-                            onChange={(e) => setNewPersonalEmail(e.target.value)}
-                            value={newPersonalEmail}
-                            label={{ basic: true, content: '@gmail.com' }}
-                            labelPosition='right'
-                            placeholder='froid'
-                        />
-                    </Modal.Description>
-                    <Button onClick={genNewCalAuthUrl}>Add Personal Google Calendar</Button>
-                    <Input
-                        value={authCode}
-                        placeholder='paste your code here'
-                        onChange={(e) => setAuthCode(e.target.value)}
-                    />
-                    <Button
-                        content="Save Token"
-                        onClick={() => saveNewCredentials()} />
-                </Modal.Content>
-            </Modal>
         </div>
     }
 

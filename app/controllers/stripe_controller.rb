@@ -42,23 +42,37 @@ Stripe.api_key = ENV["STRIPE_KEY"]
 
 
     def create_invoice_item
+        user = User.find(params["user"]["id"])
         stripe_id = params["user"]["stripe_id"]
         event = params["event"]
         dateString =  DateTime.parse(event["start_time"])
         description = "#{dateString.day}/#{dateString.month}/#{dateString.year} Psychological services"
 
-        invoice_item = Stripe::InvoiceItem.create({
-            customer: stripe_id,
-            amount: 0,
-            currency: 'aud',
-            description: description,
-            metadata: {
-                        type: "Appointment",
-                        google_event_id: event["id"],
-                        start_time: event["start_time"],   
-                        end_time: event["end_time"],
-                    }
-        })
+        if stripe_id == nil || stripe_id.length < 1
+            Stripe.api_key = ENV["STRIPE_KEY"]
+            customer =  Stripe::Customer.create({
+            name: user.first_name + " " + user.last_name,
+            email: user.email,
+            phone: user.phone_number
+            })
+            user.update(stripe_id: customer.id)
+        end
+        begin
+            invoice_item = Stripe::InvoiceItem.create({
+                customer: user.stripe_id,
+                amount: 0,
+                currency: 'aud',
+                description: description,
+                metadata: {
+                            type: "Appointment",
+                            google_event_id: event["id"],
+                            start_time: event["start_time"],   
+                            end_time: event["end_time"],
+                        }
+            })
+        rescue
+            puts "invoice item creation error"
+        end
         render json: { invoice_item: invoice_item }
     end
 

@@ -26,6 +26,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
         resource.send_reset_password_instructions
         NotificationMailer.account_created_by_admin_notification(resource).deliver
        end
+       
        begin
           Stripe.api_key = ENV["STRIPE_KEY"]
           customer =  Stripe::Customer.create({
@@ -112,6 +113,27 @@ class Users::RegistrationsController < Devise::RegistrationsController
     if current_user.admin
        user = User.find(params["id"])
       user.update(account_update_params)
+
+
+      begin
+       Stripe.api_key = ENV["STRIPE_KEY"]
+          customer =  Stripe::Customer.retrieve(user.stripe_id)
+
+          if customer
+            Stripe::Customer.update(
+            customer.id,
+            {
+            email: user.email,
+            phone: user.phone_number,
+            name: user.first_name + " " + user.last_name,
+            }
+            )
+          end
+        rescue
+          puts "Stripe Update Customer Error" 
+        end
+
+
     end
     # params.permit(:editedByAdmin)
    

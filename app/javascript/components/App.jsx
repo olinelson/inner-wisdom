@@ -24,11 +24,10 @@ import Notification from "./Notification"
 import Counselling from './Counselling'
 import Supervision from './Supervision'
 import Training from './Training'
-import About from './About';
+
 import Contact from './Contact';
 import FAQS from './FAQS';
 import Footer from './Footer';
-import DraftEditor from './DraftEditor';
 
 
 
@@ -137,86 +136,83 @@ export function App(props) {
 
             <HashRouter basename="/" >
                 <>
-                    {/* <div style={{ minHeight: "90vh" }}> */}
-
-                    <Route
-                        render={rProps => <Nav {...store} {...rProps} user={store.getState().user} />}
-                    />
-
-                    <Switch>
-                        <Route
-
-                            exact
-                            path="/"
-                            render={props => <><Home /><Footer /></>}
-                        />
-                        <Route
-                            path="/appointments"
-                            render={props => <Appointments />}
-                        />
-                        <Route
-                            path="/counselling"
-                            render={props => <Counselling />}
-                        />
+                    <div style={{ minHeight: "100vh" }}>
 
                         <Route
-                            path="/faqs"
-                            render={props => <FAQS />}
-                        />
-                        <Route
-                            path="/supervision"
-                            render={props => <Supervision />}
-                        />
-                        <Route
-                            path="/training"
-                            render={props => <Training />}
-                        />
-                        <Route
-                            path="/contact"
-                            render={props => <Contact />}
-                        />
-                        <Route
-                            path="/myaccount"
-                            render={props => <MyAccount />}
-                        />
-                        <Route
-                            path="/schedule"
-                            render={props => <Schedule />}
-                        />
-                        <Route
-                            path="/blog"
-                            render={props => <Blog />}
+                            render={rProps => <Nav {...store} {...rProps} user={store.getState().user} />}
                         />
 
-                        <Route
-                            path="/posts/:id"
-                            render={props => <PostEditor />}
-                        />
-                        <Route
-                            path="/clients"
-                            exact
-                            render={props => <Clients />}
-                        />
-                        <Route
-                            path="/clients/:id"
-                            render={props => <><ClientShow /><Footer /></>}
-                        />
-                        <Route
-                            path="/draft"
-                            render={props => <><DraftEditor /> <Footer /></>}
-                        />
+                        <Switch>
+                            <Route
+
+                                exact
+                                path="/"
+                                render={props => <Home />}
+                            />
+                            <Route
+                                path="/appointments"
+                                render={props => <Appointments />}
+                            />
+                            <Route
+                                path="/counselling"
+                                render={props => <Counselling />}
+                            />
+
+                            <Route
+                                path="/faqs"
+                                render={props => <FAQS />}
+                            />
+                            <Route
+                                path="/supervision"
+                                render={props => <Supervision />}
+                            />
+                            <Route
+                                path="/training"
+                                render={props => <Training />}
+                            />
+                            <Route
+                                path="/contact"
+                                render={props => <Contact />}
+                            />
+                            <Route
+                                path="/myaccount"
+                                render={props => <MyAccount />}
+                            />
+                            <Route
+                                path="/schedule"
+                                render={props => <Schedule />}
+                            />
+                            <Route
+                                path="/blog"
+                                render={props => <Blog />}
+                            />
+
+                            <Route
+                                path="/posts/:id"
+                                render={props => <PostEditor />}
+                            />
+                            <Route
+                                path="/clients"
+                                exact
+                                render={props => <Clients />}
+                            />
+                            <Route
+                                path="/clients/:id"
+                                render={props => <ClientShow />}
+                            />
 
 
-                        <Route render={props => <NotFound />} />
+                            <Route render={props => <NotFound />} />
 
 
 
-                    </Switch>
-                    <Notification />
-                    {/* </div> */}
+                        </Switch>
+                        <Notification />
+                    </div>
 
 
                     {/* Footer */}
+                    <Footer />
 
 
 

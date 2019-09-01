@@ -1,8 +1,8 @@
-import React, {useEffect} from 'react'
+import React, { useEffect } from 'react'
 import PostsList from './PostsList';
 import { Container, Divider, Header, Segment, Button } from 'semantic-ui-react';
 
-import {FeatureImageSegment} from "./PostEditor"
+import { FeatureImageSegment } from "./PostEditor"
 import { Jumbotron } from './StyledComponents';
 
 
@@ -15,11 +15,11 @@ export default function Blog(props) {
     }, []);
 
     return <>
-        <Jumbotron style={{ backgroundImage: `url('https://storage.googleapis.com/inner_wisdom_bucket/ancient-art-asia-302100.jpg') `, backgroundPosition: "center" }}/>
+        <Jumbotron style={{ backgroundImage: `url('https://storage.googleapis.com/inner_wisdom_bucket/ancient-art-asia-302100.jpg') `, backgroundPosition: "center" }} />
 
 
-            <Container>
-                <Divider hidden/>
+        <Container>
+            {/* <Divider hidden/>
                 <p>
 
                     <Header size="large" as="span">H</Header>aiores in ducimus quia alias ea quos sequi dolorum. Quam doloribus veritatis in amet velit aut. Esse blanditiis molestiae quod ea quia. Qui magnam nulla rem nihil provident.
@@ -31,9 +31,10 @@ export default function Blog(props) {
                     Dolores ut similique dolor voluptas est optio nihil est. Repellat cupiditate sunt harum aspernatur sint totam dolor dolorum. Repellat vel corporis id voluptas numquam.
     
                     Est occaecati est voluptatum ut provident. Nobis voluptatum dolor rerum illo dolorum omnis. Minus doloribus id placeat.
-</p>
-                <Divider />
-                <PostsList blogView />
-            </Container>
+                </p>
+                <Divider /> */}
+            <Divider hidden />
+            <PostsList blogView />
+        </Container>
     </>
-        }
+}
