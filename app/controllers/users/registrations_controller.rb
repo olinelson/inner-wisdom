@@ -13,6 +13,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def create_user_with_admin
+    byebug
     if current_user.admin 
       params.permit(:sendWelcomeEmail)
     build_resource(sign_up_params)
@@ -54,6 +55,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # POST /resource
   def create
+    byebug
     params.permit(:sendWelcomeEmail, :createdByAdmin)
 
     if params["user"]["createdByAdmin"]
@@ -83,9 +85,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
         rescue
           puts "Stripe customer creation error"
         end
-
-
-
+        # path = after_sign_up_path_for(resource)
+        # byebug
+        # render json: {location: path }
 
         respond_with resource, location: after_sign_up_path_for(resource)
 

@@ -63,6 +63,14 @@
     <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
   </div>
 
+  
+<div class="ui checkbox">
+  <input type="checkbox" required />
+  <label><%= react_component('NewUserForm', resource: resource) %></label>
+</div>
+
+  <div class="ui divider"></div>
+
   <div class="actions">
     <input class="ui button" type="submit" value="Sign Up" />
   </div>
