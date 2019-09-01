@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from "styled-components"
-import { Label, Placeholder, Dimmer, Segment, Loader } from 'semantic-ui-react';
+import { Label, Placeholder, Dimmer, Segment, Loader, Icon } from 'semantic-ui-react';
 import { connect } from "react-redux"
 
 function Event(props) {
@@ -38,6 +38,7 @@ function Event(props) {
     </CustomLabel>
 
     return <CustomLabel color={colorPicker()}>
+        {props.event.extended_properties.private && props.event.extended_properties.private.skype === "true" ? <Icon name="skype" /> : null}
         <Loader inverted size="tiny" active={props.event.placeholder} inline></Loader>
         {props.event.title}
     </CustomLabel>

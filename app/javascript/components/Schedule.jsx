@@ -259,6 +259,8 @@ function Schedule(props) {
                 <Form.Field>
                     <label>Location</label>
                     <Input
+                        icon="building"
+                        iconPosition="left"
                         value={selectedSlot.location || ""}
                         onChange={(e) => setSelectedSlot({ ...selectedSlot, location: e.target.value })}
                         placeholder='42 Wallaby Way Sydney'
@@ -303,13 +305,21 @@ function Schedule(props) {
                     <div>
                         {showEventAttendees(e, removeAttendeeFromEvent, setSelectedEvent)}
                     </div>
-                    <Divider hidden />
-                    <UserPickerDropDown event={e} addAttendeeHandeler={(u) => addAttendeeToEvent(u, selectedEvent, setSelectedEvent)} />
+                    {console.log(e)}
+                    <Input iconPosition="left" placeholder="42 Wallaby Way, Sydney, Australia" icon="building" value={e.location || ""} onChange={(e) => setSelectedEvent({ ...selectedEvent, location: e.target.value })} />
+
+                    {e.calendar.id === props.user.google_calendar_email ? null :
+                        <>
+                            <Divider hidden />
+                            <UserPickerDropDown event={e} addAttendeeHandeler={(u) => addAttendeeToEvent(u, selectedEvent, setSelectedEvent)} />
+                        </>
+                    }
+
                 </ModalContent>
             }
             actions={[
                 { key: "delete", content: "Delete", onClick: () => deleteSelectedEventHandeler() },
-                { key: "deleteFuture", content: "Delete All Repeats", onClick: () => deleteSelectedEventHandeler("future") },
+                { key: "deleteFuture", content: "Delete Self And All Repeats", onClick: () => deleteSelectedEventHandeler("future") },
                 { key: "Cancel", content: "Cancel", onClick: () => setSelectedEvent(null) },
                 { key: "save", content: "Save", onClick: () => updateSelectedEventHandeler() }
             ]}

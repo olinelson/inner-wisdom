@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Container, Divider, Label, Button, Modal } from 'semantic-ui-react'
+import { Container, Divider, Label, Button, Modal, Checkbox } from 'semantic-ui-react'
 import { connect } from 'react-redux';
 import styled from "styled-components"
 import { CalendarContainer, ModalContent } from "./StyledComponents"
@@ -131,7 +131,7 @@ function Appointments(props) {
 
         return <>
             <h4>{moment(selectedEvent.start_time).format('Do MMMM  YYYY')}</h4>
-            <p>{moment(selectedEvent.start_time).format('h:mm a')} to {moment(selectedEvent.end).format('h:mm a')}</p>
+            <p>{moment(selectedEvent.start_time).format('h:mm a')} to {moment(selectedEvent.end_time).format('h:mm a')}</p>
         </>
     }
 
@@ -188,13 +188,26 @@ function Appointments(props) {
             actions={[maybeShowCancelButtons(selectedEvent), { key: "Close", content: "Close", onClick: () => setEventModalOpen(false) }]}
         />
 
-        // logged in and not attending
+        // logged in and not attending - bookable
         if (props.user) return <Modal
             open={eventModalOpen}
             header={selectedEvent.title}
-            content={<ModalContent>{showPrettyStartAndEndTime(selectedEvent)}</ModalContent>}
+            content={<ModalContent>
+                {showPrettyStartAndEndTime(selectedEvent)}
+                <Checkbox
+                    checked={selectedEvent.extended_properties && selectedEvent.extended_properties.private.skype ? true : false}
+                    onChange={(e) => toggleSkypeHandeler(e)}
+                    label="Skype Appointment"
+                    toggle />
+            </ModalContent>}
             actions={[{ key: "book", loading: booking, content: "Book Appointment", onClick: () => bookAppointment() }, { key: "Close", content: "Close", onClick: () => setEventModalOpen(false) }]}
         />
+    }
+
+    const toggleSkypeHandeler = () => {
+
+        let newExtendedProperties = { ...selectedEvent.extended_properties.private, skype: !selectedEvent.extended_properties.private.skype || false }
+        setSelectedEvent({ ...selectedEvent, extended_properties: { private: newExtendedProperties } })
     }
 
     const showConfirmationModal = () => {

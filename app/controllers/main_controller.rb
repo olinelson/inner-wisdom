@@ -122,6 +122,7 @@ class MainController < ApplicationController
     def createEvent
         newEvent = params["event"]
         title= ""
+
         
 
         if newEvent["attendees"]
@@ -187,22 +188,31 @@ class MainController < ApplicationController
         event = params["event"]
         fullName = user.first_name + " " + user.last_name
         newTitle = ""
-
+     
+        begin
+        skype = event["extended_properties"]["private"]["skype"] || false
+        rescue
+            skype = false
+        end
+        
 
         cal = nil
 
         if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
-             newTitle = fullName + " | session confirmed"
+             newTitle = skype ? fullName + "| skype session confirmed" : fullName + " | session confirmed"
             cal = @appointmentsCal
             
             editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
             e.title = newTitle
             e.color_id = 2
-            e.location= "609 W 135 St New York, New York"
-
+            e.location= skype ? "N/A" : "609 W 135 St New York, New York"
+                  
             e.attendees= [
             {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
+            e.extended_properties["private"]["skype"] = skype
              end
+             
+
 
              jsonEvent = editedEvent.to_json
             NotificationMailer.user_appointment_confirmation(user, jsonEvent).deliver_later
