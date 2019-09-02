@@ -64,7 +64,7 @@ function Home(props) {
                 {/* <h1>Inner Wisdom Psychology</h1> */}
 
             </JumboMessage>
-            <Label style={{ alignSelf: "flex-end", justifySelf: "flex-start", color: "white", backgroundColor: "rgba(0,0,0,0)" }} size="big" content="scroll" icon="arrow up" />
+            <Label style={{ alignSelf: "flex-end", justifySelf: "flex-start", color: "white", backgroundColor: "rgba(0,0,0,0)", visibility: "hidden" }} size="big" content="scroll" icon="arrow up" />
         </Jumbotron>
 
         <Divider hidden />
