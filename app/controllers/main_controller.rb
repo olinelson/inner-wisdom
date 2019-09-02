@@ -213,6 +213,7 @@ class MainController < ApplicationController
              end
              
 
+            
 
              jsonEvent = editedEvent.to_json
             NotificationMailer.user_appointment_confirmation(user, jsonEvent).deliver_later

@@ -1,13 +1,7 @@
-<!DOCTYPE html>
 <html>
-  <head>
-    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
-  </head>
-  <body>
-    <h1>Hi <%= @user.first_name %></h1>
-    <p>
-      This is confirmation of your appointment.
-    </p>
-    <p><%=@time%></p>
-  </body>
+  <p>Hi, <%= @user.first_name %></p>
+  <p>This is confirmation of your appointment at:</p>
+  <p><%=@time%></p>
+  <br/>
+  <p>If you need to reschedule or cancel your appointment go to <a target="_blank" href="<%=ENV["BASE_URL"]%>/users/sign_in">your appointments</a>.
 </html>

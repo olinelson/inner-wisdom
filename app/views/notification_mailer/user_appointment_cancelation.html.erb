@@ -1,13 +1,7 @@
-<!DOCTYPE html>
-
 <html>
-  <head>
-    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
-  </head>
-  <body>
-    <p><%=@user.first_name + " " + @user.last_name%>,</p>
-    <p>
-      Your appointment on <span><%=@time%></span> has been cancelled.
-    </p>
-  </body>
+  <p>Hi, <%= @user.first_name %></p>
+  <p>This is confirmation that the following appointment has been canceled:</p>
+  <p><%=@time%></p>
+  <br/>
+  <p>If you need to reschedule or cancel your appointment go to <a target="_blank" href="<%=ENV["BASE_URL"]%>/users/sign_in">your appointments</a>.
 </html>

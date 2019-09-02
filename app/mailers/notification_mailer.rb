@@ -13,7 +13,7 @@ class NotificationMailer < ApplicationMailer
     def user_appointment_cancelation(user,event)
         @user = user
         @event = JSON.parse(event)
-        byebug
+        
         if @event["start_time"]
             @time = prettyTime
         end
@@ -24,10 +24,11 @@ class NotificationMailer < ApplicationMailer
         mail(to: @user.email, subject: 'Appointment Canceled')
     end
 
-    def user_appointment_confirmation(user, event)
+    def user_appointment_confirmation(user, event, eventLink)
+        @eventLink = eventLink
         @user = user
         @event = JSON.parse(event)
-        byebug
+
         @time = prettyTime
         mail(to: @user.email, subject: 'Booking Confirmation')
     end

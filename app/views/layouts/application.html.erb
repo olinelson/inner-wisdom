@@ -19,7 +19,6 @@
     <%= react_component('FlashNotification', notifications: [{id: Time.new, type: "notice", message:notice }] ) %>
   <%end%>
   <%if alert %>
-    <%# <%= react_component('Notification', type: "alert", message: alert) %> %>
     <%= react_component('FlashNotification', notifications: [{id: Time.new, type: "alert", message:alert }] ) %>
   <%end%>
   
