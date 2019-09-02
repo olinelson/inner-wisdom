@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { Container, Menu, Divider, Button, Modal, Header, Input } from "semantic-ui-react"
 import Calendar from "./Calendar"
@@ -37,9 +37,15 @@ function MyAccount(props) {
     const [newPersonalEmail, setNewPersonalEmail] = useState("")
     const [authCode, setAuthCode] = useState("")
 
+    useEffect(() => {
+        window.scroll({
+            top: 0,
+            left: 0,
+        })
+    }, []);
+
     const handleTabClick = (tabName) => {
         props.dispatch({ type: "SET_MY_ACCOUNT_PANEL", value: tabName })
-
     }
 
     const showAdminMenu = () => {

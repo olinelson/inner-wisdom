@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Container, Divider, Label, Button, Modal, Checkbox } from 'semantic-ui-react'
 import { connect } from 'react-redux';
 import styled from "styled-components"
@@ -63,6 +63,13 @@ function Appointments(props) {
     // const [creating, setCreating] = useState(false)
     const [canceling, setCanceling] = useState(false)
     const [confirmation, setConfirmation] = useState(null)
+
+    useEffect(() => {
+        window.scroll({
+            top: 0,
+            left: 0,
+        })
+    }, []);
 
     // fetch handelers
     const bookAppointment = () => {

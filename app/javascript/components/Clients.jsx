@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { connect } from "react-redux"
 import { Card, Button, Modal, Search, Menu, Label, Form, Checkbox, Divider, Container } from "semantic-ui-react"
 import { withRouter } from "react-router-dom"
@@ -12,16 +12,19 @@ function Clients(props) {
     const [first_name, setFirst_name] = useState("")
     const [last_name, setLast_name] = useState("")
     const [email, setEmail] = useState("")
-    // const [tempPassword, setTempPassword] = useState("")
-    // const [confirmTempPassword, setConfirmTempPassword] = useState("")
     const [sendWelcomeEmail, setSendWelcomeEmail] = useState(false)
     const [modalOpen, setModalOpen] = useState(false)
     const [loading, setLoading] = useState(false)
-
-    // const [users, setUsers] = useState(props.users)
     const [filteredUsers, setFilteredUsers] = useState()
 
     const tempPassword = Math.random().toString(36).slice(2)
+
+    useEffect(() => {
+        window.scroll({
+            top: 0,
+            left: 0,
+        })
+    }, []);
 
     let allUsersExceptMe = props.users.filter(u => u.id !== props.user.id)
 

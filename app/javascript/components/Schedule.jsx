@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux';
 
 // components / styles
@@ -34,6 +34,13 @@ function Schedule(props) {
     const [selectedEvent, setSelectedEvent] = useState(null)
     const [selectedSlot, setSelectedSlot] = useState(null)
     const [loading, setLoading] = useState(false)
+
+    useEffect(() => {
+        window.scroll({
+            top: 0,
+            left: 0,
+        })
+    }, []);
 
     // fetch handelers
     const createEventHandeler = (isAppointmentSlot, isConsultSlot) => {
