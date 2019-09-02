@@ -1,7 +1,14 @@
 import React from 'react'
 import { Icon, Divider } from "semantic-ui-react"
+import { withRouter } from "react-router"
 
-export default function Footer() {
+function Footer(props) {
+    console.log("footer props", props)
+
+    let path = props.location.pathname
+
+    if (path === "/schedule" || path === "/appointments") return null
+
     return <>
         <Divider hidden />
         <div style={{ backgroundColor: "rgba(128,128,128,0.1)", height: "15rem", display: "flex", alignItems: "center", justifyContent: "center" }} >
@@ -11,3 +18,5 @@ export default function Footer() {
 
 
 }
+
+export default withRouter(Footer)
