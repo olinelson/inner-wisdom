@@ -202,12 +202,27 @@ function Appointments(props) {
             open={eventModalOpen}
             header={selectedEvent.title}
             content={<ModalContent>
+                {selectedEvent.calendar.id === process.env.CONSULTS_CALENDAR_ID ?
+                    <>
+                        <p>Would you like to book a <b>free</b> phone call consultation at the following time?</p>
+                        <p>After this consultation you will be able to reserve in-person and skype appointments.</p>
+                    </>
+                    :
+                    <>
+                        <p>Would you like to book a appointment at the following time?</p>
+                        <p>If this is intended to be a skype appointment, check the toggle below.</p>
+                    </>
+                }
+
+
                 {showPrettyStartAndEndTime(selectedEvent)}
                 <Checkbox
                     checked={selectedEvent.extended_properties && selectedEvent.extended_properties.private.skype ? true : false}
                     onChange={(e) => toggleSkypeHandeler(e)}
                     label="Skype Appointment"
                     toggle />
+                <Divider hidden />
+                <p>Note that appointments canceled with less than 24hours notice must be paid in full.</p>
             </ModalContent>}
             actions={[{ key: "book", loading: booking, content: "Book Appointment", onClick: () => bookAppointment() }, { key: "Close", content: "Close", onClick: () => setEventModalOpen(false) }]}
         />
