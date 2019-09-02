@@ -83,6 +83,8 @@ export default function NewUserForms(props) {
     }
 
 
+
+    // with no checkbox
     return <p>I, {(newUser.first_name + " " + newUser.last_name)}
         {" "}have read and understood this
                         {" "}
