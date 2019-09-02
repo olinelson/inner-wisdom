@@ -294,6 +294,7 @@ function Appointments(props) {
                     step={15}
                     timeslots={1}
                     onSelecting={() => false}
+                    views={['month', 'day', 'week']}
                 />
             </CalendarContainer>
 
