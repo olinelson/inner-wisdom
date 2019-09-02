@@ -193,7 +193,7 @@ function Nav(props) {
     }
 
     return <>
-        <FixedMenu pointing inverted={imageHeader() ? true : false} secondary >
+        <FixedMenu style={{ zIndex: "100" }} pointing inverted={imageHeader() ? true : false} secondary >
             {menuOptions()}
             <Menu.Menu position="right">
                 {UserMenuOptions()}

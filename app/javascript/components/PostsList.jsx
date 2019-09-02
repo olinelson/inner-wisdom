@@ -82,7 +82,7 @@ function PostsList(props) {
             {showUserOrPublishedPosts()}
 
         </Card.Group> */}
-        <Item.Group style={{ gridArea: "panel", margin: "0rem !important" }}  >
+        <Item.Group style={{ gridArea: "panel" }}  >
 
             {showUserOrPublishedPosts()}
 

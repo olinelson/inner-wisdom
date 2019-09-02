@@ -43,7 +43,7 @@ function MyAccount(props) {
     }
 
     const showAdminMenu = () => {
-        return <Menu vertical fluid style={{ gridArea: "sideMenu" }}  >
+        return <Menu vertical fluid style={{ gridArea: "sideMenu", marginTop: "1.5em" }}  >
             {/* <Menu.Item name='My Appointments' active={props.myAccountPanel === 'calendar'} onClick={() => handleTabClick("calendar")} /> */}
             <Menu.Item name='Profile' active={props.myAccountPanel === 'profile'} onClick={() => handleTabClick("profile")} />
             <Menu.Item name='Posts' active={props.myAccountPanel === 'posts'} onClick={() => handleTabClick("posts")} />
@@ -51,7 +51,7 @@ function MyAccount(props) {
     }
 
     const showUserMenu = () => {
-        return <Menu fluid style={{ gridArea: "sideMenu" }} vertical  >
+        return <Menu fluid style={{ gridArea: "sideMenu", marginTop: "1.5em" }} vertical  >
             <Menu.Item name='Profile' active={props.myAccountPanel === 'profile'} onClick={() => handleTabClick("profile")} />
             <Menu.Item name='Appointment History' active={props.myAccountPanel === 'history'} onClick={() => handleTabClick("history")} />
             <Menu.Item name='Invoices' active={props.myAccountPanel === 'invoices'} onClick={() => handleTabClick("invoices")} />
@@ -125,7 +125,7 @@ function MyAccount(props) {
 
     const profileSettingsLinks = () => {
         let user = props.user
-        return < div style={{ gridArea: "panel" }}>
+        return < div style={{ gridArea: "panel", marginTop: "1.5em" }}>
             <h1>Account Details</h1>
             <h4>{user.first_name} {user.last_name}</h4>
             <h4>{user.email}</h4>
