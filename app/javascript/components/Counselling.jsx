@@ -28,9 +28,9 @@ function Counselling(props) {
 
                 <p style={{ gridArea: "p2" }}>For those seeking couples counselling, their relationships are often a source of stress and emotional pain, due to differing values and goals, a sense of betrayal or unhelpful communication patterns. Deciding what you want to achieve from your sessions and clarifying expectations is an important part of the counselling process.</p>
 
-                <Quote style={{ gridArea: "quote" }} >
+                <blockquote style={{ gridArea: "quote" }} >
                     The aim is to facilitate growth in emotional, psychological and spiritual well-being and life affirming relationships
-                </Quote>
+                </blockquote>
 
 
                 <div style={{ gridArea: "p3" }}>
