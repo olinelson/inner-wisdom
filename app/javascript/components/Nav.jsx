@@ -201,12 +201,12 @@ function Nav(props) {
 
         </FixedMenu >
 
-        <MobileMenu>
+        <MobileMenu style={{ zIndex: "100" }}>
             {/* <Menu.Menu position="right"> */}
             {/* < Menu.Item  > */}
             <Dropdown direction="left" icon="bars" floating >
 
-                <Dropdown.Menu>
+                <Dropdown.Menu >
                     {menuOptions()}
                     {UserMenuOptions()}
                 </Dropdown.Menu>

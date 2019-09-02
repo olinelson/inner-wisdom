@@ -6,6 +6,7 @@ import { Divider, Modal, Popup, Button, Input, Label, Icon, Segment, Header, Dro
 import { BusinessEventSegment, CenteredFlexDiv, CalendarContainer, ModalContent } from "./StyledComponents"
 import { FullWidthCalendarContainer } from "./Appointments"
 import Event from "./Event"
+import AgendaViewEvent from "./AgendaViewEvent"
 import UserPickerDropDown from './UserPickerDropDown';
 
 
@@ -353,7 +354,10 @@ function Schedule(props) {
             <Divider style={{ gridArea: "divider" }} />
             <CalendarContainer fullWidth>
                 <BigCalendar
-                    components={{ event: Event }}
+                    style={{ border: "1px solid red !important" }}
+                    components={{
+                        event: Event
+                    }}
                     startAccessor={event => new Date(event.start_time)}
                     endAccessor={event => new Date(event.end_time)}
                     selectable
@@ -363,6 +367,7 @@ function Schedule(props) {
                     defaultView={props.defaultCalendarView}
                     defaultDate={new Date}
                     popup
+                    views={['month', 'day', 'week']}
                     step={15}
                     timeslots={1}
                     onSelectSlot={(e) => selectSlotHandeler(e)}

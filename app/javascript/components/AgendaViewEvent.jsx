@@ -8,8 +8,6 @@ function Event(props) {
     let isCanceled = false
 
     const CustomLabel = styled(Label)`
-            z-index: 1;
-            position: static;
             height: 100%;
             width: 100%;
             opacity: ${() => props.event.placeholder ? "0.5" : "1"};
@@ -18,6 +16,7 @@ function Event(props) {
     if (props.event && props.event.extended_properties && props.event.extended_properties.private.cancelation === "true") isCanceled = true
 
     const colorPicker = () => {
+        return 'orange'
         if (isCanceled) return "red"
         let personal = false
         if (!props.user) return "grey"
