@@ -8,7 +8,7 @@ export const Jumbotron = styled.div`
     background-repeat: no-repeat !important;
      background: ${props => `url('${props.src}')`};
      height: ${props => props.fullHeight ? "90vh !important" : "40vh"};
-
+    image-orientation: from-image;
     display: grid;
 }
 `

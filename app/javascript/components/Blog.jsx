@@ -18,7 +18,7 @@ export default function Blog(props) {
         <Jumbotron style={{ backgroundImage: `url('https://storage.googleapis.com/inner_wisdom_bucket/ancient-art-asia-302100.jpg') `, backgroundPosition: "center" }} />
 
 
-        <Container>
+        <Container text>
             {/* <Divider hidden/>
                 <p>
 
