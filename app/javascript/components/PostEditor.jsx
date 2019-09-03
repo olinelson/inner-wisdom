@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Editor, EditorState, RichUtils, convertToRaw, convertFromRaw } from 'draft-js';
 import { connect } from 'react-redux';
 import { Container, Input, Divider, Menu, Checkbox, Label, Dropdown, Modal, Popup, Header, Button, Icon, Image, Segment, Placeholder, Dimmer } from "semantic-ui-react"
@@ -28,9 +28,13 @@ function PostEditor(props) {
             :
             EditorState.createEmpty()
     );
-    // const [savedRawState, setSavedRawState] = useState(
-    //     JSON.stringify(convertToRaw(editorState.getCurrentContent()))
-    // )
+
+    useEffect(() => {
+        window.scroll({
+            top: 0,
+            left: 0,
+        })
+    }, []);
 
     const editingDisabled = props.user && props.user.id == post.user_id ? false : true
 
