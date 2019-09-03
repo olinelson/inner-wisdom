@@ -6,7 +6,6 @@ import { Divider, Modal, Popup, Button, Input, Label, Icon, Segment, Header, Dro
 import { BusinessEventSegment, CenteredFlexDiv, CalendarContainer, ModalContent } from "./StyledComponents"
 import { FullWidthCalendarContainer } from "./Appointments"
 import Event from "./Event"
-import AgendaViewEvent from "./AgendaViewEvent"
 import UserPickerDropDown from './UserPickerDropDown';
 
 

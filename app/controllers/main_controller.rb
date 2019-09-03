@@ -35,11 +35,7 @@ class MainController < ApplicationController
                 puts "login error"
 
         end
-
-        
     end
-
-    
 
     def createPersonalCalInstance
         if current_user && current_user.admin && current_user.google_calendar_email && current_user.google_calendar_refresh_token && current_user.google_calendar_refresh_token.length > 1
@@ -63,10 +59,10 @@ class MainController < ApplicationController
     end
 
     def eventsInDateWindow(cal)
-        now = DateTime.new(2018,1,1)
-        twoYearsAgo = now << 24
-        twoYearsAhead = now >> 24
-        cal.find_events_in_range(twoYearsAgo,twoYearsAhead, options = {max_results: 2500, expand_recurring_events: true})
+        now = DateTime.now()
+        sixMonthsAgo = now << 6
+        oneYearAhead = now >> 12
+        cal.find_events_in_range(sixMonthsAgo,oneYearAhead, options = {max_results: 2500, expand_recurring_events: true})
        
     end
 # all.length.select{ |e| e.raw["recurringEventId"] === "4vcujasnbbhhla5i6o1b4uiin4"}
@@ -375,9 +371,6 @@ class MainController < ApplicationController
         
         return appStateJson()
     end
-
-   
-
 
     def deleteEvent
          event = params["event"]

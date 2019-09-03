@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Table, Label, Icon, Button, Checkbox, Modal, Header, Input, Divider } from "semantic-ui-react"
 import moment from "moment"
 import { connect } from "react-redux"
@@ -8,8 +8,6 @@ function AdminAppointmentHistoryTable(props) {
 
     const [selectedEvent, setSelectedEvent] = useState(null)
     const [modalOpen, setModalOpen] = useState(false)
-
-
 
 
     let chronologicalSorted = props.events.sort((b, a) => new Date(a.start_time) - new Date(b.end_time))

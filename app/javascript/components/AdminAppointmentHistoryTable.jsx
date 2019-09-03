@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Table, Label, Icon, Button, Checkbox, Modal, Header, Input, Divider } from "semantic-ui-react"
 import moment from "moment"
 import { connect } from "react-redux"
@@ -10,6 +10,9 @@ function AdminAppointmentHistoryTable(props) {
     const [modalOpen, setModalOpen] = useState(false)
 
 
+    useEffect(() => {
+        console.log("hello")
+    }, []);
 
     const updateGoogleCalEvent = (event) => {
         fetch(`${process.env.BASE_URL}/update`, {
@@ -51,9 +54,6 @@ function AdminAppointmentHistoryTable(props) {
 
     return (
         <>
-            {/* <h2>Appointment History</h2> */}
-
-
             <Table style={{ gridArea: "panel" }} basic="very" >
                 <Table.Header>
                     <Table.Row>

@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   root to: 'main#home'
 
   # calendar event routes
+  post '/getEvents', to: 'main#getEvents'
   post '/create', to: 'main#createEvent'
   delete '/delete', to: 'main#deleteEvent'
   post '/update', to: 'main#updateEvent'

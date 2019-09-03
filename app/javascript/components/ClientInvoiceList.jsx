@@ -36,7 +36,7 @@ function InvoiceList(props) {
 
 
     const invoicesTableRows = () => {
-        if (invoices) {
+        if (invoices && invoices.length) {
 
             return invoices.data.map(i => {
                 if (i.status === "draft") return null
@@ -59,6 +59,8 @@ function InvoiceList(props) {
             }
             )
         }
+
+        return <Table.Row><Table.Cell>no invoices yet...</Table.Cell></Table.Row>
     }
 
     return (
