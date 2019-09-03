@@ -175,7 +175,7 @@ function ClientShow(props) {
                     </Button>}
                 header={user.approved ? "Un Approve User" : "Approve User"}
                 content={user.approved ? "Are you sure you would like to un approve this user? They will no loger be able to book appointments, only phone consultations." : "Are you sure you would like to approve this user? This will enable them to book full appointments."}
-                actions={['Cancel', { key: 'done', content: user.approved ? "Yes, Un Approve" : "Yes Approve", positive: true, onClick: () => approveUserHandeler() }]}
+                actions={[{ basic: 'true', inverted: 'true', content: 'cancel' }, { basic: 'true', key: 'done', content: user.approved ? "Yes, Un Approve" : "Yes Approve", positive: true, onClick: () => approveUserHandeler() }]}
             />
 
 
