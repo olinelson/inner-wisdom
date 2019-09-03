@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import { Container, Menu, Divider, Button, Modal, Header, Input } from "semantic-ui-react"
+import { Container, Menu, Divider, Button, Modal, Header, Tab, Input } from "semantic-ui-react"
 import Calendar from "./Calendar"
 import { connect } from 'react-redux';
 import styled from "styled-components"
@@ -132,14 +132,15 @@ function MyAccount(props) {
     const profileSettingsLinks = () => {
         let user = props.user
         return < div style={{ gridArea: "panel", marginTop: "1.5em" }}>
-            <h1>Account Details</h1>
+            {/* <h1>Account Details</h1> */}
             <h4>{user.first_name} {user.last_name}</h4>
             <h4>{user.email}</h4>
             <a href={`${process.env.BASE_URL}/users/edit`}>Change Details</a>
-            <Divider />
+
 
             {user.admin ?
                 <>
+                    <Divider />
                     <h2>Personal Google Calendar Settings</h2>
                     <h4>{user.google_calendar_email}</h4>
                     <h4>{user.google_calendar_refresh_token}</h4>
@@ -173,16 +174,29 @@ function MyAccount(props) {
 
         </div>
     }
+    const panes = () => {
+        if (props.user.admin) return [
+            { menuItem: 'My Details', render: () => <Tab.Pane content={profileSettingsLinks()} /> },
+            { menuItem: 'Posts', render: () => <Tab.Pane content={<PostsList creatable posts={props.user.posts} />} /> },
+        ]
 
+        return [
+            { menuItem: 'My Details', render: () => <Tab.Pane content={profileSettingsLinks()} /> },
+            { menuItem: 'Recent Appointments', render: () => <Tab.Pane content={<AppointmentHistoryTable events={props.relevantAppointments} user={props.user} />} /> },
+            { menuItem: 'Invoices', render: () => <Tab.Pane content={<ClientInvoiceList client={props.user} />} /> },
+        ]
+    }
 
 
     return <Container >
         <h1>My Account</h1>
-        <TwoColumnContainer>
+
+        <Tab panes={panes()} renderActiveOnly={true} />
+        {/* <TwoColumnContainer>
             {props.user.admin ? showAdminMenu() : showUserMenu()}
             {panelSwitch()}
 
-        </TwoColumnContainer>
+        </TwoColumnContainer> */}
     </Container>
 
 

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux';
-import { Tab, Table, Label, Icon, Modal, Header, Button } from "semantic-ui-react"
+import { Tab, Table, Label, Icon, Modal, Header, Button, Loader, Divider } from "semantic-ui-react"
 import moment from "moment"
 import InvoiceItem from './InvoiceItem';
 import InvoiceTableRow from './InvoiceTableRow';
 
 function InvoiceList(props) {
     const [invoices, setInvoices] = useState(null)
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
 
     const getInvoices = () => {
         fetch(`${process.env.BASE_URL}/stripe/invoices`, {
@@ -36,12 +36,13 @@ function InvoiceList(props) {
 
 
     const invoicesTableRows = () => {
-        if (invoices && invoices.length) {
+
+        if (invoices && invoices.data.length) {
 
             return invoices.data.map(i => {
                 if (i.status === "draft") return null
 
-                let time = moment.duration(i.webhooks_delivered_at).humanize()
+                // let time = moment.duration(i.webhooks_delivered_at).humanize()
                 return <Table.Row
                     warning={i.status === "open"}
                     positive={i.status === "paid"}
@@ -55,51 +56,38 @@ function InvoiceList(props) {
                     <Table.Cell>{<Button basic icon="chain" onClick={() => window.open(i.hosted_invoice_url, '_blank')} />}</Table.Cell>
                     <Table.Cell>{<Button basic icon="download" as="a" href={i.invoice_pdf} />}</Table.Cell>
                 </Table.Row>
-
             }
             )
         }
-
-        return <Table.Row><Table.Cell>no invoices yet...</Table.Cell></Table.Row>
     }
 
-    return (
-        <>
-            <Tab.Pane loading={loading} style={{ gridArea: "panel", margin: "0rem !important" }}>
-                <Table basic="very" >
-                    <Table.Header>
-                        <Table.Row >
-                            <Table.HeaderCell>Created</Table.HeaderCell>
-                            <Table.HeaderCell>Status</Table.HeaderCell>
-                            <Table.HeaderCell>Invoice No.</Table.HeaderCell>
-                            <Table.HeaderCell>Due</Table.HeaderCell>
-                            <Table.HeaderCell>Link</Table.HeaderCell>
-                            <Table.HeaderCell>PDF</Table.HeaderCell>
 
-                        </Table.Row>
-                    </Table.Header>
+    if (loading) return <><Divider hidden /><Loader active /><Divider hidden /></>
 
-                    <Table.Body>
+    if (!loading && !invoices.data.length) return <p>No invoices yet...</p>
 
-                        {invoicesTableRows()}
-                    </Table.Body>
-                </Table>
+    return <Table basic="very" >
+        <Table.Header>
+            <Table.Row >
+                <Table.HeaderCell>Created</Table.HeaderCell>
+                <Table.HeaderCell>Status</Table.HeaderCell>
+                <Table.HeaderCell>Invoice No.</Table.HeaderCell>
+                <Table.HeaderCell>Due</Table.HeaderCell>
+                <Table.HeaderCell>Link</Table.HeaderCell>
+                <Table.HeaderCell>PDF</Table.HeaderCell>
 
-            </Tab.Pane>
-        </>
-    )
+            </Table.Row>
+        </Table.Header>
+
+        <Table.Body>
+
+            {invoicesTableRows()}
+        </Table.Body>
+    </Table>
 }
 
 const mapStateToProps = (state) => ({
-    // appointments: state.appointments,
-    // consults: state.consults,
-    // // personalEvents: state.personalEvents,
     user: state.user,
-    // users: state.users,
-    // // myAccountPanel: state.myAccountPanel,
-    // baseUrl: state.baseUrl,
-    // defaultCalendarView: state.defaultCalendarView,
-    // calendarScrollToTime: state.calendarScrollToTime,
     csrfToken: state.csrfToken
 })
 

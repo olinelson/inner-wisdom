@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Container, Divider, Label, Button, Modal, Checkbox } from 'semantic-ui-react'
+import { Container, Divider, Label, Button, Modal, Header, Checkbox } from 'semantic-ui-react'
 import { connect } from 'react-redux';
 import styled from "styled-components"
 import { CalendarContainer, ModalContent } from "./StyledComponents"
@@ -137,8 +137,12 @@ function Appointments(props) {
     const showPrettyStartAndEndTime = (selectedEvent) => {
 
         return <>
-            <h4>{moment(selectedEvent.start_time).format('Do MMMM  YYYY')}</h4>
-            <p>{moment(selectedEvent.start_time).format('h:mm a')} to {moment(selectedEvent.end_time).format('h:mm a')}</p>
+            <Header textAlign="center" as='h2' >
+                {moment(selectedEvent.start_time).format('Do MMMM  YYYY')}
+                <Header.Subheader>
+                    {moment(selectedEvent.start_time).format('h:mm a')} to {moment(selectedEvent.end_time).format('h:mm a')}
+                </Header.Subheader>
+            </Header>
         </>
     }
 
@@ -202,25 +206,23 @@ function Appointments(props) {
             open={eventModalOpen}
             header={selectedEvent.title}
             content={<ModalContent>
+                {showPrettyStartAndEndTime(selectedEvent)}
                 {selectedEvent.calendar.id === process.env.CONSULTS_CALENDAR_ID ?
                     <>
-                        <p>Would you like to book a <b>free</b> phone call consultation at the following time?</p>
+                        <p>Would you like to book a <b>free</b> phone call consultation at this time?</p>
                         <p>After this consultation you will be able to reserve in-person and skype appointments.</p>
                     </>
                     :
                     <>
-                        <p>Would you like to book a appointment at the following time?</p>
+                        <p>Would you like to book a appointment at this time?</p>
                         <p>If this is intended to be a skype appointment, check the toggle below.</p>
+                        <Checkbox
+                            checked={selectedEvent.extended_properties && selectedEvent.extended_properties.private.skype ? true : false}
+                            onChange={(e) => toggleSkypeHandeler(e)}
+                            label="Skype Appointment"
+                            toggle />
                     </>
                 }
-
-
-                {showPrettyStartAndEndTime(selectedEvent)}
-                <Checkbox
-                    checked={selectedEvent.extended_properties && selectedEvent.extended_properties.private.skype ? true : false}
-                    onChange={(e) => toggleSkypeHandeler(e)}
-                    label="Skype Appointment"
-                    toggle />
                 <Divider hidden />
                 <p>Note that appointments canceled with less than 24hours notice must be paid in full.</p>
             </ModalContent>}

@@ -262,7 +262,7 @@ function PostEditor(props) {
                 </div>
             </EditorButtons>
             <Container text>
-                <Input placeholder="Post Title" transparent onChange={(e) => setPost({ ...post, title: e.target.value })} style={{ fontSize: "3rem", margin: "1rem 0" }} value={post.title} />
+                <Input fluid placeholder="Post Title" transparent onChange={(e) => setPost({ ...post, title: e.target.value })} style={{ fontSize: "3rem", margin: "1rem 0" }} value={post.title} />
             </Container>
 
         </>
@@ -288,12 +288,13 @@ function PostEditor(props) {
             editingView()
         }
 
-        <Container text>
+        <Container text style={!editingDisabled ? { border: "1px solid grey" } : null}>
 
 
 
 
             <Editor
+
                 editorState={editorState}
                 onChange={setEditorState}
                 handleKeyCommand={(c, es) => handleKeyCommand(c, es)}
