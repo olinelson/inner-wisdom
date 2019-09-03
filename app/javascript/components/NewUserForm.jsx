@@ -63,8 +63,6 @@ export default function NewUserForms(props) {
         }
     ]
 
-    console.log(props)
-
     const createUserHandeler = () => {
         fetch(`${process.env.BASE_URL}/users`, {
             method: "POST",
@@ -78,7 +76,7 @@ export default function NewUserForms(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         }).then(e => e.json())
-            .then(e => console.log(e))
+        // .then(e => console.log(e))
 
     }
 

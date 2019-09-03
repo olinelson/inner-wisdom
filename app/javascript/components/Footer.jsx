@@ -3,7 +3,6 @@ import { Icon, Divider } from "semantic-ui-react"
 import { withRouter } from "react-router"
 
 function Footer(props) {
-    console.log("footer props", props)
 
     let path = props.location.pathname
 

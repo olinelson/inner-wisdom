@@ -243,7 +243,6 @@ function Appointments(props) {
                 content={<ModalContent>
                     <p>This is confirmation that your booking has been confirmed. Here are the details. You will receive an email confirmation.</p>
                     {showPrettyStartAndEndTime(confirmation.event)}
-                    {console.log(confirmation)}
                     <p>{confirmation.event.location}</p>
                 </ModalContent>}
                 actions={["Close"]}

@@ -128,7 +128,6 @@ function Schedule(props) {
 
     const showUserName = (input) => {
         let foundUser = props.users.find(u => u.email === input.email)
-        console.log(foundUser)
         if (foundUser) return <>
             <Icon name='user' />
             <span style={{ cursor: "pointer" }} onClick={() => props.history.push(`/clients/${foundUser.id}`)}>{foundUser.first_name + " " + foundUser.last_name}</span>
