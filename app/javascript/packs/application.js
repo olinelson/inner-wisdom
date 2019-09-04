@@ -3,7 +3,7 @@ import App from 'components/App'
 
 import FlashNotification from 'components/FlashNotification'
 import Nav from "components/Nav"
-import NewUserForm from "components/NewUserForm"
+import UserConsentCheckbox from "components/UserConsentCheckbox"
 
 import "styled-components"
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -15,4 +15,4 @@ import 'draft-js/dist/Draft.css';
 
 
 
-WebpackerReact.setup({ App, FlashNotification, Nav, NewUserForm }) // ES6 shorthand for {Hello: Hello}
+WebpackerReact.setup({ App, FlashNotification, Nav, UserConsentCheckbox }) // ES6 shorthand for {Hello: Hello}
