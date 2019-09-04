@@ -43,7 +43,7 @@ function Schedule(props) {
     }, []);
 
     // fetch handelers
-    const createEventHandeler = (isAppointmentSlot, isConsultSlot) => {
+    const createEventHandeler = (isAppointmentSlot = false, isConsultSlot = false) => {
         setSelectedSlot(null)
         let event = { ...selectedSlot }
         props.dispatch({ type: "ADD_APPOINTMENT", value: { ...event, placeholder: true } })
