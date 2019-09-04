@@ -83,10 +83,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
         rescue
           puts "Stripe customer creation error"
         end
-        # path = after_sign_up_path_for(resource)
-        # byebug
-        # render json: {location: path }
-
+      
         respond_with resource, location: after_sign_up_path_for(resource)
 
         
