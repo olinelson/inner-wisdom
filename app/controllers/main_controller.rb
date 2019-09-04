@@ -158,13 +158,7 @@ class MainController < ApplicationController
             e.location= newEvent["location"]
             e.reminders =  { "useDefault": false }
             e.attendees= attendees
-            # e.recurrence = recurrence
-            # if recurrence
             e.recurrence = recurrence ? {freq: recurrence["freq"], count: 50} : nil
-
-            # end
-            
-            # e.recurrence = {freq: "daily"}
             e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => ""}}
         end
        
