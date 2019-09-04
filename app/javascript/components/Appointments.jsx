@@ -90,7 +90,7 @@ function Appointments(props) {
             .then(res => res.json())
             .then(res => {
                 props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res })
-                props.dispatch({ type: "SET_NOTIFICATIONS", value: [{ id: selectedEvent.id, type: "notice", message: "Appointment Booked" }] })
+                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: selectedEvent.id, type: "notice", message: "Appointment Booked" } })
                 setBooking(false)
                 setEventModalOpen(false)
                 setConfirmation({ type: "booking", event: res.bookedEvent })
@@ -130,6 +130,7 @@ function Appointments(props) {
                 setConfirmation({ type: "cancelation", event: { ...selectedEvent } })
                 setEventModalOpen(false)
                 setCanceling(false)
+                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: selectedEvent.id, type: "notice", message: "Appointment Canceled" } })
             })
             .then(() => setSelectedEvent(null))
     }

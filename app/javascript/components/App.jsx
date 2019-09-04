@@ -20,7 +20,7 @@ import { Provider } from "react-redux"
 import Schedule from './Schedule'
 
 import NotFound from "./NotFound"
-import Notification from "./Notification"
+import NotificationManager from "./NotificationManager"
 import Counselling from './Counselling'
 import Supervision from './Supervision'
 import Training from './Training'
@@ -79,8 +79,8 @@ function reducer(state = initialState, action) {
             return { ...state, defaultCalendarView: action.value }
         case "SET_CALENDAR_SCROLL_TO_TIME":
             return { ...state, calendarScrollToTime: action.value, calendarDisplayDate: action.value }
-        case "SET_NOTIFICATIONS":
-            return { ...state, notifications: action.value }
+        case "ADD_NOTIFICATION":
+            return { ...state, notifications: [action.value, ...state.notifications] }
         case "SET_ALL":
             return {
                 ...state,
@@ -207,7 +207,7 @@ export function App(props) {
 
 
                         </Switch>
-                        <Notification />
+                        <NotificationManager />
                     </div>
 
 

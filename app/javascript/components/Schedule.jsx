@@ -18,6 +18,7 @@ import "rc-time-picker/assets/index.css"
 import { Calendar as BigCalendar, momentLocalizer, Views } from 'react-big-calendar'
 import { withRouter } from "react-router-dom"
 
+const uuidv1 = require('uuid/v1')
 
 const localizer = momentLocalizer(moment)
 
@@ -63,7 +64,13 @@ function Schedule(props) {
             }
         })
             .then(response => response.json())
+            .catch(error => {
+                console.error('Error:', error)
+                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Event could not be created" } })
+                props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { appointments: props.appointments, consults: props.consults, personalEvents: props.personalEvents } })
+            })
             .then(res => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
+            .then(res => props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Event Created" } }))
     }
 
     const updateSelectedEventHandeler = () => {
@@ -86,7 +93,13 @@ function Schedule(props) {
             }
         })
             .then(response => response.json())
+            .catch(error => {
+                console.error('Error:', error)
+                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Event could not be updated" } })
+                props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { appointments: props.appointments, consults: props.consults, personalEvents: props.personalEvents } })
+            })
             .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
+            .then(res => props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Event Updated" } }))
 
     }
 
@@ -108,9 +121,16 @@ function Schedule(props) {
             }
         })
             .then(res => res.json())
+            .catch(error => {
+                console.error('Error:', error)
+                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Event could not be deleted" } })
+                props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { appointments: props.appointments, consults: props.consults, personalEvents: props.personalEvents } })
+            })
+
             .then((res) => {
                 props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res })
             })
+            .then(() => props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "warning", message: selectedEvent.title + " deleted" } }))
     }
 
     // attendee helper methods

@@ -65,6 +65,7 @@ function Nav(props) {
             .then(() => window.location.href = `${process.env.BASE_URL}`)
 
 
+
     }
 
     const FixedMenu = styled(Menu)`

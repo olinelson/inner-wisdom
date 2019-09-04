@@ -298,8 +298,6 @@ class MainController < ApplicationController
 
     def updateEvent
         event = params["event"]
-
-
         attendees= []
 
          if event["attendees"]
