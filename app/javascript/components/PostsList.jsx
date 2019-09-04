@@ -6,7 +6,6 @@ import PostsPreview from "./PostPreview"
 import { connect } from "react-redux"
 import { withRouter } from 'react-router-dom'
 
-
 function PostsList(props) {
 
     const handleCardClick = (id) => {

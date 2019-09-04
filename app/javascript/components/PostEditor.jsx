@@ -7,6 +7,8 @@ import styled from "styled-components"
 import { withRouter } from "react-router-dom"
 import { Jumbotron, EditorButtons } from './StyledComponents';
 
+const uuidv1 = require('uuid/v1')
+
 export const FeatureImageSegment = styled(Segment)`
     background-position: center !important;
     background-size: cover !important;
@@ -102,42 +104,24 @@ function PostEditor(props) {
     }
 
 
-    // deletePost = () => {
+    const deletePost = () => {
+        fetch(`${process.env.BASE_URL}/posts/${savedPost.id}`, {
+            method: "DELETE",
+            headers: {
+                "X-CSRF-Token": props.csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(response => response.json())
+            .then((e) => {
+                props.history.push("/myaccount")
+                props.dispatch({ type: "SET_POSTS", value: e.posts })
+                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Post Deleted" } })
+            })
 
-    //     fetch(`${process.env.BASE_URL}/posts/${savedPost.id}`, {
-    //         method: "DELETE",
-    //         headers: {
-    //             "X-CSRF-Token": props.csrfToken,
-    //             "Content-Type": "application/json",
-    //             Accept: "application/json",
-    //             "X-Requested-With": "XMLHttpRequest"
-    //         }
-    //     })
-    //         .then(response => response.json())
-    //         .then((e) => {
-    //             props.history.push("/myaccount")
-    //             props.dispatch({ type: "SET_POSTS", value: e.posts })
-    //         })
-
-    // }
-
-    // deletePostModal = () => {
-    //     return <Modal
-    //         trigger={<Button basic icon="trash" content='Delete' />}
-    //         header='Delete Post'
-    //         content='Are you sure you want to delete this post?'
-    //         actions={['Cancel', { key: 'delete', content: 'Yes, Delete', negative: true, onClick: () => deletePost() }]}
-    //     />
-
-    // }
-
-    // toggleFeatureImageHovering = () => {
-    //     setState({ featureImageHovering: !featureImageHovering })
-    // }
-
-
-
-
+    }
 
 
     const uploadFiles = (acceptedFiles) => {
