@@ -53,7 +53,7 @@ export const FullWidthCalendarContainer = styled(Container)`
         justify-content: center ;
     `
 
-
+const uuidv1 = require('uuid/v1')
 
 function Appointments(props) {
     const localizer = momentLocalizer(moment)
@@ -88,6 +88,13 @@ function Appointments(props) {
             }
         })
             .then(res => res.json())
+            .catch(error => {
+                console.error('Error:', error)
+                setEventModalOpen(false)
+                setBooking(false)
+                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Event could not be booked" } })
+                props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { appointments: props.appointments, consults: props.consults, personalEvents: props.personalEvents } })
+            })
             .then(res => {
                 props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res })
                 props.dispatch({ type: "ADD_NOTIFICATION", value: { id: selectedEvent.id, type: "notice", message: "Appointment Booked" } })
@@ -125,6 +132,13 @@ function Appointments(props) {
             }
         })
             .then(response => response.json())
+            .catch(error => {
+                console.error('Error:', error)
+                setEventModalOpen(false)
+                setCanceling(false)
+                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Event could not be canceled" } })
+                props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { appointments: props.appointments, consults: props.consults, personalEvents: props.personalEvents } })
+            })
             .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
             .then(() => {
                 setConfirmation({ type: "cancelation", event: { ...selectedEvent } })
