@@ -17,33 +17,7 @@ function GoogleEventTableRow(props) {
     let onAnInvoice = a.extended_properties && a.extended_properties.private.stripe_id.length > 0 ? true : false
     let isPaid = a.extended_properties && a.extended_properties.private.paid === "true"
 
-    let duration = moment.duration(moment(a.end_time) - moment(a.start_time))
-
-    const formattedDuration = (duration) => {
-        let hours = duration.hours()
-        let minutes = duration.minutes()
-
-        hours < 1 ? hours = '' : hours = `${hours} hr`
-        minutes < 1 ? minutes = '' : minutes = ` ${minutes} min`
-
-        return hours + minutes
-
-    }
-
-    const toogleAppointmentPaid = (a) => {
-        setLoading(true)
-        let bool = a.extended_properties.private.paid === "true"
-
-        let editedEvent = {
-            ...a, extended_properties: {
-                private: {
-                    paid: !bool,
-                    stripe_id: ""
-                }
-            }
-        }
-        updateGoogleCalEvent(editedEvent)
-    }
+    let duration = moment.duration(moment(a.end_time) - moment(a.start_time)).humanize()
 
     const updateGoogleCalEvent = (event) => {
         fetch(`${process.env.BASE_URL}/update`, {
@@ -94,9 +68,7 @@ function GoogleEventTableRow(props) {
                 if (res.invoice_item) {
                     let editedEvent = { ...event, extended_properties: { private: { paid: false, stripe_id: res.invoice_item.id } } }
                     updateGoogleCalEvent(editedEvent)
-
                 }
-
             })
     }
 
@@ -107,7 +79,7 @@ function GoogleEventTableRow(props) {
 
             <Table.Cell>{moment(a.start_time).format('Do MMMM  YYYY h:mm a')}</Table.Cell>
             <Table.Cell>{type}</Table.Cell>
-            <Table.Cell>{formattedDuration(duration)}</Table.Cell>
+            <Table.Cell>{duration}</Table.Cell>
             <Table.Cell>
                 <Label>
                     <Icon name='user' />

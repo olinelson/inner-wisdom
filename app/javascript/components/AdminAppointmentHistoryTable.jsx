@@ -6,34 +6,6 @@ import GoogleEventTableRow from './GoogleEventTableRow';
 
 function AdminAppointmentHistoryTable(props) {
 
-    const [selectedEvent, setSelectedEvent] = useState(null)
-    const [modalOpen, setModalOpen] = useState(false)
-
-
-    useEffect(() => {
-        console.log("hello")
-    }, []);
-
-    const updateGoogleCalEvent = (event) => {
-        fetch(`${process.env.BASE_URL}/update`, {
-            method: "POST",
-            body: JSON.stringify({
-                event: event
-            }),
-            headers: {
-                "X-CSRF-Token": props.csrfToken,
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        })
-            .then(response => response.json())
-            .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
-
-    }
-
-
-
     let chronologicalSorted = props.events.sort((b, a) => new Date(a.start_time) - new Date(b.end_time))
 
     const formattedDuration = (duration) => {

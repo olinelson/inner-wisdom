@@ -5,6 +5,8 @@ import moment from 'moment'
 import { connect } from "react-redux"
 import { parse } from 'url';
 
+const uuidv1 = require('uuid/v1')
+
 function InvoiceTableRow(props) {
     const [modalOpen, setModalOpen] = useState(false)
     const [voiding, setVoiding] = useState(false)
@@ -72,11 +74,18 @@ function InvoiceTableRow(props) {
             }
         })
             .then(res => res.json())
+            .catch(error => {
+                console.error('Error:', error)
+                setSending(false)
+                setModalOpen(false)
+                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Error Finalizing and Sending Invoice" } })
+            })
             .then((res) => {
                 if (res.invoice) {
                     setSending(false)
                     setModalOpen(false)
                     props.refreshAction()
+                    props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Invoice Finalized and Sent" } })
                 }
             })
     }
@@ -95,11 +104,18 @@ function InvoiceTableRow(props) {
             }
         })
             .then(res => res.json())
+            .catch(error => {
+                console.error('Error:', error)
+                setPaying(false)
+                setModalOpen(false)
+                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Error Marking Invoice as Paid" } })
+            })
             .then((res) => {
                 if (res.invoice) {
                     setPaying(false)
                     setModalOpen(false)
                     props.refreshAction()
+                    props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Invoice Marked as Paid" } })
                 }
             })
     }
@@ -165,7 +181,7 @@ function InvoiceTableRow(props) {
                         trigger={<Button loading={deleting} icon="delete" content="Delete" />}
                         header='Delete Invoice?'
                         content='Are you sure you would like to delete this invoice? This cannot be undone.'
-                        actions={['Cancel', { key: 'yes', content: 'Yes, Delete', negative: true, onClick: () => deleteInvoiceHandeler() }]}
+                        actions={[{ key: 'cancel', basic: true, content: "Cancel", inverted: true }, { basic: true, key: 'yes', content: 'Yes, Delete', negative: true, onClick: () => deleteInvoiceHandeler() }]}
                     />
                     <Modal
                         closeIcon
@@ -174,7 +190,7 @@ function InvoiceTableRow(props) {
                         trigger={<Button loading={sending} icon="paper plane" content="Finalize and Send" />}
                         header='Finalize and Send Invoice?'
                         content='Are you sure you would like to finalize and send this invoice?'
-                        actions={['Cancel', { key: 'yes', content: 'Yes', positive: true, onClick: () => sendInvoiceHandeler() }]}
+                        actions={[{ key: "cancel", basic: true, inverted: true, content: "cancel" }, { key: 'yes', basic: true, key: 'yes', content: 'Yes', positive: true, onClick: () => sendInvoiceHandeler() }]}
                     />
                     <Modal
                         closeIcon
@@ -183,7 +199,7 @@ function InvoiceTableRow(props) {
                         trigger={<Button loading={paying} icon="dollar" content="Mark As Paid" />}
                         header='Mark As Paid?'
                         content='Are you sure you would like to mark this invoice as paid?'
-                        actions={['Cancel', { key: 'yes', content: 'Yes', positive: true, onClick: () => markInvoiceAsPaidHandeler() }]}
+                        actions={[{ basic: true, key: "cancel", inverted: true, content: 'Cancel' }, { basic: true, key: 'yes', content: 'Yes', positive: true, onClick: () => markInvoiceAsPaidHandeler() }]}
                     />
                 </Button.Group>
 
@@ -196,7 +212,7 @@ function InvoiceTableRow(props) {
                         trigger={<Button basic loading={voiding} icon="delete" content="Void Invoice" />}
                         header='Void Invoice?'
                         content='Are you sure you would like to void this invoice? This cannot be undone.'
-                        actions={['Cancel', { key: 'yes', content: 'Yes, Void It', negative: true, onClick: () => voidInvoiceHandeler() }]}
+                        actions={[{ content: 'Cancel', key: 'cancel', basic: true, inverted: true }, { basic: true, key: 'yes', content: 'Yes, Void It', negative: true, onClick: () => voidInvoiceHandeler() }]}
                     />
                     <Button basic as="a" icon="download" href={i.invoice_pdf} content="PDF" />
                     <Button basic onClick={() => window.open(i.hosted_invoice_url, '_blank')} icon="chain" content="Link" />
@@ -218,7 +234,7 @@ function InvoiceTableRow(props) {
                         trigger={<Button basic loading={paying} icon="dollar" content="Mark As Paid" />}
                         header='Mark As Paid?'
                         content='Are you sure you would like to mark this invoice as paid?'
-                        actions={['Cancel', { key: 'yes', content: 'Yes', positive: true, onClick: () => markInvoiceAsPaidHandeler() }]}
+                        actions={[{ key: "cancel", content: "Cancel", basic: true, inverted: true }, { basic: true, key: 'yes', content: 'Yes', positive: true, onClick: () => markInvoiceAsPaidHandeler() }]}
                     />
                 </>
 
