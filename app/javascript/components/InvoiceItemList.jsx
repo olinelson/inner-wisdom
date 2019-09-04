@@ -4,6 +4,8 @@ import { Tab, Table, Label, Icon, Button } from "semantic-ui-react"
 import moment from "moment"
 import InvoiceItem from './InvoiceItem'
 
+const uuidv1 = require('uuid/v1')
+
 function InvoiceItemList(props) {
     const [loading, setLoading] = useState(true)
     const [invoiceItems, setInvoiceItems] = useState(null)
@@ -49,6 +51,12 @@ function InvoiceItemList(props) {
             }
         })
             .then(res => res.json())
+            .catch(error => {
+                console.error('Error:', error)
+                setCreating(false)
+                setLoading(false)
+                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Error Creating Invoice" } })
+            })
             .then((res) => {
                 if (res.invoice) {
                     setInvoiceItems(null)
@@ -56,6 +64,7 @@ function InvoiceItemList(props) {
             })
             .then(() => setCreating(false))
             .then(() => setLoading(false))
+            .then(() => props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "New Invoice Created" } }))
     }
 
 

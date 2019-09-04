@@ -3,6 +3,8 @@ import { Table, Modal, Icon, Label, Button, Checkbox, Dimmer, Loader } from "sem
 import moment from 'moment'
 import { connect } from "react-redux"
 
+const uuidv1 = require('uuid/v1')
+
 function GoogleEventTableRow(props) {
     const [loading, setLoading] = useState(false)
 
@@ -57,9 +59,14 @@ function GoogleEventTableRow(props) {
             }
         })
             .then(response => response.json())
-
+            .catch(error => {
+                console.error('Error:', error)
+                setLoading(false)
+                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Error Updating Calendar Event" } })
+            })
             .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
             .then(() => setLoading(false))
+            .then(() => props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Invoice Item Created" } }))
     }
 
     const createInvoiceItem = (event) => {
@@ -78,6 +85,11 @@ function GoogleEventTableRow(props) {
             }
         })
             .then(res => res.json())
+            .catch(error => {
+                console.error('Error:', error)
+                setLoading(false)
+                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Error Creating Invoice Item" } })
+            })
             .then((res) => {
                 if (res.invoice_item) {
                     let editedEvent = { ...event, extended_properties: { private: { paid: false, stripe_id: res.invoice_item.id } } }
@@ -102,23 +114,6 @@ function GoogleEventTableRow(props) {
                     {props.user.first_name + " " + props.user.last_name}
                 </Label>
             </Table.Cell>
-            {/* <Table.Cell>
-
-                {onAnInvoice ? <Checkbox checked={false} /> :
-                    <Modal
-                        basic
-                        size="small"
-                        closeIcon
-                        trigger={
-                            <Checkbox checked={isPaid} />
-                        }
-                        header={isPaid ? "Mark appointment as un paid" : "Mark appointment as paid"}
-                        content={"Are you sure you wish to mark this appointment as " + (isPaid ? " un paid." : " paid.")}
-                        actions={[{ basic: true, content: "cancel", key: "cancel", negative: true }, { basic: true, key: 'yes', content: 'Yes', positive: true, onClick: () => toogleAppointmentPaid(a) }]}
-                    />
-                }
-
-            </Table.Cell> */}
             <Table.Cell>
                 {onAnInvoice ? <Icon name="check" />
                     :
@@ -129,24 +124,10 @@ function GoogleEventTableRow(props) {
                         content={"Bill Item"} />}
 
             </Table.Cell>
-            {/* <Table.Cell>
-                {loading ? <Loader active={loading} inline size="tiny" /> :
-                    <div style={{ width: "1.5rem" }} />
-                }
-            </Table.Cell> */}
         </Table.Row>
     )
 }
 const mapStateToProps = (state) => ({
-    // appointments: state.appointments,
-    // consults: state.consults,
-    // // personalEvents: state.personalEvents,
-    // // user: state.user,
-    // users: state.users,
-    // // myAccountPanel: state.myAccountPanel,
-    // baseUrl: state.baseUrl,
-    // defaultCalendarView: state.defaultCalendarView,
-    // calendarScrollToTime: state.calendarScrollToTime,
     csrfToken: state.csrfToken
 })
 
