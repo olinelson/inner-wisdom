@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Modal, Button, Table, Label, Dimmer, Placeholder, Loader } from "semantic-ui-react"
+import { Modal, Button, Table, Label, Icon, Dimmer, Placeholder, Loader } from "semantic-ui-react"
 import InvoiceItem from "./InvoiceItem"
 import moment from 'moment'
 import { connect } from "react-redux"
@@ -223,7 +223,6 @@ function InvoiceTableRow(props) {
                         basic
                         content="Re Send"
                         icon='mail'
-                        label={{ basic: true, content: i.status_transitions.finalized_at ? moment(i.status_transitions.finalized_at).fromNow() : "No" }}
                         labelPosition='right'
                         onClick={() => sendInvoiceHandeler()}
                     />
@@ -257,7 +256,7 @@ function InvoiceTableRow(props) {
             <Table.Cell>{i.status}</Table.Cell>
             <Table.Cell>{i.number}</Table.Cell>
             <Table.Cell>{"$" + i.amount_due / 100}</Table.Cell>
-            <Table.Cell>{i.status_transitions.finalized_at ? moment(i.status_transitions.finalized_at).format('Do MMM YYYY @ h:mm a') : "No"}</Table.Cell>
+            <Table.Cell>{i.status === "open" || i.status === "paid" ? <Icon name="check" /> : <Icon name="close" />}</Table.Cell>
         </Table.Row>
 
         <Modal
