@@ -40,10 +40,8 @@ function Event(props) {
         }
         if (props.event.extended_properties) {
             if (props.event.extended_properties.private.skype === "true") return <Icon name="skype" />
-
         }
-
-        return null
+        return <Icon name="user" />
     }
 
     if (props.loadingEvent && (props.loadingEvent.id === props.event.id)) return <CustomLabel color={colorPicker()}>

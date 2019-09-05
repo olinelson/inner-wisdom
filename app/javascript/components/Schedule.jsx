@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux';
 
 // components / styles
-import { Divider, Modal, Popup, Button, Input, Label, Icon, Segment, Header, Dropdown, Checkbox, Form } from 'semantic-ui-react'
-import { BusinessEventSegment, CenteredFlexDiv, CalendarContainer, ModalContent } from "./StyledComponents"
+import { Divider, Modal, Popup, Button, Input, Radio, Label, Icon, Segment, Header, Dropdown, Checkbox, Form } from 'semantic-ui-react'
+import { BusinessEventSegment, CalendarContainer, ModalContent } from "./StyledComponents"
 import { FullWidthCalendarContainer } from "./Appointments"
 import Event from "./Event"
 import UserPickerDropDown from './UserPickerDropDown';
@@ -246,7 +246,7 @@ function Schedule(props) {
 
     // creating event helpers
     const selectSlotHandeler = (e) => {
-        if (props.user.admin) setSelectedSlot({ ...e, title: "", location: "", start_time: e.start, end_time: e.end, personal: false })
+        if (props.user.admin) setSelectedSlot({ ...e, title: "", location: "", start_time: e.start, end_time: e.end, personal: false, extended_properties: { private: { skype: "false", paid: "false" } } })
     }
 
     const personalOrBusinessToggle = () => {
@@ -296,6 +296,22 @@ function Schedule(props) {
             </Form>
         </Segment>
     }
+    const handleNewSlotSkypeChange = () => {
+        let skype = selectedSlot.extended_properties.private.skype
+        if (skype === "true") skype = "false"
+        else skype = "true"
+        let newExtendedProperties = { ...selectedSlot.extended_properties.private, skype }
+        console.log(newExtendedProperties)
+        setSelectedSlot({ ...selectedSlot, extended_properties: { private: newExtendedProperties } })
+    }
+    const handleSelectedEventSkypeChange = () => {
+        let skype = selectedEvent.extended_properties.private.skype
+        if (skype === "true") skype = "false"
+        else skype = "true"
+        let newExtendedProperties = { ...selectedEvent.extended_properties.private, skype }
+        console.log(newExtendedProperties)
+        setSelectedEvent({ ...selectedEvent, extended_properties: { private: newExtendedProperties } })
+    }
 
     const creatingBusinessEventOptions = (e) => {
         if (e && e.personal === false) return <BusinessEventSegment>
@@ -311,11 +327,36 @@ function Schedule(props) {
                 {showEventAttendees(e, removeAttendeeFromEvent, setSelectedSlot)}
             </div>
             <UserPickerDropDown event={e} addAttendeeHandeler={(u) => addAttendeeToEvent(u, selectedSlot, setSelectedSlot)} />
+            <Form style={{ display: !selectedSlot.attendees || selectedSlot.attendees.length < 1 ? "none" : "block" }}>
+                <Form.Group inline >
+                    <Form.Field>
+                        <Form.Radio
+                            disabled={!selectedSlot.attendees || selectedSlot.attendees.length < 1 ? true : false}
+                            label='Skype'
+                            name='radioGroup'
+                            value={"skype"}
+                            checked={selectedSlot.extended_properties.private.skype === "true"}
+                            onChange={() => handleNewSlotSkypeChange()}
+                        />
+                    </Form.Field>
 
+                    <Form.Field>
+                        <Form.Radio
+                            disabled={!selectedSlot.attendees || selectedSlot.attendees.length < 1 ? true : false}
+                            label='In Person'
+                            name='radioGroup'
+                            value={"inPerson"}
+                            checked={selectedSlot.extended_properties.private.skype === "false"}
+                            onChange={() => handleNewSlotSkypeChange()}
+                        />
+                    </Form.Field>
+                </Form.Group>
+            </Form>
 
         </BusinessEventSegment>
     }
-
+    console.log(selectedSlot)
+    console.log(selectedEvent)
     // modals
     const editingEventModal = () => {
         let e = selectedEvent
@@ -342,6 +383,29 @@ function Schedule(props) {
                             <UserPickerDropDown event={e} addAttendeeHandeler={(u) => addAttendeeToEvent(u, selectedEvent, setSelectedEvent)} />
                         </>
                     }
+                    <Divider hidden />
+
+                    <Form style={{ display: !selectedEvent.attendees || selectedEvent.attendees.length < 1 ? "none" : "block" }}>
+                        <Form.Group inline >
+                            <Form.Radio
+
+                                label='Skype'
+                                name='radioGroup'
+                                value='that'
+                                checked={selectedEvent.extended_properties.private.skype === "true"}
+                                onChange={() => handleSelectedEventSkypeChange()}
+                            />
+                            {" "}
+                            <Form.Radio
+                                // disabled={!selectedEvent.attendees || selectedEvent.attendees.length < 1 ? true : false}
+                                label='In Person'
+                                name='radioGroup'
+                                value='that'
+                                checked={selectedEvent.extended_properties.private.skype === "false"}
+                                onChange={() => handleSelectedEventSkypeChange()}
+                            />
+                        </Form.Group>
+                    </Form>
 
                 </ModalContent>
             }

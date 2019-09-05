@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Container, Divider, Label, Button, Modal, Header, Checkbox } from 'semantic-ui-react'
+import { Container, Divider, Label, Button, Modal, Form, Header, Checkbox } from 'semantic-ui-react'
 import { connect } from 'react-redux';
 import styled from "styled-components"
 import { CalendarContainer, ModalContent } from "./StyledComponents"
@@ -231,11 +231,26 @@ function Appointments(props) {
                     <>
                         <p>Would you like to book a appointment at this time?</p>
                         <p>If this is intended to be a skype appointment, check the toggle below.</p>
-                        <Checkbox
-                            checked={selectedEvent.extended_properties && selectedEvent.extended_properties.private.skype ? true : false}
-                            onChange={(e) => toggleSkypeHandeler(e)}
-                            label="Skype Appointment"
-                            toggle />
+
+                        <Form >
+                            <Form.Group inline >
+                                <Form.Radio
+                                    label='Skype'
+                                    name='radioGroup'
+                                    value='that'
+                                    checked={selectedEvent.extended_properties.private.skype === "true"}
+                                    onChange={() => toggleSkypeHandeler()}
+                                />
+                                {" "}
+                                <Form.Radio
+                                    label='In Person'
+                                    name='radioGroup'
+                                    value='that'
+                                    checked={selectedEvent.extended_properties.private.skype === "false"}
+                                    onChange={() => toggleSkypeHandeler()}
+                                />
+                            </Form.Group>
+                        </Form>
                     </>
                 }
                 <Divider hidden />
@@ -245,11 +260,16 @@ function Appointments(props) {
         />
     }
 
-    const toggleSkypeHandeler = () => {
 
-        let newExtendedProperties = { ...selectedEvent.extended_properties.private, skype: !selectedEvent.extended_properties.private.skype || false }
+    const toggleSkypeHandeler = () => {
+        let skype = selectedEvent.extended_properties.private.skype
+        if (skype === "true") skype = "false"
+        else skype = "true"
+        let newExtendedProperties = { ...selectedEvent.extended_properties.private, skype }
+        console.log(newExtendedProperties)
         setSelectedEvent({ ...selectedEvent, extended_properties: { private: newExtendedProperties } })
     }
+
 
     const showConfirmationModal = () => {
         if (confirmation) {

@@ -159,7 +159,7 @@ class MainController < ApplicationController
             e.reminders =  { "useDefault": false }
             e.attendees= attendees
             e.recurrence = recurrence ? {freq: recurrence["freq"], count: 50} : nil
-            e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => ""}}
+            e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => "", 'skype' => newEvent["extended_properties"]["private"]["skype"] || false}}
         end
        
         #  render json: {, events: eventsInDateWindow(@appointmentsCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
@@ -293,6 +293,7 @@ class MainController < ApplicationController
     def updateEvent
         event = params["event"]
         attendees= []
+        
 
          if event["attendees"]
             attendees = event["attendees"].map{|a| 
@@ -350,6 +351,7 @@ class MainController < ApplicationController
                 'paid' => event["extended_properties"]["private"]["paid"],
                  'stripe_id' => event["extended_properties"]["private"]["stripe_id"],
                  'cancelation' => inGracePeriod === false ? true : false,
+                 'skype' => event["extended_properties"]["private"]["skype"] || false
                 }}
             rescue
                 e.extended_properties = {'private' => {
@@ -430,7 +432,7 @@ class MainController < ApplicationController
             
             # just incase there are multiple matches
             foundItems.each do |item|
-                item.extended_properties = {'private' => {'paid' => false, 'stripe_id' => ""}}
+                item.extended_properties = {'private' => {'paid' => false, 'stripe_id' => "", 'skype' => item.extended_properties = {'private' => {'paid' => false, 'stripe_id' => "", 'skype' => item["extended_properties"]["private"]["skype"] || false}}}}
                 item.save
             end
         end
