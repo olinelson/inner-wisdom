@@ -38,6 +38,7 @@ function PostEditor(props) {
         })
     }, []);
 
+
     const editingDisabled = props.user && props.user.id == post.user_id ? false : true
 
     let saved = true
