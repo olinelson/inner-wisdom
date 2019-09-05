@@ -223,7 +223,7 @@ function InvoiceTableRow(props) {
                         basic
                         content="Re Send"
                         icon='mail'
-                        label={{ basic: true, content: i.webhooks_delivered_at ? moment(i.webhooks_delivered_at).fromNow() : "No" }}
+                        label={{ basic: true, content: i.status_transitions.finalized_at ? moment(i.status_transitions.finalized_at).fromNow() : "No" }}
                         labelPosition='right'
                         onClick={() => sendInvoiceHandeler()}
                     />
@@ -245,7 +245,7 @@ function InvoiceTableRow(props) {
 
 
     return <>
-
+        {console.log(i)}
         <Table.Row
             onClick={() => setModalOpen(true)}
             warning={i.status === "open"}
@@ -257,7 +257,7 @@ function InvoiceTableRow(props) {
             <Table.Cell>{i.status}</Table.Cell>
             <Table.Cell>{i.number}</Table.Cell>
             <Table.Cell>{"$" + i.amount_due / 100}</Table.Cell>
-            <Table.Cell>{i.webhooks_delivered_at ? moment(i.webhooks_delivered_at).format('Do MMM YYYY @ h:mm a') : "No"}</Table.Cell>
+            <Table.Cell>{i.status_transitions.finalized_at ? moment(i.status_transitions.finalized_at).format('Do MMM YYYY @ h:mm a') : "No"}</Table.Cell>
         </Table.Row>
 
         <Modal

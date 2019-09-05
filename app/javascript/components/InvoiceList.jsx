@@ -35,7 +35,7 @@ function InvoiceList(props) {
     const invoicesTableRows = () => {
         if (invoices) {
             return invoices.data.map(i => {
-                let time = moment.duration(i.webhooks_delivered_at).humanize()
+                // let time = moment.duration(i.webhooks_delivered_at).humanize()
                 return <InvoiceTableRow refreshAction={() => setLoading(true)} invoice={i} key={i.id} invoice={i} />
             }
             )
