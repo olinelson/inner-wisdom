@@ -27,6 +27,7 @@ function ClientShow(props) {
     const [suburb, set_suburb] = useState(user.suburb || "")
     const [address_state, set_address_state] = useState(user.state || "")
     const [post_code, set_post_code] = useState(user.post_code || "")
+    const [medicare_number, set_medicare_number] = useState(user.medicare_number || "")
 
     const [email, set_email] = useState(user.email || "")
     // const [loading, setLoading] = useState(true)
@@ -44,7 +45,7 @@ function ClientShow(props) {
     }
 
     const editUserHandeler = (approved = approved) => {
-        let editedUser = { first_name, last_name, email, street_address, apartment_number, post_code, suburb, state: address_state, approved }
+        let editedUser = { first_name, last_name, email, street_address, apartment_number, post_code, suburb, state: address_state, approved, medicare_number }
 
         fetch(`${process.env.BASE_URL}/clients/${user.id}`, {
             method: "PATCH",
@@ -142,6 +143,10 @@ function ClientShow(props) {
                                 <label>Post Code</label>
                                 <input value={post_code || ""} onChange={(e) => set_post_code(e.target.value)} />
                             </Form.Field>
+                            <Form.Field>
+                                <label>Medicare Number</label>
+                                <input value={medicare_number || ""} onChange={(e) => set_medicare_number(e.target.value)} />
+                            </Form.Field>
                         </Form>
                     </div>
                 }
@@ -178,7 +183,7 @@ function ClientShow(props) {
                 actions={[{ basic: 'true', inverted: 'true', content: 'cancel' }, { basic: 'true', key: 'done', content: user.approved ? "Yes, Un Approve" : "Yes Approve", positive: true, onClick: () => approveUserHandeler() }]}
             />
 
-
+            {console.log(user)}
             <hr />
             <h4>Address</h4>
             <p>{user.street_address}</p>
@@ -186,9 +191,14 @@ function ClientShow(props) {
             <p>{user.suburb}</p>
             <p>{user.state}</p>
             <p>{user.post_code}</p>
-            <hr />
+
             <h4>Email</h4>
             <p>{user.email}</p>
+            <h4>Phone</h4>
+            <p>{user.phone_number}</p>
+            <h4>Medicare Number</h4>
+            <p>{user.medicare_number}</p>
+
 
 
             <Tab panes={panes} renderActiveOnly={true} />

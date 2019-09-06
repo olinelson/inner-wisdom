@@ -50,6 +50,8 @@
     <%= f.number_field :post_code, autofocus: true %>
   </div>
 
+  <%if current_user.admin %>
+
   <div class="field">
     <%= f.label :google_calendar_email %><br />
     <%= f.email_field :google_calendar_email, autofocus: true, autocomplete: "email" %>
@@ -59,8 +61,12 @@
     <%= f.label :google_calendar_refresh_token %><br />
     <%= f.text_field :google_calendar_refresh_token, autofocus: true %>
   </div>
+<%end%>
 
-  
+   <div class="field">
+    <%= f.label :medicare_number %><br />
+    <%= f.text_field :medicare_number, autofocus: true %>
+  </div>
 
   <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
     <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
