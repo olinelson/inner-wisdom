@@ -9,7 +9,7 @@ class NotificationMailer < ApplicationMailer
             end
             # all day
             if @event["start"]["date"]
-                return DateTime.parse(@event["start"]["date"]).strftime("%A, %d %b %Y") + " | All Day Event)"
+                return DateTime.parse(@event["start"]["date"]).strftime("%A, %d %b %Y") + " | All Day Event"
             end
 
             if @event["start"]["dateTime"]
