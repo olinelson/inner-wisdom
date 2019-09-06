@@ -29,14 +29,14 @@
 
   <div class="field">
     <%= f.label :phone_number %><br />
-    <%= f.text_field :phone_number, autofocus: true,placeholder: "0402 123 123" %>
+    <%= f.text_field :phone_number,required: true, autofocus: true,placeholder: "0402 123 123" %>
   </div>
 
   <div class="ui divider hidden"></div>
 
   <h4 class="ui header">
   <i aria-hidden="true" class="building icon"></i>
-  <div class="content">Address</div>
+  <div class="content">Address <small style="color:grey;">(optional)</small></div>
   </h4>
 
   <div class="fields">
@@ -69,10 +69,19 @@
       <%= f.label :post_code %><br />
       <%= f.number_field :post_code, autofocus: true, placeholder: "2000" %>
     </div>
-
-
-
   </div>
+
+  <h4 class="ui header">
+  <i aria-hidden="true" class="medkit icon"></i>
+  <div class="content">Health Fund <small style="color:grey;">(optional)</small></div>
+
+  </h4>
+
+   <div class="field">
+      <%= f.label :medicare_number %><br />
+      <%= f.number_field :medicare_number, autofocus: true, placeholder: "123456781" %>
+    </div>
+
 
   <div class="ui divider hidden"></div>
 

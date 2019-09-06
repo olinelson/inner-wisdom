@@ -13,6 +13,7 @@ class ApplicationController < ActionController::Base
       :state,
       :post_code,
       :phone_number,
+      :medicare_number,
       :email,
       
 
@@ -20,6 +21,7 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:account_update, keys: [
       :first_name, 
       :last_name, 
+      :medicare_number,
       :google_calendar_email, 
       :google_calendar_refresh_token,
       :street_address, 
