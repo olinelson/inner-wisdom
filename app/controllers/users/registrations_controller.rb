@@ -24,7 +24,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
         if params["user"]["sendWelcomeEmail"]
         resource.send_reset_password_instructions
-        NotificationMailer.account_created_by_admin_notification(resource).deliver
+        NotificationMailer.account_created_by_admin_notification(resource).deliver_later
        end
        
        begin
