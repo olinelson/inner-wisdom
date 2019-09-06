@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Editor, EditorState, RichUtils, convertToRaw, convertFromRaw } from 'draft-js';
+import { EditorState, RichUtils, convertToRaw, convertFromRaw, AtomicBlockUtils, focus } from 'draft-js';
 import { connect } from 'react-redux';
 import { Container, Input, Divider, Menu, Checkbox, Label, Dropdown, Modal, Popup, Header, Button, Icon, Image, Segment, Placeholder, Dimmer } from "semantic-ui-react"
 import Dropzone from 'react-dropzone'
@@ -7,7 +7,35 @@ import styled from "styled-components"
 import { withRouter } from "react-router-dom"
 import { Jumbotron, EditorButtons } from './StyledComponents';
 
+
+import Editor, { composeDecorators } from 'draft-js-plugins-editor';
+import createImagePlugin from 'draft-js-image-plugin';
+// import createAlignmentPlugin from 'draft-js-alignment-plugin';
+
+
+// import createFocusPlugin from 'draft-js-focus-plugin';
+// // import createColorBlockPlugin from './colorBlockPlugin';
+
+const imagePlugin = createImagePlugin();
+// const focusPlugin = createFocusPlugin();
+// const alignmentPlugin = createAlignmentPlugin();
+// const { AlignmentTool } = alignmentPlugin;
+// // // const colorBlockPlugin = createColorBlockPlugin({ decorator });
+
+// const decorator = composeDecorators(
+//     alignmentPlugin.decorator,
+//     focusPlugin.decorator,
+// );
+
+const plugins = [
+    imagePlugin
+    //  focusPlugin, 
+    //  alignmentPlugin
+];
+
 const uuidv1 = require('uuid/v1')
+
+
 
 export const FeatureImageSegment = styled(Segment)`
     background-position: center !important;
@@ -151,6 +179,33 @@ function PostEditor(props) {
 
     }
 
+    const getBase64 = (file) => {
+        var reader = new FileReader();
+        reader.readAsDataURL(file[0]);
+        reader.onload = function () {
+            let base64 = reader.result
+            insertImage(editorState, base64)
+
+        };
+        reader.onerror = function (error) {
+            console.log('Error: ', error);
+        };
+
+
+
+    }
+
+    const insertImage = (editorState, base64) => {
+        const contentState = editorState.getCurrentContent();
+        const contentStateWithEntity = contentState.createEntity(
+            'image',
+            'IMMUTABLE',
+            { src: base64 },
+        );
+        const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+        setEditorState(AtomicBlockUtils.insertAtomicBlock(editorState, entityKey, ' '))
+    };
+
     const editingView = () => {
         return <>
 
@@ -174,7 +229,6 @@ function PostEditor(props) {
 
                                 :
                                 <Placeholder >
-                                    {/* <Placeholder.Image /> */}
                                 </Placeholder>
                             }
 
@@ -182,6 +236,9 @@ function PostEditor(props) {
                     </Container>
                 )}
             </Dropzone>
+
+
+
 
 
 
@@ -273,21 +330,28 @@ function PostEditor(props) {
             editingView()
         }
 
-        <Container text style={!editingDisabled ? { border: "1px solid grey" } : null}>
+        <Dropzone onDrop={(acceptedFiles) => getBase64(acceptedFiles)}>
+            {({ getRootProps, getInputProps }) => (
+                <Container {...getRootProps()} text style={!editingDisabled ? { border: "1px solid grey" } : null}>
 
 
 
 
-            <Editor
+                    <Editor
+                        editorState={editorState}
+                        onChange={setEditorState}
+                        handleKeyCommand={(c, es) => handleKeyCommand(c, es)}
+                        spellCheck
+                        readOnly={editingDisabled}
+                        placeholder="start writing your post here..."
+                        plugins={plugins}
+                    />
+                    {/* <AlignmentTool /> */}
+                </Container>
+            )}
+        </Dropzone>
 
-                editorState={editorState}
-                onChange={setEditorState}
-                handleKeyCommand={(c, es) => handleKeyCommand(c, es)}
-                spellCheck
-                readOnly={editingDisabled}
-                placeholder="start writing your post here..."
-            />
-        </Container>
+
     </>
 
 
@@ -302,3 +366,5 @@ const mapStateToProps = (state) => ({
 
 
 export default withRouter(connect(mapStateToProps)(PostEditor))
+
+

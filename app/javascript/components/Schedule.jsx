@@ -301,7 +301,6 @@ function Schedule(props) {
         if (skype === "true") skype = "false"
         else skype = "true"
         let newExtendedProperties = { ...selectedSlot.extended_properties.private, skype }
-        console.log(newExtendedProperties)
         setSelectedSlot({ ...selectedSlot, extended_properties: { private: newExtendedProperties } })
     }
     const handleSelectedEventSkypeChange = () => {
@@ -309,7 +308,6 @@ function Schedule(props) {
         if (skype === "true") skype = "false"
         else skype = "true"
         let newExtendedProperties = { ...selectedEvent.extended_properties.private, skype }
-        console.log(newExtendedProperties)
         setSelectedEvent({ ...selectedEvent, extended_properties: { private: newExtendedProperties } })
     }
 
@@ -355,8 +353,6 @@ function Schedule(props) {
 
         </BusinessEventSegment>
     }
-    console.log(selectedSlot)
-    console.log(selectedEvent)
     // modals
     const editingEventModal = () => {
         let e = selectedEvent

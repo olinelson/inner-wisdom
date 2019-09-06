@@ -266,7 +266,6 @@ function Appointments(props) {
         if (skype === "true") skype = "false"
         else skype = "true"
         let newExtendedProperties = { ...selectedEvent.extended_properties.private, skype }
-        console.log(newExtendedProperties)
         setSelectedEvent({ ...selectedEvent, extended_properties: { private: newExtendedProperties } })
     }
 

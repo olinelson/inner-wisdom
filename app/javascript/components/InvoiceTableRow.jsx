@@ -244,7 +244,6 @@ function InvoiceTableRow(props) {
 
 
     return <>
-        {console.log(i)}
         <Table.Row
             onClick={() => setModalOpen(true)}
             warning={i.status === "open"}
