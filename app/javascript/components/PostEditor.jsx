@@ -10,30 +10,32 @@ import { Jumbotron, EditorButtons } from './StyledComponents';
 
 import Editor, { composeDecorators } from 'draft-js-plugins-editor';
 import createImagePlugin from 'draft-js-image-plugin';
-// import createAlignmentPlugin from 'draft-js-alignment-plugin';
+import createBlockDndPlugin from 'draft-js-drag-n-drop-plugin';
+import createFocusPlugin from 'draft-js-focus-plugin';
+import createAlignmentPlugin from 'draft-js-alignment-plugin';
+import 'draft-js-image-plugin/lib/plugin.css';
 
 
-// import createFocusPlugin from 'draft-js-focus-plugin';
-// // import createColorBlockPlugin from './colorBlockPlugin';
+const blockDndPlugin = createBlockDndPlugin();
+const focusPlugin = createFocusPlugin();
+const alignmentPlugin = createAlignmentPlugin();
+const { AlignmentTool } = alignmentPlugin;
 
-const imagePlugin = createImagePlugin();
-// const focusPlugin = createFocusPlugin();
-// const alignmentPlugin = createAlignmentPlugin();
-// const { AlignmentTool } = alignmentPlugin;
-// // // const colorBlockPlugin = createColorBlockPlugin({ decorator });
+const decorator = composeDecorators(
+    focusPlugin.decorator,
+    blockDndPlugin.decorator
+);
 
-// const decorator = composeDecorators(
-//     alignmentPlugin.decorator,
-//     focusPlugin.decorator,
-// );
 
-const plugins = [
-    imagePlugin
-    //  focusPlugin, 
-    //  alignmentPlugin
-];
+const imagePlugin = createImagePlugin({ decorator });
 
 const uuidv1 = require('uuid/v1')
+
+const plugins = [
+    blockDndPlugin,
+    focusPlugin,
+    imagePlugin
+];
 
 
 
@@ -51,6 +53,7 @@ export const FeatureImageSegment = styled(Segment)`
 function PostEditor(props) {
     const [savedPost, setSavedPost] = useState(props.posts.find(p => p.id == props.match.params.id))
     const [post, setPost] = useState(savedPost)
+
 
     const [editorState, setEditorState] = useState(
         post.body && post.body.length > 0 ?
@@ -346,7 +349,7 @@ function PostEditor(props) {
                         placeholder="start writing your post here..."
                         plugins={plugins}
                     />
-                    {/* <AlignmentTool /> */}
+                    <AlignmentTool />
                 </Container>
             )}
         </Dropzone>
@@ -368,3 +371,10 @@ const mapStateToProps = (state) => ({
 export default withRouter(connect(mapStateToProps)(PostEditor))
 
 
+// ####################################
+// ####################################
+// ####################################
+// ####################################
+// ####################################
+// ####################################
+// ####################################

@@ -2620,6 +2620,13 @@ draft-js-buttons@^2.0.1:
   dependencies:
     clsx "^1.0.4"
 
+draft-js-drag-n-drop-plugin@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/draft-js-drag-n-drop-plugin/-/draft-js-drag-n-drop-plugin-2.0.4.tgz#082b72ab2f8201129a5d9ab527dc199c0d74fed6"
+  integrity sha512-kh/ew4jKpzlZPAdXNUTX4Zq1BtAGURdufUv1Iaki/qM9M1HjMPmv0Sy4jbi8tk7UcJ6rNZHX1ooN/vOts1iM1Q==
+  dependencies:
+    immutable "~3.7.4"
+
 draft-js-focus-plugin@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/draft-js-focus-plugin/-/draft-js-focus-plugin-3.0.1.tgz#235a2b80362ba65b6132f540ca1b2932a3eb19e9"
@@ -2642,6 +2649,11 @@ draft-js-plugins-editor@^3.0.0:
   dependencies:
     immutable "~3.7.4"
     prop-types "^15.5.8"
+
+draft-js-resizeable-plugin@^2.0.9:
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/draft-js-resizeable-plugin/-/draft-js-resizeable-plugin-2.0.9.tgz#fd78f4b8f4729dd585fe032ee066edbc526599f8"
+  integrity sha512-hInVpzSt7VK0M+j81BAfEk1S1fGo2sse+KZT8nXu7zTebdUGhJWwBjIMztYuY/NQSq+h+5MqKY40aZ6DkZ1R9w==
 
 draft-js@^0.11.0:
   version "0.11.0"
