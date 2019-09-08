@@ -139,10 +139,11 @@ export const EditorButtons = styled.div`
         justify-items: center;
         align-items: center;
         position: sticky;
-        top: 1rem;
+        top: 3rem;
         z-index: 2;
         @media (min-width: 60rem) {
-            top: 3.5rem;
+            top: 3rem;
+
         }
 `
 

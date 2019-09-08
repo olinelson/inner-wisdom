@@ -8,32 +8,15 @@ import { withRouter } from "react-router-dom"
 import { Jumbotron, EditorButtons } from './StyledComponents';
 
 
-import Editor, { composeDecorators } from 'draft-js-plugins-editor';
+import Editor from 'draft-js-plugins-editor';
 import createImagePlugin from 'draft-js-image-plugin';
-import createBlockDndPlugin from 'draft-js-drag-n-drop-plugin';
-import createFocusPlugin from 'draft-js-focus-plugin';
-import createAlignmentPlugin from 'draft-js-alignment-plugin';
-import 'draft-js-image-plugin/lib/plugin.css';
 
 
-const blockDndPlugin = createBlockDndPlugin();
-const focusPlugin = createFocusPlugin();
-const alignmentPlugin = createAlignmentPlugin();
-const { AlignmentTool } = alignmentPlugin;
-
-const decorator = composeDecorators(
-    focusPlugin.decorator,
-    blockDndPlugin.decorator
-);
-
-
-const imagePlugin = createImagePlugin({ decorator });
+const imagePlugin = createImagePlugin();
 
 const uuidv1 = require('uuid/v1')
 
 const plugins = [
-    blockDndPlugin,
-    focusPlugin,
     imagePlugin
 ];
 
@@ -182,9 +165,9 @@ function PostEditor(props) {
 
     }
 
-    const getBase64 = (file) => {
+    const getBase64 = (selectionState, files) => {
         var reader = new FileReader();
-        reader.readAsDataURL(file[0]);
+        reader.readAsDataURL(files[0]);
         reader.onload = function () {
             let base64 = reader.result
             insertImage(editorState, base64)
@@ -241,11 +224,7 @@ function PostEditor(props) {
             </Dropzone>
 
 
-
-
-
-
-            <EditorButtons textAlign="center">
+            <EditorButtons style={{ background: "white" }} textAlign="center">
                 <Button as='div' labelPosition='right'>
                     <Button
                         basic
@@ -309,7 +288,6 @@ function PostEditor(props) {
             <Container text>
                 <Input fluid placeholder="Post Title" transparent onChange={(e) => setPost({ ...post, title: e.target.value })} style={{ fontSize: "3rem", margin: "1rem 0" }} value={post.title} />
             </Container>
-
         </>
     }
 
@@ -320,7 +298,6 @@ function PostEditor(props) {
             <Container text>
                 <h1>{post.title}</h1>
             </Container>
-
         </>
     }
 
@@ -333,32 +310,20 @@ function PostEditor(props) {
             editingView()
         }
 
-        <Dropzone onDrop={(acceptedFiles) => getBase64(acceptedFiles)}>
-            {({ getRootProps, getInputProps }) => (
-                <Container {...getRootProps()} text style={!editingDisabled ? { border: "1px solid grey" } : null}>
 
-
-
-
-                    <Editor
-                        editorState={editorState}
-                        onChange={setEditorState}
-                        handleKeyCommand={(c, es) => handleKeyCommand(c, es)}
-                        spellCheck
-                        readOnly={editingDisabled}
-                        placeholder="start writing your post here..."
-                        plugins={plugins}
-                    />
-                    <AlignmentTool />
-                </Container>
-            )}
-        </Dropzone>
-
-
+        <Container text style={!editingDisabled ? { border: "1px solid grey" } : null}>
+            <Editor
+                editorState={editorState}
+                onChange={setEditorState}
+                handleKeyCommand={(c, es) => handleKeyCommand(c, es)}
+                spellCheck
+                readOnly={editingDisabled}
+                placeholder="start writing your post here..."
+                plugins={plugins}
+                handleDroppedFiles={(selectionState, files) => getBase64(selectionState, files)}
+            />
+        </Container>
     </>
-
-
-
 }
 
 const mapStateToProps = (state) => ({
@@ -369,12 +334,3 @@ const mapStateToProps = (state) => ({
 
 
 export default withRouter(connect(mapStateToProps)(PostEditor))
-
-
-// ####################################
-// ####################################
-// ####################################
-// ####################################
-// ####################################
-// ####################################
-// ####################################
