@@ -314,7 +314,7 @@ function PostEditor(props) {
         <Container text style={!editingDisabled ? { border: "1px solid grey" } : null}>
             <Editor
                 editorState={editorState}
-                onChange={setEditorState}
+                onChange={(e) => setEditorState(e)}
                 handleKeyCommand={(c, es) => handleKeyCommand(c, es)}
                 spellCheck
                 readOnly={editingDisabled}

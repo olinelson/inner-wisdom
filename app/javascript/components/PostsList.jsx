@@ -71,9 +71,9 @@ function PostsList(props) {
         let result = sortedPosts.map(p => {
             if (p.published === true) return cardMapper(p)
         })
-        if (result.length < 1) return result
-        return <p style={{ color: "grey" }}>No Blog Posts Yet...</p>
 
+        if (result.length < 1 || result[0] === undefined) return <p style={{ color: "grey" }}>No Blog Posts Yet...</p>
+        return result
     }
 
     return <>
