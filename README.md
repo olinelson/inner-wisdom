@@ -8,8 +8,6 @@ This app serves three main purposes:
 
 3. Blog post creation
 
-<hr/>
-
 ## Events and Booking
 
 Events are built on top of google calendar...
