@@ -14,12 +14,11 @@ function Event(props) {
             opacity: ${() => props.event.placeholder ? "0.5" : "1"};
         `
 
-    if (props.event && props.event.extended_properties && props.event.extended_properties.private.cancelation === "true") isCanceled = true
 
     const colorPicker = () => {
-        if (isCanceled) return "red"
-        let personal = false
-        // if (props.attendees) return 'blue'
+
+        if (props.event && props.event.extended_properties && props.event.extended_properties.private.cancelation === "true") return 'red'
+        if (props.event.attendees && props.event.attendees.length > 0) return 'blue'
         // // if (!props.user) return "grey"
         // if (props.event.calendar && props.event.calendar.id === props.user.google_calendar_email) personal = true
         // if (personal) return "green"
@@ -29,9 +28,9 @@ function Event(props) {
             return false
         }
 
-        if (!personal && isAnEmptySlot()) return "grey"
+        // if (!personal && isAnEmptySlot()) return "grey"
 
-        return "blue"
+        // return "blue"
     }
 
     const iconPicker = () => {

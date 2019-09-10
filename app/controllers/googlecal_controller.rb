@@ -227,9 +227,42 @@ class GooglecalController < ApplicationController
         jsonEvent = event.to_json
         NotificationMailer.user_appointment_cancelation(user, jsonEvent).deliver_later
         # NotificationMailer.admin_appointment_confirmation(user, jsonEvent).deliver_later
-        render json: {canceledEvent: event}
+        # render json: {canceledEvent: event}
 
-        # return editGoogleCalEvent(cal: cal, event: event, attendees: attendees, inGracePeriod: inGracePeriod)
+        return editGoogleCalEvent(cal: cal, event: event, attendees: attendees, inGracePeriod: inGracePeriod)
     end
+
+def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true, recurrence: nil)
+
+
+        
+        editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
+            
+            e.title = event["title"]
+            e.color_id = 2
+            e.start_time = event["start_time"]
+            e.end_time = event["end_time"]
+            e.location= event["location"]
+            e.attendees = attendees
+            e.recurrence = recurrence ? {freq: recurrence["freq"], count: 50} : nil
+
+            begin
+             e.extended_properties = {'private' => {
+                'paid' => event["extended_properties"]["private"]["paid"],
+                 'stripe_id' => event["extended_properties"]["private"]["stripe_id"],
+                 'cancelation' => inGracePeriod === false ? "true" : "false",
+                 'skype' => event["extended_properties"]["private"]["skype"] || false
+                }}
+            rescue
+                e.extended_properties = {'private' => {
+                'paid' => false,
+                 'stripe_id' => "",
+                 'cancelation' => inGracePeriod === false ? "true" : "false",
+                }}
+            end
+        end
+        render json: {editedEvent: editedEvent}
+    end
+
 
 end
