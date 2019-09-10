@@ -19,6 +19,9 @@ class PagesController < ApplicationController
         render react_component: 'Home' ,props: { 
            lastPost: Post.all.select{|p| p.published === true}.last
         } 
-        
+    end
+
+    def appointments
+        render react_component: 'Appointments', props: {current_user: current_user}
     end
 end

@@ -63,25 +63,59 @@ function Appointments(props) {
     // const [creating, setCreating] = useState(false)
     const [canceling, setCanceling] = useState(false)
     const [confirmation, setConfirmation] = useState(null)
+    const [events, setEvents] = useState([])
+
+    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
     useEffect(() => {
         window.scroll({
             top: 0,
             left: 0,
         })
+        if (props.current_user) {
+            getPrivateEvents()
+        } else {
+            getPublicEvents()
+        }
+
+
+
     }, []);
+
+    const getPrivateEvents = () => {
+        fetch(`${process.env.BASE_URL}/events/current_user`, {
+            headers: {
+                "X-CSRF-Token": csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        }).then(r => r.json())
+            .then(r => setEvents(r.appointments.concat(r.consults)))
+    }
+
+    const getPublicEvents = () => {
+        fetch(`${process.env.BASE_URL}/events/public`, {
+            headers: {
+                "X-CSRF-Token": csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        }).then(r => r.json())
+            .then(r => setEvents(r.appointments.concat(r.consults)))
+    }
 
     // fetch handelers
     const bookAppointment = () => {
         setBooking(true)
-        fetch(`${process.env.BASE_URL}/purchase`, {
+        fetch(`${process.env.BASE_URL}/events/book`, {
             method: "POST",
             body: JSON.stringify({
                 event: selectedEvent,
-                user: props.user
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -92,15 +126,17 @@ function Appointments(props) {
                 console.error('Error:', error)
                 setEventModalOpen(false)
                 setBooking(false)
-                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Event could not be booked" } })
-                props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { appointments: props.appointments, consults: props.consults, personalEvents: props.personalEvents } })
+                // props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Event could not be booked" } })
+
+                // props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { appointments: props.appointments, consults: props.consults, personalEvents: props.personalEvents } })
             })
             .then(res => {
-                props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res })
-                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Appointment Booked" } })
+                console.log(res.editedEvent)
+                let currentEvents = [...events].filter(e => e.id !== res.editedEvent.id)
+                setEvents(currentEvents.concat(res.editedEvent))
                 setBooking(false)
                 setEventModalOpen(false)
-                setConfirmation({ type: "booking", event: res.bookedEvent })
+                setConfirmation({ type: "booking", event: res.editedEvent })
             })
             .then(() => setSelectedEvent(null))
 
@@ -118,14 +154,14 @@ function Appointments(props) {
         let newTitle = "*Canceled " + event.title
         let editedEvent = { ...event, title: newTitle }
 
-        fetch(`${baseUrl}/cancel`, {
+        fetch(`${baseUrl}/events/cancel`, {
             method: "POST",
             body: JSON.stringify({
                 inGracePeriod,
                 event: selectedEvent
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -139,12 +175,13 @@ function Appointments(props) {
                 props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Event could not be canceled" } })
                 props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { appointments: props.appointments, consults: props.consults, personalEvents: props.personalEvents } })
             })
-            .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
-            .then(() => {
-                setConfirmation({ type: "cancelation", event: { ...selectedEvent } })
+            .then((res) => {
+                let currentEvents = [...events].filter(e => e.id !== res.canceledEvent.id)
+                setEvents(currentEvents)
                 setEventModalOpen(false)
                 setCanceling(false)
-                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Appointment Canceled" } })
+                setConfirmation({ type: "cancelation", event: { ...res.canceledEvent } })
+                // props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Appointment Canceled" } })
             })
             .then(() => setSelectedEvent(null))
     }
@@ -199,7 +236,7 @@ function Appointments(props) {
         if (!selectedEvent) return null
 
         // anonymous event view
-        if (!props.user) return <Modal
+        if (!props.current_user) return <Modal
             open={eventModalOpen}
             header={selectedEvent.title}
             content={<ModalContent>{showPrettyStartAndEndTime(selectedEvent)}</ModalContent>}
@@ -207,7 +244,7 @@ function Appointments(props) {
         />
 
         // logged in and attended
-        if (props.user && isUserAnAttendeeOfEvent(selectedEvent, props.user)) return <Modal
+        if (props.current_user && isUserAnAttendeeOfEvent(selectedEvent, props.current_user)) return <Modal
             open={eventModalOpen}
             header={selectedEvent.title}
             content={<ModalContent>{showPrettyStartAndEndTime(selectedEvent)}
@@ -217,7 +254,7 @@ function Appointments(props) {
         />
 
         // logged in and not attending - bookable
-        if (props.user) return <Modal
+        if (props.current_user) return <Modal
             open={eventModalOpen}
             header={selectedEvent.title}
             content={<ModalContent>
@@ -322,8 +359,8 @@ function Appointments(props) {
                     endAccessor={event => new Date(event.end_time)}
                     selectable
                     localizer={localizer}
-                    events={relevantEvents(props.appointments, props.consults, props.user)}
-                    defaultView={props.defaultCalendarView}
+                    events={events}
+                    // defaultView={props.defaultCalendarView}
                     onSelectEvent={(e) => selectEventHandeler(e)}
                     popup
                     step={15}
@@ -340,14 +377,14 @@ function Appointments(props) {
 
 }
 
-const mapStateToProps = (state) => ({
-    appointments: state.appointments,
-    consults: state.consults,
-    user: state.user,
-    personalEvents: state.personalEvents,
-    defaultCalendarView: state.defaultCalendarView,
-    csrfToken: state.csrfToken
+// const mapStateToProps = (state) => ({
+//     appointments: state.appointments,
+//     consults: state.consults,
+//     user: state.user,
+//     personalEvents: state.personalEvents,
+//     defaultCalendarView: state.defaultCalendarView,
+//     csrfToken: state.csrfToken
 
-})
+// })
 
-export default connect(mapStateToProps)(Appointments)
+export default Appointments

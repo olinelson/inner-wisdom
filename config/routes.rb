@@ -8,16 +8,17 @@ Rails.application.routes.draw do
   delete '/delete', to: 'main#deleteEvent'
   post '/update', to: 'main#updateEvent'
   post '/cancel', to: 'main#cancelEvent'
-  post '/purchase', to: 'main#purchase'
+  # post '/purchase', to: 'main#purchase'
   post '/calendar_auth', to: 'main#calendarAuthLink'
   
   post '/remove_stripe_id_from_event', to: 'main#remove_stripe_id_from_event' 
   post '/remove_many_stripe_ids', to: 'main#remove_many_stripe_ids'
 
-  
-
-
-
+  # this will get all possible events
+  get "/events/public" => "googlecal#getPublicEvents"
+  get "/events/current_user" => "googlecal#getUsersAndFreeEvents"
+  post '/events/book', to: 'googlecal#bookEvent'
+  post '/events/cancel', to: 'googlecal#cancelEvent'  
 
  
 
@@ -65,5 +66,6 @@ Rails.application.routes.draw do
   get "/faqs" => "pages#faqs"
   get "/contact" => "pages#contact"
   get "/supervision" => "pages#supervision"
+  get "/appointments" => "pages#appointments"
 
 end

@@ -4,7 +4,6 @@ import { Label, Placeholder, Dimmer, Segment, Loader, Icon } from 'semantic-ui-r
 import { connect } from "react-redux"
 
 function Event(props) {
-
     let isCanceled = false
 
     const CustomLabel = styled(Label)`
@@ -20,9 +19,10 @@ function Event(props) {
     const colorPicker = () => {
         if (isCanceled) return "red"
         let personal = false
-        if (!props.user) return "grey"
-        if (props.event.calendar && props.event.calendar.id === props.user.google_calendar_email) personal = true
-        if (personal) return "green"
+        // if (props.attendees) return 'blue'
+        // // if (!props.user) return "grey"
+        // if (props.event.calendar && props.event.calendar.id === props.user.google_calendar_email) personal = true
+        // if (personal) return "green"
 
         const isAnEmptySlot = () => {
             if (!personal && props.event.attendees == null) return true
@@ -56,14 +56,14 @@ function Event(props) {
     </CustomLabel>
 }
 
-const mapStateToProps = (state, props) => ({
-    user: state.user,
-    users: state.users,
-    loadingEvent: state.loadingEvent
-})
+// const mapStateToProps = (state, props) => ({
+//     user: state.user,
+//     users: state.users,
+//     loadingEvent: state.loadingEvent
+// })
 
 
-export default connect(mapStateToProps)(Event)
+export default Event
 
 
 
