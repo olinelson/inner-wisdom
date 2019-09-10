@@ -24,4 +24,8 @@ class PagesController < ApplicationController
     def appointments
         render react_component: 'Appointments', props: {current_user: current_user}
     end
+
+    def myAccount
+        render react_component: 'MyAccount', props: {current_user: current_user}
+    end
 end

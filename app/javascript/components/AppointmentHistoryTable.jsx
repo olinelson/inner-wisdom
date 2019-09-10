@@ -1,16 +1,44 @@
 import React, { useState, useEffect } from 'react'
-import { Table, Label, Icon, Button, Checkbox, Modal, Header, Input, Divider } from "semantic-ui-react"
+import { Table, Label, Icon, Button, Checkbox, Modal, Header, Input, Divider, Loader } from "semantic-ui-react"
 import moment from "moment"
 import { connect } from "react-redux"
 import GoogleEventTableRow from './GoogleEventTableRow';
 
-function AdminAppointmentHistoryTable(props) {
+function AppointmentHistoryTable(props) {
 
     const [selectedEvent, setSelectedEvent] = useState(null)
     const [modalOpen, setModalOpen] = useState(false)
+    const [events, setEvents] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
+
+    const getEvents = () => {
+        fetch(`${process.env.BASE_URL}/events/booked/${props.current_user.id}`, {
+            headers: {
+                "X-CSRF-Token": csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(res => res.json())
+            .then((res) => {
+                console.log(res)
+                setEvents(res.events)
+                setLoading(false)
+            })
+
+    }
 
 
-    let chronologicalSorted = props.events.sort((b, a) => new Date(a.start_time) - new Date(b.end_time))
+    useEffect(() => {
+        getEvents()
+    }, [])
+
+
+
+    let chronologicalSorted = events.sort((b, a) => new Date(a.start_time) - new Date(b.end_time))
 
     const formattedDuration = (duration) => {
         let hours = duration.hours()
@@ -22,6 +50,8 @@ function AdminAppointmentHistoryTable(props) {
         return hours + minutes
 
     }
+
+    if (loading) return <><Divider hidden /><Loader active /><Divider hidden /></>
 
     return (
         <Table style={{ gridArea: "panel" }} basic="very" >
@@ -35,6 +65,7 @@ function AdminAppointmentHistoryTable(props) {
             </Table.Header>
 
             <Table.Body>
+
                 {chronologicalSorted.map(a => {
                     let type = ""
 
@@ -49,7 +80,7 @@ function AdminAppointmentHistoryTable(props) {
                         <Table.Cell>
                             <Label>
                                 <Icon name='user' />
-                                {props.user.first_name + " " + props.user.last_name}
+                                {props.current_user.first_name + " " + props.current_user.last_name}
                             </Label>
                         </Table.Cell>
 
@@ -62,9 +93,9 @@ function AdminAppointmentHistoryTable(props) {
     )
 }
 
-const mapStateToProps = (state) => ({
-    csrfToken: state.csrfToken
-})
+// const mapStateToProps = (state) => ({
+//     csrfToken: state.csrfToken
+// })
 
-export default connect(mapStateToProps)(AdminAppointmentHistoryTable)
+export default AppointmentHistoryTable
 

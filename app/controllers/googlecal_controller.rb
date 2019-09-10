@@ -52,32 +52,74 @@ class GooglecalController < ApplicationController
     end
 
     def doAnyAttendeesHaveThisEmail(email, attendees)
-        attendees.each do |a|
-            if a['email'] === email
-                return true
-            end 
+
+        if attendees 
+            attendees.each do |a|
+                if a['email'] === email
+                    return true
+                end 
+            end
         end
+        
         return false
     end
 
     def getUsersAndFreeEvents
 
-
-        begin
+        if current_user.approved
+           
+            begin
             appointments = eventsInDateWindow(@appointmentsCal).select{|a| !a.attendees || doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
+            rescue
+            appointments = []   
+            end
+            
+            begin
+
+            consults = eventsInDateWindow(@consultsCal).select{|a| doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
+            rescue
+            consults = []    
+            end
+        else
+            begin
+            consults = eventsInDateWindow(@consultsCal).select{|a| !a.attendees || doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
+            rescue
+            consults = []    
+            end
+        end
+
+        
+
+        # begin
+        #     consults = eventsInDateWindow(@consultsCal).select{|a| !a.attendees || doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
+        #     rescue
+        #     consults = []    
+        # end
+
+        render json: {
+            appointments: appointments, 
+            consults: consults, 
+            }
+    end
+
+    def getUsersBookedEvents
+        user = User.find(params["id"])
+        begin
+            appointments = eventsInDateWindow(@appointmentsCal).select{|a| doAnyAttendeesHaveThisEmail(user.email, a.attendees)}
             rescue
             appointments = []    
         end
 
-         begin
-            consults = eventsInDateWindow(@consultsCal).select{|a| !a.attendees || doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
+        begin
+            consults = eventsInDateWindow(@consultsCal).select{|a| doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
             rescue
             consults = []    
         end
 
         render json: {
-            appointments: appointments, 
-            consults: consults, 
+            events: appointments + consults
+            # appointments: appointments, 
+            # consults: consults, 
             }
     end
 

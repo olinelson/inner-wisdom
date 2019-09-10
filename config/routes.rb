@@ -3,20 +3,21 @@ Rails.application.routes.draw do
   root to: 'pages#home'
 
   # calendar event routes
-  post '/getEvents', to: 'main#getEvents'
+  # post '/getEvents', to: 'main#getEvents'
   post '/create', to: 'main#createEvent'
   delete '/delete', to: 'main#deleteEvent'
   post '/update', to: 'main#updateEvent'
-  post '/cancel', to: 'main#cancelEvent'
+  # post '/cancel', to: 'main#cancelEvent'
   # post '/purchase', to: 'main#purchase'
   post '/calendar_auth', to: 'main#calendarAuthLink'
   
   post '/remove_stripe_id_from_event', to: 'main#remove_stripe_id_from_event' 
   post '/remove_many_stripe_ids', to: 'main#remove_many_stripe_ids'
 
-  # this will get all possible events
+
   get "/events/public" => "googlecal#getPublicEvents"
   get "/events/current_user" => "googlecal#getUsersAndFreeEvents"
+  get "/events/booked/:id" => "googlecal#getUsersBookedEvents"
   post '/events/book', to: 'googlecal#bookEvent'
   post '/events/cancel', to: 'googlecal#cancelEvent'  
 
@@ -67,5 +68,8 @@ Rails.application.routes.draw do
   get "/contact" => "pages#contact"
   get "/supervision" => "pages#supervision"
   get "/appointments" => "pages#appointments"
+  get "/myaccount" => "pages#myAccount"
+  # my account
+  
 
 end

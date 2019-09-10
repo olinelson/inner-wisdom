@@ -8,15 +8,16 @@ import InvoiceTableRow from './InvoiceTableRow';
 function InvoiceList(props) {
     const [invoices, setInvoices] = useState(null)
     const [loading, setLoading] = useState(true)
+    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
     const getInvoices = () => {
         fetch(`${process.env.BASE_URL}/stripe/invoices`, {
             method: "POST",
             body: JSON.stringify({
-                user: props.user,
+                user: props.client,
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -86,11 +87,11 @@ function InvoiceList(props) {
     </Table>
 }
 
-const mapStateToProps = (state) => ({
-    user: state.user,
-    csrfToken: state.csrfToken
-})
+// const mapStateToProps = (state) => ({
+//     user: state.user,
+//     csrfToken: state.csrfToken
+// })
 
 
 
-export default connect(mapStateToProps)(InvoiceList)
+export default InvoiceList

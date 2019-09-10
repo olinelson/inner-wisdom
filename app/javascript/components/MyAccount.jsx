@@ -67,7 +67,7 @@ function MyAccount(props) {
     const isUserAnAttendeeOfEvent = (event) => {
         if (event.attendees === null) return false
         for (let att of event.attendees) {
-            if (att.email === props.user.email) return true
+            if (att.email === props.current_user.email) return true
         }
     }
 
@@ -75,13 +75,13 @@ function MyAccount(props) {
         switch (props.myAccountPanel) {
             case "history":
                 // return <Calendar readOnly events={RelevantAppointments()} />
-                return <AppointmentHistoryTable events={props.relevantAppointments} user={props.user} />
+                return <AppointmentHistoryTable events={props.relevantAppointments} user={props.current_user} />
             case "profile":
                 return profileSettingsLinks()
             case "posts":
-                return <PostsList creatable posts={props.user.posts} />
+                return <PostsList creatable posts={props.current_user.posts} />
             case "invoices":
-                return <ClientInvoiceList client={props.user} />
+                return <ClientInvoiceList client={props.current_user} />
             default:
                 return profileSettingsLinks()
         }
@@ -130,7 +130,7 @@ function MyAccount(props) {
 
 
     const profileSettingsLinks = () => {
-        let user = props.user
+        let user = props.current_user
         return < div style={{ gridArea: "panel", marginTop: "1.5em" }}>
             {/* <h1>Account Details</h1> */}
             <h4>{user.first_name} {user.last_name}</h4>
@@ -175,15 +175,15 @@ function MyAccount(props) {
         </div>
     }
     const panes = () => {
-        if (props.user.admin) return [
+        if (props.current_user.admin) return [
             { menuItem: 'My Details', render: () => <Tab.Pane content={profileSettingsLinks()} /> },
-            { menuItem: 'Posts', render: () => <Tab.Pane content={<PostsList creatable posts={props.user.posts} />} /> },
+            { menuItem: 'Posts', render: () => <Tab.Pane content={<PostsList creatable posts={props.current_user.posts} />} /> },
         ]
 
         return [
             { menuItem: 'My Details', render: () => <Tab.Pane content={profileSettingsLinks()} /> },
-            { menuItem: 'Recent Appointments', render: () => <Tab.Pane content={<AppointmentHistoryTable events={props.relevantAppointments} user={props.user} />} /> },
-            { menuItem: 'Invoices', render: () => <Tab.Pane content={<ClientInvoiceList client={props.user} />} /> },
+            { menuItem: 'Recent Appointments', render: () => <Tab.Pane content={<AppointmentHistoryTable current_user={props.current_user} />} /> },
+            { menuItem: 'Invoices', render: () => <Tab.Pane content={<ClientInvoiceList client={props.current_user} />} /> },
         ]
     }
 
@@ -193,7 +193,7 @@ function MyAccount(props) {
 
         <Tab panes={panes()} renderActiveOnly={true} />
         {/* <TwoColumnContainer>
-            {props.user.admin ? showAdminMenu() : showUserMenu()}
+            {props.current_user.admin ? showAdminMenu() : showUserMenu()}
             {panelSwitch()}
 
         </TwoColumnContainer> */}
@@ -203,14 +203,14 @@ function MyAccount(props) {
 
 }
 
-const mapStateToProps = (state) => ({
+// const mapStateToProps = (state) => ({
 
-    relevantAppointments: flatten([...state.appointments, state.consults]).filter(e => isUserAnAttendeeOfEvent(e, state.user)),
-    user: state.user,
-    users: state.users,
-    myAccountPanel: state.myAccountPanel,
-    baseUrl: state.baseUrl,
-    csrfToken: state.csrfToken
-})
+//     relevantAppointments: flatten([...state.appointments, state.consults]).filter(e => isUserAnAttendeeOfEvent(e, state.user)),
+//     user: state.user,
+//     users: state.users,
+//     myAccountPanel: state.myAccountPanel,
+//     baseUrl: state.baseUrl,
+//     csrfToken: state.csrfToken
+// })
 
-export default connect(mapStateToProps)(MyAccount)
+export default MyAccount
