@@ -6,7 +6,8 @@ function UserPickerDropDown(props) {
     const event = props.event
 
     const allUsersNotAttending = (event) => {
-        let users = props.users.filter(u => u.email !== props.user.email)
+        let users = props.users
+        // let users = props.users.filter(u => u.email !== props.user.email)
         if (event == null) return users
 
         if (!event.attendees || event.attendees.length < 1) return users
@@ -61,15 +62,15 @@ function UserPickerDropDown(props) {
 }
 
 
-const mapStateToProps = (state) => ({
-    // events: state.events,
-    // personalEvents: state.personalEvents,
-    // allEvents: allEvents(state.events, state.personalEvents),
-    user: state.user,
-    users: state.users,
-    // csrfToken: state.csrfToken,
-    // baseUrl: state.baseUrl,
-    // businessCalendarAddress: state.businessCalendarAddress
-})
+// const mapStateToProps = (state) => ({
+//     // events: state.events,
+//     // personalEvents: state.personalEvents,
+//     // allEvents: allEvents(state.events, state.personalEvents),
+//     user: state.user,
+//     users: state.users,
+//     // csrfToken: state.csrfToken,
+//     // baseUrl: state.baseUrl,
+//     // businessCalendarAddress: state.businessCalendarAddress
+// })
 
-export default connect(mapStateToProps)(UserPickerDropDown)
+export default UserPickerDropDown

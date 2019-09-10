@@ -34,22 +34,40 @@ function Schedule(props) {
     const [selectedEvent, setSelectedEvent] = useState(null)
     const [selectedSlot, setSelectedSlot] = useState(null)
     const [loading, setLoading] = useState(false)
+    const [events, setEvents] = useState([])
+
+    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
     useEffect(() => {
         window.scroll({
             top: 0,
             left: 0,
         })
+
+        getAllEvents()
     }, []);
+
+    const getAllEvents = () => {
+        fetch(`${process.env.BASE_URL}/events/schedule`, {
+            headers: {
+                "X-CSRF-Token": csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(response => response.json())
+            .then((r) => setEvents(r.events))
+    }
 
     // fetch handelers
     const createEventHandeler = (isAppointmentSlot = false, isConsultSlot = false) => {
         setSelectedSlot(null)
         let event = { ...selectedSlot }
-        props.dispatch({ type: "ADD_APPOINTMENT", value: { ...event, placeholder: true } })
+        // props.dispatch({ type: "ADD_APPOINTMENT", value: { ...event, placeholder: true } })
 
 
-        fetch(`${process.env.BASE_URL}/create`, {
+        fetch(`${process.env.BASE_URL}/events/create`, {
             method: "POST",
             body: JSON.stringify({
                 event: event,
@@ -57,7 +75,7 @@ function Schedule(props) {
                 consultSlot: isConsultSlot,
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -66,11 +84,15 @@ function Schedule(props) {
             .then(response => response.json())
             .catch(error => {
                 console.error('Error:', error)
-                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Event could not be created" } })
-                props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { appointments: props.appointments, consults: props.consults, personalEvents: props.personalEvents } })
+                // props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Event could not be created" } })
+                // props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { appointments: props.appointments, consults: props.consults, personalEvents: props.personalEvents } })
             })
-            .then(res => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
-            .then(res => props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Event Created" } }))
+            .then(r => {
+                let currentEvents = [...events].filter(e => e.id !== event.id)
+                setEvents([...currentEvents, r.newEvent])
+            })
+        // .then(res => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
+        // .then(res => props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Event Created" } }))
     }
 
     const updateSelectedEventHandeler = () => {
@@ -106,15 +128,14 @@ function Schedule(props) {
     const deleteSelectedEventHandeler = (deleteReps) => {
         let deleteFutureReps = deleteReps === "future"
 
-        props.dispatch({ type: "SET_LOADING_EVENT", value: { ...selectedEvent } })
-        fetch(`${process.env.BASE_URL}/delete`, {
-            method: "DELETE",
+        fetch(`${process.env.BASE_URL}/events/delete`, {
+            method: "POST",
             body: JSON.stringify({
                 event: selectedEvent,
                 deleteFutureReps
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -126,11 +147,10 @@ function Schedule(props) {
                 props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Event could not be deleted" } })
                 props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { appointments: props.appointments, consults: props.consults, personalEvents: props.personalEvents } })
             })
-
-            .then((res) => {
-                props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res })
+            .then(r => {
+                let filteredEvents = [...events].filter(e => e.id !== selectedEvent.id)
+                setEvents(filteredEvents)
             })
-            .then(() => props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "warning", message: selectedEvent.title + " deleted" } }))
     }
 
     // attendee helper methods
@@ -246,12 +266,12 @@ function Schedule(props) {
 
     // creating event helpers
     const selectSlotHandeler = (e) => {
-        if (props.user.admin) setSelectedSlot({ ...e, title: "", location: "", start_time: e.start, end_time: e.end, personal: false, extended_properties: { private: { skype: "false", paid: "false" } } })
+        if (props.current_user.admin) setSelectedSlot({ ...e, title: "", location: "", start_time: e.start, end_time: e.end, personal: false, extended_properties: { private: { skype: "false", paid: "false" } } })
     }
 
     const personalOrBusinessToggle = () => {
         let e = selectedSlot
-        if (!e || !props.user.google_calendar_email || props.user.google_calendar_email.length < 1) return null
+        if (!e || !props.current_user.google_calendar_email || props.current_user.google_calendar_email.length < 1) return null
 
         let label = null
         if (e.personal) {
@@ -324,7 +344,7 @@ function Schedule(props) {
             <div >
                 {showEventAttendees(e, removeAttendeeFromEvent, setSelectedSlot)}
             </div>
-            <UserPickerDropDown event={e} addAttendeeHandeler={(u) => addAttendeeToEvent(u, selectedSlot, setSelectedSlot)} />
+            <UserPickerDropDown current_user={props.current_user} users={props.users} event={e} addAttendeeHandeler={(u) => addAttendeeToEvent(u, selectedSlot, setSelectedSlot)} />
             <Form style={{ display: !selectedSlot.attendees || selectedSlot.attendees.length < 1 ? "none" : "block" }}>
                 <Form.Group inline >
                     <Form.Field>
@@ -373,10 +393,10 @@ function Schedule(props) {
 
 
 
-                    {e.calendar.id === props.user.google_calendar_email ? null :
+                    {e.calendar.id === props.current_user.google_calendar_email ? null :
                         <>
                             <Divider hidden />
-                            <UserPickerDropDown event={e} addAttendeeHandeler={(u) => addAttendeeToEvent(u, selectedEvent, setSelectedEvent)} />
+                            <UserPickerDropDown current_user={props.current_user} users={props.users} event={e} addAttendeeHandeler={(u) => addAttendeeToEvent(u, selectedEvent, setSelectedEvent)} />
                         </>
                     }
                     <Divider hidden />
@@ -448,8 +468,9 @@ function Schedule(props) {
                     selectable
                     localizer={localizer}
                     onSelectEvent={(e) => setSelectedEvent(e)}
-                    events={props.allEvents}
-                    defaultView={props.defaultCalendarView}
+                    // onSelectEvent={(e) => console.log(e)}
+                    events={events}
+                    // defaultView={props.defaultCalendarView}
                     defaultDate={new Date}
                     popup
                     views={['month', 'day', 'week']}
@@ -485,5 +506,5 @@ const mapStateToProps = (state) => ({
     defaultCalendarView: state.defaultCalendarView
 })
 
-export default withRouter(connect(mapStateToProps)(Schedule))
+export default Schedule
 

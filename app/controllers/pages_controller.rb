@@ -27,5 +27,14 @@ class PagesController < ApplicationController
 
     def myAccount
         render react_component: 'MyAccount', props: {current_user: current_user}
+
+    end
+    def schedule
+        if current_user.admin
+            render react_component: 'Schedule', props: {current_user: current_user, users: User.where("admin = false").order(:first_name)}
+        else
+        redirect_to appointments_url and return
+        end
+        
     end
 end

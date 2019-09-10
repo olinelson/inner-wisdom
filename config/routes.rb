@@ -3,29 +3,32 @@ Rails.application.routes.draw do
   root to: 'pages#home'
 
   # calendar event routes
-  # post '/getEvents', to: 'main#getEvents'
-  post '/create', to: 'main#createEvent'
-  delete '/delete', to: 'main#deleteEvent'
-  post '/update', to: 'main#updateEvent'
-  # post '/cancel', to: 'main#cancelEvent'
-  # post '/purchase', to: 'main#purchase'
-  post '/calendar_auth', to: 'main#calendarAuthLink'
+  # post '/getEvents'=> 'main#getEvents'
+  post '/create'=> 'main#createEvent'
+  delete '/delete'=> 'main#deleteEvent'
+  post '/update'=> 'main#updateEvent'
+  # post '/cancel'=> 'main#cancelEvent'
+  # post '/purchase'=> 'main#purchase'
+  post '/calendar_auth'=> 'main#calendarAuthLink'
   
-  post '/remove_stripe_id_from_event', to: 'main#remove_stripe_id_from_event' 
-  post '/remove_many_stripe_ids', to: 'main#remove_many_stripe_ids'
+  post '/remove_stripe_id_from_event'=> 'main#remove_stripe_id_from_event' 
+  post '/remove_many_stripe_ids'=> 'main#remove_many_stripe_ids'
 
 
   get "/events/public" => "googlecal#getPublicEvents"
+  get "/events/schedule" => "googlecal#getScheduleEvents"
   get "/events/current_user" => "googlecal#getUsersAndFreeEvents"
   get "/events/booked/:id" => "googlecal#getUsersBookedEvents"
-  post '/events/book', to: 'googlecal#bookEvent'
-  post '/events/cancel', to: 'googlecal#cancelEvent'  
+  post '/events/book'=> 'googlecal#bookEvent'
+  post '/events/cancel'=> 'googlecal#cancelEvent'  
+  post '/events/create'=> 'googlecal#createEvent'  
+  post '/events/delete'=> 'googlecal#deleteEvent'  
 
  
 
   # google personal cal set up
-  post '/googlecal/url', to: 'googlecal#genNewCalAuthUrl'
-  post '/googlecal/token', to: 'googlecal#setPersonalCalRefreshToken'
+  post '/googlecal/url'=> 'googlecal#genNewCalAuthUrl'
+  post '/googlecal/token'=> 'googlecal#setPersonalCalRefreshToken'
 
 
   # users
@@ -57,10 +60,10 @@ Rails.application.routes.draw do
  # blog post routes
   get "/blog" => "posts#getAllPublishedPosts"
   get "/posts/:id" => "posts#showPost"
-  patch '/posts/:id', to: 'posts#edit'
-  delete '/posts/:id', to: 'posts#delete'
-  post '/posts', to: 'posts#create'
-  post '/attach/posts/:id', to: 'posts#attach'
+  patch '/posts/:id'=> 'posts#edit'
+  delete '/posts/:id'=> 'posts#delete'
+  post '/posts'=> 'posts#create'
+  post '/attach/posts/:id'=> 'posts#attach'
 
   # pages
   get "/counselling" => "pages#counselling"
@@ -69,6 +72,8 @@ Rails.application.routes.draw do
   get "/supervision" => "pages#supervision"
   get "/appointments" => "pages#appointments"
   get "/myaccount" => "pages#myAccount"
+  get "/schedule" => "pages#schedule"
+
   # my account
   
 

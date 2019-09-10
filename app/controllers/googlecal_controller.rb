@@ -306,5 +306,122 @@ def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true, recurre
         render json: {editedEvent: editedEvent}
     end
 
+    def getScheduleEvents
+
+        begin
+            appointments = eventsInDateWindow(@appointmentsCal)
+            rescue
+            appointments = []    
+        end
+
+        begin
+            consults = eventsInDateWindow(@consultsCal)
+            rescue
+            consults = []    
+        end
+
+        render json: { events: appointments + consults}
+    end
+
+     def createEvent
+        byebug
+        newEvent = params["event"]
+        title= ""
+
+        if newEvent["attendees"]
+             attendees = newEvent["attendees"].map do |a|
+            {
+                'email' => a["email"],
+                'displayName' => a["first_name"] + " " + a["last_name"], 
+                'responseStatus' => 'tentative'
+            }
+            end
+
+            fullName = newEvent["attendees"].first["first_name"] + newEvent["attendees"].first["last_name"]
+            title = fullName + " | session confirmed"
+
+        end
+
+        if newEvent["personal"]
+            return createGoogleEvent(cal: @personalCal, newEvent: newEvent, title: newEvent["title"])
+        end
+
+        if params["appointmentSlot"]
+            return createGoogleEvent(cal: @appointmentsCal,newEvent: newEvent, title: "Appointment Slot", recurrence:  newEvent["recurrence"])
+        end
+        if params["consultSlot"]
+            return createGoogleEvent(cal: @consultsCal,newEvent: newEvent, title: "Consult Slot", recurrence:  newEvent["recurrence"])
+        end
+        # if booked appointment
+        return createGoogleEvent(cal: @appointmentsCal, newEvent: newEvent, title: title, attendees: attendees, recurrence:  newEvent["recurrence"])
+    end
+
+
+    def createGoogleEvent(cal:, newEvent:, title:, attendees: [], recurrence: nil)
+        event = cal.create_event do |e|
+            e.title = title
+            e.start_time = newEvent["start_time"]
+            e.end_time = newEvent["end_time"]
+            e.location= newEvent["location"]
+            e.reminders =  { "useDefault": false }
+            e.attendees= attendees
+            e.recurrence = recurrence ? {freq: recurrence["freq"], count: 50} : nil
+            e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => "", 'skype' => newEvent["extended_properties"]["private"]["skype"] || false}}
+        end
+       
+        #  render json: {, events: eventsInDateWindow(@appointmentsCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
+        render json: {newEvent: event}
+    end
+
+    def deleteEvent
+         event = params["event"]
+         deleteFutureReps = params["deleteFutureReps"]
+         deleteAllReps = params["deleteFutureReps"]
+
+        if event["calendar"]["id"] === current_user.google_calendar_email
+                cal = @personalCal
+        end
+
+        if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
+            cal = @appointmentsCal
+        end
+
+        if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
+            cal = @consultsCal
+        end
+        
+        results = cal.find_event_by_id(event["id"])
+
+        foundEvent = results.first
+
+        # delete future reps
+        if foundEvent.raw["recurringEventId"]
+            if deleteFutureReps
+
+                start = DateTime.parse(foundEvent.start_time)
+                twoYearsAhead = start >> 24
+                futureEvents = cal.find_events_in_range(start, twoYearsAhead, options = {max_results: 2500})
+                futureReps = futureEvents.select{ |e| e.raw["recurringEventId"] === foundEvent.raw["recurringEventId"]}
+                futureReps.each {|r| r.delete}
+                # foundEvent.delete
+                 return appStateJson()
+            end
+
+            if deleteAllReps
+                allEvents = eventsInDateWindow(cal)
+                repeats = allEvents.select{ |e| e.raw["recurringEventId"] === foundEvent.raw["recurringEventId"]}
+                repeats.each {|r| r.delete}
+                # foundEvent.delete
+                return appStateJson()
+            end
+
+            
+        end
+
+        foundEvent.delete
+        render json: {deletedEvent: foundEvent}
+        # render
+        # return appStateJson()
+    end
 
 end
