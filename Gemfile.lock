@@ -322,6 +322,7 @@ DEPENDENCIES
   derailed_benchmarks
   devise
   dotenv-rails
+  get_process_mem
   google-api-client
   google-cloud-storage
   google_calendar
