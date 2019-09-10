@@ -60,7 +60,7 @@ function Home(props) {
 
 
     return <>
-        <Jumbotron fullHeight src="https://storage.googleapis.com/inner_wisdom_bucket/asphalt-australia-conifer-2763005.jpg" >
+        <Jumbotron fullHeight src="https://storage.googleapis.com/inner_wisdom_bucket/forest-path-trees-6037(1).jpg" >
             <JumboMessage  >
                 <Header style={{ fontSize: "4rem" }} size="huge" as={"h1"} inverted>Inner Wisdom Psychology</Header>
                 <Header.Subheader style={{ color: "white" }} as="h3">Wellbeing, Relationships, Guidance</Header.Subheader>
