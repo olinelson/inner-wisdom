@@ -21,7 +21,6 @@ const plugins = [
 ];
 
 
-
 export const FeatureImageSegment = styled(Segment)`
     background-position: center !important;
     background-size: cover !important;
@@ -34,7 +33,11 @@ export const FeatureImageSegment = styled(Segment)`
 `
 
 function PostEditor(props) {
-    const [savedPost, setSavedPost] = useState(props.posts.find(p => p.id == props.match.params.id))
+    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
+
+
+    // const [savedPost, setSavedPost] = useState(props.posts.find(p => p.id == props.match.params.id))
+    const [savedPost, setSavedPost] = useState(props.post)
     const [post, setPost] = useState(savedPost)
 
 
@@ -52,8 +55,7 @@ function PostEditor(props) {
         })
     }, []);
 
-
-    const editingDisabled = props.user && props.user.id == post.user_id ? false : true
+    const editingDisabled = props.current_user && props.current_user.admin ? false : true
 
     let saved = true
     savedPost.body !== JSON.stringify(convertToRaw(editorState.getCurrentContent())) ? saved = false : null
@@ -93,7 +95,7 @@ function PostEditor(props) {
                 editedPost
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -123,7 +125,7 @@ function PostEditor(props) {
         fetch(`${process.env.BASE_URL}/posts/${savedPost.id}`, {
             method: "DELETE",
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -151,7 +153,7 @@ function PostEditor(props) {
 
 
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
             }
@@ -326,11 +328,11 @@ function PostEditor(props) {
     </>
 }
 
-const mapStateToProps = (state) => ({
-    posts: state.posts,
-    user: state.user,
-    csrfToken: state.csrfToken
-})
+// const mapStateToProps = (state) => ({
+//     posts: state.posts,
+//     user: state.user,
+//     csrfToken: state.csrfToken
+// })
 
 
-export default withRouter(connect(mapStateToProps)(PostEditor))
+export default PostEditor

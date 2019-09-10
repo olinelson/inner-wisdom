@@ -38,13 +38,28 @@ function Home(props) {
 
     `
 
-    const publishedPosts = props.posts.filter(p => p.published === true)
+    // const publishedPosts = props.posts.filter(p => p.published === true)
+    console.log(props)
 
+    // const mostRecentPublicPost = publishedPosts.sort((b, a) => a.id - b.id)[0]
+    const mostRecentPublicPost = props.lastPost
 
-    const mostRecentPublicPost = publishedPosts.sort((b, a) => a.id - b.id)[0]
+    // const showRecentBlogPost = () => {
+    //     if (publishedPosts.length > 0) {
+    //         return <>
+    //             <Divider />
+    //             <Container text>
+    //                 <h1>Latest Blog Post</h1>
+    //                 <Item.Group>
+    //                     <PostPreview readMoreButton blogView post={mostRecentPublicPost} />
+    //                 </Item.Group>
+    //             </Container>
+    //         </>
+    //     }
 
+    // }
     const showRecentBlogPost = () => {
-        if (publishedPosts.length > 0) {
+        if (props.lastPost) {
             return <>
                 <Divider />
                 <Container text>
@@ -139,8 +154,9 @@ function Home(props) {
 
 }
 
-const mapStateToProps = (state) => ({
-    posts: state.posts
-})
+// const mapStateToProps = (state) => ({
+//     // posts: state.posts
+//     lastPost: state.lastPost
+// })
 
-export default withRouter(connect(mapStateToProps)(Home))
+export default Home

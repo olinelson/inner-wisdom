@@ -17,10 +17,7 @@ function Nav(props) {
 
 
 
-    let csrfToken
-
-    if (props.static) csrfToken = ""
-    else csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
+    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
     const [sideBarOpen, setSideBar] = useState(false);
     let pathname = ""
@@ -31,7 +28,7 @@ function Nav(props) {
 
     const imageHeader = () => {
 
-        if (pathname.includes('/posts') && props.user && props.user.admin) return false
+        if (pathname.includes('/posts') && props.current_user && props.current_user.admin) return false
 
         if (
             pathname === '/schedule' ||
@@ -52,7 +49,7 @@ function Nav(props) {
     }
 
     const signOutHandeler = () => {
-
+        console.log(`${process.env.BASE_URL}/users/sign_out`)
         fetch(`${process.env.BASE_URL}/users/sign_out`, {
             method: "DELETE",
             headers: {
@@ -135,7 +132,7 @@ function Nav(props) {
 
 
             {
-                props.user && props.user.admin ? null :
+                props.current_user && props.current_user.admin ? null :
                     <Menu.Item active={pathname === '/appointments'}>
 
                         <LinkOrATag static={props.static} to="/appointments">Appointments</LinkOrATag>
@@ -145,10 +142,12 @@ function Nav(props) {
         </>
     }
 
+    console.log(props.current_user)
+
 
     const UserMenuOptions = () => {
         return <> {
-            props.user == null ?
+            props.current_user == null ?
                 <Menu.Item>
                     <Icon name="sign in"></Icon>
                     <a href={`${process.env.BASE_URL}/users/sign_in`}>Sign In</a>
@@ -156,7 +155,7 @@ function Nav(props) {
 
                 :
                 <>
-                    {props.user.admin === true ?
+                    {props.current_user.admin === true ?
                         <>
                             <Menu.Item
                                 active={pathname === '/schedule'}

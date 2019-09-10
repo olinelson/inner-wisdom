@@ -10,7 +10,8 @@ import { Editor, EditorState, RichUtils, convertToRaw, convertFromRaw, getFirstB
 function PostPreview(props) {
     const p = props.post
     const handleCardClick = (id) => {
-        props.history.push(`/posts/${id}`)
+        // props.history.push(`/posts/${id}`)
+        window.location.href = `/posts/${id}`
     }
 
     const [editorState, setEditorState] = useState(
@@ -62,4 +63,4 @@ function PostPreview(props) {
 }
 
 
-export default withRouter(connect()(PostPreview))
+export default PostPreview

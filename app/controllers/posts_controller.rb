@@ -27,4 +27,17 @@ class PostsController < ApplicationController
     @post.save
     render json: {posts: Post.all, feature_image: feature_image} 
     end
+
+     def getAllPublishedPosts
+        render react_component: 'Blog', props: { 
+            posts: Post.all.select{|p| p.published === true},  
+        }
+    end
+
+    def showPost
+        render react_component: 'PostEditor', props: { 
+            post: Post.find(params["id"]),
+            current_user: current_user  
+        }
+    end
 end

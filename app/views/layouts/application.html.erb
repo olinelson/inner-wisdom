@@ -13,7 +13,7 @@
   </head>
 
   <body>
-
+  <%= react_component('Nav', current_user: current_user, static: true) %>
   
   <% if notice %>
     <%= react_component('FlashNotification', notifications: [{id: Time.new, type: "notice", message:notice }] ) %>

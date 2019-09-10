@@ -40,6 +40,7 @@ const initialState = {
     consults: [],
     personalEvents: [],
     posts: [],
+    lastPost: [],
     myAccountPanel: "calendar",
     notifications: [],
     baseUrl: null,
@@ -111,12 +112,13 @@ export function App(props) {
 
     store.dispatch({
         type: "SET_ALL", value: {
-            posts: props.posts,
+            // posts: props.posts,
             // events: formatEvents(props.events, "business"),
-            appointments: props.appointments,
-            consults: props.consults,
-            // personalEvents: formatEvents(props.personalEvents, "personal"),
-            personalEvents: props.personalEvents,
+            // appointments: props.appointments,
+            // consults: props.consults,
+
+            // personalEvents: props.personalEvents,
+            lastPost: props.lastPost,
             user: props.user,
             csrfToken: document.querySelectorAll('meta[name="csrf-token"]')[0].content,
             users: props.users,
@@ -138,9 +140,9 @@ export function App(props) {
                 <>
                     <div style={{ minHeight: "100vh" }}>
 
-                        <Route
+                        {/* <Route
                             render={rProps => <Nav {...store} {...rProps} user={store.getState().user} />}
-                        />
+                        /> */}
 
                         <Switch>
                             <Route

@@ -91,13 +91,13 @@ function PostsList(props) {
     </>
 }
 
-const mapStateToProps = (state) => ({
-    user: state.user,
-    allPosts: state.posts,
-    myAccountPanel: state.myAccountPanel,
-    refreshMethod: state.refreshMethod,
-    baseUrl: state.baseUrl,
-    csrfToken: state.csrfToken
-})
+// const mapStateToProps = (state) => ({
+//     user: state.user,
+//     allPosts: state.posts,
+//     myAccountPanel: state.myAccountPanel,
+//     refreshMethod: state.refreshMethod,
+//     baseUrl: state.baseUrl,
+//     csrfToken: state.csrfToken
+// })
 
-export default withRouter(connect(mapStateToProps)(PostsList))
+export default PostsList

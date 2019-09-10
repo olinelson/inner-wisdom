@@ -63,4 +63,4 @@ function Counselling(props) {
 //     personalEvents: state.personalEvents
 // })
 
-export default withRouter(Counselling)
+export default Counselling

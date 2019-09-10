@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: { registrations: "users/registrations",passwords: "users/passwords" }
-  root to: 'main#home'
+  root to: 'pages#home'
 
   # calendar event routes
   post '/getEvents', to: 'main#getEvents'
@@ -19,12 +19,7 @@ Rails.application.routes.draw do
 
 
 
-  # blog post routes
-  patch '/posts/:id', to: 'posts#edit'
-  delete '/posts/:id', to: 'posts#delete'
-  post '/posts', to: 'posts#create'
-  post '/attach/posts/:id', to: 'posts#attach'
-
+ 
 
   # google personal cal set up
   post '/googlecal/url', to: 'googlecal#genNewCalAuthUrl'
@@ -55,5 +50,20 @@ Rails.application.routes.draw do
   
 
 
+
+
+ # blog post routes
+  get "/blog" => "posts#getAllPublishedPosts"
+  get "/posts/:id" => "posts#showPost"
+  patch '/posts/:id', to: 'posts#edit'
+  delete '/posts/:id', to: 'posts#delete'
+  post '/posts', to: 'posts#create'
+  post '/attach/posts/:id', to: 'posts#attach'
+
+  # pages
+  get "/counselling" => "pages#counselling"
+  get "/faqs" => "pages#faqs"
+  get "/contact" => "pages#contact"
+  get "/supervision" => "pages#supervision"
 
 end

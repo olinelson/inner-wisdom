@@ -69,47 +69,50 @@ class MainController < ApplicationController
     def home
         
         user = nil
-        personalEvents = []
-        users = User.all
 
-        if current_user
-            user = current_user
-        begin
-            if user.google_calendar_email  && user.google_calendar_refresh_token
+        lastPost = Post.all.select{|p| p.published === false}.last
 
-                personalEvents = eventsInDateWindow(@personalCal)
-            end
-        rescue
-                puts "error fetching personal events"
-                personalEvents = []
-            end
+        # personalEvents = []
+        # users = User.all
+
+        # if current_user
+        #     user = current_user
+        # begin
+        #     if user.google_calendar_email  && user.google_calendar_refresh_token
+
+        #         personalEvents = eventsInDateWindow(@personalCal)
+        #     end
+        # rescue
+        #         puts "error fetching personal events"
+        #         personalEvents = []
+        #     end
         
         
 
-        end
+        # end
 
-        begin
-            appointments = eventsInDateWindow(@appointmentsCal)
-            rescue
-            appointments = []    
-        end
+        # begin
+        #     appointments = eventsInDateWindow(@appointmentsCal)
+        #     rescue
+        #     appointments = []    
+        # end
 
-         begin
-            consults = eventsInDateWindow(@consultsCal)
-            rescue
-            consults = []    
-        end
+        #  begin
+        #     consults = eventsInDateWindow(@consultsCal)
+        #     rescue
+        #     consults = []    
+        # end
 
 
 
         render react_component: 'App', props: { 
-            appointments: appointments, 
-            consults: consults, 
-            personalEvents: personalEvents, 
-            posts: Post.all, 
-            user: user, 
+            # appointments: appointments, 
+            # consults: consults, 
+            # personalEvents: personalEvents, 
+            # posts: Post.all,  
+            lastPost: lastPost,
             baseUrl: ENV["BASE_URL"], 
-            users: users, 
+            # users: users, 
             businessCalendarAddress: ENV["GOOGLE_CALENDAR_ADDRESS"]
         }
     end
