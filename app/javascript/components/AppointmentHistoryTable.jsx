@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Table, Label, Icon, Button, Checkbox, Modal, Header, Input, Divider, Loader } from "semantic-ui-react"
+import { Table, Label, Icon, Divider, Loader } from "semantic-ui-react"
 import moment from "moment"
-import { connect } from "react-redux"
-import GoogleEventTableRow from './GoogleEventTableRow';
+
 
 function AppointmentHistoryTable(props) {
 

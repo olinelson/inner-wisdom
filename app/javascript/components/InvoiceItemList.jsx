@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { connect } from 'react-redux';
-import { Tab, Table, Label, Icon, Button } from "semantic-ui-react"
+import { Tab, Table, Button } from "semantic-ui-react"
 import moment from "moment"
 import InvoiceItem from './InvoiceItem'
 

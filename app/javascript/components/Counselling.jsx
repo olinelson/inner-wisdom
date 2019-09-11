@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import { Container, Header, Button, Image, Divider } from "semantic-ui-react"
-import { withRouter } from "react-router-dom"
-import { Quote, Jumbotron } from "./StyledComponents"
-import styled from "styled-components"
+import React, { useEffect } from 'react'
+import { Divider } from "semantic-ui-react"
+import { Jumbotron } from "./StyledComponents"
 import { InfoContainer } from "./StyledComponents"
 
 function Counselling(props) {

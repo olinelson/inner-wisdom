@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { connect } from 'react-redux';
-import { Tab, Table, Label, Icon, Modal, Header, Button } from "semantic-ui-react"
-import moment from "moment"
+import { Tab, Table } from "semantic-ui-react"
 import InvoiceTableRow from './InvoiceTableRow';
 
 function InvoiceList(props) {

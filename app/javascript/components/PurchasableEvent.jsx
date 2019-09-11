@@ -1,13 +1,7 @@
 import React, { useState } from 'react'
-import styled from "styled-components"
-import { Card, Label, Popup, Progress, Rating, Segment, Input, Loader, Divider, Dropdown, Modal, Grid, Header, Icon, Button } from 'semantic-ui-react';
-import { connect } from "react-redux"
+import { Label, Progress, Loader, Divider, Modal, Header, Icon, Button } from 'semantic-ui-react';
 import moment from 'moment'
-import DayPicker from 'react-day-picker';
-import { withRouter, Link } from "react-router-dom"
 import { isUserAnAttendeeOfEvent } from "./Appointments"
-import Checkout from "./Checkout"
-import ReadOnlyEvent from './ReadOnlyEvent';
 
 function PurchasableEvent(props) {
     const event = props.event

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Container, Divider, Label, Button, Modal, Form, Header, Checkbox, Loader } from 'semantic-ui-react'
-import { connect } from 'react-redux';
+import { Container, Divider, Button, Modal, Form, Header, Loader } from 'semantic-ui-react'
 import styled from "styled-components"
 import { CalendarContainer, ModalContent } from "./StyledComponents"
 import { Calendar as BigCalendar, momentLocalizer, Views } from 'react-big-calendar'

@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import { Table, Modal, Icon, Label, Button, Checkbox, Dimmer, Loader } from "semantic-ui-react"
+import { Table, Icon, Label, Button, } from "semantic-ui-react"
 import moment from 'moment'
-import { connect } from "react-redux"
 
 const uuidv1 = require('uuid/v1')
 

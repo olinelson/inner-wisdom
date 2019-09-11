@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { EditorState, RichUtils, convertToRaw, convertFromRaw, AtomicBlockUtils, focus } from 'draft-js';
-import { connect } from 'react-redux';
-import { Container, Input, Divider, Menu, Checkbox, Label, Dropdown, Modal, Popup, Header, Button, Icon, Image, Segment, Placeholder, Dimmer } from "semantic-ui-react"
+import { EditorState, RichUtils, convertToRaw, convertFromRaw, AtomicBlockUtils } from 'draft-js';
+import { Container, Input, Divider, Checkbox, Label, Modal, Popup, Button, Icon, Image, Segment, Placeholder, Dimmer } from "semantic-ui-react"
 import Dropzone from 'react-dropzone'
 import styled from "styled-components"
-import { withRouter } from "react-router-dom"
 import { Jumbotron, EditorButtons } from './StyledComponents';
 
 

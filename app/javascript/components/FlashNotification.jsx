@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
-import { Message, Container } from "semantic-ui-react"
+import { Message } from "semantic-ui-react"
 import styled from "styled-components"
-import { connect } from "react-redux"
 
 
 let CustomMessage = styled(Message)`
@@ -83,11 +82,5 @@ function Notification(props) {
 
 
 }
-
-// const mapStateToProps = (state) => ({
-//     notifications: state.notifications
-// })
-
-// export default connect(mapStateToProps)(Notification)
 export default Notification
 

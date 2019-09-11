@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { Table, Label, Icon, Input, Modal, Button, Header } from "semantic-ui-react"
+import { Table, Label, Input, Modal, } from "semantic-ui-react"
 import moment from 'moment'
-import { connect } from "react-redux"
+
 
 function InvoiceItem(props) {
     const [i, setI] = useState(props.item)

@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { connect } from 'react-redux';
-import { Tab, Table, Label, Icon, Modal, Header, Button, Loader, Divider } from "semantic-ui-react"
+import { Table, Button, Loader, Divider } from "semantic-ui-react"
 import moment from "moment"
-import InvoiceItem from './InvoiceItem';
-import InvoiceTableRow from './InvoiceTableRow';
 
 function InvoiceList(props) {
     const [invoices, setInvoices] = useState(null)

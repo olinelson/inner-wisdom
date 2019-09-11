@@ -1,10 +1,7 @@
 import React, { useState } from 'react'
-import styled from "styled-components"
-import { Card, Image, Label, Icon, Item, Button, Divider } from "semantic-ui-react"
+import { Image, Label, Icon, Item, } from "semantic-ui-react"
 import moment from "moment"
-import { withRouter } from 'react-router-dom'
-import { connect } from "react-redux"
-import { Editor, EditorState, RichUtils, convertToRaw, convertFromRaw, getFirstBlock } from 'draft-js';
+import { EditorState, convertFromRaw } from 'draft-js';
 
 
 function PostPreview(props) {

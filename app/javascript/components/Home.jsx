@@ -1,17 +1,11 @@
-import React, { Component, useRef, useEffect } from 'react'
+import React, { useEffect } from 'react'
 
-import { Menu, Header, Container, Card, Button, Segment, Icon, Item, Image, Divider, Label } from "semantic-ui-react"
+import { Header, Container, Item, Divider, Label } from "semantic-ui-react"
 
-import { Link } from "react-router-dom"
-import { connect } from 'react-redux';
 import PostPreview from './PostPreview';
 import styled from "styled-components"
-import { withRouter } from "react-router-dom"
 
-import { Jumbotron, JumboMessage, ThreeColumnContainer, GridCard, ImageDivider } from './StyledComponents'
-import Counselling from './Counselling';
-import Supervision from './Supervision';
-import Training from './Training';
+import { Jumbotron, JumboMessage } from './StyledComponents'
 import Memberships from "./Memberships"
 function Home(props) {
 

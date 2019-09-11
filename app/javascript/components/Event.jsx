@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from "styled-components"
-import { Label, Placeholder, Dimmer, Segment, Loader, Icon } from 'semantic-ui-react';
-import { connect } from "react-redux"
+import { Label, Loader, Icon } from 'semantic-ui-react';
 
 function Event(props) {
     let isCanceled = false

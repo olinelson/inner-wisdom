@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { connect } from 'react-redux';
 
 // components / styles
-import { Divider, Modal, Popup, Button, Input, Radio, Label, Icon, Segment, Header, Dimmer, Dropdown, Checkbox, Form, Loader } from 'semantic-ui-react'
+import { Divider, Modal, Popup, Button, Input, Label, Icon, Segment, Dropdown, Checkbox, Form, Loader } from 'semantic-ui-react'
 import { BusinessEventSegment, CalendarContainer, ModalContent } from "./StyledComponents"
 import { FullWidthCalendarContainer } from "./Appointments"
 import Event from "./Event"
@@ -16,7 +15,7 @@ import 'react-day-picker/lib/style.css';
 import TimePicker from 'rc-time-picker';
 import "rc-time-picker/assets/index.css"
 import { Calendar as BigCalendar, momentLocalizer, Views } from 'react-big-calendar'
-import { withRouter } from "react-router-dom"
+
 
 const uuidv1 = require('uuid/v1')
 

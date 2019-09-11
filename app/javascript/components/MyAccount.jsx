@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react'
 
-import { Container, Menu, Divider, Button, Modal, Header, Tab, Input } from "semantic-ui-react"
-import Calendar from "./Calendar"
-import { connect } from 'react-redux';
+import { Container, Menu, Divider, Button, Modal, Tab, Input } from "semantic-ui-react"
 import styled from "styled-components"
 
 import PostsList from './PostsList';
 import AppointmentHistoryTable from './AppointmentHistoryTable';
 import ClientInvoiceList from './ClientInvoiceList';
 
-import { relevantEvents, flatten, isUserAnAttendeeOfEvent } from "./Appointments"
 
 const TwoColumnContainer = styled.div`
     display: grid;

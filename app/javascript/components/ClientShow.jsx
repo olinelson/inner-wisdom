@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { connect } from "react-redux"
-import { withRouter } from "react-router-dom"
 import { Container, Card, Item, Table, Label, Menu, Button, Icon, Checkbox, Modal, Form, Header, Tab, Divider } from 'semantic-ui-react';
 import { isUserAnAttendeeOfEvent, relevantEvents, flatten } from "./Appointments"
 import moment from "moment"

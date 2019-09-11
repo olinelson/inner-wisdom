@@ -1,13 +1,9 @@
 import React from 'react';
 import { Calendar as BigCalendar, momentLocalizer, Views } from 'react-big-calendar'
 import moment from 'moment'
-import { connect } from "react-redux"
-import { Button, Container, Label, Grid, Search, Icon, Segment, Radio, Modal, Header, Image, Dropdown, Divider } from "semantic-ui-react"
-import Checkout from './Checkout'
 import Event from "./Event"
 import PurchasableEvent from "./PurchasableEvent"
 import ReadOnlyEvent from "./ReadOnlyEvent"
-import { withRouter } from 'react-router-dom'
 import styled from "styled-components"
 
 

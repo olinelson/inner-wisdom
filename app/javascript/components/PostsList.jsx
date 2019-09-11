@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Menu, Button, Placeholder, Item, } from "semantic-ui-react"
-import { Link } from "react-router-dom"
-import moment from 'moment'
 import PostsPreview from "./PostPreview"
-import { connect } from "react-redux"
-import { withRouter } from 'react-router-dom'
 
 function PostsList(props) {
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content

@@ -1,11 +1,6 @@
 import React, { useState } from 'react'
-import styled from "styled-components"
-import { Card, Label, Popup, Rating, Segment, Input, Loader, Divider, Dropdown, Modal, Grid, Header, Icon, Button } from 'semantic-ui-react';
-import { connect } from "react-redux"
+import { Label, Loader, Divider, Modal, Header, Icon, Button } from 'semantic-ui-react';
 import moment from 'moment'
-import DayPicker from 'react-day-picker';
-
-import Checkout from "./Checkout"
 
 function ReadOnlyEvent(props) {
 
@@ -144,18 +139,18 @@ function ReadOnlyEvent(props) {
 
 
 
-const mapStateToProps = (state, props) => ({
-    // events: state.events,
-    // personalEvents: state.personalEvents,
-    // allEvents: state.events.concat(state.personalEvents),
-    user: state.user,
-    users: state.users,
-    events: state.events,
-    // users: state.users,
-    csrfToken: state.csrfToken,
-    baseUrl: state.baseUrl
-})
+// const mapStateToProps = (state, props) => ({
+//     // events: state.events,
+//     // personalEvents: state.personalEvents,
+//     // allEvents: state.events.concat(state.personalEvents),
+//     user: state.user,
+//     users: state.users,
+//     events: state.events,
+//     // users: state.users,
+//     csrfToken: state.csrfToken,
+//     baseUrl: state.baseUrl
+// })
 
 
 
-export default connect(mapStateToProps)(ReadOnlyEvent)
+export default ReadOnlyEvent
