@@ -6,10 +6,7 @@ import LinkOrATag from "./LinkOrATag"
 function Nav(props) {
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
-    const [sideBarOpen, setSideBar] = useState(false);
-
-    let pathname = window.location.pathname
-
+    const pathname = window.location.pathname
 
     const imageHeader = () => {
 
@@ -29,7 +26,6 @@ function Nav(props) {
 
         ) return false
 
-
         return true
     }
 
@@ -44,9 +40,6 @@ function Nav(props) {
             }
         })
             .then(() => window.location.href = `${process.env.BASE_URL}`)
-
-
-
     }
 
     const FixedMenu = styled(Menu)`
@@ -112,8 +105,6 @@ function Nav(props) {
             <Menu.Item active={pathname === '/contact'} >
                 <LinkOrATag static={props.static} to="/contact">Contact</LinkOrATag>
             </Menu.Item>
-
-
 
             {
                 props.current_user && props.current_user.admin ? null :
@@ -194,5 +185,3 @@ function Nav(props) {
 }
 
 export default Nav
-
-
