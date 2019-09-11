@@ -6,7 +6,6 @@ import GoogleEventTableRow from './GoogleEventTableRow';
 
 function AdminAppointmentHistoryTable(props) {
 
-    let chronologicalSorted = props.events.sort((b, a) => new Date(a.start_time) - new Date(b.end_time))
 
     const formattedDuration = (duration) => {
         let hours = duration.hours()
@@ -20,7 +19,7 @@ function AdminAppointmentHistoryTable(props) {
     }
 
     const appointmentHistoryTableRows = () => {
-        return chronologicalSorted.map(a => <GoogleEventTableRow key={a.id} user={props.user} event={a} />)
+        return props.events.sort((b, a) => new Date(a.start_time) - new Date(b.end_time)).map(a => <GoogleEventTableRow key={a.id} user={props.user} event={a} />)
     }
 
 
@@ -51,18 +50,18 @@ function AdminAppointmentHistoryTable(props) {
     )
 }
 
-const mapStateToProps = (state) => ({
-    // appointments: state.appointments,
-    // consults: state.consults,
-    // // personalEvents: state.personalEvents,
-    // // user: state.user,
-    // users: state.users,
-    // // myAccountPanel: state.myAccountPanel,
-    // baseUrl: state.baseUrl,
-    // defaultCalendarView: state.defaultCalendarView,
-    // calendarScrollToTime: state.calendarScrollToTime,
-    csrfToken: state.csrfToken
-})
+// const mapStateToProps = (state) => ({
+//     // appointments: state.appointments,
+//     // consults: state.consults,
+//     // // personalEvents: state.personalEvents,
+//     // // user: state.user,
+//     // users: state.users,
+//     // // myAccountPanel: state.myAccountPanel,
+//     // baseUrl: state.baseUrl,
+//     // defaultCalendarView: state.defaultCalendarView,
+//     // calendarScrollToTime: state.calendarScrollToTime,
+//     csrfToken: state.csrfToken
+// })
 
-export default connect(mapStateToProps)(AdminAppointmentHistoryTable)
+export default AdminAppointmentHistoryTable
 

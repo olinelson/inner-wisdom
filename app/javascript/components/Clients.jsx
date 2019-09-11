@@ -17,8 +17,11 @@ function Clients(props) {
     const [loading, setLoading] = useState(false)
     const [filteredUsers, setFilteredUsers] = useState()
 
+    const [users, setUsers] = useState(props.users)
+
     const tempPassword = Math.random().toString(36).slice(2)
 
+    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
     useEffect(() => {
         window.scroll({
             top: 0,
@@ -26,7 +29,8 @@ function Clients(props) {
         })
     }, []);
 
-    let allUsersExceptMe = props.users.filter(u => u.id !== props.user.id)
+    // let allUsersExceptMe = props.users.filter(u => u.id !== props.user.id)
+    let allUsersExceptMe = props.users
 
 
 
@@ -39,7 +43,7 @@ function Clients(props) {
                 user: newUser
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -49,7 +53,8 @@ function Clients(props) {
             .then((res) => {
                 setLoading(false)
                 setModalOpen(false)
-                props.dispatch({ type: "SET_USERS", value: res.users })
+                // props.dispatch({ type: "SET_USERS", value: res.users })
+                setUsers([...users, res.newUser])
             })
     }
 
@@ -110,13 +115,15 @@ function Clients(props) {
 
             <Card.Group stackable doubling centered>
 
-                {allUsersExceptMe.map(user => {
-                    let relevantAppointments = flatten([...props.appointments, props.consults]).filter(e => isUserAnAttendeeOfEvent(e, user))
-                    let pastAppointments = relevantAppointments.filter(a => new Date(a.start_time) < new Date)
-                    let futureAppointments = relevantAppointments.filter(a => new Date(a.start_time) > new Date)
-
+                {users.map(user => {
+                    // let relevantAppointments = flatten([...props.appointments, props.consults]).filter(e => isUserAnAttendeeOfEvent(e, user))
+                    // let pastAppointments = relevantAppointments.filter(a => new Date(a.start_time) < new Date)
+                    // let futureAppointments = relevantAppointments.filter(a => new Date(a.start_time) > new Date)
+                    // let relevantAppointments = 
+                    // let pastAppointments =
+                    // let futureAppointments 
                     return <Card
-                        onClick={() => props.history.push(`/clients/${user.id}`)}
+                        onClick={() => window.location = `/clients/${user.id}`}
                         key={user.id}>
                         <Card.Content>
                             <Card.Header>{user.first_name + " " + user.last_name}</Card.Header>
@@ -126,11 +133,13 @@ function Clients(props) {
                             <Card.Content extra>
                                 <Label
                                     icon="history"
-                                    content={pastAppointments.length}
+                                    // content={pastAppointments.length}
+                                    content={100}
                                 />
                                 <Label
                                     icon="calendar"
-                                    content={futureAppointments.length}
+                                    // content={futureAppointments.length}
+                                    content={10}
                                 />
                             </Card.Content>
 
@@ -185,4 +194,4 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default withRouter(connect(mapStateToProps)(Clients))
+export default Clients

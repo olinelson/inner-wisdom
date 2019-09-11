@@ -14,6 +14,8 @@ import Home from "components/Home"
 import Appointments from "components/Appointments"
 import MyAccount from "components/MyAccount"
 import Schedule from "components/Schedule"
+import Clients from "components/Clients"
+import ClientShow from "components/ClientShow"
 
 import "styled-components"
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -22,4 +24,4 @@ import "components/stylesheet.css"
 import 'draft-js/dist/Draft.css';
 
 
-WebpackerReact.setup({ App, PostEditor, MyAccount, Schedule, Home, Appointments, Counselling, FAQS, Supervision, Contact, Blog, FlashNotification, Nav, UserConsentCheckbox }) // ES6 shorthand for {Hello: Hello}
+WebpackerReact.setup({ App, PostEditor, ClientShow, Schedule, MyAccount, Clients, Home, Appointments, Counselling, FAQS, Supervision, Contact, Blog, FlashNotification, Nav, UserConsentCheckbox }) // ES6 shorthand for {Hello: Hello}

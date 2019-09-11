@@ -11,7 +11,7 @@ function PostPreview(props) {
     const p = props.post
     const handleCardClick = (id) => {
         // props.history.push(`/posts/${id}`)
-        window.location.href = `/posts/${id}`
+        window.location = `/posts/${id}`
     }
 
     const [editorState, setEditorState] = useState(

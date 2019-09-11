@@ -324,7 +324,6 @@ def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true, recurre
     end
 
      def createEvent
-        byebug
         newEvent = params["event"]
         title= ""
 
@@ -420,8 +419,92 @@ def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true, recurre
 
         foundEvent.delete
         render json: {deletedEvent: foundEvent}
-        # render
-        # return appStateJson()
+    end
+
+
+     def updateEvent
+        event = params["event"]
+        attendees= []
+         if event["attendees"]
+            attendees = event["attendees"].map{|a| 
+
+    
+                user = User.find_by(email: a["email"])
+                if user === nil
+                    displayName= a["email"].split("@").first
+                else
+                    displayName = user["first_name"] + " " + user["last_name"]
+                end
+                
+                
+            {
+            'email' => a["email"],
+            'displayName' => displayName, 
+            'responseStatus' => 'tentative'
+             }
+            }
+        end
+
+        
+
+        #  personal
+        if event["calendar"]["id"] === current_user.google_calendar_email
+                return editGoogleCalEvent(cal: @personalCal, event: event, recurrence:  event["recurrence"])
+        end
+
+        # business
+        if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
+                return editGoogleCalEvent(cal: @appointmentsCal, event: event, attendees: attendees, recurrence:  event["recurrence"])
+        end
+
+        if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
+                return editGoogleCalEvent(cal: @consultsCal, event: event, attendees: attendees, recurrence:  event["recurrence"])
+        end
+    end
+
+    def remove_many_stripe_ids
+        invoiceItems = params["invoice"]["lines"]["data"]
+        cal = nil
+        invoiceItems.each do |item|
+            if item["metadata"]["type"] === "Appointment"
+                cal = @appointmentsCal
+            end
+            if item["metadata"]["type"] === "Consult"
+                cal = @consultsCal
+            end
+
+            foundItems = cal.find_events_by_extended_properties({ 'private' => {'stripe_id' => item["id"]} })
+
+            foundItems.each do |item|
+                item.extended_properties = {'private' => {'paid' => false, 'stripe_id' => "", 'skype' => item.extended_properties = {'private' => {'paid' => false, 'stripe_id' => "", 'skype' => item.extended_properties["private"]["skype"] || false}}}}
+                item.save
+            end
+        end
+
+        render json: {success: true}
+
+        
+    end
+
+    def remove_stripe_id_from_event
+        invoice_item = params["invoice_item"]["metadata"]
+
+        cal = nil
+
+
+        if invoice_item["type"] === "Appointment"
+            cal = @appointmentsCal
+        end
+        if invoice_item["type"] === "Phone Consult"
+            cal = @appointmentsCal
+        end
+        
+        editedEvent = cal.find_or_create_event_by_id(invoice_item["google_event_id"]) do |e|
+
+            e.extended_properties = {'private' => {'paid' => e.extended_properties["private"]["paid"], 'stripe_id' => ""}}
+        end
+
+        render json: {editedEvent: editedEvent}
     end
 
 end

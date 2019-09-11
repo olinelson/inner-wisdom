@@ -10,50 +10,27 @@ import InvoiceList from './InvoiceList';
 
 
 function ClientShow(props) {
-    let userId = props.match.params.id
-
-    const user = props.users.find(u => u.id == userId)
-
-    if (!user) return props.history.push('/notfound')
-
-    let relevantAppointments = flatten([...props.appointments, props.consults]).filter(e => isUserAnAttendeeOfEvent(e, user))
-
-    const [first_name, set_first_name] = useState(user.first_name || "")
-    const [last_name, set_last_name] = useState(user.last_name || "")
-    const [phone_number, set_phone_number] = useState(user.phone_number || "")
-
-    const [street_address, set_street_address] = useState(user.street_address || "")
-    const [apartment_number, set_apartment_number] = useState(user.apartment_number || "")
-    const [suburb, set_suburb] = useState(user.suburb || "")
-    const [address_state, set_address_state] = useState(user.state || "")
-    const [post_code, set_post_code] = useState(user.post_code || "")
-    const [medicare_number, set_medicare_number] = useState(user.medicare_number || "")
-
-    const [email, set_email] = useState(user.email || "")
-    // const [loading, setLoading] = useState(true)
-
+    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
+    const [events, setEvents] = useState([])
+    const [user, setUser] = useState(props.user)
+    const [loading, setLoading] = useState(true)
     const [approving, setApproving] = useState(false)
     const [deleting, setDeleting] = useState(false)
 
-    const [approved, setApproved] = useState(user.approved)
-
-    let chronologicalSorted = relevantAppointments.sort((b, a) => new Date(a.start_time) - new Date(b.end_time))
+    useEffect(() => {
+        getEvents()
+    }, [])
 
     const approveUserHandeler = () => {
         setApproving(true)
-        editUserHandeler(!approved)
+        let editedUser = { ...user, approved: !user.approved }
+        editUserHandeler(editedUser)
     }
 
-    const editUserHandeler = (approved = approved) => {
-        let editedUser = { first_name, last_name, email, street_address, apartment_number, post_code, suburb, state: address_state, approved, medicare_number }
-
-        fetch(`${process.env.BASE_URL}/clients/${user.id}`, {
-            method: "PATCH",
-            body: JSON.stringify({
-                user: editedUser
-            }),
+    const getEvents = () => {
+        fetch(`${process.env.BASE_URL}/events/booked/${user.id}`, {
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -61,9 +38,32 @@ function ClientShow(props) {
         })
             .then(res => res.json())
             .then((res) => {
-                setApproved(approved)
+                console.log(res)
+                setEvents(res.events)
+                // setApproving(false)
+                // setUser(res.user)
+                // props.dispatch({ type: "SET_USERS", value: res.users })
+            })
+    }
+
+    const editUserHandeler = (editedUser = user) => {
+        fetch(`${process.env.BASE_URL}/clients/${user.id}`, {
+            method: "PATCH",
+            body: JSON.stringify({
+                user: editedUser
+            }),
+            headers: {
+                "X-CSRF-Token": csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(res => res.json())
+            .then((res) => {
                 setApproving(false)
-                props.dispatch({ type: "SET_USERS", value: res.users })
+                setUser(res.user)
+                // props.dispatch({ type: "SET_USERS", value: res.users })
             })
     }
 
@@ -72,7 +72,7 @@ function ClientShow(props) {
         fetch(`${process.env.BASE_URL}/clients/${user.id}`, {
             method: "DELETE",
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -87,7 +87,7 @@ function ClientShow(props) {
     }
 
     const panes = [
-        { menuItem: 'Appointment History', render: () => <Tab.Pane content={<AdminAppointmentHistoryTable events={relevantAppointments} user={user} />} /> },
+        { menuItem: 'Appointment History', render: () => <Tab.Pane content={<AdminAppointmentHistoryTable events={events} user={user} />} /> },
         { menuItem: 'Billable Items', render: () => <InvoiceItemList user={user} /> },
         { menuItem: 'Invoices', render: () => <InvoiceList user={user} /> },
 
@@ -109,43 +109,43 @@ function ClientShow(props) {
                         <Form >
                             <Form.Field>
                                 <label>First Name</label>
-                                <input value={first_name} onChange={(e) => set_first_name(e.target.value)} required placeholder='First Name' />
+                                <input value={user.first_name} required placeholder='First Name' onChange={(e) => set_first_name(e.target.value)} />
                             </Form.Field>
                             <Form.Field>
                                 <label>Last Name</label>
-                                <input value={last_name} onChange={(e) => set_last_name(e.target.value)} required placeholder='Last Name' />
+                                <input value={user.last_name} required placeholder='Last Name' onChange={(e) => set_last_name(e.target.value)} />
                             </Form.Field>
                             <Form.Field>
                                 <label>Email</label>
-                                <input value={email || ""} onChange={(e) => set_email(e.target.value)} required placeholder='newclient@gmail.com' />
+                                <input value={user.email || ""} onChange={(e) => setUser({ ...user, email: e.target.value })} />
                             </Form.Field>
                             <Form.Field>
                                 <label>Phone Number</label>
-                                <input value={phone_number || ""} onChange={(e) => set_phone_number(e.target.value)} />
+                                <input value={user.phone_number || ""} onChange={(e) => setUser({ ...user, phone_number: e.target.value })} />
                             </Form.Field>
                             <Form.Field>
                                 <label>Street Address</label>
-                                <input value={street_address || ""} onChange={(e) => set_street_address(e.target.value)} />
+                                <input value={user.street_address || ""} onChange={(e) => setUser({ ...user, street_address: e.target.value })} />
                             </Form.Field>
                             <Form.Field>
                                 <label>Apartment Number</label>
-                                <input value={apartment_number || ""} onChange={(e) => set_apartment_number(e.target.value)} />
+                                <input value={user.apartment_number || ""} onChange={(e) => setUser({ ...user, apartment_number: e.target.value })} />
                             </Form.Field>
                             <Form.Field>
                                 <label>Suburb/City</label>
-                                <input value={suburb || ""} onChange={(e) => set_suburb(e.target.value)} />
+                                <input value={user.suburb || ""} onChange={(e) => setUser({ ...user, suburb: e.target.value })} />
                             </Form.Field>
                             <Form.Field>
                                 <label>State</label>
-                                <input value={address_state || ""} onChange={(e) => set_address_state(e.target.value)} />
+                                <input value={user.address_state || ""} onChange={(e) => setUser({ ...user, address_state: e.target.value })} />
                             </Form.Field>
                             <Form.Field>
                                 <label>Post Code</label>
-                                <input value={post_code || ""} onChange={(e) => set_post_code(e.target.value)} />
+                                <input value={user.post_code || ""} onChange={(e) => setUser({ ...user, post_code: e.target.value })} />
                             </Form.Field>
                             <Form.Field>
                                 <label>Medicare Number</label>
-                                <input value={medicare_number || ""} onChange={(e) => set_medicare_number(e.target.value)} />
+                                <input value={user.medicare_number || ""} onChange={(e) => setUser({ ...user, medicare_number: e.target.value })} />
                             </Form.Field>
                         </Form>
                     </div>
@@ -182,8 +182,6 @@ function ClientShow(props) {
                 content={user.approved ? "Are you sure you would like to un approve this user? They will no loger be able to book appointments, only phone consultations." : "Are you sure you would like to approve this user? This will enable them to book full appointments."}
                 actions={[{ basic: 'true', inverted: 'true', content: 'cancel' }, { basic: 'true', key: 'done', content: user.approved ? "Yes, Un Approve" : "Yes Approve", positive: true, onClick: () => approveUserHandeler() }]}
             />
-
-            {console.log(user)}
             <hr />
             <h4>Address</h4>
             <p>{user.street_address}</p>
@@ -207,17 +205,17 @@ function ClientShow(props) {
 }
 
 
-const mapStateToProps = (state) => ({
-    appointments: state.appointments,
-    consults: state.consults,
-    // personalEvents: state.personalEvents,
-    // user: state.user,
-    users: state.users,
-    // myAccountPanel: state.myAccountPanel,
-    baseUrl: state.baseUrl,
-    defaultCalendarView: state.defaultCalendarView,
-    calendarScrollToTime: state.calendarScrollToTime,
-    csrfToken: state.csrfToken
-})
+// const mapStateToProps = (state) => ({
+//     appointments: state.appointments,
+//     consults: state.consults,
+//     // personalEvents: state.personalEvents,
+//     // user: state.user,
+//     users: state.users,
+//     // myAccountPanel: state.myAccountPanel,
+//     baseUrl: state.baseUrl,
+//     defaultCalendarView: state.defaultCalendarView,
+//     calendarScrollToTime: state.calendarScrollToTime,
+//     csrfToken: state.csrfToken
+// })
 
-export default withRouter(connect(mapStateToProps)(ClientShow))
+export default ClientShow

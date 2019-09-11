@@ -44,7 +44,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
         end
 
 
-       render json: {users: User.all}
+       render json: {newUser: resource}
       end
     end
     end
@@ -109,6 +109,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def edit_user_with_admin
     if current_user.admin
        user = User.find(params["id"])
+
       user.update(account_update_params)
 
 
@@ -132,11 +133,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
 
     end
-    # params.permit(:editedByAdmin)
-   
-   
-
-    render json: {users: User.all}
+    render json: {user: user}
   end
   # PUT /resource
   # We need to use a copy of the resource because we don't want to change

@@ -8,23 +8,27 @@ import { parse } from 'url';
 const uuidv1 = require('uuid/v1')
 
 function InvoiceTableRow(props) {
+
     const [modalOpen, setModalOpen] = useState(false)
     const [voiding, setVoiding] = useState(false)
     const [sending, setSending] = useState(false)
     const [deleting, setDeleting] = useState(false)
     const [paying, setPaying] = useState(false)
 
-    let i = props.invoice
+    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
+
+
+    const invoice = props.invoice
 
     const deleteInvoiceHandeler = () => {
         setDeleting(true)
         fetch(`${process.env.BASE_URL}/stripe/invoices/delete`, {
             method: "POST",
             body: JSON.stringify({
-                invoice: i
+                invoice
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -42,17 +46,17 @@ function InvoiceTableRow(props) {
         fetch(`${process.env.BASE_URL}/remove_many_stripe_ids`, {
             method: "POST",
             body: JSON.stringify({
-                invoice: i
+                invoice
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
             .then(res => res.json())
-            .then(res => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
+            // .then(res => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
             .then(() => {
                 setDeleting(false)
                 props.refreshAction()
@@ -64,10 +68,10 @@ function InvoiceTableRow(props) {
         fetch(`${process.env.BASE_URL}/stripe/invoices/send`, {
             method: "POST",
             body: JSON.stringify({
-                invoice: i
+                invoice
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -85,7 +89,7 @@ function InvoiceTableRow(props) {
                     setSending(false)
                     setModalOpen(false)
                     props.refreshAction()
-                    props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Invoice Finalized and Sent" } })
+                    // props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Invoice Finalized and Sent" } })
                 }
             })
     }
@@ -94,10 +98,10 @@ function InvoiceTableRow(props) {
         fetch(`${process.env.BASE_URL}/stripe/invoices/mark_as_paid`, {
             method: "POST",
             body: JSON.stringify({
-                invoice: i
+                invoice
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -114,8 +118,9 @@ function InvoiceTableRow(props) {
                 if (res.invoice) {
                     setPaying(false)
                     setModalOpen(false)
-                    props.refreshAction()
-                    props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Invoice Marked as Paid" } })
+                    setInvoice({ ...invoice, status: "paid" })
+                    // props.refreshAction()
+                    // props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Invoice Marked as Paid" } })
                 }
             })
     }
@@ -128,7 +133,7 @@ function InvoiceTableRow(props) {
                 invoice: i
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -171,7 +176,7 @@ function InvoiceTableRow(props) {
     }
 
     const showActionButtons = () => {
-        switch (i.status) {
+        switch (invoice.status) {
             case "draft":
                 return <Button.Group basic>
                     <Modal
@@ -214,8 +219,8 @@ function InvoiceTableRow(props) {
                         content='Are you sure you would like to void this invoice? This cannot be undone.'
                         actions={[{ content: 'Cancel', key: 'cancel', basic: true, inverted: true }, { basic: true, key: 'yes', content: 'Yes, Void It', negative: true, onClick: () => voidInvoiceHandeler() }]}
                     />
-                    <Button basic as="a" icon="download" href={i.invoice_pdf} content="PDF" />
-                    <Button basic onClick={() => window.open(i.hosted_invoice_url, '_blank')} icon="chain" content="Link" />
+                    <Button basic as="a" icon="download" href={invoice.invoice_pdf} content="PDF" />
+                    <Button basic onClick={() => window.open(invoice.hosted_invoice_url, '_blank')} icon="chain" content="Link" />
                     {/* <Button icon="mail" content="Send Invoice" onClick={() => sendInvoiceHandeler()} /> */}
 
                     <Button
@@ -246,16 +251,16 @@ function InvoiceTableRow(props) {
     return <>
         <Table.Row
             onClick={() => setModalOpen(true)}
-            warning={i.status === "open"}
-            positive={i.status === "paid"}
-            negative={i.status === "void"}
-            key={i.number}>
+            warning={invoice.status === "open"}
+            positive={invoice.status === "paid"}
+            negative={invoice.status === "void"}
+            key={invoice.number}>
 
-            <Table.Cell>{moment(i.created).format('Do MMM YYYY')}</Table.Cell>
-            <Table.Cell>{i.status}</Table.Cell>
-            <Table.Cell>{i.number}</Table.Cell>
-            <Table.Cell>{"$" + i.amount_due / 100}</Table.Cell>
-            <Table.Cell>{i.status === "open" || i.status === "paid" ? <Icon name="check" /> : <Icon name="close" />}</Table.Cell>
+            <Table.Cell>{moment(invoice.created).format('Do MMM YYYY')}</Table.Cell>
+            <Table.Cell>{invoice.status}</Table.Cell>
+            <Table.Cell>{invoice.number}</Table.Cell>
+            <Table.Cell>{"$" + invoice.amount_due / 100}</Table.Cell>
+            <Table.Cell>{invoice.status === "open" || invoice.status === "paid" ? <Icon name="check" /> : <Icon name="close" />}</Table.Cell>
         </Table.Row>
 
         <Modal
@@ -269,18 +274,18 @@ function InvoiceTableRow(props) {
             <Modal.Header>
                 <h1>Invoice</h1>
                 <Label
-                    content={i.status}
-                    color={invoiceColorSwitch(i.status)}
-                    icon={invoiceIconSwitch(i.status)}
+                    content={invoice.status}
+                    color={invoiceColorSwitch(invoice.status)}
+                    icon={invoiceIconSwitch(invoice.status)}
                 />
             </Modal.Header>
             <Modal.Content>
-                <h4>{i.customer_name}</h4>
+                <h4>{invoice.customer_name}</h4>
 
 
                 <Modal.Description>
 
-                    <Table basic selectable={i.status === "draft" ? true : false}>
+                    <Table basic selectable={invoice.status === "draft" ? true : false}>
                         <Table.Header>
                             <Table.Row >
                                 <Table.HeaderCell>Created</Table.HeaderCell>
@@ -291,7 +296,7 @@ function InvoiceTableRow(props) {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {i.lines.data.map(item => <InvoiceItem invoice={i} key={item.id} item={item} />)}
+                            {invoice.lines.data.map(item => <InvoiceItem {...props} setInvoice={(e) => setInvoice(e)} invoice={invoice} key={item.id} item={item} />)}
                         </Table.Body>
                     </Table>
 
@@ -307,19 +312,19 @@ function InvoiceTableRow(props) {
 }
 
 
-const mapStateToProps = (state) => ({
-    // appointments: state.appointments,
-    // consults: state.consults,
-    // // personalEvents: state.personalEvents,
-    // // user: state.user,
-    // users: state.users,
-    // // myAccountPanel: state.myAccountPanel,
-    // baseUrl: state.baseUrl,
-    // defaultCalendarView: state.defaultCalendarView,
-    // calendarScrollToTime: state.calendarScrollToTime,
-    csrfToken: state.csrfToken
-})
+// const mapStateToProps = (state) => ({
+//     // appointments: state.appointments,
+//     // consults: state.consults,
+//     // // personalEvents: state.personalEvents,
+//     // // user: state.user,
+//     // users: state.users,
+//     // // myAccountPanel: state.myAccountPanel,
+//     // baseUrl: state.baseUrl,
+//     // defaultCalendarView: state.defaultCalendarView,
+//     // calendarScrollToTime: state.calendarScrollToTime,
+//     csrfToken: state.csrfToken
+// })
 
 
 
-export default connect(mapStateToProps)(InvoiceTableRow)
+export default InvoiceTableRow

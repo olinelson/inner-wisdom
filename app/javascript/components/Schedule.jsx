@@ -62,11 +62,12 @@ function Schedule(props) {
 
     // fetch handelers
     const createEventHandeler = (isAppointmentSlot = false, isConsultSlot = false) => {
+
+        setEvents([...events, { ...selectedSlot, placeholder: true }])
+
         setSelectedSlot(null)
         let event = { ...selectedSlot }
         // props.dispatch({ type: "ADD_APPOINTMENT", value: { ...event, placeholder: true } })
-
-
         fetch(`${process.env.BASE_URL}/events/create`, {
             method: "POST",
             body: JSON.stringify({
@@ -97,18 +98,18 @@ function Schedule(props) {
 
     const updateSelectedEventHandeler = () => {
         // setLoading(true)
+        let filteredEvents = [...events].filter(e => e.id !== selectedEvent.id)
+        setEvents([...filteredEvents, { ...selectedEvent, placeholder: true }])
 
         let event = { ...selectedEvent }
-
-        props.dispatch({ type: "SET_LOADING_EVENT", value: { ...event } })
         setSelectedEvent(null)
-        fetch(`${process.env.BASE_URL}/update`, {
+        fetch(`${process.env.BASE_URL}/events/update`, {
             method: "POST",
             body: JSON.stringify({
                 event: selectedEvent
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -117,16 +118,18 @@ function Schedule(props) {
             .then(response => response.json())
             .catch(error => {
                 console.error('Error:', error)
-                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Event could not be updated" } })
-                props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { appointments: props.appointments, consults: props.consults, personalEvents: props.personalEvents } })
             })
-            .then((res) => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
-            .then(res => props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Event Updated" } }))
-
+            .then((r) => {
+                let filteredEvents = [...events].filter(e => e.id !== r.editedEvent.id)
+                setEvents([...filteredEvents, r.editedEvent])
+            })
     }
 
     const deleteSelectedEventHandeler = (deleteReps) => {
         let deleteFutureReps = deleteReps === "future"
+
+        let filteredEvents = [...events].filter(e => e.id !== selectedEvent.id)
+        setEvents([...filteredEvents, { ...selectedEvent, placeholder: true }])
 
         fetch(`${process.env.BASE_URL}/events/delete`, {
             method: "POST",

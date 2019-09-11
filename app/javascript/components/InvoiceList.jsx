@@ -7,6 +7,7 @@ import InvoiceTableRow from './InvoiceTableRow';
 function InvoiceList(props) {
     const [loading, setLoading] = useState(true)
     const [invoices, setInvoices] = useState(null)
+    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
     const getInvoices = () => {
         fetch(`${process.env.BASE_URL}/stripe/invoices`, {
@@ -15,7 +16,7 @@ function InvoiceList(props) {
                 user: props.user
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -30,13 +31,14 @@ function InvoiceList(props) {
 
     useEffect(() => {
         getInvoices()
+        console.log("invoice list refreshing")
     }, [loading])
 
     const invoicesTableRows = () => {
         if (invoices) {
             return invoices.data.map(i => {
                 // let time = moment.duration(i.webhooks_delivered_at).humanize()
-                return <InvoiceTableRow refreshAction={() => setLoading(true)} invoice={i} key={i.id} invoice={i} />
+                return <InvoiceTableRow refreshAction={() => setLoading(true)} invoice={i} key={i.id} />
             }
             )
         }
@@ -68,8 +70,5 @@ function InvoiceList(props) {
     )
 }
 
-const mapStateToProps = (state) => ({
-    csrfToken: state.csrfToken
-})
 
-export default connect(mapStateToProps)(InvoiceList)
+export default InvoiceList

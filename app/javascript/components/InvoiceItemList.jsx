@@ -7,6 +7,7 @@ import InvoiceItem from './InvoiceItem'
 const uuidv1 = require('uuid/v1')
 
 function InvoiceItemList(props) {
+    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
     const [loading, setLoading] = useState(true)
     const [invoiceItems, setInvoiceItems] = useState(null)
     const [creating, setCreating] = useState(false)
@@ -18,7 +19,7 @@ function InvoiceItemList(props) {
                 user: props.user
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -44,7 +45,7 @@ function InvoiceItemList(props) {
                 user: props.user
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -64,7 +65,7 @@ function InvoiceItemList(props) {
             })
             .then(() => setCreating(false))
             .then(() => setLoading(false))
-            .then(() => props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "New Invoice Created" } }))
+        // .then(() => props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "New Invoice Created" } }))
     }
 
 
@@ -114,19 +115,19 @@ function InvoiceItemList(props) {
     )
 }
 
-const mapStateToProps = (state) => ({
-    // appointments: state.appointments,
-    // consults: state.consults,
-    // // personalEvents: state.personalEvents,
-    // // user: state.user,
-    // users: state.users,
-    // // myAccountPanel: state.myAccountPanel,
-    // baseUrl: state.baseUrl,
-    // defaultCalendarView: state.defaultCalendarView,
-    // calendarScrollToTime: state.calendarScrollToTime,
-    csrfToken: state.csrfToken
-})
+// const mapStateToProps = (state) => ({
+//     // appointments: state.appointments,
+//     // consults: state.consults,
+//     // // personalEvents: state.personalEvents,
+//     // // user: state.user,
+//     // users: state.users,
+//     // // myAccountPanel: state.myAccountPanel,
+//     // baseUrl: state.baseUrl,
+//     // defaultCalendarView: state.defaultCalendarView,
+//     // calendarScrollToTime: state.calendarScrollToTime,
+//     csrfToken: state.csrfToken
+// })
 
 
 
-export default connect(mapStateToProps)(InvoiceItemList)
+export default InvoiceItemList

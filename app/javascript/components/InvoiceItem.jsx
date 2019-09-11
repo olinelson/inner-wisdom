@@ -9,15 +9,12 @@ function InvoiceItem(props) {
     const [modalOpen, setModalOpen] = useState(false)
     const [deleted, setDeleted] = useState(false)
 
+    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
+    console.log("invoice item props", props)
 
-    const isEditable = () => {
-        if (props.invoice) {
-            if (props.invoice.status === "open" || props.invoice.status === "void") return false
-        }
-        return true
-    }
-
-    const [editable, setEditable] = useState(isEditable)
+    const editable = props.invoice && props.invoice.status === "paid" ? false : true
+    console.log("editable", editable)
+    // const [editable, setEditable] = useState(isEditable)
 
     const updateItemHandeler = () => {
         setLoading(true)
@@ -27,7 +24,7 @@ function InvoiceItem(props) {
                 invoice_item: i
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -36,8 +33,17 @@ function InvoiceItem(props) {
             .then(res => res.json())
             .then((res) => {
                 setLoading(false)
+
                 setI(res.updated_item)
                 setModalOpen(false)
+                if (props.invoice) {
+                    console.log("doing refresh action")
+                    props.refreshAction()
+                    // let filteredItems = { ...props.invoice }.lines.data.filter(item => item.id !== i.id)
+                    // props.setInvoice({ ...props.invoice, lines: { ...props.invoice.lines, data: [...filteredItems, res.updated_item] } })
+                }
+
+
             })
     }
 
@@ -48,7 +54,7 @@ function InvoiceItem(props) {
                 invoice_item
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -72,7 +78,7 @@ function InvoiceItem(props) {
                 invoice_item: i
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -93,7 +99,7 @@ function InvoiceItem(props) {
     return <>
         {editable ?
             <Modal
-                trigger={<Table.Row disabled={deleted} >
+                trigger={<Table.Row >
                     <Table.Cell>{moment(i.metadata.start_time).format('Do MMMM YYYY, h:mm a')}</Table.Cell>
                     <Table.Cell>{i.description}</Table.Cell>
                     <Table.Cell>{"$" + prettyPrice}</Table.Cell>
@@ -140,19 +146,19 @@ function InvoiceItem(props) {
 }
 
 
-const mapStateToProps = (state) => ({
-    // appointments: state.appointments,
-    // consults: state.consults,
-    // // personalEvents: state.personalEvents,
-    // // user: state.user,
-    // users: state.users,
-    // // myAccountPanel: state.myAccountPanel,
-    // baseUrl: state.baseUrl,
-    // defaultCalendarView: state.defaultCalendarView,
-    // calendarScrollToTime: state.calendarScrollToTime,
-    csrfToken: state.csrfToken
-})
+// const mapStateToProps = (state) => ({
+//     // appointments: state.appointments,
+//     // consults: state.consults,
+//     // // personalEvents: state.personalEvents,
+//     // // user: state.user,
+//     // users: state.users,
+//     // // myAccountPanel: state.myAccountPanel,
+//     // baseUrl: state.baseUrl,
+//     // defaultCalendarView: state.defaultCalendarView,
+//     // calendarScrollToTime: state.calendarScrollToTime,
+//     csrfToken: state.csrfToken
+// })
 
 
 
-export default connect(mapStateToProps)(InvoiceItem)
+export default InvoiceItem

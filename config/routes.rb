@@ -4,15 +4,15 @@ Rails.application.routes.draw do
 
   # calendar event routes
   # post '/getEvents'=> 'main#getEvents'
-  post '/create'=> 'main#createEvent'
-  delete '/delete'=> 'main#deleteEvent'
-  post '/update'=> 'main#updateEvent'
+  # post '/create'=> 'main#createEvent'
+  # delete '/delete'=> 'main#deleteEvent'
+  # post '/update'=> 'main#updateEvent'
   # post '/cancel'=> 'main#cancelEvent'
   # post '/purchase'=> 'main#purchase'
   post '/calendar_auth'=> 'main#calendarAuthLink'
   
-  post '/remove_stripe_id_from_event'=> 'main#remove_stripe_id_from_event' 
-  post '/remove_many_stripe_ids'=> 'main#remove_many_stripe_ids'
+  post '/remove_stripe_id_from_event'=> 'googlecal#remove_stripe_id_from_event' 
+  post '/remove_many_stripe_ids'=> 'googlecal#remove_many_stripe_ids'
 
 
   get "/events/public" => "googlecal#getPublicEvents"
@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   post '/events/cancel'=> 'googlecal#cancelEvent'  
   post '/events/create'=> 'googlecal#createEvent'  
   post '/events/delete'=> 'googlecal#deleteEvent'  
+  post '/events/update'=> 'googlecal#updateEvent'  
 
  
 
@@ -37,6 +38,7 @@ Rails.application.routes.draw do
     patch "/clients/:id" => 'users/registrations#edit_user_with_admin'
     delete "/clients/:id" => 'users/registrations#destroy_with_admin'
   end
+  get "/clients/:id" => 'pages#clientShow'
 
   # stripe
 
@@ -73,7 +75,7 @@ Rails.application.routes.draw do
   get "/appointments" => "pages#appointments"
   get "/myaccount" => "pages#myAccount"
   get "/schedule" => "pages#schedule"
-
+  get "/clients" => "pages#clients"
   # my account
   
 

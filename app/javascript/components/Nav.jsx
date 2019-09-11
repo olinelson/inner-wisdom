@@ -49,7 +49,6 @@ function Nav(props) {
     }
 
     const signOutHandeler = () => {
-        console.log(`${process.env.BASE_URL}/users/sign_out`)
         fetch(`${process.env.BASE_URL}/users/sign_out`, {
             method: "DELETE",
             headers: {
@@ -141,8 +140,6 @@ function Nav(props) {
 
         </>
     }
-
-    console.log(props.current_user)
 
 
     const UserMenuOptions = () => {
