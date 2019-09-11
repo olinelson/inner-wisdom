@@ -109,11 +109,11 @@ function ClientShow(props) {
                         <Form >
                             <Form.Field>
                                 <label>First Name</label>
-                                <input value={user.first_name} required placeholder='First Name' onChange={(e) => set_first_name(e.target.value)} />
+                                <input value={user.first_name} required placeholder='First Name' onChange={(e) => setUser({ ...user, first_name: e.target.value })} />
                             </Form.Field>
                             <Form.Field>
                                 <label>Last Name</label>
-                                <input value={user.last_name} required placeholder='Last Name' onChange={(e) => set_last_name(e.target.value)} />
+                                <input value={user.last_name} required placeholder='Last Name' onChange={(e) => setUser({ ...user, last_name: e.target.value })} />
                             </Form.Field>
                             <Form.Field>
                                 <label>Email</label>
@@ -180,7 +180,7 @@ function ClientShow(props) {
                     </Button>}
                 header={user.approved ? "Un Approve User" : "Approve User"}
                 content={user.approved ? "Are you sure you would like to un approve this user? They will no loger be able to book appointments, only phone consultations." : "Are you sure you would like to approve this user? This will enable them to book full appointments."}
-                actions={[{ basic: 'true', inverted: 'true', content: 'cancel' }, { basic: 'true', key: 'done', content: user.approved ? "Yes, Un Approve" : "Yes Approve", positive: true, onClick: () => approveUserHandeler() }]}
+                actions={[{ key: 'cancel', basic: true, inverted: true, content: 'cancel' }, { basic: true, key: 'done', content: user.approved ? "Yes, Un Approve" : "Yes Approve", positive: true, onClick: () => approveUserHandeler() }]}
             />
             <hr />
             <h4>Address</h4>
