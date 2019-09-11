@@ -207,7 +207,7 @@ function PostEditor(props) {
 
                                 <FeatureImageSegment onMouseEnter={() => setFeatureImageHovering(true)} onMouseLeave={() => setFeatureImageHovering(false)} loading={featureImageLoading} tertiary style={{ backgroundImage: `url('${featureImage}') ` }}>
                                     {featureImageHovering === true ?
-                                        <Dimmer active >
+                                        <Dimmer blurring active >
                                             <h4>Drag an image here to set featured image</h4>
                                             <small>or click here</small>
                                         </Dimmer>

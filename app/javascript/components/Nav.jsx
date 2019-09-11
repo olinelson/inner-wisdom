@@ -1,29 +1,14 @@
-import React, { useState, Component } from 'react'
-
-
-import { Menu, Icon, Dropdown, Divider, Sidebar, Segment, Header, Image } from 'semantic-ui-react'
-
-import { Link, withRouter } from 'react-router-dom'
-import { connect } from 'react-redux';
+import React, { useState } from 'react'
+import { Menu, Icon, Dropdown, Divider } from 'semantic-ui-react'
 import styled from "styled-components"
-
 import LinkOrATag from "./LinkOrATag"
 
-
-
-
 function Nav(props) {
-
-
-
-
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
     const [sideBarOpen, setSideBar] = useState(false);
-    let pathname = ""
 
-    if (props.static) pathname = ""
-    else pathname = props.location.pathname
+    let pathname = window.location.pathname
 
 
     const imageHeader = () => {
@@ -175,11 +160,6 @@ function Nav(props) {
                         <LinkOrATag static={props.static} to="/myaccount">My Account</LinkOrATag>
                     </Menu.Item>
 
-
-
-
-
-
                     <Menu.Item>
                         <Icon name="sign out"></Icon>
                         <a style={{ cursor: "pointer" }} onClick={signOutHandeler}>Sign Out</a>
@@ -199,8 +179,7 @@ function Nav(props) {
         </FixedMenu >
 
         <MobileMenu style={{ zIndex: "100" }}>
-            {/* <Menu.Menu position="right"> */}
-            {/* < Menu.Item  > */}
+
             <Dropdown direction="left" icon="bars" floating >
 
                 <Dropdown.Menu >
@@ -210,19 +189,9 @@ function Nav(props) {
             </Dropdown>
 
             <Divider hidden />
-            {/* </Menu.Item > */}
-            {/* </Menu.Menu> */}
-
-
         </MobileMenu>
     </>
-
 }
-
-
-
-
-
 
 export default Nav
 
