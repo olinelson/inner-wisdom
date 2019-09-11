@@ -76,6 +76,7 @@ function InvoiceItemList(props) {
 
     const invoiceItemsTableRows = () => {
         if (invoiceItems) {
+            if (invoiceItems.data.length < 1) return <Table.Row><Table.Cell><p>No billable items yet...</p></Table.Cell></Table.Row>
             return invoiceItems.data.map(i => {
 
                 let strArray = i.amount.toString().split("")

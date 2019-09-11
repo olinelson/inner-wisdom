@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Card, Menu, Image, Icon, Label, Button, Item, Loader } from "semantic-ui-react"
+import { Menu, Button, Placeholder, Item, } from "semantic-ui-react"
 import { Link } from "react-router-dom"
 import moment from 'moment'
 import PostsPreview from "./PostPreview"
@@ -94,8 +94,31 @@ function PostsList(props) {
         {props.creatable ? showToolBar() : null}
 
         <Item.Group style={{ gridArea: "panel" }}  >
-            <Loader inline='centered' active={loading} />
+            {loading ?
+                <>
+                    <Placeholder>
+                        <Placeholder.Header image >
+                            <Placeholder.Line />
+                            <Placeholder.Line />
+                        </Placeholder.Header>
+                    </Placeholder>
+                    <Placeholder>
+                        <Placeholder.Header image>
+                            <Placeholder.Line />
+                            <Placeholder.Line />
+                        </Placeholder.Header>
+                    </Placeholder>
+                    <Placeholder>
+                        <Placeholder.Header image>
+                            <Placeholder.Line />
+                            <Placeholder.Line />
+                        </Placeholder.Header>
+                    </Placeholder>
+                </>
+                : null
+            }
             {posts.map(p => cardMapper(p))}
+            {!loading && posts.length < 1 ? <p>no blog posts yet...</p> : null}
         </Item.Group>
     </>
 }

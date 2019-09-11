@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { connect } from "react-redux"
-import { Card, Button, Modal, Search, Menu, Label, Form, Checkbox, Divider, Container } from "semantic-ui-react"
-import { withRouter } from "react-router-dom"
+import { Card, Button, Modal, Search, Menu, Icon, Form, Checkbox, Container } from "semantic-ui-react"
 import moment from "moment"
-import { isUserAnAttendeeOfEvent, flatten } from "./Appointments"
 import { debounce } from "debounce";
 import styled from "styled-components"
 
@@ -29,11 +26,6 @@ function Clients(props) {
         })
     }, []);
 
-    // let allUsersExceptMe = props.users.filter(u => u.id !== props.user.id)
-    let allUsersExceptMe = props.users
-
-
-
     const createUserHandeler = (e) => {
         setLoading(true)
         let newUser = { first_name, last_name, email, password: tempPassword, sendWelcomeEmail }
@@ -53,7 +45,6 @@ function Clients(props) {
             .then((res) => {
                 setLoading(false)
                 setModalOpen(false)
-                // props.dispatch({ type: "SET_USERS", value: res.users })
                 setUsers([...users, res.newUser])
             })
     }
@@ -75,15 +66,7 @@ function Clients(props) {
         let filtered = allUsers.filter(u => userFilter(u, value))
         let result = filtered.map(u => { return { title: `${u.first_name} ${u.last_name}`, id: u.id } })
         setFilteredUsers(result)
-
     }
-
-
-    const SubMenu = styled.div`
-        // display: flex;
-        // justify-content: space-between;
-        // width: 100%;
-    `
 
     return (
         <Container>
@@ -116,21 +99,19 @@ function Clients(props) {
             <Card.Group stackable doubling centered>
 
                 {users.map(user => {
-                    // let relevantAppointments = flatten([...props.appointments, props.consults]).filter(e => isUserAnAttendeeOfEvent(e, user))
-                    // let pastAppointments = relevantAppointments.filter(a => new Date(a.start_time) < new Date)
-                    // let futureAppointments = relevantAppointments.filter(a => new Date(a.start_time) > new Date)
-                    // let relevantAppointments = 
-                    // let pastAppointments =
-                    // let futureAppointments 
                     return <Card
                         onClick={() => window.location = `/clients/${user.id}`}
                         key={user.id}>
                         <Card.Content>
-                            <Card.Header>{user.first_name + " " + user.last_name}</Card.Header>
+
+                            <Card.Header>
+                                <Icon name="user" />
+                                {user.first_name + " " + user.last_name}
+                            </Card.Header>
                             <Card.Meta>
                                 {moment(user.created_at).format('MM/DD/YYYY')}
                             </Card.Meta>
-                            <Card.Content extra>
+                            {/* <Card.Content extra>
                                 <Label
                                     icon="history"
                                     // content={pastAppointments.length}
@@ -141,7 +122,7 @@ function Clients(props) {
                                     // content={futureAppointments.length}
                                     content={10}
                                 />
-                            </Card.Content>
+                            </Card.Content> */}
 
                         </Card.Content>
                     </Card>
@@ -181,17 +162,4 @@ function Clients(props) {
         </Container >
     )
 }
-
-const mapStateToProps = (state) => ({
-    csrfToken: state.csrfToken,
-    appointments: state.appointments,
-    consults: state.consults,
-    personalEvents: state.personalEvents,
-    user: state.user,
-    users: state.users,
-    myAccountPanel: state.myAccountPanel,
-    baseUrl: state.baseUrl
-})
-
-
 export default Clients
