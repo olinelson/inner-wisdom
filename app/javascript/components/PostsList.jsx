@@ -12,9 +12,9 @@ function PostsList(props) {
         props.blogView ? getPublishedPosts() : getAllPosts()
     }, []);
 
-    const handleCardClick = (id) => {
-        props.history.push(`/posts/${id}`)
-    }
+    // const handleCardClick = (id) => {
+    //     props.history.push(`/posts/${id}`)
+    // }
 
     const cardMapper = (p) => {
         return <PostsPreview blogView={props.blogView} key={p.id + "preview"} post={p} />

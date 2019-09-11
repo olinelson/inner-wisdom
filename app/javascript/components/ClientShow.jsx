@@ -61,7 +61,6 @@ function ClientShow(props) {
             .then((res) => {
                 setApproving(false)
                 setUser(res.user)
-                // props.dispatch({ type: "SET_USERS", value: res.users })
             })
     }
 
@@ -78,8 +77,7 @@ function ClientShow(props) {
         })
             .then(res => res.json())
             .then((res) => {
-                props.history.push('/clients')
-                props.dispatch({ type: "SET_USERS", value: res.users })
+                window.location = '/clients'
             })
 
     }

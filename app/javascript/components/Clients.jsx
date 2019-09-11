@@ -57,7 +57,7 @@ function Clients(props) {
     }
 
     const handleResultSelect = (e, { result }) => {
-        props.history.push(`/clients/${result.id}`)
+        window.location = `/clients/${result.id}`
     }
 
     const handleSearchChange = (e, { value }) => {
