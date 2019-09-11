@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   # post '/update'=> 'main#updateEvent'
   # post '/cancel'=> 'main#cancelEvent'
   # post '/purchase'=> 'main#purchase'
-  post '/calendar_auth'=> 'main#calendarAuthLink'
+  # post '/calendar_auth'=> 'main#calendarAuthLink'
   
   post '/remove_stripe_id_from_event'=> 'googlecal#remove_stripe_id_from_event' 
   post '/remove_many_stripe_ids'=> 'googlecal#remove_many_stripe_ids'
