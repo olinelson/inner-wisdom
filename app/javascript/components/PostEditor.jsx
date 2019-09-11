@@ -106,7 +106,7 @@ function PostEditor(props) {
             .then((e) => {
                 setSaving(false)
                 setSavedPost(editedPost)
-                props.dispatch({ type: "SET_POSTS", value: e.posts })
+                // props.dispatch({ type: "SET_POSTS", value: e.posts })
             })
 
     }
@@ -133,9 +133,9 @@ function PostEditor(props) {
         })
             .then(response => response.json())
             .then((e) => {
-                props.history.push("/myaccount")
-                props.dispatch({ type: "SET_POSTS", value: e.posts })
-                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Post Deleted" } })
+                window.location = "/myaccount"
+                // props.dispatch({ type: "SET_POSTS", value: e.posts })
+                // props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Post Deleted" } })
             })
 
     }

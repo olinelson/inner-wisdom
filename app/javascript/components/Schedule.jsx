@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux';
 
 // components / styles
-import { Divider, Modal, Popup, Button, Input, Radio, Label, Icon, Segment, Header, Dropdown, Checkbox, Form } from 'semantic-ui-react'
+import { Divider, Modal, Popup, Button, Input, Radio, Label, Icon, Segment, Header, Dimmer, Dropdown, Checkbox, Form, Loader } from 'semantic-ui-react'
 import { BusinessEventSegment, CalendarContainer, ModalContent } from "./StyledComponents"
 import { FullWidthCalendarContainer } from "./Appointments"
 import Event from "./Event"
@@ -33,8 +33,9 @@ const repeatOptions = [
 function Schedule(props) {
     const [selectedEvent, setSelectedEvent] = useState(null)
     const [selectedSlot, setSelectedSlot] = useState(null)
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [events, setEvents] = useState([])
+
 
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
@@ -57,7 +58,11 @@ function Schedule(props) {
             }
         })
             .then(response => response.json())
-            .then((r) => setEvents(r.events))
+            .then((r) => {
+                setEvents(r.events)
+                setLoading(false)
+            })
+
     }
 
     // fetch handelers
@@ -461,25 +466,33 @@ function Schedule(props) {
 
             <Divider style={{ gridArea: "divider" }} />
             <CalendarContainer fullWidth>
-                <BigCalendar
-                    style={{ border: "1px solid red !important" }}
-                    components={{
-                        event: Event
-                    }}
-                    startAccessor={event => new Date(event.start_time)}
-                    endAccessor={event => new Date(event.end_time)}
-                    selectable
-                    localizer={localizer}
-                    onSelectEvent={(e) => setSelectedEvent(e)}
-                    events={events}
-                    // defaultView={props.defaultCalendarView}
-                    defaultDate={new Date}
-                    popup
-                    views={['month', 'day', 'week']}
-                    step={15}
-                    timeslots={1}
-                    onSelectSlot={(e) => selectSlotHandeler(e)}
-                />
+
+                {loading ?
+                    <Loader inline="centered" active />
+                    :
+                    <BigCalendar
+                        style={{ border: "1px solid red !important" }}
+                        components={{
+                            event: Event
+                        }}
+                        startAccessor={event => new Date(event.start_time)}
+                        endAccessor={event => new Date(event.end_time)}
+                        selectable
+                        localizer={localizer}
+                        onSelectEvent={(e) => setSelectedEvent(e)}
+                        events={events}
+                        defaultDate={new Date}
+                        popup
+                        views={['month', 'day', 'week']}
+                        step={15}
+                        timeslots={1}
+                        onSelectSlot={(e) => selectSlotHandeler(e)}
+                    />
+                }
+
+
+
+
             </CalendarContainer>
         </FullWidthCalendarContainer>
 

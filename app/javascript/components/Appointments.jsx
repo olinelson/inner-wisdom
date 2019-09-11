@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Container, Divider, Label, Button, Modal, Form, Header, Checkbox } from 'semantic-ui-react'
+import { Container, Divider, Label, Button, Modal, Form, Header, Checkbox, Loader } from 'semantic-ui-react'
 import { connect } from 'react-redux';
 import styled from "styled-components"
 import { CalendarContainer, ModalContent } from "./StyledComponents"
@@ -61,6 +61,7 @@ function Appointments(props) {
     const [eventModalOpen, setEventModalOpen] = useState(false)
     const [booking, setBooking] = useState(false)
     // const [creating, setCreating] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [canceling, setCanceling] = useState(false)
     const [confirmation, setConfirmation] = useState(null)
     const [events, setEvents] = useState([])
@@ -91,7 +92,10 @@ function Appointments(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         }).then(r => r.json())
-            .then(r => setEvents(r.appointments.concat(r.consults)))
+            .then(r => {
+                setEvents(r.appointments.concat(r.consults))
+                setLoading(false)
+            })
     }
 
     const getPublicEvents = () => {
@@ -103,7 +107,10 @@ function Appointments(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         }).then(r => r.json())
-            .then(r => setEvents(r.appointments.concat(r.consults)))
+            .then(r => {
+                setEvents(r.appointments.concat(r.consults))
+                setLoading(false)
+            })
     }
 
     // fetch handelers
@@ -353,21 +360,26 @@ function Appointments(props) {
             <Divider style={{ gridArea: "divider" }} />
             {/* <Calendar fullWidth purchasable events={relevantEvents(props.appointments, props.consults, props.user)} /> */}
             <CalendarContainer fullWidth>
-                <BigCalendar
-                    components={{ event: Event }}
-                    startAccessor={event => new Date(event.start_time)}
-                    endAccessor={event => new Date(event.end_time)}
-                    selectable
-                    localizer={localizer}
-                    events={events}
-                    // defaultView={props.defaultCalendarView}
-                    onSelectEvent={(e) => selectEventHandeler(e)}
-                    popup
-                    step={15}
-                    timeslots={1}
-                    onSelecting={() => false}
-                    views={['month', 'day', 'week']}
-                />
+                {loading ?
+                    <Loader inline="centered" active />
+                    :
+                    <BigCalendar
+                        components={{ event: Event }}
+                        startAccessor={event => new Date(event.start_time)}
+                        endAccessor={event => new Date(event.end_time)}
+                        selectable
+                        localizer={localizer}
+                        events={events}
+                        // defaultView={props.defaultCalendarView}
+                        onSelectEvent={(e) => selectEventHandeler(e)}
+                        popup
+                        step={15}
+                        timeslots={1}
+                        onSelecting={() => false}
+                        views={['month', 'day', 'week']}
+                    />
+                }
+
             </CalendarContainer>
 
         </FullWidthCalendarContainer>
