@@ -24,7 +24,6 @@ function AppointmentHistoryTable(props) {
         })
             .then(res => res.json())
             .then((res) => {
-                console.log(res)
                 setEvents(res.events.sort((b, a) => new Date(a.start_time) - new Date(b.end_time)))
                 setLoading(false)
             })

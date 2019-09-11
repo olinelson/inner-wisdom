@@ -39,7 +39,7 @@ function Home(props) {
     `
 
     // const publishedPosts = props.posts.filter(p => p.published === true)
-    console.log(props)
+
 
     // const mostRecentPublicPost = publishedPosts.sort((b, a) => a.id - b.id)[0]
     const mostRecentPublicPost = props.lastPost

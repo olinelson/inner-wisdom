@@ -38,7 +38,7 @@ function ClientShow(props) {
         })
             .then(res => res.json())
             .then((res) => {
-                console.log(res)
+
                 setEvents(res.events)
                 // setApproving(false)
                 // setUser(res.user)

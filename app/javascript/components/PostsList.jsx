@@ -1,5 +1,5 @@
-import React from 'react'
-import { Card, Menu, Image, Icon, Label, Button, Item } from "semantic-ui-react"
+import React, { useState, useEffect } from 'react'
+import { Card, Menu, Image, Icon, Label, Button, Item, Loader } from "semantic-ui-react"
 import { Link } from "react-router-dom"
 import moment from 'moment'
 import PostsPreview from "./PostPreview"
@@ -7,35 +7,73 @@ import { connect } from "react-redux"
 import { withRouter } from 'react-router-dom'
 
 function PostsList(props) {
+    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
+    const [loading, setLoading] = useState(true)
+    const [posts, setPosts] = useState([])
+
+
+    useEffect(() => {
+        props.blogView ? getPublishedPosts() : getAllPosts()
+    }, []);
 
     const handleCardClick = (id) => {
         props.history.push(`/posts/${id}`)
     }
 
     const cardMapper = (p) => {
-
         return <PostsPreview blogView={props.blogView} key={p.id + "preview"} post={p} />
-
     }
 
-
-
-    const createNewPost = () => {
-
-        let user = props.user
-
+    const getAllPosts = () => {
         fetch(`${process.env.BASE_URL}/posts`, {
-            method: "POST",
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
             .then(response => response.json())
-            .then((e) => props.dispatch({ type: "SET_POSTS", value: e.posts }))
+            .then((r) => {
+                setPosts(r.posts)
+                console.log(r)
+                setLoading(false)
+            })
+    }
+    const getPublishedPosts = () => {
+        fetch(`${process.env.BASE_URL}/posts/published`, {
+            headers: {
+                "X-CSRF-Token": csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(response => response.json())
+            .then((r) => {
+                setPosts(r.posts)
+                console.log(r)
+                setLoading(false)
+            })
+    }
 
+
+
+    const createNewPost = () => {
+        fetch(`${process.env.BASE_URL}/posts`, {
+            method: "POST",
+            headers: {
+                "X-CSRF-Token": csrfToken,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(response => response.json())
+            .then((r) => {
+                setPosts([r.newPost, ...posts])
+
+            })
     }
 
 
@@ -51,53 +89,15 @@ function PostsList(props) {
         </Menu>
     }
 
-    const showUserOrPublishedPosts = () => {
-        let sortedPosts = props.allPosts.sort((b, a) => a.id - b.id)
-        // sort by date published coming soon!
-        // let sortedPosts = props.allPosts.sort((a, b) => new Date(a.updated) - new Date(b.updated))
-
-        if (props.blogView) return showPublishedPosts(sortedPosts)
-        return showUsersPosts(sortedPosts)
-    }
-
-    const showUsersPosts = (sortedPosts) => {
-        let result = sortedPosts.map(p => {
-            if (p.user_id == props.user.id) return cardMapper(p)
-        })
-        return result
-    }
-
-    const showPublishedPosts = (sortedPosts) => {
-        let result = sortedPosts.map(p => {
-            if (p.published === true) return cardMapper(p)
-        })
-
-        if (result.length < 1 || result[0] === undefined) return <p style={{ color: "grey" }}>No Blog Posts Yet...</p>
-        return result
-    }
-
     return <>
+
         {props.creatable ? showToolBar() : null}
-        {/* <Card.Group style={{ gridArea: "panel" }} stackable >
 
-            {showUserOrPublishedPosts()}
-
-        </Card.Group> */}
         <Item.Group style={{ gridArea: "panel" }}  >
-
-            {showUserOrPublishedPosts()}
-
+            <Loader inline='centered' active={loading} />
+            {posts.map(p => cardMapper(p))}
         </Item.Group>
     </>
 }
-
-// const mapStateToProps = (state) => ({
-//     user: state.user,
-//     allPosts: state.posts,
-//     myAccountPanel: state.myAccountPanel,
-//     refreshMethod: state.refreshMethod,
-//     baseUrl: state.baseUrl,
-//     csrfToken: state.csrfToken
-// })
 
 export default PostsList

@@ -9,7 +9,7 @@ class PostsController < ApplicationController
     def create
         @post = Post.create(user_id: current_user.id)
         @post.save
-        render json: {posts: Post.all} 
+        render json: {newPost: @post} 
 
     end
 
@@ -29,9 +29,11 @@ class PostsController < ApplicationController
     end
 
      def getAllPublishedPosts
-        render react_component: 'Blog', props: { 
-            posts: Post.all.select{|p| p.published === true},  
-        }
+         render json: {posts: Post.all.select{|p| p.published === true}}
+    end
+
+     def getAllPosts
+        render json:  { posts: Post.all.order("created_at DESC")}
     end
 
     def showPost

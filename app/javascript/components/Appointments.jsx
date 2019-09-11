@@ -131,7 +131,7 @@ function Appointments(props) {
                 // props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { appointments: props.appointments, consults: props.consults, personalEvents: props.personalEvents } })
             })
             .then(res => {
-                console.log(res.editedEvent)
+
                 let currentEvents = [...events].filter(e => e.id !== res.editedEvent.id)
                 setEvents(currentEvents.concat(res.editedEvent))
                 setBooking(false)
@@ -176,7 +176,6 @@ function Appointments(props) {
                 props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { appointments: props.appointments, consults: props.consults, personalEvents: props.personalEvents } })
             })
             .then((res) => {
-                console.log("editedEvent", res.editedEvent)
                 let currentEvents = [...events].filter(e => e.id !== res.editedEvent.id)
                 setEvents(currentEvents.concat(res.editedEvent))
                 setEventModalOpen(false)

@@ -471,7 +471,6 @@ function Schedule(props) {
                     selectable
                     localizer={localizer}
                     onSelectEvent={(e) => setSelectedEvent(e)}
-                    // onSelectEvent={(e) => console.log(e)}
                     events={events}
                     // defaultView={props.defaultCalendarView}
                     defaultDate={new Date}

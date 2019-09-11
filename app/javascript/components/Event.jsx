@@ -19,18 +19,7 @@ function Event(props) {
 
         if (props.event && props.event.extended_properties && props.event.extended_properties.private.cancelation === "true") return 'red'
         if (props.event.attendees && props.event.attendees.length > 0) return 'blue'
-        // // if (!props.user) return "grey"
-        // if (props.event.calendar && props.event.calendar.id === props.user.google_calendar_email) personal = true
-        // if (personal) return "green"
-
-        const isAnEmptySlot = () => {
-            if (!personal && props.event.attendees == null) return true
-            return false
-        }
-
-        // if (!personal && isAnEmptySlot()) return "grey"
-
-        // return "blue"
+        return 'grey'
     }
 
     const iconPicker = () => {

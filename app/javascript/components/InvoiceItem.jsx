@@ -10,10 +10,10 @@ function InvoiceItem(props) {
     const [deleted, setDeleted] = useState(false)
 
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
-    console.log("invoice item props", props)
+
 
     const editable = props.invoice && props.invoice.status === "paid" ? false : true
-    console.log("editable", editable)
+
     // const [editable, setEditable] = useState(isEditable)
 
     const updateItemHandeler = () => {
@@ -37,7 +37,7 @@ function InvoiceItem(props) {
                 setI(res.updated_item)
                 setModalOpen(false)
                 if (props.invoice) {
-                    console.log("doing refresh action")
+
                     props.refreshAction()
                     // let filteredItems = { ...props.invoice }.lines.data.filter(item => item.id !== i.id)
                     // props.setInvoice({ ...props.invoice, lines: { ...props.invoice.lines, data: [...filteredItems, res.updated_item] } })

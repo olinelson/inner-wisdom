@@ -34,7 +34,7 @@ export default function Blog(props) {
                 </p>
                 <Divider /> */}
             <Divider hidden />
-            <PostsList allPosts={props.posts} blogView />
+            <PostsList posts={props.posts} blogView />
         </Container>
     </>
 }

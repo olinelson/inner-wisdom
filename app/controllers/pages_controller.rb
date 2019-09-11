@@ -53,4 +53,8 @@ class PagesController < ApplicationController
         redirect_to myaccount_url and return
         end
     end
+
+    def blog
+        render react_component: 'Blog', props: {current_user: current_user}
+    end
 end

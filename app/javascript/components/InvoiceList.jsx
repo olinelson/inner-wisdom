@@ -31,7 +31,7 @@ function InvoiceList(props) {
 
     useEffect(() => {
         getInvoices()
-        console.log("invoice list refreshing")
+
     }, [loading])
 
     const invoicesTableRows = () => {

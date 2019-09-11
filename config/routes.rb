@@ -60,7 +60,8 @@ Rails.application.routes.draw do
 
 
  # blog post routes
-  get "/blog" => "posts#getAllPublishedPosts"
+  get "/posts/published" => "posts#getAllPublishedPosts"
+  get "/posts" => "posts#getAllPosts"
   get "/posts/:id" => "posts#showPost"
   patch '/posts/:id'=> 'posts#edit'
   delete '/posts/:id'=> 'posts#delete'
@@ -76,6 +77,7 @@ Rails.application.routes.draw do
   get "/myaccount" => "pages#myAccount"
   get "/schedule" => "pages#schedule"
   get "/clients" => "pages#clients"
+  get "/blog" => "pages#blog"
   # my account
   
 
