@@ -84,17 +84,8 @@ gem 'google_calendar'
 
 gem 'signet', '~> 0.11.0'
 
-
-# ==============================
-
 gem 'webpacker-react'
-
 gem 'devise'
-
 gem 'google-cloud-storage'
-
 gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'
-
-gem 'derailed_benchmarks', group: :development
-gem 'stackprof', group: :development
 gem 'scout_apm'
