@@ -126,22 +126,21 @@ class GooglecalController < ApplicationController
     def eventsInDateWindow(cal)
         now = DateTime.now()
         oneMonthAgo = now << 1
-        oneYearAhead = now >> 12
-        cal.find_events_in_range(oneMonthAgo,oneYearAhead, options = {max_results: 2500, expand_recurring_events: true})
-       
+        sixMonthsAhead = now >> 6
+        cal.find_events_in_range(oneMonthAgo,sixMonthsAhead, options = {max_results: 2500})
     end
 
 
 
     def getPublicEvents
         begin
-            appointments = futureEvents(@appointmentsCal).select{|a| !a.attendees}
+            appointments = futureEvents(@appointmentsCal,100).select{|a| !a.attendees}
             rescue
             appointments = []    
         end
 
          begin
-            consults = futureEvents(@consultsCal).select{|a| !a.attendees}
+            consults = futureEvents(@consultsCal, 100).select{|a| !a.attendees}
             rescue
             consults = []    
         end
@@ -152,8 +151,8 @@ class GooglecalController < ApplicationController
             }
     end
 
-    def futureEvents(cal)
-        cal.find_future_events(options = {max_results: 2500, expand_recurring_events: true })
+    def futureEvents(cal, maxResults)
+        cal.find_future_events(options = {max_results: maxResults, expand_recurring_events: true })
     end
 
 
