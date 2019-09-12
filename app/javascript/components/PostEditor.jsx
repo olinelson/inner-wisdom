@@ -92,12 +92,10 @@ function PostEditor(props) {
             .then((e) => {
                 setSaving(false)
                 setSavedPost(editedPost)
-                // props.dispatch({ type: "SET_POSTS", value: e.posts })
             })
 
     }
 
-    // style button controls
     const onStyleClick = (command) => {
         setEditorState(RichUtils.toggleInlineStyle(editorState, command))
     }
@@ -120,8 +118,6 @@ function PostEditor(props) {
             .then(response => response.json())
             .then((e) => {
                 window.location = "/myaccount"
-                // props.dispatch({ type: "SET_POSTS", value: e.posts })
-                // props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Post Deleted" } })
             })
 
     }
@@ -147,22 +143,7 @@ function PostEditor(props) {
             })
     }
 
-    const getBase64 = (selectionState, files) => {
-        insertImage(editorState, files)
-        // var reader = new FileReader();
-        // reader.readAsDataURL(files[0]);
-        // reader.onload = function () {
-        //     let base64 = reader.result
-        //     insertImage(editorState, base64)
 
-        // };
-        // reader.onerror = function (error) {
-        //     console.log('Error: ', error);
-        // };
-
-
-
-    }
 
     const insertImage = (acceptedFiles) => {
         setInserting(true)
@@ -293,6 +274,31 @@ function PostEditor(props) {
             <Container text>
                 <Input fluid placeholder="Post Title" transparent onChange={(e) => setPost({ ...post, title: e.target.value })} style={{ fontSize: "3rem", margin: "1rem 0" }} value={post.title} />
             </Container>
+
+            <Container text style={!editingDisabled ? { border: "1px solid grey" } : null}>
+                <Dropzone onDrop={(acceptedFiles) => insertImage(acceptedFiles)}>
+                    {({ getRootProps, getInputProps }) => (
+                        <Dimmer.Dimmable as={Container} dimmed={inserting} >
+                            <Dimmer active={inserting} inverted>
+                                <Loader>Inserting Image</Loader>
+                            </Dimmer>
+                            <div {...getRootProps()}>
+                                <Editor
+                                    editorState={editorState}
+                                    onChange={(e) => setEditorState(e)}
+                                    handleKeyCommand={(c, es) => handleKeyCommand(c, es)}
+                                    spellCheck
+                                    readOnly={editingDisabled}
+                                    placeholder="start writing your post here..."
+                                    plugins={plugins}
+                                />
+
+                            </div>
+                        </Dimmer.Dimmable>
+                    )}
+                </Dropzone>
+
+            </Container>
         </>
     }
 
@@ -302,6 +308,17 @@ function PostEditor(props) {
             <Divider hidden />
             <Container text>
                 <h1>{post.title}</h1>
+
+                <Editor
+                    editorState={editorState}
+                    onChange={(e) => setEditorState(e)}
+                    handleKeyCommand={(c, es) => handleKeyCommand(c, es)}
+                    spellCheck
+                    readOnly={editingDisabled}
+                    placeholder="start writing your post here..."
+                    plugins={plugins}
+                />
+
             </Container>
         </>
     }
@@ -314,45 +331,6 @@ function PostEditor(props) {
             :
             editingView()
         }
-
-
-        <Container text style={!editingDisabled ? { border: "1px solid grey" } : null}>
-            <Dropzone onDrop={(acceptedFiles) => insertImage(acceptedFiles)}>
-                {({ getRootProps, getInputProps }) => (
-                    <Dimmer.Dimmable as={Container} dimmed={inserting} >
-                        <Dimmer active={inserting} inverted>
-                            <Loader>Inserting Image</Loader>
-                        </Dimmer>
-                        {/* <Loader inline active={inserting} /> */}
-                        <div {...getRootProps()}>
-                            {/* <input {...getInputProps()} /> */}
-
-
-                            <Editor
-                                editorState={editorState}
-                                onChange={(e) => setEditorState(e)}
-                                handleKeyCommand={(c, es) => handleKeyCommand(c, es)}
-                                spellCheck
-                                readOnly={editingDisabled}
-                                placeholder="start writing your post here..."
-                                plugins={plugins}
-                            // handleDroppedFiles={(selectionState, files) => getBase64(selectionState, files)}
-                            />
-
-                        </div>
-                    </Dimmer.Dimmable>
-                )}
-            </Dropzone>
-
-        </Container>
     </>
 }
-
-// const mapStateToProps = (state) => ({
-//     posts: state.posts,
-//     user: state.user,
-//     csrfToken: state.csrfToken
-// })
-
-
 export default PostEditor
