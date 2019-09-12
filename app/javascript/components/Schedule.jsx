@@ -486,6 +486,7 @@ function Schedule(props) {
                         step={15}
                         timeslots={1}
                         onSelectSlot={(e) => selectSlotHandeler(e)}
+                    // onNavigate={(e) => console.log("navigating", e)}
                     />
                 }
 
