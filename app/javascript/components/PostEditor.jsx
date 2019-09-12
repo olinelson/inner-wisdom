@@ -149,8 +149,6 @@ function PostEditor(props) {
         setInserting(true)
         let formData = new FormData();
         formData.append('file', acceptedFiles[0])
-        console.log(acceptedFiles[0])
-        console.log(formData)
         fetch(`${process.env.BASE_URL}/insert/posts/${savedPost.id}`, {
             method: "POST",
             body: formData,

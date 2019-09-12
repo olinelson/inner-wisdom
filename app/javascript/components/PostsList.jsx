@@ -32,7 +32,6 @@ function PostsList(props) {
             .then(response => response.json())
             .then((r) => {
                 setPosts(r.posts)
-                console.log(r)
                 setLoading(false)
             })
     }
@@ -48,7 +47,6 @@ function PostsList(props) {
             .then(response => response.json())
             .then((r) => {
                 setPosts(r.posts)
-                console.log(r)
                 setLoading(false)
             })
     }
