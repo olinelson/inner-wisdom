@@ -31,7 +31,6 @@ function Notification(props) {
     const hideMessage = (e) => {
         e.target.parentElement.style.display = "none"
     }
-
     const renderMessage = (message) => {
         switch (message.type) {
             case "notice":
@@ -50,6 +49,15 @@ function Notification(props) {
                     key={message.id}
                     warning
                     header='Alert'
+                    content={message.message}
+                />
+            case "error":
+                return <CustomMessage
+                    onDismiss={(e) => hideMessage(e)}
+                    floating
+                    key={message.id}
+                    negative
+                    header='Error'
                     content={message.message}
                 />
         }

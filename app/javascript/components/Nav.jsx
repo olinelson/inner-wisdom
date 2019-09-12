@@ -45,7 +45,7 @@ function Nav(props) {
     const FixedMenu = styled(Menu)`
         position: ${() => imageHeader() ? "absolute" : "sticky"};
         // position: sticky ;
-        z-index: 3;
+        z-index: 1000;
         width: 100vw;
         top:0rem !important;
         border: none !important;
@@ -61,7 +61,7 @@ function Nav(props) {
 
     const MobileMenu = styled.div`
         position: fixed;
-        z-index: 3;
+        z-index: 1000;
         top: 1.5rem;
         right: 1rem;
         background: rgba(0, 0, 0, 0);
@@ -173,7 +173,7 @@ function Nav(props) {
 
             <Dropdown direction="left" icon="bars" floating >
 
-                <Dropdown.Menu >
+                <Dropdown.Menu>
                     {menuOptions()}
                     {UserMenuOptions()}
                 </Dropdown.Menu>

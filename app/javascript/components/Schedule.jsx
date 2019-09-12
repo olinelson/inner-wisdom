@@ -6,7 +6,7 @@ import { BusinessEventSegment, CalendarContainer, ModalContent } from "./StyledC
 import { FullWidthCalendarContainer } from "./Appointments"
 import Event from "./Event"
 import UserPickerDropDown from './UserPickerDropDown';
-
+import Message from './Message'
 
 // packages
 import moment from "moment"
@@ -34,7 +34,7 @@ function Schedule(props) {
     const [selectedSlot, setSelectedSlot] = useState(null)
     const [loading, setLoading] = useState(true)
     const [events, setEvents] = useState([])
-
+    const [notifications, setNotifications] = useState([])
 
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
@@ -47,17 +47,36 @@ function Schedule(props) {
         getAllEvents()
     }, []);
 
-    const getAllEvents = () => {
-        fetch(`${process.env.BASE_URL}/events/schedule`, {
-            headers: {
-                "X-CSRF-Token": csrfToken,
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "X-Requested-With": "XMLHttpRequest"
+    useEffect(() => {
+        const timer = setTimeout(() => {
+
+            if (notifications === []) return () => clearTimeout(timer)
+            if (notifications.length > 1) {
+                let newVal = [...notifications]
+                newVal.pop()
+                setNotifications(newVal)
             }
-        })
+            else if (notifications.length === 1) {
+                setNotifications([])
+            }
+            else {
+                return () => clearTimeout(timer)
+            }
+
+        }, 5000);
+        return () => clearTimeout(timer);
+    }, [notifications]);
+
+    const getAllEvents = () => {
+        fetch(`${process.env.BASE_URL}/events/schedule`)
             .then(response => response.json())
+            .catch(error => {
+                setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
+                console.error('Error:', error)
+                setLoading(false)
+            })
             .then((r) => {
+                // setNotifications({ id: new Date, type: "alert", message: "Could not get events. Please try again. If this problem persists please contact your system administrator." })
                 setEvents(r.events)
                 setLoading(false)
             })
@@ -71,7 +90,6 @@ function Schedule(props) {
 
         setSelectedSlot(null)
         let event = { ...selectedSlot }
-        // props.dispatch({ type: "ADD_APPOINTMENT", value: { ...event, placeholder: true } })
         fetch(`${process.env.BASE_URL}/events/create`, {
             method: "POST",
             body: JSON.stringify({
@@ -88,16 +106,15 @@ function Schedule(props) {
         })
             .then(response => response.json())
             .catch(error => {
+                setNotifications([{ id: new Date, type: "alert", message: "There was an error creating this event. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
                 console.error('Error:', error)
-                // props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Event could not be created" } })
-                // props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { appointments: props.appointments, consults: props.consults, personalEvents: props.personalEvents } })
+                setLoading(false)
             })
             .then(r => {
                 let currentEvents = [...events].filter(e => e.id !== event.id)
                 setEvents([...currentEvents, r.newEvent])
+                setNotifications([{ id: new Date, type: "notice", message: "Event successfully created." }, ...notifications])
             })
-        // .then(res => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
-        // .then(res => props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Event Created" } }))
     }
 
     const updateSelectedEventHandeler = () => {
@@ -121,11 +138,13 @@ function Schedule(props) {
         })
             .then(response => response.json())
             .catch(error => {
+                setNotifications({ id: new Date, type: "alert", message: "There was an error updating this event. Please try again. If this problem persists please contact your system administrator." })
                 console.error('Error:', error)
             })
             .then((r) => {
                 let filteredEvents = [...events].filter(e => e.id !== r.editedEvent.id)
                 setEvents([...filteredEvents, r.editedEvent])
+                setNotifications([{ id: new Date, type: "notice", message: "Event successfully updated" }, ...notifications])
             })
     }
 
@@ -150,13 +169,13 @@ function Schedule(props) {
         })
             .then(res => res.json())
             .catch(error => {
+                setNotifications([{ id: new Date, type: "alert", message: "There was an error deleting this event. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
                 console.error('Error:', error)
-                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Event could not be deleted" } })
-                props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { appointments: props.appointments, consults: props.consults, personalEvents: props.personalEvents } })
             })
             .then(r => {
                 let filteredEvents = [...events].filter(e => e.id !== selectedEvent.id)
                 setEvents(filteredEvents)
+                setNotifications([{ id: new Date, type: "warning", message: "Event successfully deleted" }, ...notifications])
             })
     }
 
@@ -457,7 +476,9 @@ function Schedule(props) {
     }
 
     return <>
-
+        <div style={{ position: "absolute", right: "1rem" }}>
+            {notifications.map(n => <Message key={uuidv1()} message={n} />)}
+        </div>
         <FullWidthCalendarContainer fluid >
             <div style={{ width: "100%", maxWidth: "95vw", justifySelf: "center" }}>
                 <h1>Schedule</h1>
@@ -486,7 +507,6 @@ function Schedule(props) {
                         step={15}
                         timeslots={1}
                         onSelectSlot={(e) => selectSlotHandeler(e)}
-                    // onNavigate={(e) => console.log("navigating", e)}
                     />
                 }
 
@@ -498,6 +518,7 @@ function Schedule(props) {
 
         {creatingEventModal()}
         {editingEventModal()}
+
 
     </>
 }

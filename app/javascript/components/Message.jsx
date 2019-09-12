@@ -4,13 +4,13 @@ import { Message as SemanticMessage } from "semantic-ui-react"
 export default function Message(props) {
     const [hidden, setHidden] = useState(false)
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setHidden(true)
-        }, 10000);
-        return () => clearTimeout(timer);
-    }, []);
-
+    // useEffect(() => {
+    //     const timer = setTimeout(() => {
+    //         setHidden(true)
+    //     }, 15000);
+    //     return () => clearTimeout(timer);
+    // }, []);
+    if (!props.message) return null
     switch (props.message.type) {
         case "notice":
             return <SemanticMessage
@@ -22,6 +22,8 @@ export default function Message(props) {
                 positive
                 header='Notice'
                 content={props.message.message}
+            // style={{ position: "fixed", zIndex: "100", right: "1rem", minWidth: "7rem" }}
+
             />
         case "warning":
             return <SemanticMessage
@@ -33,6 +35,7 @@ export default function Message(props) {
                 warning
                 header='Warning'
                 content={props.message.message}
+            // style={{ position: "fixed", zIndex: "100", right: "1rem", minWidth: "7rem" }}
             />
         case "alert":
             return <SemanticMessage
@@ -41,9 +44,10 @@ export default function Message(props) {
                 onDismiss={() => setHidden(true)}
                 floating
                 key={props.message.id}
-                warning
+                negative
                 header='Alert'
                 content={props.message.message}
+            // style={{ position: "fixed", zIndex: "100", right: "1rem", minWidth: "7rem" }}
             />
         default:
             return <SemanticMessage
@@ -54,6 +58,7 @@ export default function Message(props) {
                 key={props.message.id}
                 header='Notice'
                 content={props.message.message}
+            // style={{ position: "fixed", zIndex: "100", right: "1rem", minWidth: "7rem" }}
             />
     }
 }

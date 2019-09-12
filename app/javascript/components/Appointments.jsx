@@ -5,6 +5,7 @@ import { CalendarContainer, ModalContent } from "./StyledComponents"
 import { Calendar as BigCalendar, momentLocalizer, Views } from 'react-big-calendar'
 import moment from "moment"
 import Event from "./Event"
+import Message from "./Message"
 
 export const isUserAnAttendeeOfEvent = (event, user) => {
     if (event.attendees === null) return false
@@ -64,6 +65,7 @@ function Appointments(props) {
     const [canceling, setCanceling] = useState(false)
     const [confirmation, setConfirmation] = useState(null)
     const [events, setEvents] = useState([])
+    const [notifications, setNotifications] = useState([])
 
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
@@ -82,6 +84,26 @@ function Appointments(props) {
 
     }, []);
 
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (notifications === []) return () => clearTimeout(timer)
+            if (notifications.length > 1) {
+                let newVal = [...notifications]
+                newVal.pop()
+                setNotifications(newVal)
+            }
+            else if (notifications.length === 1) {
+                setNotifications([])
+            }
+            else {
+                return () => clearTimeout(timer)
+            }
+
+        }, 5000);
+        return () => clearTimeout(timer);
+    }, [notifications]);
+
     const getPrivateEvents = () => {
         fetch(`${process.env.BASE_URL}/events/current_user`, {
             headers: {
@@ -90,7 +112,13 @@ function Appointments(props) {
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
             }
-        }).then(r => r.json())
+        })
+            .then(r => r.json())
+            .catch(error => {
+                setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
+                console.error('Error:', error)
+                setLoading(false)
+            })
             .then(r => {
                 setEvents(r.events)
                 setLoading(false)
@@ -106,6 +134,10 @@ function Appointments(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         }).then(r => r.json())
+            .catch(error => {
+                setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
+                console.error('Error:', error)
+            })
             .then(r => {
                 setEvents(r.appointments.concat(r.consults))
                 setLoading(false)
@@ -129,12 +161,11 @@ function Appointments(props) {
         })
             .then(res => res.json())
             .catch(error => {
+                setNotifications([{ id: new Date, type: "alert", message: "Could not book appointment. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
                 console.error('Error:', error)
-                setEventModalOpen(false)
                 setBooking(false)
-                // props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Event could not be booked" } })
-
-                // props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { appointments: props.appointments, consults: props.consults, personalEvents: props.personalEvents } })
+                setEventModalOpen(false)
+                setSelectedEvent(null)
             })
             .then(res => {
 
@@ -143,6 +174,7 @@ function Appointments(props) {
                 setBooking(false)
                 setEventModalOpen(false)
                 setConfirmation({ type: "booking", event: res.editedEvent })
+                setNotifications([{ id: new Date, type: "notice", message: "Appointment successfully booked!" }, ...notifications])
             })
             .then(() => setSelectedEvent(null))
 
@@ -175,11 +207,10 @@ function Appointments(props) {
         })
             .then(response => response.json())
             .catch(error => {
+                setNotifications([{ id: new Date, type: "alert", message: "Could not cancel this event. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
                 console.error('Error:', error)
                 setEventModalOpen(false)
                 setCanceling(false)
-                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Event could not be canceled" } })
-                props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: { appointments: props.appointments, consults: props.consults, personalEvents: props.personalEvents } })
             })
             .then((res) => {
                 let currentEvents = [...events].filter(e => e.id !== res.editedEvent.id)
@@ -187,7 +218,7 @@ function Appointments(props) {
                 setEventModalOpen(false)
                 setCanceling(false)
                 setConfirmation({ type: "cancelation", event: { ...res.editedEvent } })
-                // props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Appointment Canceled" } })
+                setNotifications([{ id: new Date, type: "warning", message: "Appointment successully canceled" }, ...notifications])
             })
             .then(() => setSelectedEvent(null))
     }
@@ -352,6 +383,10 @@ function Appointments(props) {
     }
 
     return <>
+        <div style={{ position: "absolute", right: "1rem" }}>
+            {notifications.map(n => <Message key={uuidv1()} message={n} />)}
+        </div>
+
         <FullWidthCalendarContainer fluid>
             <div style={{ width: "100%", maxWidth: "95vw", justifySelf: "center" }}>
                 <h1>Appointments</h1>
