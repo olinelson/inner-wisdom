@@ -4,11 +4,7 @@
 # the maximum value specified for Puma. Default is set to 5 threads for minimum
 # and maximum; this matches the default thread size of Active Record.
 #
-before_fork do
-  require 'puma_worker_killer'
 
-  PumaWorkerKiller.enable_rolling_restart(120) 
-end
 
 
 threads_count = ENV.fetch("RAILS_MAX_THREADS") { 5 }
@@ -22,6 +18,14 @@ port        ENV.fetch("PORT") { 3000 }
 #
 environment ENV.fetch("RAILS_ENV") { "development" }
 
+
+before_fork do
+  require 'puma_worker_killer'
+    PumaWorkerKiller.config do |config|
+      config.ram           = 512 # mb
+    end
+    PumaWorkerKiller.start
+end
 # Specifies the number of `workers` to boot in clustered mode.
 # Workers are forked webserver processes. If using threads and workers together
 # the concurrency of the application would be max `threads` * `workers`.
