@@ -104,6 +104,8 @@ GEM
     faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
     ffi (1.11.1)
+    get_process_mem (0.2.4)
+      ffi (~> 1.0)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
     google-api-client (0.30.8)
@@ -186,6 +188,9 @@ GEM
     pg (1.1.4)
     public_suffix (3.1.1)
     puma (3.12.1)
+    puma_worker_killer (0.1.1)
+      get_process_mem (~> 0.2)
+      puma (>= 2.7, < 5)
     rack (2.0.7)
     rack-proxy (0.6.5)
       rack
@@ -317,6 +322,7 @@ DEPENDENCIES
   mocha (~> 1.9)
   pg
   puma (~> 3.11)
+  puma_worker_killer
   rails (~> 5.2.3)
   rake (~> 12.3, >= 12.3.3)
   rb-fsevent (~> 0.10.3)

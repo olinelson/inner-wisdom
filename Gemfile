@@ -89,3 +89,5 @@ gem 'devise'
 gem 'google-cloud-storage'
 gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'
 gem 'scout_apm'
+
+gem "puma_worker_killer"
