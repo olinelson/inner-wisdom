@@ -92,7 +92,7 @@ function Appointments(props) {
             }
         }).then(r => r.json())
             .then(r => {
-                setEvents(r.appointments.concat(r.consults))
+                setEvents(r.events)
                 setLoading(false)
             })
     }

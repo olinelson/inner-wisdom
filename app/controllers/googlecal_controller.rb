@@ -66,39 +66,28 @@ class GooglecalController < ApplicationController
 
     def getUsersAndFreeEvents
 
+         appointments = []
+         consults = []       
+
         if current_user.approved
-           
             begin
             appointments = eventsInDateWindow(@appointmentsCal).select{|a| !a.attendees || doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
-            rescue
-            appointments = []   
+            rescue  
             end
             
             begin
-
             consults = eventsInDateWindow(@consultsCal).select{|a| doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
             rescue
-            consults = []    
             end
         else
             begin
             consults = eventsInDateWindow(@consultsCal).select{|a| !a.attendees || doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
-            rescue
-            consults = []    
+            rescue 
             end
         end
 
-        
-
-        # begin
-        #     consults = eventsInDateWindow(@consultsCal).select{|a| !a.attendees || doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
-        #     rescue
-        #     consults = []    
-        # end
-
         render json: {
-            appointments: appointments, 
-            consults: consults, 
+            events: appointments + consults, 
             }
     end
 
@@ -144,6 +133,7 @@ class GooglecalController < ApplicationController
             rescue
             consults = []    
         end
+        byebug
 
         render json: {
             appointments: appointments, 
