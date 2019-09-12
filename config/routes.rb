@@ -66,7 +66,9 @@ Rails.application.routes.draw do
   patch '/posts/:id'=> 'posts#edit'
   delete '/posts/:id'=> 'posts#delete'
   post '/posts'=> 'posts#create'
-  post '/attach/posts/:id'=> 'posts#attach'
+  post '/attach/posts/:id'=> 'posts#attach_feature_image'
+
+  post '/insert/posts/:id' => 'posts#upload_image'
 
   # pages
   get "/counselling" => "pages#counselling"

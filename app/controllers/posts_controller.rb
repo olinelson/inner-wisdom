@@ -3,7 +3,7 @@ class PostsController < ApplicationController
         @post = Post.find(params[:id])
         editedPost = params[:editedPost]
         @post.update(body: editedPost["body"], published: editedPost["published"], title: editedPost["title"])
-        render json: {posts: Post.all} 
+        render json: {editedPost: @post} 
     end
 
     def create
@@ -16,16 +16,24 @@ class PostsController < ApplicationController
     def delete
         @post = Post.find(params[:id])
         @post.delete
-        render json: {posts: Post.all} 
+        render json: {deletedPost: @post} 
     end
 
-    def attach
+    def upload_image
+        @post = Post.find(params[:id])
+        @post.images.attach(params["file"])
+        src = "https://storage.googleapis.com/inner_wisdom_bucket/#{@post.images.last.key}"
+        @post.save
+        render json: {src: src} 
+    end
+
+    def attach_feature_image
      @post = Post.find(params[:id])
-     @post.image.attach(params["file"])
-     feature_image = "https://storage.googleapis.com/inner_wisdom_bucket/#{@post.image.key}"
+     @post.images.attach(params["file"])
+     feature_image = "https://storage.googleapis.com/inner_wisdom_bucket/#{@post.images.last.key}"
     @post.feature_image = feature_image
     @post.save
-    render json: {posts: Post.all, feature_image: feature_image} 
+    render json: {editedPost: @post} 
     end
 
      def getAllPublishedPosts

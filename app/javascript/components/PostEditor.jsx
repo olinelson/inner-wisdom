@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { EditorState, RichUtils, convertToRaw, convertFromRaw, AtomicBlockUtils } from 'draft-js';
-import { Container, Input, Divider, Checkbox, Label, Modal, Popup, Button, Icon, Image, Segment, Placeholder, Dimmer } from "semantic-ui-react"
+import { Container, Input, Divider, Checkbox, Label, Modal, Popup, Button, Icon, Image, Segment, Placeholder, Dimmer, Loader } from "semantic-ui-react"
 import Dropzone from 'react-dropzone'
 import styled from "styled-components"
 import { Jumbotron, EditorButtons } from './StyledComponents';
@@ -11,14 +11,9 @@ import createImagePlugin from 'draft-js-image-plugin';
 
 
 const imagePlugin = createImagePlugin();
-
-const uuidv1 = require('uuid/v1')
-
 const plugins = [
     imagePlugin
 ];
-
-
 export const FeatureImageSegment = styled(Segment)`
     background-position: center !important;
     background-size: cover !important;
@@ -32,9 +27,6 @@ export const FeatureImageSegment = styled(Segment)`
 
 function PostEditor(props) {
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
-
-
-    // const [savedPost, setSavedPost] = useState(props.posts.find(p => p.id == props.match.params.id))
     const [savedPost, setSavedPost] = useState(props.post)
     const [post, setPost] = useState(savedPost)
 
@@ -60,16 +52,12 @@ function PostEditor(props) {
     savedPost.published !== post.published ? saved = false : null
     savedPost.title !== post.title ? saved = false : null
 
-
-
-
-    const [deleteModalShown, setDeleteModalShown] = useState(false)
-
     const [featureImage, setFeatureImage] = useState(post.feature_image)
 
     const [featureImageLoading, setFeatureImageLoading] = useState(false)
     const [featureImageHovering, setFeatureImageHovering] = useState(false)
     const [saving, setSaving] = useState(false)
+    const [inserting, setInserting] = useState(false)
 
     const handleKeyCommand = (command, editorState) => {
         const newState = RichUtils.handleKeyCommand(editorState, command);
@@ -139,17 +127,13 @@ function PostEditor(props) {
     }
 
 
-    const uploadFiles = (acceptedFiles) => {
+    const uploadFeatureImage = (acceptedFiles) => {
         setFeatureImageLoading(true)
         let formData = new FormData();
         formData.append('file', acceptedFiles[0])
-
         fetch(`${process.env.BASE_URL}/attach/posts/${savedPost.id}`, {
             method: "POST",
             body: formData,
-
-
-
             headers: {
                 "X-CSRF-Token": csrfToken,
                 Accept: "application/json",
@@ -157,46 +141,67 @@ function PostEditor(props) {
             }
         })
             .then(response => response.json())
-            .then((e) => {
-                props.dispatch({ type: "SET_POSTS", value: e.posts })
-                setFeatureImage(e.feature_image)
+            .then((r) => {
+                setFeatureImage(r.editedPost.feature_image)
                 setFeatureImageLoading(false)
             })
-
     }
 
     const getBase64 = (selectionState, files) => {
-        var reader = new FileReader();
-        reader.readAsDataURL(files[0]);
-        reader.onload = function () {
-            let base64 = reader.result
-            insertImage(editorState, base64)
+        insertImage(editorState, files)
+        // var reader = new FileReader();
+        // reader.readAsDataURL(files[0]);
+        // reader.onload = function () {
+        //     let base64 = reader.result
+        //     insertImage(editorState, base64)
 
-        };
-        reader.onerror = function (error) {
-            console.log('Error: ', error);
-        };
+        // };
+        // reader.onerror = function (error) {
+        //     console.log('Error: ', error);
+        // };
 
 
 
     }
 
-    const insertImage = (editorState, base64) => {
-        const contentState = editorState.getCurrentContent();
-        const contentStateWithEntity = contentState.createEntity(
-            'image',
-            'IMMUTABLE',
-            { src: base64 },
-        );
-        const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
-        setEditorState(AtomicBlockUtils.insertAtomicBlock(editorState, entityKey, ' '))
+    const insertImage = (acceptedFiles) => {
+        setInserting(true)
+        let formData = new FormData();
+        formData.append('file', acceptedFiles[0])
+        console.log(acceptedFiles[0])
+        console.log(formData)
+        fetch(`${process.env.BASE_URL}/insert/posts/${savedPost.id}`, {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRF-Token": csrfToken,
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(response => response.json())
+            .then((r) => {
+                const contentState = editorState.getCurrentContent();
+                const contentStateWithEntity = contentState.createEntity(
+                    'image',
+                    'IMMUTABLE',
+                    { src: r.src },
+                );
+                const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+                setEditorState(AtomicBlockUtils.insertAtomicBlock(editorState, entityKey, ' '))
+                setInserting(false)
+            })
+
+
+
+
     };
 
     const editingView = () => {
         return <>
 
 
-            <Dropzone onDrop={(acceptedFiles) => uploadFiles(acceptedFiles)}>
+            <Dropzone onDrop={(acceptedFiles) => uploadFeatureImage(acceptedFiles)}>
                 {({ getRootProps, getInputProps }) => (
                     <Container fluid >
                         <div {...getRootProps()}>
@@ -205,7 +210,7 @@ function PostEditor(props) {
 
                                 <FeatureImageSegment onMouseEnter={() => setFeatureImageHovering(true)} onMouseLeave={() => setFeatureImageHovering(false)} loading={featureImageLoading} tertiary style={{ backgroundImage: `url('${featureImage}') ` }}>
                                     {featureImageHovering === true ?
-                                        <Dimmer blurring active >
+                                        <Dimmer active >
                                             <h4>Drag an image here to set featured image</h4>
                                             <small>or click here</small>
                                         </Dimmer>
@@ -312,16 +317,33 @@ function PostEditor(props) {
 
 
         <Container text style={!editingDisabled ? { border: "1px solid grey" } : null}>
-            <Editor
-                editorState={editorState}
-                onChange={(e) => setEditorState(e)}
-                handleKeyCommand={(c, es) => handleKeyCommand(c, es)}
-                spellCheck
-                readOnly={editingDisabled}
-                placeholder="start writing your post here..."
-                plugins={plugins}
-                handleDroppedFiles={(selectionState, files) => getBase64(selectionState, files)}
-            />
+            <Dropzone onDrop={(acceptedFiles) => insertImage(acceptedFiles)}>
+                {({ getRootProps, getInputProps }) => (
+                    <Dimmer.Dimmable as={Container} dimmed={inserting} >
+                        <Dimmer active={inserting} inverted>
+                            <Loader>Inserting Image</Loader>
+                        </Dimmer>
+                        {/* <Loader inline active={inserting} /> */}
+                        <div {...getRootProps()}>
+                            {/* <input {...getInputProps()} /> */}
+
+
+                            <Editor
+                                editorState={editorState}
+                                onChange={(e) => setEditorState(e)}
+                                handleKeyCommand={(c, es) => handleKeyCommand(c, es)}
+                                spellCheck
+                                readOnly={editingDisabled}
+                                placeholder="start writing your post here..."
+                                plugins={plugins}
+                            // handleDroppedFiles={(selectionState, files) => getBase64(selectionState, files)}
+                            />
+
+                        </div>
+                    </Dimmer.Dimmable>
+                )}
+            </Dropzone>
+
         </Container>
     </>
 }
