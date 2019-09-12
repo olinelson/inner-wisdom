@@ -133,7 +133,6 @@ class GooglecalController < ApplicationController
             rescue
             consults = []    
         end
-        byebug
 
         render json: {
             appointments: appointments, 
