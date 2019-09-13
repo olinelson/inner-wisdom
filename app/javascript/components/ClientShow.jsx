@@ -98,7 +98,6 @@ function ClientShow(props) {
     }
 
     const addNotification = (newNotification) => {
-        console.log("new", newNotification, notifications)
         let current = [...notifications]
         setNotifications([newNotification, ...current])
     }

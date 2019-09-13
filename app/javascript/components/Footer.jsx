@@ -8,8 +8,6 @@ function Footer(props) {
 
     if (path === "/schedule" || path === "/appointments") return null
 
-    console.log(path, process.env.BASE_URL)
-
     const FooterContainer = styled.div`
         display: grid;
         justify-items: center;
