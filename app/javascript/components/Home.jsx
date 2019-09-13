@@ -67,12 +67,18 @@ function Home(props) {
 
     }
 
+    const JumboHeader = styled(Header)`
+        font-size: 4rem;
+        color: white;
+        text-shadow: 1px 1px 2px black;
+    `
+
 
     return <>
         <Jumbotron fullHeight src="https://storage.googleapis.com/inner_wisdom_bucket/forest-path-trees-6037(1).jpg" >
             <JumboMessage  >
-                <Header style={{ fontSize: "4rem" }} size="huge" as={"h1"} inverted>Inner Wisdom Psychology</Header>
-                <Header.Subheader style={{ color: "white" }} as="h3">Wellbeing, Relationships, Guidance</Header.Subheader>
+                <JumboHeader size="huge" as={"h1"} inverted>Inner Wisdom Psychology</JumboHeader>
+                <Header.Subheader style={{ color: "white", textShadow: "1px 1px 2px black" }} as="h3">Wellbeing, Relationships, Guidance</Header.Subheader>
                 {/* <h1>Inner Wisdom Psychology</h1> */}
 
             </JumboMessage>
