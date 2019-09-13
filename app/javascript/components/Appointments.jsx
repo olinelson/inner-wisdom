@@ -383,7 +383,7 @@ function Appointments(props) {
     }
 
     return <>
-        <div style={{ position: "absolute", right: "1rem" }}>
+        <div style={{ position: "fixed", right: "1rem", zIndex: "100" }}>
             {notifications.map(n => <Message key={uuidv1()} message={n} />)}
         </div>
 

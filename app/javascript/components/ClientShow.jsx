@@ -5,6 +5,9 @@ import moment from "moment"
 import AdminAppointmentHistoryTable from './AdminAppointmentHistoryTable';
 import InvoiceItemList from './InvoiceItemList';
 import InvoiceList from './InvoiceList';
+import Message from './Message'
+
+const uuidv1 = require('uuid/v1')
 
 
 function ClientShow(props) {
@@ -14,34 +17,35 @@ function ClientShow(props) {
     const [loading, setLoading] = useState(true)
     const [approving, setApproving] = useState(false)
     const [deleting, setDeleting] = useState(false)
+    const [notifications, setNotifications] = useState([])
+
+
+
 
     useEffect(() => {
-        getEvents()
-    }, [])
+        const timer = setTimeout(() => {
+
+            if (notifications === []) return () => clearTimeout(timer)
+            if (notifications.length > 1) {
+                let newVal = [...notifications]
+                newVal.pop()
+                setNotifications(newVal)
+            }
+            else if (notifications.length === 1) {
+                setNotifications([])
+            }
+            else {
+                return () => clearTimeout(timer)
+            }
+
+        }, 10000);
+        return () => clearTimeout(timer);
+    }, [notifications]);
 
     const approveUserHandeler = () => {
         setApproving(true)
         let editedUser = { ...user, approved: !user.approved }
         editUserHandeler(editedUser)
-    }
-
-    const getEvents = () => {
-        fetch(`${process.env.BASE_URL}/events/booked/${user.id}`, {
-            headers: {
-                "X-CSRF-Token": csrfToken,
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        })
-            .then(res => res.json())
-            .then((res) => {
-
-                setEvents(res.events)
-                // setApproving(false)
-                // setUser(res.user)
-                // props.dispatch({ type: "SET_USERS", value: res.users })
-            })
     }
 
     const editUserHandeler = (editedUser = user) => {
@@ -58,9 +62,15 @@ function ClientShow(props) {
             }
         })
             .then(res => res.json())
+            .catch(error => {
+                setNotifications([{ id: new Date, type: "alert", message: "Could not edit client. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
+                console.error('Error:', error)
+                setLoading(false)
+            })
             .then((res) => {
                 setApproving(false)
                 setUser(res.user)
+                setNotifications([{ id: new Date, type: "notice", message: "Client changes successfully saved" }, ...notifications])
             })
     }
 
@@ -76,20 +86,34 @@ function ClientShow(props) {
             }
         })
             .then(res => res.json())
+            .catch(error => {
+                setNotifications([{ id: new Date, type: "alert", message: "Could not delete user. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
+                console.error('Error:', error)
+                setLoading(false)
+            })
             .then((res) => {
                 window.location = '/clients'
             })
 
     }
 
+    const addNotification = (newNotification) => {
+        console.log("new", newNotification, notifications)
+        let current = [...notifications]
+        setNotifications([newNotification, ...current])
+    }
+
     const panes = [
-        { menuItem: 'Appointment History', render: () => <Tab.Pane content={<AdminAppointmentHistoryTable events={events} user={user} />} /> },
-        { menuItem: 'Billable Items', render: () => <InvoiceItemList user={user} /> },
-        { menuItem: 'Invoices', render: () => <InvoiceList user={user} /> },
+        { menuItem: 'Appointment History', render: () => <AdminAppointmentHistoryTable addNotification={(e) => addNotification(e)} user={user} /> },
+        { menuItem: 'Billable Items', render: () => <InvoiceItemList addNotification={(e) => addNotification(e)} user={user} /> },
+        { menuItem: 'Invoices', render: () => <InvoiceList addNotification={(e) => addNotification(e)} user={user} /> },
 
     ]
 
-    return (
+    return <>
+        <div style={{ position: "fixed", right: "1rem", zIndex: "100" }}>
+            {notifications.map(n => <Message key={uuidv1()} message={n} />)}
+        </div>
         <Container>
 
             <h1>{user.first_name + " " + user.last_name}</h1>
@@ -197,7 +221,7 @@ function ClientShow(props) {
 
             <Tab panes={panes} renderActiveOnly={true} />
         </Container>
-    )
+    </>
 }
 
 

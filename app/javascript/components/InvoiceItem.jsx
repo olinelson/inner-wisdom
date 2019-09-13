@@ -61,7 +61,11 @@ function InvoiceItem(props) {
             }
         })
             .then(res => res.json())
-            .then(res => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
+            .catch(error => {
+                // props.addNotification({ id: new Date, type: "alert", message: "Could not retreive events. Please try again. If this problem persists please contact your system administrator." })
+                console.error('Error:', error)
+                setLoading(false)
+            })
             .then(() => {
                 setModalOpen(false)
                 setLoading(false)

@@ -21,22 +21,27 @@ function InvoiceList(props) {
             }
         })
             .then(res => res.json())
+            .catch(error => {
+                props.addNotification({ id: new Date, type: "alert", message: "Could not get invoices. Please try again. If this problem persists please contact your system administrator." })
+                console.error('Error:', error)
+                setLoading(false)
+            })
             .then((res) => {
                 setInvoices(res.invoices)
+                setLoading(false)
             })
-            .then(() => setLoading(false))
     }
 
     useEffect(() => {
         getInvoices()
 
-    }, [loading])
+    }, [])
 
     const invoicesTableRows = () => {
         if (invoices) {
             return invoices.data.map(i => {
                 // let time = moment.duration(i.webhooks_delivered_at).humanize()
-                return <InvoiceTableRow refreshAction={() => setLoading(true)} invoice={i} key={i.id} />
+                return <InvoiceTableRow addNotification={props.addNotification} refreshAction={() => getInvoices()} invoice={i} key={i.id} />
             }
             )
         }

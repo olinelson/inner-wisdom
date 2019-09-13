@@ -33,13 +33,18 @@ function GoogleEventTableRow(props) {
         })
             .then(response => response.json())
             .catch(error => {
+                props.addNotification({ id: new Date, type: "alert", message: "Could not update event. Please try again. If this problem persists please contact your system administrator." })
                 console.error('Error:', error)
                 setLoading(false)
-                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Error Updating Calendar Event" } })
+                return null
             })
             .then(r => {
-                setLoading(false)
-                setEvent(r.editedEvent)
+                if (r !== null) {
+                    props.addNotification({ id: new Date, type: "notice", message: "Event updated successfully." })
+                    setLoading(false)
+                    setEvent(r.editedEvent)
+                }
+
             })
     }
 
@@ -60,15 +65,19 @@ function GoogleEventTableRow(props) {
         })
             .then(res => res.json())
             .catch(error => {
+                props.addNotification({ id: new Date, type: "alert", message: "Could not create invoice item. Please try again. If this problem persists please contact your system administrator." })
                 console.error('Error:', error)
                 setLoading(false)
-                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Error Creating Invoice Item" } })
+                return null
             })
             .then((res) => {
                 if (res.invoice_item) {
                     let editedEvent = { ...event, extended_properties: { private: { paid: false, stripe_id: res.invoice_item.id } } }
                     updateGoogleCalEvent(editedEvent)
                 }
+
+
+
             })
     }
 

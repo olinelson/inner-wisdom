@@ -25,6 +25,11 @@ function InvoiceItemList(props) {
             }
         })
             .then(res => res.json())
+            .catch(error => {
+                props.addNotification({ id: new Date, type: "alert", message: "Could not retreive invoice items. Please try again. If this problem persists please contact your system administrator." })
+                console.error('Error:', error)
+                setLoading(false)
+            })
             .then((res) => {
                 if (res.invoice_items.data) {
                     setInvoiceItems(res.invoice_items)
@@ -52,25 +57,24 @@ function InvoiceItemList(props) {
         })
             .then(res => res.json())
             .catch(error => {
+                props.addNotification({ id: new Date, type: "alert", message: "Could not create new invoice. Please try again. If this problem persists please contact your system administrator." })
                 console.error('Error:', error)
                 setCreating(false)
-                setLoading(false)
-                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Error Creating Invoice" } })
             })
             .then((res) => {
                 if (res.invoice) {
+                    props.addNotification({ id: new Date, type: "notice", message: "New invoice created successfully." })
                     setInvoiceItems(null)
                 }
+                setCreating(false)
             })
-            .then(() => setCreating(false))
-            .then(() => setLoading(false))
-        // .then(() => props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "New Invoice Created" } }))
+
     }
 
 
     useEffect(() => {
         getInvoiceItems()
-    }, [loading])
+    }, [])
 
 
     const invoiceItemsTableRows = () => {

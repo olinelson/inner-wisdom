@@ -33,6 +33,12 @@ function InvoiceTableRow(props) {
             }
         })
             .then(res => res.json())
+            .catch(error => {
+                props.addNotification({ id: new Date, type: "alert", message: "Could not delete invoice. Please try again. If this problem persists please contact your system administrator." })
+                console.error('Error:', error)
+                setDeleting(false)
+                props.refreshAction()
+            })
             .then((res) => {
                 if (res.invoice) {
                     deleteStripeIdsFromEvents(res.invoice)
@@ -54,7 +60,11 @@ function InvoiceTableRow(props) {
             }
         })
             .then(res => res.json())
-            // .then(res => props.dispatch({ type: "SET_PERSONAL_AND_BUSINESS_EVENTS", value: res }))
+            .catch(error => {
+                props.addNotification({ id: new Date, type: "alert", message: "Could not update events. Please try again. If this problem persists please contact your system administrator." })
+                console.error('Error:', error)
+                setDeleting(false)
+            })
             .then(() => {
                 setDeleting(false)
                 props.refreshAction()
@@ -77,17 +87,18 @@ function InvoiceTableRow(props) {
         })
             .then(res => res.json())
             .catch(error => {
+                props.addNotification({ id: new Date, type: "alert", message: "Could not finalize and send invoice. Please try again. If this problem persists please contact your system administrator." })
                 console.error('Error:', error)
                 setSending(false)
                 setModalOpen(false)
-                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Error Finalizing and Sending Invoice" } })
+                props.refreshAction()
             })
             .then((res) => {
                 if (res.invoice) {
                     setSending(false)
                     setModalOpen(false)
+                    props.addNotification({ id: new Date, type: "notice", message: "Invoice finalized and sent." })
                     props.refreshAction()
-                    // props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Invoice Finalized and Sent" } })
                 }
             })
     }
@@ -107,18 +118,18 @@ function InvoiceTableRow(props) {
         })
             .then(res => res.json())
             .catch(error => {
+                props.addNotification({ id: new Date, type: "alert", message: "Could not mark as paid. Please try again. If this problem persists please contact your system administrator." })
                 console.error('Error:', error)
                 setPaying(false)
                 setModalOpen(false)
-                props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "alert", message: "Error Marking Invoice as Paid" } })
+                props.refreshAction()
             })
             .then((res) => {
                 if (res.invoice) {
                     setPaying(false)
                     setModalOpen(false)
-                    setInvoice({ ...invoice, status: "paid" })
-                    // props.refreshAction()
-                    // props.dispatch({ type: "ADD_NOTIFICATION", value: { id: uuidv1(), type: "notice", message: "Invoice Marked as Paid" } })
+                    props.refreshAction()
+                    props.addNotification({ id: new Date, type: "notice", message: "Invoice marked as paid." })
                 }
             })
     }
@@ -128,7 +139,7 @@ function InvoiceTableRow(props) {
         fetch(`${process.env.BASE_URL}/stripe/invoices/void`, {
             method: "POST",
             body: JSON.stringify({
-                invoice: i
+                invoice
             }),
             headers: {
                 "X-CSRF-Token": csrfToken,
@@ -138,8 +149,16 @@ function InvoiceTableRow(props) {
             }
         })
             .then(res => res.json())
+            .catch(error => {
+                props.addNotification({ id: new Date, type: "alert", message: "Could not void invoice. Please try again. If this problem persists please contact your system administrator." })
+                console.error('Error:', error)
+                setVoiding(false)
+                setModalOpen(false)
+                props.refreshAction()
+            })
             .then((res) => {
                 if (res.invoice) {
+                    props.addNotification({ id: new Date, type: "warning", message: "Invoice successfully voided." })
                     setVoiding(false)
                     setModalOpen(false)
                     props.refreshAction()
