@@ -39,10 +39,10 @@ function Schedule(props) {
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
     useEffect(() => {
-        window.scroll({
-            top: 0,
-            left: 0,
-        })
+        // window.scroll({
+        //     top: 0,
+        //     left: 0,
+        // })
 
         getAllEvents()
     }, []);
@@ -195,7 +195,7 @@ function Schedule(props) {
         let foundUser = props.users.find(u => u.email === input.email)
         if (foundUser) return <>
             <Icon name='user' />
-            <span style={{ cursor: "pointer" }} onClick={() => window.loction = `/clients/${foundUser.id}`}>{foundUser.first_name + " " + foundUser.last_name}</span>
+            <span style={{ cursor: "pointer" }} onClick={() => window.location = `/clients/${foundUser.id}`}>{foundUser.first_name + " " + foundUser.last_name}</span>
         </>
 
         return <>

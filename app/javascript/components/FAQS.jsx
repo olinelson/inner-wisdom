@@ -3,10 +3,10 @@ import { Header, Accordion, Container, Table, List } from "semantic-ui-react"
 
 export default function FAQS() {
     useEffect(() => {
-        window.scroll({
-            top: 0,
-            left: 0,
-        })
+        // window.scroll({
+        //     top: 0,
+        //     left: 0,
+        // })
     }, []);
 
     const panels = [

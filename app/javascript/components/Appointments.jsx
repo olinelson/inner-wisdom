@@ -70,10 +70,10 @@ function Appointments(props) {
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
     useEffect(() => {
-        window.scroll({
-            top: 0,
-            left: 0,
-        })
+        // window.scroll({
+        //     top: 0,
+        //     left: 0,
+        // })
         if (props.current_user) {
             getPrivateEvents()
         } else {

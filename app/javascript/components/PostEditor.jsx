@@ -39,10 +39,10 @@ function PostEditor(props) {
     );
 
     useEffect(() => {
-        window.scroll({
-            top: 0,
-            left: 0,
-        })
+        // window.scroll({
+        //     top: 0,
+        //     left: 0,
+        // })
     }, []);
 
     const editingDisabled = props.current_user && props.current_user.admin ? false : true

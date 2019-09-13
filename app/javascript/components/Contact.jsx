@@ -4,10 +4,10 @@ import { Container, Divider, Embed, Grid } from 'semantic-ui-react';
 export default function Contact() {
 
     useEffect(() => {
-        window.scroll({
-            top: 0,
-            left: 0,
-        })
+        // window.scroll({
+        //     top: 0,
+        //     left: 0,
+        // })
     }, []);
 
     return <Container text>

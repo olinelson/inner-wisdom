@@ -8,10 +8,10 @@ import Training from './Training';
 export default function Supervision() {
 
     useEffect(() => {
-        window.scroll({
-            top: 0,
-            left: 0,
-        })
+        // window.scroll({
+        //     top: 0,
+        //     left: 0,
+        // })
     }, []);
 
     return <><TwoColumnContainer text >

@@ -20,10 +20,10 @@ function Clients(props) {
 
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
     useEffect(() => {
-        window.scroll({
-            top: 0,
-            left: 0,
-        })
+        // window.scroll({
+        //     top: 0,
+        //     left: 0,
+        // })
     }, []);
 
     const createUserHandeler = (e) => {

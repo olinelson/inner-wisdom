@@ -35,10 +35,10 @@ function MyAccount(props) {
     const [authCode, setAuthCode] = useState("")
 
     useEffect(() => {
-        window.scroll({
-            top: 0,
-            left: 0,
-        })
+        // window.scroll({
+        //     top: 0,
+        //     left: 0,
+        // })
     }, []);
 
     const handleTabClick = (tabName) => {
