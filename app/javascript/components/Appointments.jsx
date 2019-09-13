@@ -46,7 +46,6 @@ export const relevantEvents = (appointments, consults, user) => {
 
 
 export const FullWidthCalendarContainer = styled(Container)`
-        margin-top: 4rem;
         display: grid !Important;
         grid-template-columns: 1fr;
         grid-template-areas: "heading" "divider" "panel";a
@@ -391,7 +390,7 @@ function Appointments(props) {
             <div style={{ width: "100%", maxWidth: "95vw", justifySelf: "center" }}>
                 <h1>Appointments</h1>
             </div>
-            <Divider style={{ gridArea: "divider" }} />
+            <Divider hidden style={{ gridArea: "divider" }} />
             {/* <Calendar fullWidth purchasable events={relevantEvents(props.appointments, props.consults, props.user)} /> */}
             <CalendarContainer fullWidth>
                 {loading ?

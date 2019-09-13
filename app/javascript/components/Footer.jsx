@@ -21,7 +21,7 @@ function Footer(props) {
 
 
 
-    return <>
+    return <div>
         <Divider hidden />
         <Divider hidden />
         <Container fluid style={{ background: "rgb(230, 230, 230)" }}>
@@ -97,7 +97,7 @@ function Footer(props) {
 
             </Container>
         </Container>
-    </>
+    </div>
 
 
 }

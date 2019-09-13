@@ -24,7 +24,11 @@
     <%= react_component('FlashNotification', notifications: [{id: Time.new, type: "alert", message:alert }] ) %>
   <%end%>
   
+    <div style="min-height:90vh;">
     <%= yield %>
+    </div>
+
+
     <%= react_component('Footer', current_user: current_user ) %>
   </body>
 </html>

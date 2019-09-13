@@ -39,11 +39,6 @@ function Schedule(props) {
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
     useEffect(() => {
-        // window.scroll({
-        //     top: 0,
-        //     left: 0,
-        // })
-
         getAllEvents()
     }, []);
 
@@ -195,7 +190,7 @@ function Schedule(props) {
         let foundUser = props.users.find(u => u.email === input.email)
         if (foundUser) return <>
             <Icon name='user' />
-            <span style={{ cursor: "pointer" }} onClick={() => window.location = `/clients/${foundUser.id}`}>{foundUser.first_name + " " + foundUser.last_name}</span>
+            <span style={{ cursor: "pointer" }} onClick={() => window.loction = `/clients/${foundUser.id}`}>{foundUser.first_name + " " + foundUser.last_name}</span>
         </>
 
         return <>
@@ -479,12 +474,14 @@ function Schedule(props) {
         <div style={{ position: "fixed", right: "1rem", zIndex: "100" }}>
             {notifications.map(n => <Message key={uuidv1()} message={n} />)}
         </div>
+        <Divider hidden />
+        <Divider hidden />
         <FullWidthCalendarContainer fluid >
             <div style={{ width: "100%", maxWidth: "95vw", justifySelf: "center" }}>
                 <h1>Schedule</h1>
             </div>
 
-            <Divider style={{ gridArea: "divider" }} />
+            <Divider hidden style={{ gridArea: "divider" }} />
             <CalendarContainer fullWidth>
 
                 {loading ?
