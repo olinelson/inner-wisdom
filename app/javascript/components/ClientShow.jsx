@@ -122,7 +122,7 @@ function ClientShow(props) {
                 closeIcon
                 size="small"
                 trigger={<Button basic content="edit" icon="edit" />}
-                actions={['Cancel', { key: 'save', content: "Save", positive: true, basic: true, onClick: () => editUserHandeler() }]}
+                actions={[{ key: 'cancel', content: "Cancel", basic: true, onClick: () => setUser(props.user) }, { key: 'save', content: "Save", positive: true, basic: true, onClick: () => editUserHandeler() }]}
                 header="Edit User"
                 content={
                     <div style={{ margin: "1rem" }}>

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-import { Header, Container, Item, Divider, Label } from "semantic-ui-react"
+import { Header, Container, Segment, Item, Divider, Label } from "semantic-ui-react"
 
 import PostPreview from './PostPreview';
 import styled from "styled-components"
