@@ -5,9 +5,24 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0"/>
 
+<div style="position:fixed ;right:1rem;z-index: 100;">
+  <% if notice %>
+    <%= react_component('FlashNotification', notifications: [{id: Time.new, type: "notice", message:notice }] ) %>
+  <%end%>
+  <%if alert %>
+    <%= react_component('FlashNotification', notifications: [{id: Time.new, type: "alert", message:alert }] ) %>
+  <%end%>
+  </div>
+
+  <%= react_component('Nav', current_user: current_user, static: true) %>
+
 
 
 <div class="ui divider hidden"></div>
-<div class="ui container text">
+<div style="min-height:90vh !important;" class="ui container text">
 <%= yield %>
 </div>
+
+
+<%= react_component('Footer', current_user: current_user ) %>
+

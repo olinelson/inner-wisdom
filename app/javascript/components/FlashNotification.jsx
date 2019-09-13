@@ -5,10 +5,9 @@ import styled from "styled-components"
 
 
 let CustomMessage = styled(Message)`
-        // position: fixed !important;
         // right: .5rem;
         // top: .5rem;
-        // z-index: 1;
+
         // width: 10rem;
     `
 
