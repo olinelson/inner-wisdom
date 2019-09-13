@@ -17,6 +17,7 @@ function Footer(props) {
     const FooterMenu = styled(Menu)`
         margin: 0 !important;
         margin-bottom: 0 !important;
+        font-size: .9rem !important;
     `
 
 
@@ -24,13 +25,13 @@ function Footer(props) {
     return <div>
         <Divider hidden />
         <Divider hidden />
-        <Container fluid style={{ background: "rgb(230, 230, 230)" }}>
+        <div style={{ background: "rgb(230, 230, 230)" }}>
 
             <Container text>
 
                 <FooterContainer >
                     <Divider hidden />
-                    <FooterMenu secondary>
+                    <FooterMenu compact secondary>
                         < Menu.Item
                             name='home'
                             active={path === process.env.BASE_URL + "/"}
@@ -39,27 +40,29 @@ function Footer(props) {
 
                         />
                         <Menu.Item
-                            name='Counselling'
-                            active={path === process.env.BASE_URL + "/counselling"}
-                            content='Counselling'
-                            href="/counselling"
-                        />
-                        <Menu.Item
                             name='supervision'
                             active={path === process.env.BASE_URL + "/supervision"}
                             content='Supervision & Training'
                             href="/supervision"
                         />
                         <Menu.Item
+                            name='Counselling'
+                            active={path === process.env.BASE_URL + "/counselling"}
+                            content='Counselling'
+                            href="/counselling"
+                        />
+
+
+
+                    </FooterMenu>
+                    <FooterMenu compact secondary>
+
+                        <Menu.Item
                             name='faqs'
                             active={path === process.env.BASE_URL + "/faqs"}
                             content='FAQs'
                             href="/faqs"
                         />
-
-                    </FooterMenu>
-
-                    <FooterMenu secondary >
                         <Menu.Item
                             name='blog'
                             active={path === process.env.BASE_URL + "/blog"}
@@ -72,6 +75,13 @@ function Footer(props) {
                             content='Contact'
                             href="/contact"
                         />
+
+                    </FooterMenu>
+
+
+                    <FooterMenu compact secondary >
+
+
                         {props.current_user && props.current_user.admin ?
                             <Menu.Item
                                 name='schedule'
@@ -96,7 +106,7 @@ function Footer(props) {
                 </FooterContainer>
 
             </Container>
-        </Container>
+        </div>
     </div>
 
 
