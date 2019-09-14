@@ -50,4 +50,6 @@ blockquote:before {
 
 }
 
-
+img {
+    image-orientation: from-image;
+}

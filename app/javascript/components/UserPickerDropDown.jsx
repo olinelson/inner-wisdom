@@ -35,7 +35,7 @@ function UserPickerDropDown(props) {
     const searchForUsersHandeler = (items, query) => {
         let result = []
         for (let item of items) {
-            if (item.props.text.includes(query)) result.push(item)
+            if (item.props.text.toLowerCase().includes(query) || item.props.text.includes(query)) result.push(item)
         }
         return result
     }
