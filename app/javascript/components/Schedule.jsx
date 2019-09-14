@@ -429,7 +429,7 @@ function Schedule(props) {
                                 label='Skype'
                                 name='radioGroup'
                                 value='that'
-                                checked={selectedEvent.extended_properties.private.skype === "true"}
+                                checked={selectedEvent.extended_properties && selectedEvent.extended_properties.private.skype === "true"}
                                 onChange={() => handleSelectedEventSkypeChange()}
                             />
                             {" "}
@@ -438,7 +438,7 @@ function Schedule(props) {
                                 label='In Person'
                                 name='radioGroup'
                                 value='that'
-                                checked={selectedEvent.extended_properties.private.skype === "false"}
+                                checked={selectedEvent.extended_properties && selectedEvent.extended_properties.private.skype === "false"}
                                 onChange={() => handleSelectedEventSkypeChange()}
                             />
                         </Form.Group>

@@ -308,7 +308,13 @@ def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true, recurre
             consults = []    
         end
 
-        render json: { events: appointments + consults}
+        begin
+            personalEvents = eventsInDateWindow(@personalCal)
+            rescue
+            personalEvents = []    
+        end
+
+        render json: { events: appointments + consults + personalEvents}
     end
 
      def createEvent

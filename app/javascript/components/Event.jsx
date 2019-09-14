@@ -15,7 +15,7 @@ function Event(props) {
 
 
     const colorPicker = () => {
-
+        if (props.event.calendar && props.event.calendar.id !== process.env.CONSULTS_CALENDAR_ID && props.event.calendar.id !== process.env.APPOINTMENTS_CALENDAR_ID) return 'green'
         if (props.event && props.event.extended_properties && props.event.extended_properties.private.cancelation === "true") return 'red'
         if (props.event.attendees && props.event.attendees.length > 0) return 'blue'
         return 'grey'
