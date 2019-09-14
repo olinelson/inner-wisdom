@@ -32,26 +32,10 @@ function Home(props) {
 
     `
 
-    // const publishedPosts = props.posts.filter(p => p.published === true)
 
-
-    // const mostRecentPublicPost = publishedPosts.sort((b, a) => a.id - b.id)[0]
     const mostRecentPublicPost = props.lastPost
 
-    // const showRecentBlogPost = () => {
-    //     if (publishedPosts.length > 0) {
-    //         return <>
-    //             <Divider />
-    //             <Container text>
-    //                 <h1>Latest Blog Post</h1>
-    //                 <Item.Group>
-    //                     <PostPreview readMoreButton blogView post={mostRecentPublicPost} />
-    //                 </Item.Group>
-    //             </Container>
-    //         </>
-    //     }
 
-    // }
     const showRecentBlogPost = () => {
         if (props.lastPost) {
             return <>
@@ -79,33 +63,13 @@ function Home(props) {
             <JumboMessage  >
                 <JumboHeader size="huge" as={"h1"} inverted>Inner Wisdom Psychology</JumboHeader>
                 <Header.Subheader style={{ color: "white", textShadow: "1px 1px 2px black" }} as="h3">Wellbeing, Relationships, Guidance</Header.Subheader>
-                {/* <h1>Inner Wisdom Psychology</h1> */}
+
 
             </JumboMessage>
             <Label style={{ alignSelf: "flex-end", justifySelf: "flex-start", color: "white", backgroundColor: "rgba(0,0,0,0)", visibility: "hidden" }} size="big" content="scroll" icon="arrow up" />
         </Jumbotron>
 
         <Divider hidden />
-
-        {/* <ThreeColumnContainer>
-
-            <BasicCard onClick={() => props.history.push("/counselling")}>
-                <Image centered size="small" src="https://storage.googleapis.com/inner_wisdom_bucket/DSC_0022.jpg" />
-                <Header content="Counselling" />
-            </BasicCard>
-
-            <BasicCard onClick={() => props.history.push("/supervision")}>
-                <Image centered size="tiny" src="https://storage.googleapis.com/inner_wisdom_bucket/bonsai.jpg" />
-                <Header content="Supervision" />
-
-            </BasicCard>
-            <BasicCard onClick={() => props.history.push("/training")}>
-                <Image centered size="small" src="https://storage.googleapis.com/inner_wisdom_bucket/DSC_0021.jpg" />
-                <Header content="Training" />
-
-            </BasicCard>
-
-        </ThreeColumnContainer> */}
 
         <Divider hidden />
 
@@ -115,7 +79,8 @@ function Home(props) {
             {/* <Segment> */}
             <Item.Group>
                 <Item>
-                    <Item.Image alt="Susan Stephenson, Director" size='medium' src='https://storage.googleapis.com/inner_wisdom_bucket/DSC_0014.jpg' />
+                    {/* <Item.Image alt="Susan Stephenson, Director" size='medium' src='https://storage.googleapis.com/inner_wisdom_bucket/DSC_0014.jpg' /> */}
+                    <Item.Image alt="Susan Stephenson, Director" size='medium' src='https://storage.googleapis.com/inner_wisdom_bucket/DSC_0011.JPG' />
 
                     <Item.Content verticalAlign='top'>
                         <Header>Susan Stephenson | Director
@@ -154,9 +119,5 @@ function Home(props) {
 
 }
 
-// const mapStateToProps = (state) => ({
-//     // posts: state.posts
-//     lastPost: state.lastPost
-// })
 
 export default Home

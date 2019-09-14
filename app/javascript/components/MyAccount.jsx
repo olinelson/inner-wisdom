@@ -174,7 +174,7 @@ function MyAccount(props) {
     const panes = () => {
         if (props.current_user.admin) return [
             { menuItem: 'My Details', render: () => <Tab.Pane content={profileSettingsLinks()} /> },
-            { menuItem: 'Posts', render: () => <Tab.Pane content={<PostsList creatable current_user={props.current_user} posts={props.posts} />} /> },
+            { menuItem: 'Blog Posts', render: () => <Tab.Pane content={<PostsList creatable current_user={props.current_user} posts={props.posts} />} /> },
         ]
 
         return [

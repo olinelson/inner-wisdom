@@ -3,7 +3,7 @@ import { Item, Header, Container } from 'semantic-ui-react';
 
 export default function Memberships() {
     return <Container text >
-        <Header as="h2" content="Proffesional Memberships" />
+        <Header as="h2" content="Professional Memberships" />
         <Item.Group >
             <Item>
                 <Item.Image alt="APS Logo" size="tiny" src="https://storage.googleapis.com/inner_wisdom_bucket/APS_Member%20Logo.jpg" />
@@ -38,6 +38,15 @@ export default function Memberships() {
                     {/* <Item.Meta>Provider Number 2577293T</Item.Meta> */}
                     <Item.Meta>
                         <p>Interest group memberships: Counselling Psychology, Psychology and Yoga</p>
+                    </Item.Meta>
+                </Item.Content>
+            </Item>
+            <Item>
+                <Item.Image alt="Australasian Association of Supervision logo" size="tiny" src="https://storage.googleapis.com/inner_wisdom_bucket/AAOS_Member_Logo.jpg" />
+                <Item.Content>
+                    <h4>AAOS</h4>
+                    <Item.Meta>
+                        <p>Australasian Association Of Supervision</p>
                     </Item.Meta>
                 </Item.Content>
             </Item>
