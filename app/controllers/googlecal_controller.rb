@@ -148,6 +148,11 @@ class GooglecalController < ApplicationController
     def bookEvent
         user = current_user
         event = params["event"]
+
+        if DateTime.parse(event["start_time"]).past?
+            raise "error"
+        end
+
         fullName = user.first_name + " " + user.last_name
         newTitle = ""
 
@@ -183,6 +188,8 @@ class GooglecalController < ApplicationController
         if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
             newTitle = fullName + "| Phone Call Consultation"
             cal = @consultsCal
+
+           
 
             editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
             e.title = newTitle
@@ -498,4 +505,5 @@ def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true, recurre
         render json: {editedEvent: editedEvent}
     end
 
+    
 end

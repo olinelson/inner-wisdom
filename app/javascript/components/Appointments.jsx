@@ -329,8 +329,13 @@ function Appointments(props) {
                 <Divider hidden />
                 <p>Note that appointments canceled with less than 24 hours notice must be paid in full.</p>
             </ModalContent>}
-            actions={[{ key: "book", loading: booking, content: "Book Appointment", onClick: () => bookAppointment() }, { key: "Close", content: "Close", onClick: () => setEventModalOpen(false) }]}
+            actions={[{ key: "book", disabled: isSelectedEventInThePast(), loading: booking, content: "Book Appointment", onClick: () => bookAppointment() }, { key: "Close", content: "Close", onClick: () => setEventModalOpen(false) }]}
         />
+    }
+
+    const isSelectedEventInThePast = () => {
+        if (new Date(selectedEvent.start_time) > new Date) return false
+        return true
     }
 
 
