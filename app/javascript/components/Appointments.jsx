@@ -302,7 +302,7 @@ function Appointments(props) {
                     </>
                     :
                     <>
-                        <p>Would you like to book a appointment at this time?</p>
+                        <p>Would you like to book an appointment at this time?</p>
                         <p>If this is intended to be a skype appointment, check the toggle below.</p>
 
                         <Form >
@@ -327,7 +327,7 @@ function Appointments(props) {
                     </>
                 }
                 <Divider hidden />
-                <p>Note that appointments canceled with less than 24hours notice must be paid in full.</p>
+                <p>Note that appointments canceled with less than 24 hours notice must be paid in full.</p>
             </ModalContent>}
             actions={[{ key: "book", loading: booking, content: "Book Appointment", onClick: () => bookAppointment() }, { key: "Close", content: "Close", onClick: () => setEventModalOpen(false) }]}
         />
