@@ -150,7 +150,7 @@ class GooglecalController < ApplicationController
         event = params["event"]
         fullName = user.first_name + " " + user.last_name
         newTitle = ""
-     
+
         begin
         skype = event["extended_properties"]["private"]["skype"] || false
         rescue
@@ -161,21 +161,18 @@ class GooglecalController < ApplicationController
         cal = nil
 
         if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
-             newTitle = skype ? fullName + "| skype session confirmed" : fullName + " | session confirmed"
+             newTitle = skype === "true" || skype === true ? fullName + "| skype session confirmed" : fullName + " | session confirmed"
             cal = @appointmentsCal
             
             editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
             e.title = newTitle
             e.color_id = 2
-            e.location= skype ? "Skype Appointment" : "609 W 135 St New York, New York"
+            e.location= skype === "true" || skype === true ? "Skype Appointment" : "TBC"
                   
             e.attendees= [
             {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
             e.extended_properties["private"]["skype"] = skype
              end
-             
-
-            
 
              jsonEvent = editedEvent.to_json
             NotificationMailer.user_appointment_confirmation(user, jsonEvent).deliver_later
