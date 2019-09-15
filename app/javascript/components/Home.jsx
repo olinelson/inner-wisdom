@@ -80,7 +80,8 @@ function Home(props) {
             <Item.Group>
                 <Item>
                     {/* <Item.Image alt="Susan Stephenson, Director" size='medium' src='https://storage.googleapis.com/inner_wisdom_bucket/DSC_0014.jpg' /> */}
-                    <Item.Image className="rotated-image" alt="Susan Stephenson, Director" size='medium' src='https://storage.googleapis.com/inner_wisdom_bucket/DSC_0011.JPG' />
+                    {/* <Item.Image className="rotated-image" alt="Susan Stephenson, Director" size='medium' src='https://storage.googleapis.com/inner_wisdom_bucket/DSC_0011.JPG' /> */}
+                    <Item.Image className="rotated-image" alt="Susan Stephenson, Director" size='medium' src='https://storage.googleapis.com/inner_wisdom_bucket/headshot_noExif.JPG' />
 
                     <Item.Content verticalAlign='top'>
                         <Header>Susan Stephenson | Director
