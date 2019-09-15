@@ -18,7 +18,7 @@ function InvoiceItem(props) {
 
     const updateItemHandeler = () => {
         setLoading(true)
-        fetch(`${process.env.BASE_URL}/stripe/invoice_itemsX`, {
+        fetch(`${process.env.BASE_URL}/stripe/invoice_items`, {
             method: "PATCH",
             body: JSON.stringify({
                 invoice_item: i
