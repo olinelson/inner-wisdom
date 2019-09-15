@@ -109,6 +109,7 @@ function Schedule(props) {
                 let currentEvents = [...events].filter(e => e.id !== event.id)
                 setEvents([...currentEvents, r.newEvent])
                 setNotifications([{ id: new Date, type: "notice", message: "Event successfully created." }, ...notifications])
+                if (event.recurrence) getAllEvents()
             })
     }
 
@@ -171,6 +172,7 @@ function Schedule(props) {
                 let filteredEvents = [...events].filter(e => e.id !== selectedEvent.id)
                 setEvents(filteredEvents)
                 setNotifications([{ id: new Date, type: "warning", message: "Event successfully deleted" }, ...notifications])
+                if (deleteFutureReps) getAllEvents()
             })
     }
 
