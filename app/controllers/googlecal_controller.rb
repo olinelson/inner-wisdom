@@ -161,7 +161,7 @@ class GooglecalController < ApplicationController
         cal = nil
 
         if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
-             newTitle = skype === "true" || skype === true ? fullName + "| skype session confirmed" : fullName + " | session confirmed"
+             newTitle = skype === "true" || skype === true ? fullName + " | skype session confirmed" : fullName + " | session confirmed"
             cal = @appointmentsCal
             
             editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
