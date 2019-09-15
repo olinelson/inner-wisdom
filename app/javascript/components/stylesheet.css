@@ -50,9 +50,9 @@ blockquote:before {
 
 }
 
-/* img {
-    image-orientation: from-image;
-} */
+img {
+    image-orientation: none;
+}
 .rotated-image {
     -webkit-transform: rotate(90deg);
     -moz-transform: rotate(90deg);
