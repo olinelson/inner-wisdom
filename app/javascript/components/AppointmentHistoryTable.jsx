@@ -22,6 +22,11 @@ function AppointmentHistoryTable(props) {
             }
         })
             .then(res => res.json())
+            .catch(error => {
+                // setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
+                console.error('Error:', error)
+                setLoading(false)
+            })
             .then((res) => {
                 setEvents(res.events.sort((b, a) => new Date(a.start_time) - new Date(b.end_time)))
                 setLoading(false)

@@ -18,7 +18,7 @@ function InvoiceItem(props) {
 
     const updateItemHandeler = () => {
         setLoading(true)
-        fetch(`${process.env.BASE_URL}/stripe/invoice_items`, {
+        fetch(`${process.env.BASE_URL}/stripe/invoice_itemsX`, {
             method: "PATCH",
             body: JSON.stringify({
                 invoice_item: i
@@ -31,6 +31,11 @@ function InvoiceItem(props) {
             }
         })
             .then(res => res.json())
+            .catch(error => {
+                console.error('Error:', error)
+                setLoading(false)
+                props.refreshAction()
+            })
             .then((res) => {
                 setLoading(false)
 
@@ -65,6 +70,7 @@ function InvoiceItem(props) {
                 // props.addNotification({ id: new Date, type: "alert", message: "Could not retreive events. Please try again. If this problem persists please contact your system administrator." })
                 console.error('Error:', error)
                 setLoading(false)
+                setModalOpen(false)
             })
             .then(() => {
                 setModalOpen(false)
@@ -89,6 +95,12 @@ function InvoiceItem(props) {
             }
         })
             .then(res => res.json())
+            .catch(error => {
+                // props.addNotification({ id: new Date, type: "alert", message: "Could not retreive events. Please try again. If this problem persists please contact your system administrator." })
+                console.error('Error:', error)
+                setLoading(false)
+                setModalOpen(false)
+            })
             .then(() => removeStripeIdFromEvent(i))
     }
 
@@ -130,7 +142,6 @@ function InvoiceItem(props) {
                                     <Label>.00</Label>
                                 </Input>
                             </Table.Cell>
-                            {/* <Input onChange={(e) => setI({ ...i, amount: e.target.value })} value={i.amount} /></Table.Cell> */}
                             <Table.Cell>{prettyDuration}</Table.Cell>
                         </Table.Row>
                     </Table.Body>
@@ -148,21 +159,5 @@ function InvoiceItem(props) {
         }
     </>
 }
-
-
-// const mapStateToProps = (state) => ({
-//     // appointments: state.appointments,
-//     // consults: state.consults,
-//     // // personalEvents: state.personalEvents,
-//     // // user: state.user,
-//     // users: state.users,
-//     // // myAccountPanel: state.myAccountPanel,
-//     // baseUrl: state.baseUrl,
-//     // defaultCalendarView: state.defaultCalendarView,
-//     // calendarScrollToTime: state.calendarScrollToTime,
-//     csrfToken: state.csrfToken
-// })
-
-
 
 export default InvoiceItem

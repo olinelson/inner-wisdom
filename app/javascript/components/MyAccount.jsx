@@ -100,6 +100,9 @@ function MyAccount(props) {
             }
         })
             .then(res => res.json())
+            .catch(error => {
+                console.error('Error:', error)
+            })
             .then((res) => { window.open(res.authUrl, '_blank') })
     }
 
@@ -118,6 +121,9 @@ function MyAccount(props) {
             }
         })
             .then(res => res.json())
+            .catch(error => {
+                console.error('Error:', error)
+            })
             .then(res => {
                 if (res.status == "success") location.reload()
             })

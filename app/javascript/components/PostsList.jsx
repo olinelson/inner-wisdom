@@ -30,6 +30,10 @@ function PostsList(props) {
             }
         })
             .then(response => response.json())
+            .catch(error => {
+                console.error('Error:', error)
+                setLoading(false)
+            })
             .then((r) => {
                 setPosts(r.posts)
                 setLoading(false)
@@ -45,6 +49,10 @@ function PostsList(props) {
             }
         })
             .then(response => response.json())
+            .catch(error => {
+                console.error('Error:', error)
+                setLoading(false)
+            })
             .then((r) => {
                 setPosts(r.posts)
                 setLoading(false)
@@ -64,6 +72,10 @@ function PostsList(props) {
             }
         })
             .then(response => response.json())
+            .catch(error => {
+                console.error('Error:', error)
+                setLoading(false)
+            })
             .then((r) => {
                 setPosts([r.newPost, ...posts])
 

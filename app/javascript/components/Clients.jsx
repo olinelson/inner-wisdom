@@ -3,7 +3,9 @@ import { Card, Button, Modal, Search, Menu, Icon, Form, Checkbox, Container } fr
 import moment from "moment"
 import { debounce } from "debounce";
 import styled from "styled-components"
+import Message from "./Message"
 
+const uuidv1 = require('uuid/v1')
 
 function Clients(props) {
     const [first_name, setFirst_name] = useState("")
@@ -13,18 +15,33 @@ function Clients(props) {
     const [modalOpen, setModalOpen] = useState(false)
     const [loading, setLoading] = useState(false)
     const [filteredUsers, setFilteredUsers] = useState()
+    const [notifications, setNotifications] = useState([])
 
     const [users, setUsers] = useState(props.users)
 
     const tempPassword = Math.random().toString(36).slice(2)
 
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
+
     useEffect(() => {
-        // window.scroll({
-        //     top: 0,
-        //     left: 0,
-        // })
-    }, []);
+        const timer = setTimeout(() => {
+
+            if (notifications === []) return () => clearTimeout(timer)
+            if (notifications.length > 1) {
+                let newVal = [...notifications]
+                newVal.pop()
+                setNotifications(newVal)
+            }
+            else if (notifications.length === 1) {
+                setNotifications([])
+            }
+            else {
+                return () => clearTimeout(timer)
+            }
+
+        }, 10000);
+        return () => clearTimeout(timer);
+    }, [notifications]);
 
     const createUserHandeler = (e) => {
         setLoading(true)
@@ -42,6 +59,12 @@ function Clients(props) {
             }
         })
             .then(res => res.json())
+            .catch(error => {
+                setNotifications([{ id: new Date, type: "alert", message: "Could not create user" }, ...notifications])
+                console.error('Error:', error)
+                setLoading(false)
+                setModalOpen(false)
+            })
             .then((res) => {
                 setLoading(false)
                 setModalOpen(false)
@@ -68,7 +91,10 @@ function Clients(props) {
         setFilteredUsers(result)
     }
 
-    return (
+    return <>
+        <div style={{ position: "fixed", right: "1rem", zIndex: "100" }}>
+            {notifications.map(n => <Message key={uuidv1()} message={n} />)}
+        </div>
         <Container>
             <h1>Clients</h1>
             <Menu fluid secondary >
@@ -160,6 +186,6 @@ function Clients(props) {
                 </Modal.Content>
             </Modal >
         </Container >
-    )
+    </>
 }
 export default Clients

@@ -89,6 +89,10 @@ function PostEditor(props) {
         })
 
             .then(response => response.json())
+            .catch(error => {
+                console.error('Error:', error)
+                setSaving(false)
+            })
             .then((e) => {
                 setSaving(false)
                 setSavedPost(editedPost)
@@ -137,6 +141,10 @@ function PostEditor(props) {
             }
         })
             .then(response => response.json())
+            .catch(error => {
+                console.error('Error:', error)
+                setFeatureImageLoading(false)
+            })
             .then((r) => {
                 setFeatureImage(r.editedPost.feature_image)
                 setFeatureImageLoading(false)
@@ -159,6 +167,10 @@ function PostEditor(props) {
             }
         })
             .then(response => response.json())
+            .catch(error => {
+                console.error('Error:', error)
+                setInserting(false)
+            })
             .then((r) => {
                 const contentState = editorState.getCurrentContent();
                 const contentStateWithEntity = contentState.createEntity(
