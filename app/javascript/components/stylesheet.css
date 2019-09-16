@@ -28,6 +28,16 @@ blockquote:before {
   width: 90%;
   height: auto;
   max-height: 100rem;
+
+    position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  max-width: 100%;
+  background-color: transparent;
+
+  width: 450px;
+  height: auto;
+  font-size: 1.14285714rem;
 }
 
 .DraftEditor-editorContainer figure {
