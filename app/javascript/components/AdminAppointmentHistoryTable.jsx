@@ -23,7 +23,7 @@ function AdminAppointmentHistoryTable(props) {
         })
             .then(res => res.json())
             .catch(error => {
-                props.addNotification({ id: new Date, type: "alert", message: "Could not retreive events. Please try again. If this problem persists please contact your system administrator." })
+                props.addNotification({ id: new Date, type: "alert", message: "Could not retreive events. Please refresh the page and try again. If this problem persists please contact your system administrator." })
                 console.error('Error:', error)
                 setLoading(false)
             })
@@ -76,18 +76,6 @@ function AdminAppointmentHistoryTable(props) {
     )
 }
 
-// const mapStateToProps = (state) => ({
-//     // appointments: state.appointments,
-//     // consults: state.consults,
-//     // // personalEvents: state.personalEvents,
-//     // // user: state.user,
-//     // users: state.users,
-//     // // myAccountPanel: state.myAccountPanel,
-//     // baseUrl: state.baseUrl,
-//     // defaultCalendarView: state.defaultCalendarView,
-//     // calendarScrollToTime: state.calendarScrollToTime,
-//     csrfToken: state.csrfToken
-// })
 
 export default AdminAppointmentHistoryTable
 

@@ -107,7 +107,7 @@ function Appointments(props) {
         })
             .then(r => r.json())
             .catch(error => {
-                setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
+                setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Please refresh the page and try again. If this problem persists please contact your system administrator." }, ...notifications])
                 console.error('Error:', error)
                 setLoading(false)
             })
@@ -127,7 +127,7 @@ function Appointments(props) {
             }
         }).then(r => r.json())
             .catch(error => {
-                setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
+                setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Please refresh the page and try again. If this problem persists please contact your system administrator." }, ...notifications])
                 console.error('Error:', error)
             })
             .then(r => {
@@ -153,7 +153,7 @@ function Appointments(props) {
         })
             .then(res => res.json())
             .catch(error => {
-                setNotifications([{ id: new Date, type: "alert", message: "Could not book appointment. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
+                setNotifications([{ id: new Date, type: "alert", message: "Could not book appointment. Please refresh the page and try again. If this problem persists please contact your system administrator." }, ...notifications])
                 console.error('Error:', error)
                 setBooking(false)
                 setEventModalOpen(false)
