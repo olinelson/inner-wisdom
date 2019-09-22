@@ -5,15 +5,15 @@ class NotificationMailer < ApplicationMailer
     def prettyTime
         begin
             if @event["start_time"]
-                return DateTime.parse(@event["start_time"]).strftime("%A, %d %b %Y %l:%M %p") + " till " + DateTime.parse(@event["end_time"]).strftime(" %l:%M %p")
+                return DateTime.parse(@event["start_time"]).in_time_zone("Sydney").strftime("%A, %d %b %Y %l:%M %p") + " till " + DateTime.parse(@event["end_time"]).in_time_zone("Sydney").strftime(" %l:%M %p")
             end
             # all day
             if @event["start"]["date"]
-                return DateTime.parse(@event["start"]["date"]).strftime("%A, %d %b %Y") + " | All Day Event"
+                return DateTime.parse(@event["start"]["date"]).in_time_zone("Sydney").strftime("%A, %d %b %Y") + " | All Day Event"
             end
 
             if @event["start"]["dateTime"]
-                return DateTime.parse(@event["start"]["dateTime"]).strftime("%A, %d %b %Y %l:%M %p") + " till " + DateTime.parse(@event["end"]["dateTime"]).strftime(" %l:%M %p")  
+                return DateTime.parse(@event["start"]["dateTime"]).in_time_zone("Sydney").strftime("%A, %d %b %Y %l:%M %p") + " till " + DateTime.parse(@event["end"]["dateTime"]).in_time_zone("Sydney").strftime(" %l:%M %p")  
             end
         rescue
             return "Invalid Date"
