@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Container, Divider, Button, Modal, Form, Header, Loader } from 'semantic-ui-react'
+import { Container, Divider, Button, Modal, Form, Header, Message as StaticMessage, Loader } from 'semantic-ui-react'
 import styled from "styled-components"
 import { CalendarContainer, ModalContent } from "./StyledComponents"
 import { Calendar as BigCalendar, momentLocalizer, Views } from 'react-big-calendar'
@@ -59,7 +59,7 @@ function Appointments(props) {
     const [selectedEvent, setSelectedEvent] = useState(null)
     const [eventModalOpen, setEventModalOpen] = useState(false)
     const [booking, setBooking] = useState(false)
-    // const [creating, setCreating] = useState(false)
+
     const [loading, setLoading] = useState(true)
     const [canceling, setCanceling] = useState(false)
     const [confirmation, setConfirmation] = useState(null)
@@ -69,18 +69,11 @@ function Appointments(props) {
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
     useEffect(() => {
-        // window.scroll({
-        //     top: 0,
-        //     left: 0,
-        // })
         if (props.current_user) {
             getPrivateEvents()
         } else {
             getPublicEvents()
         }
-
-
-
     }, []);
 
 
@@ -272,12 +265,23 @@ function Appointments(props) {
         if (!selectedEvent) return null
 
         // anonymous event view
-        if (!props.current_user) return <Modal
-            open={eventModalOpen}
-            header={selectedEvent.title}
-            content={<ModalContent>{showPrettyStartAndEndTime(selectedEvent)}</ModalContent>}
-            actions={[{ key: "sign in", content: "Sign In", onClick: () => window.open(`${process.env.BASE_URL}/users/sign_in`, "_self") }, { key: "Close", content: "Close", onClick: () => setEventModalOpen(false) }]}
-        />
+        if (!props.current_user) return <>
+            <Modal
+                open={eventModalOpen}
+                header={selectedEvent.title}
+                content={<ModalContent>
+
+                    <StaticMessage
+                        warning
+                        header={showPrettyStartAndEndTime(selectedEvent)}
+                        content={<p>To book an appointment you must first <a href={`${process.env.BASE_URL}/users/sign_in`}>sign in</a>. If you do not have an account yet you can <a href={`${process.env.BASE_URL}/users/sign_up`}>sign up</a> for free.</p>}
+                    />
+
+                </ModalContent>
+                }
+                actions={[{ key: "Close", content: "Close", onClick: () => setEventModalOpen(false) }]}
+            />
+        </>
 
         // logged in and attended
         if (props.current_user && isUserAnAttendeeOfEvent(selectedEvent, props.current_user)) return <Modal
@@ -387,13 +391,39 @@ function Appointments(props) {
     }
 
     return <>
+        {/* <Container fluid>
+            <Message key={uuidv1()} message={{
+                id: new Date, type: "notice", message: <>
+                    <p>To book an appointment you must first <a href={`${process.env.BASE_URL}/users/sign_up`}>sign in</a>. If you do not have an account yet you can <a href={`${process.env.BASE_URL}/users/sign_up`}>sign up</a> for free.</p>
+
+
+                </>
+            }} />
+        </Container> */}
+
         <div style={{ position: "fixed", right: "1rem", zIndex: "100" }}>
+            {!props.current_user ?
+                <Message key={uuidv1()} message={{
+                    id: new Date, type: "notice", message: <>
+                        <p>To book an appointment you must first <a href={`${process.env.BASE_URL}/users/sign_in`}>sign in</a>. If you do not have an account yet you can <a href={`${process.env.BASE_URL}/users/sign_up`}>sign up</a> for free.</p>
+
+
+                    </>
+                }} />
+                :
+                null}
+
             {notifications.map(n => <Message key={uuidv1()} message={n} />)}
         </div>
 
         <FullWidthCalendarContainer fluid>
             <div style={{ width: "100%", maxWidth: "95vw", justifySelf: "center" }}>
                 <h1>Appointments</h1>
+                <p>To make a booking click on an appointment in the calendar below.</p>
+                {props.current_user && props.current_user.approved === false ?
+                    <p>Please choose a suitable time for your free 15 minute phone consultation. After your phone consultation is complete and you think Inner Wisdom is a good fit for you, you will be able to book full length Skype and in-person appointments.</p>
+                    : null
+                }
             </div>
             <Divider hidden style={{ gridArea: "divider" }} />
             {/* <Calendar fullWidth purchasable events={relevantEvents(props.appointments, props.consults, props.user)} /> */}

@@ -149,6 +149,7 @@ class GooglecalController < ApplicationController
         user = current_user
         event = params["event"]
 
+
         if DateTime.parse(event["start_time"]).past?
             raise "error"
         end
@@ -168,17 +169,30 @@ class GooglecalController < ApplicationController
         if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
              newTitle = skype === "true" || skype === true ? fullName + " | skype session confirmed" : fullName + " | session confirmed"
             cal = @appointmentsCal
+
+            
+            
+            
             
             editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
+            
+            if e.attendees && e.attendees.length > 0
+                raise 'error'
+            end    
+
+            e.attendees= [
+                {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
+           
+           
             e.title = newTitle
             e.color_id = 2
             e.location= skype === "true" || skype === true ? "Skype Appointment" : "TBC"
                   
-            e.attendees= [
-            {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
+           
             e.extended_properties["private"]["skype"] = skype
              end
 
+             
              jsonEvent = editedEvent.to_json
             NotificationMailer.user_appointment_confirmation(user, jsonEvent).deliver_later
             NotificationMailer.admin_appointment_confirmation(user, jsonEvent).deliver_later
@@ -211,6 +225,10 @@ class GooglecalController < ApplicationController
 
     end
 
+    def alreadyBooked
+        raise "error"
+    end
+
 
     def cancelEvent
         event = params["event"]
@@ -222,6 +240,7 @@ class GooglecalController < ApplicationController
             cal = @appointmentsCal
             if inGracePeriod
                 event["title"] =  "Available Appointment"
+                event["extended_properties"]["private"]["skype"] = "false"
             end
         end
 
