@@ -206,11 +206,15 @@ class GooglecalController < ApplicationController
            
 
             editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
+                 if e.attendees && e.attendees.length > 0
+                raise 'error'
+                end   
+
+             e.attendees= [
+            {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]    
             e.title = newTitle
             e.color_id = 2
             # e.location= "609 W 135 St New York, New York"
-            e.attendees= [
-            {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]
             end
 
             dateString =  DateTime.parse(editedEvent.start_time)
