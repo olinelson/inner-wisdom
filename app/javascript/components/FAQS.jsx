@@ -56,7 +56,7 @@ export default function FAQS() {
             key: 'how-make-appointment',
             title: 'How do I make an appointment?',
             content: [
-                'You can book a free 15 minute telephone consultation online. If we decide to go ahead with an appointment can be usually be made within 72 hours. Existing and returning clients can book sessions online.',
+                'You can book a free 15 minute telephone consultation online. If we decide to go ahead, an appointment can be usually be made within 72 hours. Existing and returning clients can book sessions online.',
             ].join(' '),
         },
         {
