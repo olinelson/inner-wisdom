@@ -28,7 +28,7 @@ function PostPreview(props) {
             onClick={() => handleCardClick(p.id)}>
 
             <Item.Content>
-                <Image floated='left' size="small" src={p.feature_image} />
+                <Image alt="post preview thumbnail" floated='left' size="small" src={p.feature_image} />
                 <Item.Header>{p.title}</Item.Header>
                 <Item.Meta>
                     <span className='date'>Created {moment(p.created_at).format('Do MMMM  YYYY')}</span>
