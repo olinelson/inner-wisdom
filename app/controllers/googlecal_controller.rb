@@ -203,8 +203,6 @@ class GooglecalController < ApplicationController
             newTitle = fullName + "| Phone Call Consultation"
             cal = @consultsCal
 
-           
-
             editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
                  if e.attendees && e.attendees.length > 0
                 raise 'error'
