@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Container, Divider, Button, Modal, Form, Header, Message as StaticMessage, Loader } from 'semantic-ui-react'
+import { Container, Divider, Button, Modal, Form, Header, Message as StaticMessage, Loader, Dimmer } from 'semantic-ui-react'
 import styled from "styled-components"
 import { CalendarContainer, ModalContent } from "./StyledComponents"
 import { Calendar as BigCalendar, momentLocalizer, Views } from 'react-big-calendar'
@@ -66,7 +66,18 @@ function Appointments(props) {
     const [events, setEvents] = useState([])
     const [notifications, setNotifications] = useState([])
 
+    // const [calStart, setCalStart] = useState(moment().startOf('month')._d)
+    // const [calEnd, setCalEnd] = useState(moment().endOf('month')._d)
+
+    const [calRange, setCalRange] = useState({
+        start: moment().startOf('month')._d,
+        end: moment().endOf('month')._d,
+    })
+
+
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
+
+
 
     useEffect(() => {
         if (props.current_user) {
@@ -74,7 +85,9 @@ function Appointments(props) {
         } else {
             getPublicEvents()
         }
-    }, []);
+    }, [calRange]);
+
+
 
 
     useEffect(() => {
@@ -96,8 +109,19 @@ function Appointments(props) {
         return () => clearTimeout(timer);
     }, [notifications]);
 
+
+    const rangeChangeHandeler = (e) => {
+        if (e.start && e.end) return setCalRange({ start: e.start, end: e.end })
+
+        if (e.length === 1) return setCalRange({ start: moment(e[0]).subtract(1, 'days')._d, end: moment(e[0]).add(1, 'days')._d })
+
+        if (e.length > 1) return setCalRange({ start: e[0], end: moment(e[e.length - 1])._d })
+    }
+
     const getPrivateEvents = () => {
-        fetch(`${process.env.BASE_URL}/events/current_user`, {
+        if (loading !== true) setLoading(true)
+
+        fetch(`${process.env.BASE_URL}/events/current_user/${calRange.start}/${calRange.end}`, {
             headers: {
                 "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
@@ -118,13 +142,14 @@ function Appointments(props) {
     }
 
     const getPublicEvents = () => {
-        fetch(`${process.env.BASE_URL}/events/public`, {
+        if (loading !== true) setLoading(true)
+        fetch(`${process.env.BASE_URL}/events/public/${calRange.start}/${calRange.end}`, {
             headers: {
                 "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
-            }
+            },
         }).then(r => r.json())
             .catch(error => {
                 setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Please refresh the page and try again. If this problem persists please contact your system administrator." }, ...notifications])
@@ -427,28 +452,27 @@ function Appointments(props) {
             </div>
             <Divider hidden style={{ gridArea: "divider" }} />
             {/* <Calendar fullWidth purchasable events={relevantEvents(props.appointments, props.consults, props.user)} /> */}
-            <CalendarContainer fullWidth>
-                {loading ?
-                    <Loader inline="centered" active />
-                    :
-                    <BigCalendar
-                        components={{ event: Event }}
-                        startAccessor={event => new Date(event.start_time)}
-                        endAccessor={event => new Date(event.end_time)}
-                        selectable
-                        localizer={localizer}
-                        events={events}
-                        // defaultView={props.defaultCalendarView}
-                        onSelectEvent={(e) => selectEventHandeler(e)}
-                        popup
-                        step={15}
-                        timeslots={1}
-                        onSelecting={() => false}
-                        views={['month', 'day', 'week']}
-                    />
-                }
+            <Dimmer.Dimmable as={CalendarContainer} fullWidth>
+                <Dimmer blurring active={loading} inverted>
+                    <Loader inline active={loading} />
+                </Dimmer>
+                <BigCalendar
+                    components={{ event: Event }}
+                    startAccessor={event => new Date(event.start_time)}
+                    endAccessor={event => new Date(event.end_time)}
+                    selectable
+                    localizer={localizer}
+                    events={events}
+                    onSelectEvent={(e) => selectEventHandeler(e)}
+                    popup
+                    step={15}
+                    timeslots={1}
+                    onSelecting={() => false}
+                    views={['month', 'day', 'week']}
+                    onRangeChange={(e) => rangeChangeHandeler(e)}
+                />
 
-            </CalendarContainer>
+            </Dimmer.Dimmable>
 
         </FullWidthCalendarContainer>
         {showSelectedEventModal()}

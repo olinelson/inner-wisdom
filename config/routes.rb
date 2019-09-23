@@ -7,9 +7,9 @@ Rails.application.routes.draw do
   post '/remove_many_stripe_ids'=> 'googlecal#remove_many_stripe_ids'
 
 
-  get "/events/public" => "googlecal#getPublicEvents"
-  get "/events/schedule" => "googlecal#getScheduleEvents"
-  get "/events/current_user" => "googlecal#getUsersAndFreeEvents"
+  get "/events/public/:calStart/:calEnd" => "googlecal#getPublicEvents"
+  get "/events/schedule/:calStart/:calEnd" => "googlecal#getScheduleEvents"
+  get "/events/current_user/:calStart/:calEnd" => "googlecal#getUsersAndFreeEvents"
   get "/events/booked/:id" => "googlecal#getUsersBookedEvents"
   post '/events/book'=> 'googlecal#bookEvent'
   post '/events/cancel'=> 'googlecal#cancelEvent'  

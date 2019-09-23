@@ -67,19 +67,23 @@ class GooglecalController < ApplicationController
         appointments = []
         consults = []       
 
+        calStart = DateTime.parse(params["calStart"])
+        calEnd = DateTime.parse(params["calEnd"])
+
         if current_user.approved
             begin
-            appointments = eventsInDateWindow(@appointmentsCal).select{|a| !a.attendees || doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
+            appointments = @appointmentsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees || doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
             rescue  
             end
             
             begin
-            consults = eventsInDateWindow(@consultsCal).select{|a| doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
+            consults = @consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
             rescue
             end
         else
             begin
-            consults = eventsInDateWindow(@consultsCal).select{|a| !a.attendees || doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
+            consults = @consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees || doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
+
             rescue 
             end
         end
@@ -111,17 +115,21 @@ class GooglecalController < ApplicationController
         cal.find_events_in_range(oneMonthAgo,sixMonthsAhead, options = {max_results: 2500})
     end
 
-
-
     def getPublicEvents
+        calStart = DateTime.parse(params["calStart"])
+        calEnd = DateTime.parse(params["calEnd"])
+
         begin
-            appointments = futureEvents(@appointmentsCal,100).select{|a| !a.attendees}
+            appointments = @appointmentsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees}
+            # appointments = futureEvents(@appointmentsCal,100).select{|a| !a.attendees}
             rescue
             appointments = []    
         end
+         
 
          begin
-            consults = futureEvents(@consultsCal, 100).select{|a| !a.attendees}
+            # consults = futureEvents(@consultsCal, 100).select{|a| !a.attendees}
+            consults = @consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees}
             rescue
             consults = []    
         end
@@ -306,15 +314,21 @@ def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true, recurre
     end
 
     def getScheduleEvents
+        # byebug
+
+        calStart = DateTime.parse(params["calStart"])
+        calEnd = DateTime.parse(params["calEnd"])
 
         begin
-            appointments = eventsInDateWindow(@appointmentsCal)
+            # appointments = eventsInDateWindow(@appointmentsCal)
+            appointments = @appointmentsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500})
             rescue
             appointments = []    
         end
 
         begin
-            consults = eventsInDateWindow(@consultsCal)
+            # consults = eventsInDateWindow(@consultsCal)
+            consults = @consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500})
             rescue
             consults = []    
         end

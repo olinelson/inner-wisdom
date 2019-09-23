@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 // components / styles
-import { Divider, Modal, Popup, Button, Input, Label, Icon, Segment, Dropdown, Checkbox, Form, Loader } from 'semantic-ui-react'
+import { Divider, Modal, Popup, Dimmer, Button, Input, Label, Icon, Segment, Dropdown, Checkbox, Form, Loader } from 'semantic-ui-react'
 import { BusinessEventSegment, CalendarContainer, ModalContent } from "./StyledComponents"
 import { FullWidthCalendarContainer } from "./Appointments"
 import Event from "./Event"
@@ -36,11 +36,16 @@ function Schedule(props) {
     const [events, setEvents] = useState([])
     const [notifications, setNotifications] = useState([])
 
+    const [calRange, setCalRange] = useState({
+        start: moment().startOf('month')._d,
+        end: moment().endOf('month')._d,
+    })
+
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
     useEffect(() => {
         getAllEvents()
-    }, []);
+    }, [calRange]);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -62,8 +67,21 @@ function Schedule(props) {
         return () => clearTimeout(timer);
     }, [notifications]);
 
+    const rangeChangeHandeler = (e) => {
+        if (e.start && e.end) return setCalRange({ start: e.start, end: e.end })
+
+        if (e.length === 1) return setCalRange({ start: moment(e[0]).subtract(1, 'days')._d, end: moment(e[0]).add(1, 'days')._d })
+
+        if (e.length > 1) return setCalRange({ start: e[0], end: moment(e[e.length - 1])._d })
+    }
+
+
+
+
     const getAllEvents = () => {
-        fetch(`${process.env.BASE_URL}/events/schedule`)
+        if (loading === false) setLoading(true)
+
+        fetch(`${process.env.BASE_URL}/events/schedule/${calRange.start}/${calRange.end}`)
             .then(response => response.json())
             .catch(error => {
                 setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
@@ -480,39 +498,47 @@ function Schedule(props) {
         <Divider hidden />
         <FullWidthCalendarContainer fluid >
             <div style={{ width: "100%", maxWidth: "95vw", justifySelf: "center" }}>
-                <h1>Schedule</h1>
+                <h1>Schedule </h1>
             </div>
 
             <Divider hidden style={{ gridArea: "divider" }} />
-            <CalendarContainer fullWidth>
 
-                {loading ?
-                    <Loader inline="centered" active />
-                    :
-                    <BigCalendar
-                        style={{ border: "1px solid red !important" }}
-                        components={{
-                            event: Event
-                        }}
-                        startAccessor={event => new Date(event.start_time)}
-                        endAccessor={event => new Date(event.end_time)}
-                        selectable
-                        localizer={localizer}
-                        onSelectEvent={(e) => setSelectedEvent(e)}
-                        events={events}
-                        defaultDate={new Date}
-                        popup
-                        views={['month', 'day', 'week']}
-                        step={15}
-                        timeslots={1}
-                        onSelectSlot={(e) => selectSlotHandeler(e)}
-                    />
-                }
+            <Dimmer.Dimmable as={CalendarContainer} fullWidth>
+                <Dimmer blurring active={loading} inverted>
+                    <Loader inline active={loading} />
+                </Dimmer>
+
+                <BigCalendar
+                    style={{ border: "1px solid red !important" }}
+                    components={{
+                        event: Event
+                    }}
+                    startAccessor={event => new Date(event.start_time)}
+                    endAccessor={event => new Date(event.end_time)}
+                    selectable
+                    localizer={localizer}
+                    onSelectEvent={(e) => setSelectedEvent(e)}
+                    events={events}
+                    defaultDate={new Date}
+                    popup
+                    views={['month', 'day', 'week']}
+                    step={15}
+                    timeslots={1}
+                    onSelectSlot={(e) => selectSlotHandeler(e)}
+                    onViewChange={(e) => console.log("view change", e)}
+                    onRangeChange={(e) => {
+                        rangeChangeHandeler(e)
+                        // setCalRange({ start: e.start, end: e.end })
+                    }
+                    }
+                />
+                {/* </CalendarContainer> */}
+            </Dimmer.Dimmable>
 
 
 
 
-            </CalendarContainer>
+
         </FullWidthCalendarContainer>
 
         {creatingEventModal()}
