@@ -341,7 +341,7 @@ def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true, recurre
             }
             end
 
-            fullName = newEvent["attendees"].first["first_name"] + newEvent["attendees"].first["last_name"]
+            fullName = newEvent["attendees"].first["first_name"] + " " + newEvent["attendees"].first["last_name"]
             title = fullName + " | session confirmed"
 
         end
