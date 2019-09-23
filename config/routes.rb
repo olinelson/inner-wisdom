@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   get "/events/schedule/:calStart/:calEnd" => "googlecal#getScheduleEvents"
   get "/events/current_user/:calStart/:calEnd" => "googlecal#getUsersAndFreeEvents"
   get "/events/booked/:id" => "googlecal#getUsersBookedEvents"
+  
   post '/events/book'=> 'googlecal#bookEvent'
   post '/events/cancel'=> 'googlecal#cancelEvent'  
   post '/events/create'=> 'googlecal#createEvent'  

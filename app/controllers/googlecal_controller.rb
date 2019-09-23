@@ -312,27 +312,24 @@ def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true, recurre
     end
 
     def getScheduleEvents
-        # byebug
 
         calStart = DateTime.parse(params["calStart"])
         calEnd = DateTime.parse(params["calEnd"])
 
         begin
-            # appointments = eventsInDateWindow(@appointmentsCal)
             appointments = @appointmentsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500})
             rescue
             appointments = []    
         end
 
         begin
-            # consults = eventsInDateWindow(@consultsCal)
             consults = @consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500})
             rescue
             consults = []    
         end
 
         begin
-            personalEvents = eventsInDateWindow(@personalCal)
+            personalEvents = @personalCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500})
             rescue
             personalEvents = []    
         end
@@ -384,8 +381,7 @@ def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true, recurre
             e.recurrence = recurrence ? {freq: recurrence["freq"], count: 50} : nil
             e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => "", 'skype' => newEvent["extended_properties"]["private"]["skype"] || false}}
         end
-       
-        #  render json: {, events: eventsInDateWindow(@appointmentsCal), personalEvents: @personalCal ? eventsInDateWindow(@personalCal) : [] }
+
         render json: {newEvent: event}
     end
 
@@ -419,16 +415,14 @@ def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true, recurre
                 futureEvents = cal.find_events_in_range(start, twoYearsAhead, options = {max_results: 2500})
                 futureReps = futureEvents.select{ |e| e.raw["recurringEventId"] === foundEvent.raw["recurringEventId"]}
                 futureReps.each {|r| r.delete}
-                # foundEvent.delete
-                 return appStateJson()
+                 return
             end
 
             if deleteAllReps
                 allEvents = eventsInDateWindow(cal)
                 repeats = allEvents.select{ |e| e.raw["recurringEventId"] === foundEvent.raw["recurringEventId"]}
                 repeats.each {|r| r.delete}
-                # foundEvent.delete
-                return appStateJson()
+                return
             end
 
             
@@ -445,15 +439,13 @@ def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true, recurre
          if event["attendees"]
             attendees = event["attendees"].map{|a| 
 
-    
                 user = User.find_by(email: a["email"])
                 if user === nil
                     displayName= a["email"].split("@").first
                 else
                     displayName = user["first_name"] + " " + user["last_name"]
                 end
-                
-                
+        
             {
             'email' => a["email"],
             'displayName' => displayName, 
@@ -507,7 +499,6 @@ def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true, recurre
         invoice_item = params["invoice_item"]["metadata"]
 
         cal = nil
-
 
         if invoice_item["type"] === "Appointment"
             cal = @appointmentsCal

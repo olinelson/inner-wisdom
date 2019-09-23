@@ -89,7 +89,6 @@ function Schedule(props) {
                 setLoading(false)
             })
             .then((r) => {
-                // setNotifications({ id: new Date, type: "alert", message: "Could not get events. Please try again. If this problem persists please contact your system administrator." })
                 setEvents(r.events)
                 setLoading(false)
             })
@@ -414,6 +413,7 @@ function Schedule(props) {
 
         </BusinessEventSegment>
     }
+
     // modals
     const editingEventModal = () => {
         let e = selectedEvent
@@ -445,7 +445,6 @@ function Schedule(props) {
                     <Form style={{ display: !selectedEvent.attendees || selectedEvent.attendees.length < 1 ? "none" : "block" }}>
                         <Form.Group inline >
                             <Form.Radio
-
                                 label='Skype'
                                 name='radioGroup'
                                 value='that'
@@ -454,7 +453,6 @@ function Schedule(props) {
                             />
                             {" "}
                             <Form.Radio
-                                // disabled={!selectedEvent.attendees || selectedEvent.attendees.length < 1 ? true : false}
                                 label='In Person'
                                 name='radioGroup'
                                 value='that'
@@ -526,13 +524,8 @@ function Schedule(props) {
                     timeslots={1}
                     onSelectSlot={(e) => selectSlotHandeler(e)}
                     onViewChange={(e) => console.log("view change", e)}
-                    onRangeChange={(e) => {
-                        rangeChangeHandeler(e)
-                        // setCalRange({ start: e.start, end: e.end })
-                    }
-                    }
+                    onRangeChange={(e) => { rangeChangeHandeler(e) }}
                 />
-                {/* </CalendarContainer> */}
             </Dimmer.Dimmable>
 
 
@@ -543,29 +536,8 @@ function Schedule(props) {
 
         {creatingEventModal()}
         {editingEventModal()}
-
-
     </>
 }
-
-
-function flatten(arr) {
-    return [].concat(...arr)
-}
-
-
-const mapStateToProps = (state) => ({
-    appointments: state.appointments,
-    consults: state.consults,
-    personalEvents: state.personalEvents,
-    allEvents: flatten([...state.appointments, state.consults, state.personalEvents]),
-    user: state.user,
-    users: state.users,
-    csrfToken: state.csrfToken,
-    baseUrl: state.baseUrl,
-    businessCalendarAddress: state.businessCalendarAddress,
-    defaultCalendarView: state.defaultCalendarView
-})
 
 export default Schedule
 
