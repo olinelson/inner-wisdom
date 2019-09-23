@@ -273,8 +273,7 @@ class GooglecalController < ApplicationController
         end
         jsonEvent = event.to_json
         NotificationMailer.user_appointment_cancelation(user, jsonEvent).deliver_later
-        # NotificationMailer.admin_appointment_confirmation(user, jsonEvent).deliver_later
-        # render json: {canceledEvent: event}
+        NotificationMailer.admin_appointment_cancelation(user, jsonEvent).deliver_later
 
         return editGoogleCalEvent(cal: cal, event: event, attendees: attendees, inGracePeriod: inGracePeriod)
     end

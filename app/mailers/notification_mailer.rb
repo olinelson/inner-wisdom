@@ -29,6 +29,14 @@ class NotificationMailer < ApplicationMailer
 
         mail(to: @user.email, subject: 'Appointment Canceled')
     end
+    
+    def admin_appointment_cancelation(user,event)
+        @user = user
+        @event = JSON.parse(event)
+        @time = prettyTime
+
+        mail(to: ENV["EMAIL_ADDRESS"], subject: 'Booking Confirmation')
+    end
 
     def user_appointment_confirmation(user, event)
         @user = user
