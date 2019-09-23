@@ -43,12 +43,6 @@ function Event(props) {
     </CustomLabel>
 }
 
-// const mapStateToProps = (state, props) => ({
-//     user: state.user,
-//     users: state.users,
-//     loadingEvent: state.loadingEvent
-// })
-
 
 export default Event
 

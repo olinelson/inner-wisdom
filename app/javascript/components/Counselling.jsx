@@ -47,10 +47,4 @@ function Counselling(props) {
 
 }
 
-// const mapStateToProps = (state) => ({
-//     events: state.events,
-//     user: state.user,
-//     personalEvents: state.personalEvents
-// })
-
 export default Counselling

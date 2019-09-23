@@ -89,11 +89,6 @@ function InvoiceList(props) {
     </Table>
 }
 
-// const mapStateToProps = (state) => ({
-//     user: state.user,
-//     csrfToken: state.csrfToken
-// })
-
 
 
 export default InvoiceList

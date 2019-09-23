@@ -329,19 +329,5 @@ function InvoiceTableRow(props) {
 }
 
 
-// const mapStateToProps = (state) => ({
-//     // appointments: state.appointments,
-//     // consults: state.consults,
-//     // // personalEvents: state.personalEvents,
-//     // // user: state.user,
-//     // users: state.users,
-//     // // myAccountPanel: state.myAccountPanel,
-//     // baseUrl: state.baseUrl,
-//     // defaultCalendarView: state.defaultCalendarView,
-//     // calendarScrollToTime: state.calendarScrollToTime,
-//     csrfToken: state.csrfToken
-// })
-
-
 
 export default InvoiceTableRow

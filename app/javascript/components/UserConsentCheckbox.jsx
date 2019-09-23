@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Form, Container, Divider, Header, Modal, Button, ModalContent, Checkbox } from "semantic-ui-react"
+import { Header, Modal, ModalContent } from "semantic-ui-react"
 import ClientConsentForm from "./ClientConsentForm"
 
 export default function UserConsentCheckbox(props) {

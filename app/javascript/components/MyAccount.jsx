@@ -206,14 +206,4 @@ function MyAccount(props) {
 
 }
 
-// const mapStateToProps = (state) => ({
-
-//     relevantAppointments: flatten([...state.appointments, state.consults]).filter(e => isUserAnAttendeeOfEvent(e, state.user)),
-//     user: state.user,
-//     users: state.users,
-//     myAccountPanel: state.myAccountPanel,
-//     baseUrl: state.baseUrl,
-//     csrfToken: state.csrfToken
-// })
-
 export default MyAccount

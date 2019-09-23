@@ -96,9 +96,5 @@ function AppointmentHistoryTable(props) {
     )
 }
 
-// const mapStateToProps = (state) => ({
-//     csrfToken: state.csrfToken
-// })
-
 export default AppointmentHistoryTable
 

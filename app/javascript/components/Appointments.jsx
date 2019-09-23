@@ -14,34 +14,10 @@ export const isUserAnAttendeeOfEvent = (event, user) => {
     }
 }
 
-export function flatten(arr) {
-    return [].concat(...arr)
-}
-
 export const isInTheFuture = (event) => {
     let now = new Date
     let eventTime = new Date(event.start_time)
     return now < eventTime
-}
-
-export const relevantEvents = (appointments, consults, user) => {
-    let result = []
-
-    let freeAppointments = appointments.filter(e => (e.attendees == null || e.attendees.length < 1) && isInTheFuture(e))
-    let freeConsults = consults.filter(e => (e.attendees == null || e.attendees.length < 1) && isInTheFuture(e))
-
-
-    if (user) {
-        let usersAppointments = appointments.filter(e => isUserAnAttendeeOfEvent(e, user))
-        let usersConsults = consults.filter(e => isUserAnAttendeeOfEvent(e, user))
-
-        if (user.approved) result = flatten([...usersAppointments, usersConsults, freeAppointments])
-        else result = flatten([...freeConsults, usersConsults])
-
-    } else {
-        result = flatten([...freeConsults, freeAppointments])
-    }
-    return result
 }
 
 
@@ -65,9 +41,6 @@ function Appointments(props) {
     const [confirmation, setConfirmation] = useState(null)
     const [events, setEvents] = useState([])
     const [notifications, setNotifications] = useState([])
-
-    // const [calStart, setCalStart] = useState(moment().startOf('month')._d)
-    // const [calEnd, setCalEnd] = useState(moment().endOf('month')._d)
 
     const [calRange, setCalRange] = useState({
         start: moment().startOf('month')._d,
@@ -416,15 +389,6 @@ function Appointments(props) {
     }
 
     return <>
-        {/* <Container fluid>
-            <Message key={uuidv1()} message={{
-                id: new Date, type: "notice", message: <>
-                    <p>To book an appointment you must first <a href={`${process.env.BASE_URL}/users/sign_up`}>sign in</a>. If you do not have an account yet you can <a href={`${process.env.BASE_URL}/users/sign_up`}>sign up</a> for free.</p>
-
-
-                </>
-            }} />
-        </Container> */}
 
         <div style={{ position: "fixed", right: "1rem", zIndex: "100" }}>
 
@@ -451,7 +415,7 @@ function Appointments(props) {
                 }
             </div>
             <Divider hidden style={{ gridArea: "divider" }} />
-            {/* <Calendar fullWidth purchasable events={relevantEvents(props.appointments, props.consults, props.user)} /> */}
+
             <Dimmer.Dimmable as={CalendarContainer} fullWidth>
                 <Dimmer blurring active={loading} inverted>
                     <Loader inline active={loading} />
@@ -480,15 +444,5 @@ function Appointments(props) {
     </>
 
 }
-
-// const mapStateToProps = (state) => ({
-//     appointments: state.appointments,
-//     consults: state.consults,
-//     user: state.user,
-//     personalEvents: state.personalEvents,
-//     defaultCalendarView: state.defaultCalendarView,
-//     csrfToken: state.csrfToken
-
-// })
 
 export default Appointments

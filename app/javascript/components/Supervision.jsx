@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Container, Header, Button, Divider, Image } from "semantic-ui-react"
 import { Jumbotron, ImageDiv, TwoColumnContainer } from "./StyledComponents"
 
@@ -7,12 +7,7 @@ import styled from "styled-components"
 import Training from './Training';
 export default function Supervision() {
 
-    useEffect(() => {
-        // window.scroll({
-        //     top: 0,
-        //     left: 0,
-        // })
-    }, []);
+
 
     return <><TwoColumnContainer text >
         <h1 style={{ gridArea: "heading", textAlign: "right", alignSelf: "flex-end" }}>Supervision</h1>

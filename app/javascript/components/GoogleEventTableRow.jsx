@@ -108,8 +108,5 @@ function GoogleEventTableRow(props) {
         </Table.Row>
     )
 }
-// const mapStateToProps = (state) => ({
-//     csrfToken: state.csrfToken
-// })
 
 export default GoogleEventTableRow

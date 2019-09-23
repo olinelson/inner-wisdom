@@ -1,6 +1,5 @@
 import React from 'react'
-import { Container, Header, Button, Divider } from "semantic-ui-react"
-import { Jumbotron, TwoColumnContainer, ImageDiv } from "./StyledComponents"
+import { TwoColumnContainer, ImageDiv } from "./StyledComponents"
 export default function Training() {
     return <TwoColumnContainer text  >
         <h1 style={{ gridArea: "heading", textAlign: "right", alignSelf: "flex-end" }}>Training</h1>
