@@ -5,14 +5,6 @@ import { InfoContainer } from "./StyledComponents"
 
 function Counselling(props) {
 
-
-    useEffect(() => {
-        // window.scroll({
-        //     top: 0,
-        //     left: 0,
-        // })
-    }, []);
-
     return (
         <>
             <Jumbotron src="https://storage.googleapis.com/inner_wisdom_bucket/beautiful-bonsai-botany-1671256.jpg" />
