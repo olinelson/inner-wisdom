@@ -42,9 +42,9 @@ class GooglecalController < ApplicationController
                     :redirect_url  => ENV['GOOGLE_REDIRECT_URL']
                                     )
 
-                    @personalCal.login_with_refresh_token(current_user.google_calendar_refresh_token)               
-                rescue
-                    puts "personal login error"
+                @personalCal.login_with_refresh_token(current_user.google_calendar_refresh_token)               
+            rescue
+                puts "personal login error"
             end
 
         end
@@ -52,7 +52,6 @@ class GooglecalController < ApplicationController
     end
 
     def doAnyAttendeesHaveThisEmail(email, attendees)
-
         if attendees 
             attendees.each do |a|
                 if a['email'] === email
@@ -65,9 +64,8 @@ class GooglecalController < ApplicationController
     end
 
     def getUsersAndFreeEvents
-
-         appointments = []
-         consults = []       
+        appointments = []
+        consults = []       
 
         if current_user.approved
             begin
@@ -86,9 +84,7 @@ class GooglecalController < ApplicationController
             end
         end
 
-        render json: {
-            events: appointments + consults, 
-            }
+        render json: {events: appointments + consults}
     end
 
     def getUsersBookedEvents
@@ -105,11 +101,7 @@ class GooglecalController < ApplicationController
             consults = []    
         end
 
-        render json: {
-            events: appointments + consults
-            # appointments: appointments, 
-            # consults: consults, 
-            }
+        render json: {events: appointments + consults}
     end
 
     def eventsInDateWindow(cal)
@@ -134,10 +126,7 @@ class GooglecalController < ApplicationController
             consults = []    
         end
 
-        render json: {
-            appointments: appointments, 
-            consults: consults, 
-            }
+        render json: { appointments: appointments, consults: consults}
     end
 
     def futureEvents(cal, maxResults)
