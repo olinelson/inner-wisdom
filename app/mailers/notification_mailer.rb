@@ -35,7 +35,7 @@ class NotificationMailer < ApplicationMailer
         @event = JSON.parse(event)
         @time = prettyTime
 
-        mail(to: ENV["EMAIL_ADDRESS"], subject: 'Booking Confirmation')
+        mail(to: ENV["EMAIL_ADDRESS"], subject: 'Appointment Canceled')
     end
 
     def user_appointment_confirmation(user, event)
