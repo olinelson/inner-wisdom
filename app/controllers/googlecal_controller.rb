@@ -95,13 +95,13 @@ class GooglecalController < ApplicationController
         user = User.find(params["id"])
         begin
             appointments = eventsInDateWindow(@appointmentsCal).select{|a| doAnyAttendeesHaveThisEmail(user.email, a.attendees)}
-            rescue
+        rescue
             appointments = []    
         end
 
         begin
             consults = eventsInDateWindow(@consultsCal).select{|a| doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
-            rescue
+        rescue
             consults = []    
         end
 
@@ -121,14 +121,12 @@ class GooglecalController < ApplicationController
 
         begin
             appointments = @appointmentsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees}
-            # appointments = futureEvents(@appointmentsCal,100).select{|a| !a.attendees}
             rescue
             appointments = []    
         end
          
 
          begin
-            # consults = futureEvents(@consultsCal, 100).select{|a| !a.attendees}
             consults = @consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees}
             rescue
             consults = []    
