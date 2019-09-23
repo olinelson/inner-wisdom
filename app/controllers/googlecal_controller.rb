@@ -178,7 +178,7 @@ class GooglecalController < ApplicationController
            
             e.title = newTitle
             e.color_id = 2
-            e.location= skype === "true" || skype === true ? "Skype Appointment" : "TBC"
+            e.location= skype === "true" || skype === true ? "Skype Appointment" : "13/10 Short St Thornleigh NSW 2120 Australia"
                   
            
             e.extended_properties["private"]["skype"] = skype
