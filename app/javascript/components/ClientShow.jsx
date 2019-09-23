@@ -19,6 +19,22 @@ function ClientShow(props) {
     const [deleting, setDeleting] = useState(false)
     const [notifications, setNotifications] = useState([])
 
+    const [emailError, setEmailError] = useState(false)
+
+    const isEmailValid = (email) => {
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+            return (true)
+        }
+        return (false)
+    }
+
+    const setAndValidateEmail = (emailAddress) => {
+        if (isEmailValid(emailAddress) === false) setEmailError(true)
+        else setEmailError(false)
+        setUser({ ...user, email: emailAddress })
+    }
+
+
 
 
 
@@ -118,54 +134,33 @@ function ClientShow(props) {
             <h1>{user.first_name + " " + user.last_name}</h1>
 
             <Modal
-                closeIcon
                 size="small"
                 trigger={<Button basic content="edit" icon="edit" />}
-                actions={[{ key: 'cancel', content: "Cancel", basic: true, onClick: () => setUser(props.user) }, { key: 'save', content: "Save", positive: true, basic: true, onClick: () => editUserHandeler() }]}
+                actions={[{ key: 'cancel', content: "Cancel", basic: true, onClick: () => setUser(props.user) }, { key: 'save', disabled: emailError, content: "Save", positive: true, basic: true, onClick: () => editUserHandeler() }]}
                 header="Edit User"
                 content={
                     <div style={{ margin: "1rem" }}>
                         <Form >
-                            <Form.Field>
-                                <label>First Name</label>
-                                <input value={user.first_name} required placeholder='First Name' onChange={(e) => setUser({ ...user, first_name: e.target.value })} />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Last Name</label>
-                                <input value={user.last_name} required placeholder='Last Name' onChange={(e) => setUser({ ...user, last_name: e.target.value })} />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Email</label>
-                                <input value={user.email || ""} onChange={(e) => setUser({ ...user, email: e.target.value })} />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Phone Number</label>
-                                <input value={user.phone_number || ""} onChange={(e) => setUser({ ...user, phone_number: e.target.value })} />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Street Address</label>
-                                <input value={user.street_address || ""} onChange={(e) => setUser({ ...user, street_address: e.target.value })} />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Apartment Number</label>
-                                <input value={user.apartment_number || ""} onChange={(e) => setUser({ ...user, apartment_number: e.target.value })} />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Suburb/City</label>
-                                <input value={user.suburb || ""} onChange={(e) => setUser({ ...user, suburb: e.target.value })} />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>State</label>
-                                <input value={user.address_state || ""} onChange={(e) => setUser({ ...user, address_state: e.target.value })} />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Post Code</label>
-                                <input value={user.post_code || ""} onChange={(e) => setUser({ ...user, post_code: e.target.value })} />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Medicare Number</label>
-                                <input value={user.medicare_number || ""} onChange={(e) => setUser({ ...user, medicare_number: e.target.value })} />
-                            </Form.Field>
+                            <Form.Input value={user.first_name || ""} label={"First Name"} placeholder='Bob' onChange={(e) => setUser({ ...user, first_name: e.target.value })} />
+
+                            <Form.Input value={user.last_name || ""} label="Last Name" placeholder='Johnson' onChange={(e) => setUser({ ...user, last_name: e.target.value })} />
+
+                            <Form.Input error={emailError ? "Invalid Email Address" : false} type="email" value={user.email || ""} label="Email" required placeholder='bobjohnson@example.com' onChange={(e) => setAndValidateEmail(e.target.value)} />
+
+                            <Form.Input value={user.phone_number || ""} label="Phone Number" placeholder='0400123123' onChange={(e) => setUser({ ...user, phone_number: e.target.value })} />
+
+                            <Form.Input value={user.street_address || ""} label="Street Address" placeholder='42 Wallaby Way' onChange={(e) => setUser({ ...user, street_address: e.target.value })} />
+
+                            <Form.Input value={user.apartment_number || ""} label="Apartment No." placeholder='1' onChange={(e) => setUser({ ...user, apartment_number: e.target.value })} />
+
+                            <Form.Input value={user.suburb || ""} label="Suburb" placeholder='Hornsby' onChange={(e) => setUser({ ...user, suburb: e.target.value })} />
+
+                            <Form.Input value={user.address_state || ""} label="State" placeholder='NSW' onChange={(e) => setUser({ ...user, address_state: e.target.value })} />
+
+                            <Form.Input value={user.post_code || ""} label="Post Code" placeholder='2017' onChange={(e) => setUser({ ...user, post_code: e.target.value })} />
+
+                            <Form.Input value={user.medicare_number || ""} label="Medicare Number" placeholder='123456789' onChange={(e) => setUser({ ...user, medicare_number: e.target.value })} />
+
                         </Form>
                     </div>
                 }
@@ -223,18 +218,5 @@ function ClientShow(props) {
     </>
 }
 
-
-// const mapStateToProps = (state) => ({
-//     appointments: state.appointments,
-//     consults: state.consults,
-//     // personalEvents: state.personalEvents,
-//     // user: state.user,
-//     users: state.users,
-//     // myAccountPanel: state.myAccountPanel,
-//     baseUrl: state.baseUrl,
-//     defaultCalendarView: state.defaultCalendarView,
-//     calendarScrollToTime: state.calendarScrollToTime,
-//     csrfToken: state.csrfToken
-// })
 
 export default ClientShow
