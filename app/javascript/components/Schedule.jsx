@@ -121,6 +121,7 @@ function Schedule(props) {
                 setNotifications([{ id: new Date, type: "alert", message: "There was an error creating this event. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
                 console.error('Error:', error)
                 setLoading(false)
+                setEvents([...events])
             })
             .then(r => {
                 let currentEvents = [...events].filter(e => e.id !== event.id)
