@@ -100,7 +100,7 @@ export const ImageDiv = styled.div`
 export const TwoColumnContainer = styled(Container)`
         grid-template-rows: auto 1fr;
         display: grid !important;
-        justify-contentt: center;
+        justify-content: center;
         grid-template-columns: 2fr 3fr;
         grid-template-areas: ${props => props.imgleft ? "'. heading' 'img p1'" : "'heading .' 'p1 img'"};
         grid-column-gap: 2rem;
