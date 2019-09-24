@@ -13,7 +13,7 @@ function Counselling(props) {
             <InfoContainer text >
                 {/* <div> */}
                 <h1 style={{ gridArea: "header" }} >What is Counselling Psychology?</h1>
-                <p style={{ gridArea: "p1" }}>Many people seek help from a Psychologist, knowing there is a particular concern they want to address, but don’t know how to make the changes they desire. Others experience on going distress in their lives or relationships and are looking for personal growth, support and guidance. Many have suffered abuse, trauma or grief and would like to make sense of their experiences, seek healing and build strategies to empower them to live more fulfilling lives.</p>
+                <p style={{ gridArea: "p1" }}>Many people seek help from a Psychologist, knowing there is a particular concern they want to address, but don't know how to make the changes they desire. Others experience on going distress in their lives or relationships and are looking for personal growth, support and guidance. Many have suffered abuse, trauma or grief and would like to make sense of their experiences, seek healing and build strategies to empower them to live more fulfilling lives.</p>
 
                 <p style={{ gridArea: "p2" }}>For those seeking couples counselling, their relationships are often a source of stress and emotional pain, due to differing values and goals, a sense of betrayal or unhelpful communication patterns. Deciding what you want to achieve from your sessions and clarifying expectations is an important part of the counselling process.</p>
 

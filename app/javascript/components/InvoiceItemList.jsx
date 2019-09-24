@@ -26,7 +26,7 @@ function InvoiceItemList(props) {
         })
             .then(res => res.json())
             .catch(error => {
-                props.addNotification({ id: new Date, type: "alert", message: "Could not retreive invoice items. Please try again. If this problem persists please contact your system administrator." })
+                props.addNotification({ id: new Date, type: "alert", message: "Could not retrieve invoice items. Please try again. If this problem persists please contact your system administrator." })
                 console.error('Error:', error)
                 setLoading(false)
             })

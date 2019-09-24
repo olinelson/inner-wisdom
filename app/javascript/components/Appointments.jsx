@@ -83,7 +83,7 @@ function Appointments(props) {
     }, [notifications]);
 
 
-    const rangeChangeHandeler = (e) => {
+    const rangeChangeHandler = (e) => {
         if (e.start && e.end) return setCalRange({ start: e.start, end: e.end })
 
         if (e.length === 1) return setCalRange({ start: moment(e[0]).subtract(1, 'days')._d, end: moment(e[0]).add(1, 'days')._d })
@@ -134,7 +134,7 @@ function Appointments(props) {
             })
     }
 
-    // fetch handelers
+    // fetch handlers
     const bookAppointment = () => {
         setBooking(true)
         fetch(`${process.env.BASE_URL}/events/book`, {
@@ -314,7 +314,7 @@ function Appointments(props) {
                                     name='radioGroup'
                                     value='that'
                                     checked={selectedEvent.extended_properties.private.skype === "true"}
-                                    onChange={() => toggleSkypeHandeler()}
+                                    onChange={() => toggleSkypeHandler()}
                                 />
                                 {" "}
                                 <Form.Radio
@@ -322,7 +322,7 @@ function Appointments(props) {
                                     name='radioGroup'
                                     value='that'
                                     checked={selectedEvent.extended_properties.private.skype === "false"}
-                                    onChange={() => toggleSkypeHandeler()}
+                                    onChange={() => toggleSkypeHandler()}
                                 />
                             </Form.Group>
                         </Form>
@@ -341,7 +341,7 @@ function Appointments(props) {
     }
 
 
-    const toggleSkypeHandeler = () => {
+    const toggleSkypeHandler = () => {
         let skype = selectedEvent.extended_properties.private.skype
         if (skype === "true") skype = "false"
         else skype = "true"
@@ -383,7 +383,7 @@ function Appointments(props) {
 
     }
 
-    const selectEventHandeler = (event) => {
+    const selectEventHandler = (event) => {
         setSelectedEvent(event)
         setEventModalOpen(true)
     }
@@ -427,13 +427,13 @@ function Appointments(props) {
                     selectable
                     localizer={localizer}
                     events={events}
-                    onSelectEvent={(e) => selectEventHandeler(e)}
+                    onSelectEvent={(e) => selectEventHandler(e)}
                     popup
                     step={15}
                     timeslots={1}
                     onSelecting={() => false}
                     views={['month', 'day', 'week']}
-                    onRangeChange={(e) => rangeChangeHandeler(e)}
+                    onRangeChange={(e) => rangeChangeHandler(e)}
                 />
 
             </Dimmer.Dimmable>

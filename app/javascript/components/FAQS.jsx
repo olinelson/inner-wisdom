@@ -97,7 +97,7 @@ export default function FAQS() {
                                     <Table.Cell>1800 806 292</Table.Cell>
                                 </Table.Row>
                                 <Table.Row>
-                                    <Table.Cell>Women’s DV Helpline</Table.Cell>
+                                    <Table.Cell>Women's DV Helpline</Table.Cell>
                                     <Table.Cell>1800 007 339</Table.Cell>
                                 </Table.Row>
                             </Table.Body>
@@ -110,7 +110,7 @@ export default function FAQS() {
         },
         {
             key: 'cant-make-it',
-            title: 'What if I can’t make it to my appointment?',
+            title: 'What if I can\'t make it to my appointment?',
             content: [
                 'If you are unable to attend for any reason, please notify me via mobile, text or email as soon as possible. Anything less than 24 hours’ notice or failing to attend a session will incur a cancellation fee of 100%. Late arrivals will result in a short session as I may have other clients booked in following you.',
             ].join(' '),
@@ -124,7 +124,7 @@ export default function FAQS() {
                         <p>Yes, no one can access your records without your permission, unless: exist:</p>
                         <List bulleted>
                             <List.Item>They are subpoenaed by a court</List.Item>
-                            <List.Item>If your own or another person’s safety is considered to be at risk</List.Item>
+                            <List.Item>If your own or another person's safety is considered to be at risk</List.Item>
                             <List.Item>If I am required to fulfil my legal obligation as a mandatory reporter</List.Item>
                         </List>
                     </>

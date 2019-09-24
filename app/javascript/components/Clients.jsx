@@ -43,7 +43,7 @@ function Clients(props) {
         return () => clearTimeout(timer);
     }, [notifications]);
 
-    const createUserHandeler = (e) => {
+    const createUserHandler = (e) => {
         setLoading(true)
         let newUser = { first_name, last_name, email, password: tempPassword, sendWelcomeEmail }
         fetch(`${process.env.BASE_URL}/clients`, {
@@ -164,7 +164,7 @@ function Clients(props) {
                 <Modal.Header>Create New Client</Modal.Header>
                 <Modal.Content image>
                     <Modal.Description>
-                        <Form onSubmit={(e) => createUserHandeler(e)}>
+                        <Form onSubmit={(e) => createUserHandler(e)}>
                             <Form.Field>
                                 <label>First Name</label>
                                 <input value={first_name} onChange={(e) => setFirst_name(e.target.value)} required placeholder='First Name' />

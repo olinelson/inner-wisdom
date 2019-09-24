@@ -67,7 +67,7 @@ function Schedule(props) {
         return () => clearTimeout(timer);
     }, [notifications]);
 
-    const rangeChangeHandeler = (e) => {
+    const rangeChangeHandler = (e) => {
         if (e.start && e.end) return setCalRange({ start: e.start, end: e.end })
 
         if (e.length === 1) return setCalRange({ start: moment(e[0]).subtract(1, 'days')._d, end: moment(e[0]).add(1, 'days')._d })
@@ -95,8 +95,8 @@ function Schedule(props) {
 
     }
 
-    // fetch handelers
-    const createEventHandeler = (isAppointmentSlot = false, isConsultSlot = false) => {
+    // fetch handlers
+    const createEventHandler = (isAppointmentSlot = false, isConsultSlot = false) => {
 
         setEvents([...events, { ...selectedSlot, placeholder: true }])
 
@@ -130,7 +130,7 @@ function Schedule(props) {
             })
     }
 
-    const updateSelectedEventHandeler = () => {
+    const updateSelectedEventHandler = () => {
         // setLoading(true)
         let filteredEvents = [...events].filter(e => e.id !== selectedEvent.id)
         setEvents([...filteredEvents, { ...selectedEvent, placeholder: true }])
@@ -161,7 +161,7 @@ function Schedule(props) {
             })
     }
 
-    const deleteSelectedEventHandeler = (deleteReps) => {
+    const deleteSelectedEventHandler = (deleteReps) => {
         let deleteFutureReps = deleteReps === "future"
 
         let filteredEvents = [...events].filter(e => e.id !== selectedEvent.id)
@@ -209,7 +209,7 @@ function Schedule(props) {
         let foundUser = props.users.find(u => u.email === input.email)
         if (foundUser) return <>
             <Icon name='user' />
-            <span style={{ cursor: "pointer" }} onClick={() => window.loction = `/clients/${foundUser.id}`}>{foundUser.first_name + " " + foundUser.last_name}</span>
+            <span style={{ cursor: "pointer" }} onClick={() => window.location = `/clients/${foundUser.id}`}>{foundUser.first_name + " " + foundUser.last_name}</span>
         </>
 
         return <>
@@ -234,7 +234,7 @@ function Schedule(props) {
 
 
     // time setting components
-    const changeDayHandeler = (dt, event, setStateAction) => {
+    const changeDayHandler = (dt, event, setStateAction) => {
         let dateTime = new Date(dt)
         let newMonth = dateTime.getMonth()
         let newDay = dateTime.getDate()
@@ -275,7 +275,7 @@ function Schedule(props) {
                 on="click"
                 content={
                     <DayPicker
-                        onDayClick={(dt) => changeDayHandeler(dt, event, setStateAction)}
+                        onDayClick={(dt) => changeDayHandler(dt, event, setStateAction)}
                         selectedDays={new Date(event.start_time)}
                     />
                 }
@@ -305,7 +305,7 @@ function Schedule(props) {
     }
 
     // creating event helpers
-    const selectSlotHandeler = (e) => {
+    const selectSlotHandler = (e) => {
         if (props.current_user.admin) setSelectedSlot({ ...e, title: "", location: "", start_time: e.start, end_time: e.end, personal: false, extended_properties: { private: { skype: "false", paid: "false" } } })
     }
 
@@ -352,7 +352,7 @@ function Schedule(props) {
                         placeholder='42 Wallaby Way Sydney'
                     />
                 </Form.Field>
-                <Button loading={loading} color="green" onClick={() => createEventHandeler(false)} type="submit">Create</Button>
+                <Button loading={loading} color="green" onClick={() => createEventHandler(false)} type="submit">Create</Button>
             </Form>
         </Segment>
     }
@@ -377,14 +377,14 @@ function Schedule(props) {
             <Dropdown onChange={(e, d) => setSelectedSlot({ ...selectedSlot, recurrence: { freq: d.value } })} defaultValue={null} placeholder='No Repeat' options={repeatOptions} />
 
             <div>
-                <Button content="Create New Appointment" icon="bookmark" loading={loading} disabled={!selectedSlot.attendees || selectedSlot.attendees.length < 1 ? true : false} primary onClick={() => createEventHandeler(false)} />
-                <Popup content='This will create a "bookable" appointment slot visable to all clients.' trigger={<Button disabled={selectedSlot.attendees && selectedSlot.attendees.length > 0 ? true : false} icon="calendar" loading={loading} color="grey" onClick={() => createEventHandeler(true)} content="Create Appointment Slot" />} />
-                <Popup content='This will create a "bookable" consultation slot visable to all clients.' trigger={<Button disabled={selectedSlot.attendees && selectedSlot.attendees.length > 0 ? true : false} loading={loading} color="yellow" onClick={() => createEventHandeler(false, true)} icon="phone" content="Create Consult Slot" />} />
+                <Button content="Create New Appointment" icon="bookmark" loading={loading} disabled={!selectedSlot.attendees || selectedSlot.attendees.length < 1 ? true : false} primary onClick={() => createEventHandler(false)} />
+                <Popup content='This will create a "bookable" appointment slot visible to all clients.' trigger={<Button disabled={selectedSlot.attendees && selectedSlot.attendees.length > 0 ? true : false} icon="calendar" loading={loading} color="grey" onClick={() => createEventHandler(true)} content="Create Appointment Slot" />} />
+                <Popup content='This will create a "bookable" consultation slot visible to all clients.' trigger={<Button disabled={selectedSlot.attendees && selectedSlot.attendees.length > 0 ? true : false} loading={loading} color="yellow" onClick={() => createEventHandler(false, true)} icon="phone" content="Create Consult Slot" />} />
             </div>
             <div >
                 {showEventAttendees(e, removeAttendeeFromEvent, setSelectedSlot)}
             </div>
-            <UserPickerDropDown current_user={props.current_user} users={props.users} event={e} addAttendeeHandeler={(u) => addAttendeeToEvent(u, selectedSlot, setSelectedSlot)} />
+            <UserPickerDropDown current_user={props.current_user} users={props.users} event={e} addAttendeeHandler={(u) => addAttendeeToEvent(u, selectedSlot, setSelectedSlot)} />
             <Form style={{ display: !selectedSlot.attendees || selectedSlot.attendees.length < 1 ? "none" : "block" }}>
                 <Form.Group inline >
                     <Form.Field>
@@ -437,7 +437,7 @@ function Schedule(props) {
                     {e.calendar.id === props.current_user.google_calendar_email ? null :
                         <>
                             <Divider hidden />
-                            <UserPickerDropDown current_user={props.current_user} users={props.users} event={e} addAttendeeHandeler={(u) => addAttendeeToEvent(u, selectedEvent, setSelectedEvent)} />
+                            <UserPickerDropDown current_user={props.current_user} users={props.users} event={e} addAttendeeHandler={(u) => addAttendeeToEvent(u, selectedEvent, setSelectedEvent)} />
                         </>
                     }
                     <Divider hidden />
@@ -465,10 +465,10 @@ function Schedule(props) {
                 </ModalContent>
             }
             actions={[
-                { key: "delete", content: "Delete", onClick: () => deleteSelectedEventHandeler() },
-                { key: "deleteFuture", content: "Delete Self And All Repeats", onClick: () => deleteSelectedEventHandeler("future") },
+                { key: "delete", content: "Delete", onClick: () => deleteSelectedEventHandler() },
+                { key: "deleteFuture", content: "Delete Self And All Repeats", onClick: () => deleteSelectedEventHandler("future") },
                 { key: "Cancel", content: "Cancel", onClick: () => setSelectedEvent(null) },
-                { key: "save", content: "Save", onClick: () => updateSelectedEventHandeler() }
+                { key: "save", content: "Save", onClick: () => updateSelectedEventHandler() }
             ]}
         />
     }
@@ -522,9 +522,9 @@ function Schedule(props) {
                     views={['month', 'day', 'week']}
                     step={15}
                     timeslots={1}
-                    onSelectSlot={(e) => selectSlotHandeler(e)}
+                    onSelectSlot={(e) => selectSlotHandler(e)}
                     onViewChange={(e) => console.log("view change", e)}
-                    onRangeChange={(e) => { rangeChangeHandeler(e) }}
+                    onRangeChange={(e) => { rangeChangeHandler(e) }}
                 />
             </Dimmer.Dimmable>
 

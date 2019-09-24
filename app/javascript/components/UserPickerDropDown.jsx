@@ -24,15 +24,15 @@ function UserPickerDropDown(props) {
 
     }
 
-    const allUsersNotAttendingList = (event, addAttendeeHandeler) => {
+    const allUsersNotAttendingList = (event, addAttendeeHandler) => {
         let users = allUsersNotAttending(event)
         return users.map(user => (
-            <Dropdown.Item onClick={() => addAttendeeHandeler(user)} key={user.id} text={`${user.first_name} ${user.last_name}`} icon="user circle" />
+            <Dropdown.Item onClick={() => addAttendeeHandler(user)} key={user.id} text={`${user.first_name} ${user.last_name}`} icon="user circle" />
         ))
 
     }
 
-    const searchForUsersHandeler = (items, query) => {
+    const searchForUsersHandler = (items, query) => {
         let result = []
         for (let item of items) {
             if (item.props.text.toLowerCase().includes(query) || item.props.text.includes(query)) result.push(item)
@@ -48,8 +48,8 @@ function UserPickerDropDown(props) {
         labeled
         button
         className='icon'
-        search={searchForUsersHandeler}
-        options={allUsersNotAttendingList(event, props.addAttendeeHandeler)}
+        search={searchForUsersHandler}
+        options={allUsersNotAttendingList(event, props.addAttendeeHandler)}
     >
     </Dropdown>
 

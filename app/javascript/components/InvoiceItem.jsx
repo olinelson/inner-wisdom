@@ -16,7 +16,7 @@ function InvoiceItem(props) {
 
     // const [editable, setEditable] = useState(isEditable)
 
-    const updateItemHandeler = () => {
+    const updateItemHandler = () => {
         setLoading(true)
         fetch(`${process.env.BASE_URL}/stripe/invoice_items`, {
             method: "PATCH",
@@ -44,11 +44,7 @@ function InvoiceItem(props) {
                 if (props.invoice) {
 
                     props.refreshAction()
-                    // let filteredItems = { ...props.invoice }.lines.data.filter(item => item.id !== i.id)
-                    // props.setInvoice({ ...props.invoice, lines: { ...props.invoice.lines, data: [...filteredItems, res.updated_item] } })
                 }
-
-
             })
     }
 
@@ -67,7 +63,6 @@ function InvoiceItem(props) {
         })
             .then(res => res.json())
             .catch(error => {
-                // props.addNotification({ id: new Date, type: "alert", message: "Could not retreive events. Please try again. If this problem persists please contact your system administrator." })
                 console.error('Error:', error)
                 setLoading(false)
                 setModalOpen(false)
@@ -80,7 +75,7 @@ function InvoiceItem(props) {
     }
 
 
-    const deleteItemHandeler = () => {
+    const deleteItemHandler = () => {
         setDeleted(true)
         fetch(`${process.env.BASE_URL}/stripe/invoice_items/delete`, {
             method: "POST",
@@ -96,7 +91,6 @@ function InvoiceItem(props) {
         })
             .then(res => res.json())
             .catch(error => {
-                // props.addNotification({ id: new Date, type: "alert", message: "Could not retreive events. Please try again. If this problem persists please contact your system administrator." })
                 console.error('Error:', error)
                 setLoading(false)
                 setModalOpen(false)
@@ -146,7 +140,7 @@ function InvoiceItem(props) {
                         </Table.Row>
                     </Table.Body>
                 </Table>}
-                actions={['Cancel', { key: 'save', content: 'Save', positive: true, onClick: () => updateItemHandeler() }, { key: 'delete', content: 'Delete', negative: true, onClick: () => deleteItemHandeler() }]}
+                actions={['Cancel', { key: 'save', content: 'Save', positive: true, onClick: () => updateItemHandler() }, { key: 'delete', content: 'Delete', negative: true, onClick: () => deleteItemHandler() }]}
             />
             :
             <Table.Row disabled={deleted} >

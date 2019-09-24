@@ -7,7 +7,7 @@ export default function ClientConsentForm() {
         <Header as="h3" content="Client Information & Consent" />
         {/* <Divider hidden /> */}
         <Header as="h4" content="Welcome" />
-        <p>Clients’ privacy, rights and responsibilities are important issues. As a Psychologist registered with the Psychology Board of Australia, I follow the legal and ethical considerations that are outlined below. Please read and sign this form, then email it or bring it to your appointment. If you have any questions, don’t hesitate to ask.</p>
+        <p>Clients’ privacy, rights and responsibilities are important issues. As a Psychologist registered with the Psychology Board of Australia, I follow the legal and ethical considerations that are outlined below. Please read and sign this form, then email it or bring it to your appointment. If you have any questions, don't hesitate to ask.</p>
 
         <Header as="h4" content="Access To Client Information" />
         <p>As part of providing informed psychological assessment and counselling to you, I need to collect and record personal information that is relevant to your situation, such as your name, contact information, medical history and other information like summaries of what happens during sessions. </p>

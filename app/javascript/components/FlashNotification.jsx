@@ -11,15 +11,6 @@ let CustomMessage = styled(Message)`
         // width: 10rem;
     `
 
-let CustomContainer = styled.div`
-        border: 1px solid red;
-        display: grid;
-        justify-content: center;
-        padding: 1rem;
-        z-index: 1;
-        postion: absolute;
-    `
-
 function Notification(props) {
 
     const [messages, setMessages] = useState(props.notifications)

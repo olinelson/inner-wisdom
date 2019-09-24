@@ -29,7 +29,7 @@ function Nav(props) {
         return true
     }
 
-    const signOutHandeler = () => {
+    const signOutHandler = () => {
         fetch(`${process.env.BASE_URL}/users/sign_out`, {
             method: "DELETE",
             headers: {
@@ -153,7 +153,7 @@ function Nav(props) {
 
                     <Menu.Item>
                         <Icon name="sign out"></Icon>
-                        <a style={{ cursor: "pointer" }} onClick={signOutHandeler}>Sign Out</a>
+                        <a style={{ cursor: "pointer" }} onClick={signOutHandler}>Sign Out</a>
                     </Menu.Item>
                 </>
         }

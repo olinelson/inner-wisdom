@@ -58,13 +58,13 @@ function ClientShow(props) {
         return () => clearTimeout(timer);
     }, [notifications]);
 
-    const approveUserHandeler = () => {
+    const approveUserHandler = () => {
         setApproving(true)
         let editedUser = { ...user, approved: !user.approved }
-        editUserHandeler(editedUser)
+        editUserHandler(editedUser)
     }
 
-    const editUserHandeler = (editedUser = user) => {
+    const editUserHandler = (editedUser = user) => {
         fetch(`${process.env.BASE_URL}/clients/${user.id}`, {
             method: "PATCH",
             body: JSON.stringify({
@@ -90,7 +90,7 @@ function ClientShow(props) {
             })
     }
 
-    const deleteUserHandeler = () => {
+    const deleteUserHandler = () => {
         setDeleting(true)
         fetch(`${process.env.BASE_URL}/clients/${user.id}`, {
             method: "DELETE",
@@ -136,7 +136,7 @@ function ClientShow(props) {
             <Modal
                 size="small"
                 trigger={<Button basic content="edit" icon="edit" />}
-                actions={[{ key: 'cancel', content: "Cancel", basic: true, onClick: () => setUser(props.user) }, { key: 'save', disabled: emailError, content: "Save", positive: true, basic: true, onClick: () => editUserHandeler() }]}
+                actions={[{ key: 'cancel', content: "Cancel", basic: true, onClick: () => setUser(props.user) }, { key: 'save', disabled: emailError, content: "Save", positive: true, basic: true, onClick: () => editUserHandler() }]}
                 header="Edit User"
                 content={
                     <div style={{ margin: "1rem" }}>
@@ -175,7 +175,7 @@ function ClientShow(props) {
                 trigger={<Button loading={deleting} basic content="Delete User" icon="delete" />}
                 header={"Delete User"}
                 content="Are you sure you would like to delete this user? This cannot be undone."
-                actions={['Cancel', { key: 'delete', content: "Yes, Delete", negative: true, basic: true, onClick: () => deleteUserHandeler() }]}
+                actions={['Cancel', { key: 'delete', content: "Yes, Delete", negative: true, basic: true, onClick: () => deleteUserHandler() }]}
             />
 
 
@@ -193,8 +193,8 @@ function ClientShow(props) {
                             <><Button loading={approving} basic icon="check" content="Approve" /><Label basic color='red' pointing='left' content="Not Approved" /></>}
                     </Button>}
                 header={user.approved ? "Un Approve User" : "Approve User"}
-                content={user.approved ? "Are you sure you would like to un approve this user? They will no loger be able to book appointments, only phone consultations." : "Are you sure you would like to approve this user? This will enable them to book full appointments."}
-                actions={[{ key: 'cancel', basic: true, inverted: true, content: 'cancel' }, { basic: true, key: 'done', content: user.approved ? "Yes, Un Approve" : "Yes Approve", positive: true, onClick: () => approveUserHandeler() }]}
+                content={user.approved ? "Are you sure you would like to un approve this user? They will no longer be able to book appointments, only phone consultations." : "Are you sure you would like to approve this user? This will enable them to book full appointments."}
+                actions={[{ key: 'cancel', basic: true, inverted: true, content: 'cancel' }, { basic: true, key: 'done', content: user.approved ? "Yes, Un Approve" : "Yes Approve", positive: true, onClick: () => approveUserHandler() }]}
             />
             <hr />
             <h4>Address</h4>
