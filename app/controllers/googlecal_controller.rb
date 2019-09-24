@@ -280,8 +280,7 @@ class GooglecalController < ApplicationController
 
 def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true, recurrence: nil)
 
-
-
+    begin
         editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
             
             e.title = event["title"]
@@ -308,7 +307,10 @@ def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true, recurre
             end
         end
         render json: {editedEvent: editedEvent}
+    rescue
+        return
     end
+end
 
     def getScheduleEvents
 
