@@ -152,8 +152,9 @@ function Schedule(props) {
         })
             .then(response => response.json())
             .catch(error => {
-                setNotifications({ id: new Date, type: "alert", message: "There was an error updating this event. Please try again. If this problem persists please contact your system administrator." })
+                setNotifications([{ id: new Date, type: "alert", message: "There was an error updating this event. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
                 console.error('Error:', error)
+                setEvents([...events])
             })
             .then((r) => {
                 let filteredEvents = [...events].filter(e => e.id !== r.editedEvent.id)
