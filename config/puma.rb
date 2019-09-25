@@ -21,15 +21,10 @@ environment ENV.fetch("RAILS_ENV") { "production" }
 
 before_fork do
   require 'puma_worker_killer'
-    PumaWorkerKiller.config do |config|
-      config.ram           = 512 # mb
-      config.frequency     = 5    # seconds
-      # config.percent_usage = 0.98
-      config.percent_usage = 0.3
-      config.rolling_restart_frequency = 12 * 3600
-      config.reaper_status_logs = true
-    end
-    PumaWorkerKiller.start
+
+  PumaWorkerKiller.enable_rolling_restart(120) # Default is every 6 hours
+end
+
 end
 # Specifies the number of `workers` to boot in clustered mode.
 # Workers are forked webserver processes. If using threads and workers together
