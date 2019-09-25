@@ -16,13 +16,17 @@ port        ENV.fetch("PORT") { 3000 }
 
 # Specifies the `environment` that Puma will run in.
 #
-environment ENV.fetch("RAILS_ENV") { "development" }
+environment ENV.fetch("RAILS_ENV") { "production" }
 
 
 before_fork do
   require 'puma_worker_killer'
     PumaWorkerKiller.config do |config|
       config.ram           = 512 # mb
+      config.frequency     = 5    # seconds
+      config.percent_usage = 0.98
+      config.rolling_restart_frequency = 12 * 3600
+      config.reaper_status_logs = true
     end
     PumaWorkerKiller.start
 end
