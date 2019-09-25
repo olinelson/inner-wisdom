@@ -22,9 +22,7 @@ environment ENV.fetch("RAILS_ENV") { "production" }
 before_fork do
   require 'puma_worker_killer'
 
-  PumaWorkerKiller.enable_rolling_restart(120) # Default is every 6 hours
-end
-
+  PumaWorkerKiller.enable_rolling_restart # Default is every 6 hours
 end
 # Specifies the number of `workers` to boot in clustered mode.
 # Workers are forked webserver processes. If using threads and workers together
