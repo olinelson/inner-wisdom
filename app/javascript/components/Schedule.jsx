@@ -63,7 +63,7 @@ function Schedule(props) {
                 return () => clearTimeout(timer)
             }
 
-        }, 5000);
+        }, 3000);
         return () => clearTimeout(timer);
     }, [notifications]);
 
