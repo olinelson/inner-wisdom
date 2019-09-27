@@ -273,7 +273,7 @@ function InvoiceTableRow(props) {
             negative={invoice.status === "void"}
             key={invoice.number}>
 
-            <Table.Cell>{moment(invoice.created).format('Do MMM YYYY')}</Table.Cell>
+            {/* <Table.Cell>{moment(invoice.created).format('Do MMM YYYY')}</Table.Cell> */}
             <Table.Cell>{invoice.status}</Table.Cell>
             <Table.Cell>{invoice.number}</Table.Cell>
             <Table.Cell>{"$" + invoice.amount_due / 100}</Table.Cell>

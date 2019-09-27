@@ -54,7 +54,7 @@ function InvoiceList(props) {
                 <Table selectable basic="very" >
                     <Table.Header>
                         <Table.Row >
-                            <Table.HeaderCell>Created</Table.HeaderCell>
+                            {/* <Table.HeaderCell>Created</Table.HeaderCell> */}
                             <Table.HeaderCell>Status</Table.HeaderCell>
                             <Table.HeaderCell>Invoice No.</Table.HeaderCell>
                             <Table.HeaderCell>Amount Due</Table.HeaderCell>
