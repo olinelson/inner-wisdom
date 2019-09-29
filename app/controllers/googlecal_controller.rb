@@ -279,11 +279,23 @@ class GooglecalController < ApplicationController
     end
 
 def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true, recurrence: nil)
+    
+    if attendees && attendees.length > 0
+        event["title"] = attendees[0]["displayName"]
+        if attendees.length > 1
+            selection = attendees[1..attendees.length - 1]
+            selection.each { |a| event["title"] = event["title"] + ", " + a["displayName"]}
+        end
+    elsif cal.id === ENV["APPOINTMENTS_CALENDAR_ID"]
+        event["title"] = "Appointment Slot"
+    elsif cal.id === ENV["CONSULTS_CALENDAR_ID"]
+        event["title"] = "Consult Slot"
+    end
 
     begin
         editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
             
-            e.title = event["title"]
+            e.title =  event["title"]
             e.color_id = 2
             e.start_time = event["start_time"]
             e.end_time = event["end_time"]
