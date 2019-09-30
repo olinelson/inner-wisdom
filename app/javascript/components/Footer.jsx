@@ -101,7 +101,7 @@ function Footer(props) {
                     </FooterMenu>
 
                     <Header as='h6' icon='copyright' content={(new Date()).getFullYear() + " Inner Wisdom"} />
-
+                    <small>designed and developed by <a target="blank" href="http://olinelson.com">Oli Nelson</a></small>
                     <Divider hidden />
                 </FooterContainer>
 
