@@ -27,6 +27,7 @@ function InvoiceList(props) {
                 setLoading(false)
             })
             .then((res) => {
+                console.log(res)
                 setInvoices(res.invoices)
                 setLoading(false)
             })
