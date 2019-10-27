@@ -1,29 +1,41 @@
 class GooglecalController < ApplicationController
     before_action :initAppointmentsCal, :initConsultsCal, :createPersonalCalInstance
-    
+
+    @@appointmentsCal = nil
+    @@consultsCal = nil
+    @@personalCal = nil
+
     def initAppointmentsCal
+        if @@appointmentsCal != nil
+            return @@appointmentsCal
+        end
+        puts 'getting past it!!!!!!!!!!!!'
+
         begin
-            @appointmentsCal = Google::Calendar.new(
+            @@appointmentsCal = Google::Calendar.new(
                 :client_id     => ENV['GOOGLE_CLIENT_ID'], 
                 :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
                 :calendar      => ENV['APPOINTMENTS_CALENDAR_ID'],
                 :redirect_url  => ENV['GOOGLE_REDIRECT_URL']
                                 )
-                @appointmentsCal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])    
+                @@appointmentsCal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])    
             rescue
                 puts "login error"
         end 
     end
 
      def initConsultsCal
+        if @@consultsCal != nil
+            return @@consultsCal
+        end
         begin
-            @consultsCal = Google::Calendar.new(
+            @@consultsCal = Google::Calendar.new(
                 :client_id     => ENV['GOOGLE_CLIENT_ID'], 
                 :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
                 :calendar      => ENV['CONSULTS_CALENDAR_ID'],
                 :redirect_url  => ENV['GOOGLE_REDIRECT_URL']
                                 )
-                @consultsCal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])       
+                @@consultsCal.login_with_refresh_token(ENV['GOOGLE_REFRESH_TOKEN'])       
             rescue
                 puts "login error"
 
@@ -31,18 +43,22 @@ class GooglecalController < ApplicationController
     end
 
     def createPersonalCalInstance
+         if @@personalCal != nil
+                return @@personalCal
+            end
         if current_user && current_user.admin && current_user.google_calendar_email && current_user.google_calendar_refresh_token && current_user.google_calendar_refresh_token.length > 1
-
+            
+            puts 'past it personal!!!!!!!!!!'
             begin
                 calendar_address = current_user.google_calendar_email
-                @personalCal = Google::Calendar.new(
+                @@personalCal = Google::Calendar.new(
                     :client_id     => ENV['GOOGLE_CLIENT_ID'], 
                     :client_secret => ENV['GOOGLE_CLIENT_SECRET'],
                     :calendar      => calendar_address,
                     :redirect_url  => ENV['GOOGLE_REDIRECT_URL']
                                     )
 
-                @personalCal.login_with_refresh_token(current_user.google_calendar_refresh_token)               
+                @@personalCal.login_with_refresh_token(current_user.google_calendar_refresh_token)               
             rescue
                 puts "personal login error"
             end
@@ -72,17 +88,17 @@ class GooglecalController < ApplicationController
 
         if current_user.approved
             begin
-            appointments = @appointmentsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees || doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
+            appointments = @@appointmentsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees || doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
             rescue  
             end
             
             begin
-            consults = @consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
+            @consults = @consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
             rescue
             end
         else
             begin
-            consults = @consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees || doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
+            @consults = @consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees || doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
 
             rescue 
             end
@@ -94,13 +110,13 @@ class GooglecalController < ApplicationController
     def getUsersBookedEvents
         user = User.find(params["id"])
         begin
-            appointments = eventsInDateWindow(@appointmentsCal).select{|a| doAnyAttendeesHaveThisEmail(user.email, a.attendees)}
+            appointments = eventsInDateWindow(@@appointmentsCal).select{|a| doAnyAttendeesHaveThisEmail(user.email, a.attendees)}
         rescue
             appointments = []    
         end
 
         begin
-            consults = eventsInDateWindow(@consultsCal).select{|a| doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
+            @consults = eventsInDateWindow(@consultsCal).select{|a| doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
         rescue
             consults = []    
         end
@@ -120,14 +136,14 @@ class GooglecalController < ApplicationController
         calEnd = DateTime.parse(params["calEnd"])
 
         begin
-            appointments = @appointmentsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees}
+            appointments = @@appointmentsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees}
             rescue
             appointments = []    
         end
          
 
          begin
-            consults = @consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees}
+            @consults = @consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees}
             rescue
             consults = []    
         end
@@ -163,7 +179,7 @@ class GooglecalController < ApplicationController
 
         if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
              newTitle = skype === "true" || skype === true ? fullName + " | skype session confirmed" : fullName + " | session confirmed"
-            cal = @appointmentsCal
+            cal = @@appointmentsCal
 
             
             editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
@@ -193,7 +209,7 @@ class GooglecalController < ApplicationController
 
         if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
             newTitle = fullName + "| Phone Call Consultation"
-            cal = @consultsCal
+            @cal = @consultsCal
 
             editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
                  if e.attendees && e.attendees.length > 0
@@ -231,7 +247,7 @@ class GooglecalController < ApplicationController
 
         
           if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
-            cal = @appointmentsCal
+            cal = @@appointmentsCal
             if inGracePeriod
                 event["title"] =  "Available Appointment"
                 event["extended_properties"]["private"]["skype"] = "false"
@@ -239,7 +255,7 @@ class GooglecalController < ApplicationController
         end
 
         if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
-            cal = @consultsCal
+            @cal = @consultsCal
             if inGracePeriod
                 event["title"] =  "Consult Slot"
             end
@@ -330,19 +346,19 @@ end
         calEnd = DateTime.parse(params["calEnd"])
 
         begin
-            appointments = @appointmentsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500})
+            appointments = @@appointmentsCal.find_events_in_range(calStart,calEnd, options = {max_results: 100})
             rescue
             appointments = []    
         end
 
         begin
-            consults = @consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500})
+            consults = @@consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 100})
             rescue
             consults = []    
         end
 
         begin
-            personalEvents = @personalCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500})
+            personalEvents = @@personalCal.find_events_in_range(calStart,calEnd, options = {max_results: 100})
             rescue
             personalEvents = []    
         end
@@ -369,17 +385,17 @@ end
         end
 
         if newEvent["personal"]
-            return createGoogleEvent(cal: @personalCal, newEvent: newEvent, title: newEvent["title"])
+            return createGoogleEvent(cal: @@personalCal, newEvent: newEvent, title: newEvent["title"])
         end
 
         if params["appointmentSlot"]
-            return createGoogleEvent(cal: @appointmentsCal,newEvent: newEvent, title: "Appointment Slot", recurrence:  newEvent["recurrence"])
+            return createGoogleEvent(cal: @@appointmentsCal,newEvent: newEvent, title: "Appointment Slot", recurrence:  newEvent["recurrence"])
         end
         if params["consultSlot"]
-            return createGoogleEvent(cal: @consultsCal,newEvent: newEvent, title: "Consult Slot", recurrence:  newEvent["recurrence"])
+            return createGoogleEvent(cal: @@consultsCal,newEvent: newEvent, title: "Consult Slot", recurrence:  newEvent["recurrence"])
         end
         # if booked appointment
-        return createGoogleEvent(cal: @appointmentsCal, newEvent: newEvent, title: title, attendees: attendees, recurrence:  newEvent["recurrence"])
+        return createGoogleEvent(cal: @@appointmentsCal, newEvent: newEvent, title: title, attendees: attendees, recurrence:  newEvent["recurrence"])
     end
 
 
@@ -408,15 +424,15 @@ end
          deleteAllReps = params["deleteFutureReps"]
 
         if event["calendar"]["id"] === current_user.google_calendar_email
-                cal = @personalCal
+                @cal = @@personalCal
         end
 
         if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
-            cal = @appointmentsCal
+            cal = @@appointmentsCal
         end
 
         if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
-            cal = @consultsCal
+            @cal = @@consultsCal
         end
         
         results = cal.find_event_by_id(event["id"])
@@ -475,12 +491,12 @@ end
 
         #  personal
         if event["calendar"]["id"] === current_user.google_calendar_email
-                return editGoogleCalEvent(cal: @personalCal, event: event, recurrence:  event["recurrence"])
+                return editGoogleCalEvent(cal: @@personalCal, event: event, recurrence:  event["recurrence"])
         end
 
         # business
         if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
-                return editGoogleCalEvent(cal: @appointmentsCal, event: event, attendees: attendees, recurrence:  event["recurrence"])
+                return editGoogleCalEvent(cal: @@appointmentsCal, event: event, attendees: attendees, recurrence:  event["recurrence"])
         end
 
         if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
@@ -493,10 +509,10 @@ end
         cal = nil
         invoiceItems.each do |item|
             if item["metadata"]["type"] === "Appointment"
-                cal = @appointmentsCal
+                cal = @@appointmentsCal
             end
             if item["metadata"]["type"] === "Consult"
-                cal = @consultsCal
+                @cal = @consultsCal
             end
 
             foundItems = cal.find_events_by_extended_properties({ 'private' => {'stripe_id' => item["id"]} })
@@ -518,10 +534,10 @@ end
         cal = nil
 
         if invoice_item["type"] === "Appointment"
-            cal = @appointmentsCal
+            cal = @@appointmentsCal
         end
         if invoice_item["type"] === "Phone Consult"
-            cal = @appointmentsCal
+            cal = @@appointmentsCal
         end
         
         editedEvent = cal.find_or_create_event_by_id(invoice_item["google_event_id"]) do |e|
