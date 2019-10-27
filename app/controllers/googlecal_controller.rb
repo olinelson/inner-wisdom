@@ -9,7 +9,6 @@ class GooglecalController < ApplicationController
         if @@appointmentsCal != nil
             return @@appointmentsCal
         end
-        puts 'getting past it!!!!!!!!!!!!'
 
         begin
             @@appointmentsCal = Google::Calendar.new(
@@ -47,8 +46,6 @@ class GooglecalController < ApplicationController
                 return @@personalCal
             end
         if current_user && current_user.admin && current_user.google_calendar_email && current_user.google_calendar_refresh_token && current_user.google_calendar_refresh_token.length > 1
-            
-            puts 'past it personal!!!!!!!!!!'
             begin
                 calendar_address = current_user.google_calendar_email
                 @@personalCal = Google::Calendar.new(
@@ -93,12 +90,12 @@ class GooglecalController < ApplicationController
             end
             
             begin
-            @consults = @consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
+            @consults = @@consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
             rescue
             end
         else
             begin
-            @consults = @consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees || doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
+            @consults = @@consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees || doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
 
             rescue 
             end
@@ -116,7 +113,7 @@ class GooglecalController < ApplicationController
         end
 
         begin
-            @consults = eventsInDateWindow(@consultsCal).select{|a| doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
+            @consults = eventsInDateWindow(@@consultsCal).select{|a| doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
         rescue
             consults = []    
         end
@@ -143,7 +140,7 @@ class GooglecalController < ApplicationController
          
 
          begin
-            @consults = @consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees}
+            consults = @@consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees}
             rescue
             consults = []    
         end
@@ -209,7 +206,7 @@ class GooglecalController < ApplicationController
 
         if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
             newTitle = fullName + "| Phone Call Consultation"
-            @cal = @consultsCal
+            @cal = @@consultsCal
 
             editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
                  if e.attendees && e.attendees.length > 0
@@ -255,7 +252,7 @@ class GooglecalController < ApplicationController
         end
 
         if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
-            @cal = @consultsCal
+            @cal = @@consultsCal
             if inGracePeriod
                 event["title"] =  "Consult Slot"
             end
@@ -500,7 +497,7 @@ end
         end
 
         if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
-                return editGoogleCalEvent(cal: @consultsCal, event: event, attendees: attendees, recurrence:  event["recurrence"])
+                return editGoogleCalEvent(cal: @@consultsCal, event: event, attendees: attendees, recurrence:  event["recurrence"])
         end
     end
 
@@ -512,7 +509,7 @@ end
                 cal = @@appointmentsCal
             end
             if item["metadata"]["type"] === "Consult"
-                @cal = @consultsCal
+                @cal = @@consultsCal
             end
 
             foundItems = cal.find_events_by_extended_properties({ 'private' => {'stripe_id' => item["id"]} })
@@ -575,7 +572,6 @@ end
                     :redirect_url  => ENV['GOOGLE_REDIRECT_URL']
                                     ) 
          
-        
         refresh_token = cal.login_with_auth_code(authCode)   
         user.google_calendar_email = newEmail
         user.google_calendar_refresh_token = refresh_token
