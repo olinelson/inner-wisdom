@@ -509,7 +509,7 @@ end
                 cal = @@appointmentsCal
             end
             if item["metadata"]["type"] === "Consult"
-                @cal = @@consultsCal
+                cal = @@consultsCal
             end
 
             foundItems = cal.find_events_by_extended_properties({ 'private' => {'stripe_id' => item["id"]} })
