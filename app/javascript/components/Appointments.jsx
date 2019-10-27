@@ -287,6 +287,7 @@ function Appointments(props) {
             header={selectedEvent.title}
             content={<ModalContent>{showPrettyStartAndEndTime(selectedEvent)}
                 <p>{selectedEvent.location}</p>
+                <small>If you wish to reschedule this appointment simply cancel this one and choose another.</small>
             </ModalContent>}
             actions={[maybeShowCancelButtons(selectedEvent), { key: "Close", content: "Close", onClick: () => setEventModalOpen(false) }]}
         />
