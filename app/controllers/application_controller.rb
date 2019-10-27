@@ -15,6 +15,7 @@ class ApplicationController < ActionController::Base
       :phone_number,
       :medicare_number,
       :email,
+      :occupation
       
 
       ])
@@ -30,7 +31,8 @@ class ApplicationController < ActionController::Base
       :state,
       :post_code,
       :phone_number,
-      :approved
+      :approved,
+      :occupation
       ])
 
   end

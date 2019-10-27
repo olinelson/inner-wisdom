@@ -1,116 +1,121 @@
 <h2>Edit <%= resource_name.to_s.humanize %></h2>
 
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "ui form" }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+<%= render "devise/shared/error_messages", resource: resource %>
 
-   <div class="field">
-    <%= f.label :first_name %><br />
-    <%= f.text_field :first_name, autofocus: true %>
-  </div>
+<div class="field">
+  <%= f.label :first_name %><br />
+  <%= f.text_field :first_name, autofocus: true %>
+</div>
 
-   <div class="field">
-    <%= f.label :last_name %><br />
-    <%= f.text_field :last_name, autofocus: true %>
-  </div>
+<div class="field">
+  <%= f.label :last_name %><br />
+  <%= f.text_field :last_name, autofocus: true %>
+</div>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, type: "email", autofocus: true, autocomplete: "email" %>
-  </div>
+<div class="field">
+  <%= f.label :email %><br />
+  <%= f.email_field :email, type: "email", autofocus: true, autocomplete: "email" %>
+</div>
 
-   <div class="field">
-    <%= f.label :phone_number %><br />
-    <%= f.text_field :phone_number, autofocus: true %>
-  </div>
+<div class="field">
+  <%= f.label :phone_number %><br />
+  <%= f.text_field :phone_number, autofocus: true %>
+</div>
 
-  <hr>
+<hr>
 
-   <div class="field">
-    <%= f.label :street_address %><br />
-    <%= f.text_field :street_address, autofocus: true %>
-  </div>
+<div class="field">
+  <%= f.label :street_address %><br />
+  <%= f.text_field :street_address, autofocus: true %>
+</div>
 
-  <div class="field">
-    <%= f.label :apartment_number %><br />
-    <%= f.text_field :apartment_number, autofocus: true %>
-  </div>
+<div class="field">
+  <%= f.label :apartment_number %><br />
+  <%= f.text_field :apartment_number, autofocus: true %>
+</div>
 
-  <div class="field">
-    <%= f.label :suburb %><br />
-    <%= f.text_field :suburb, autofocus: true %>
-  </div>
+<div class="field">
+  <%= f.label :suburb %><br />
+  <%= f.text_field :suburb, autofocus: true %>
+</div>
 
-  <div class="field">
-    <%= f.label :state %><br />
-    <%= f.text_field :state, autofocus: true %>
-  </div>
+<div class="field">
+  <%= f.label :state %><br />
+  <%= f.text_field :state, autofocus: true %>
+</div>
 
-  <div class="field">
-    <%= f.label :post_code %><br />
-    <%= f.number_field :post_code, autofocus: true %>
-  </div>
+<div class="field">
+  <%= f.label :post_code %><br />
+  <%= f.number_field :post_code, autofocus: true %>
+</div>
 
-  <%if current_user.admin %>
+<div class="field">
+  <%= f.label :occupation %><br />
+  <%= f.text_field :occupation, required: true, autofocus: true %>
+</div>
 
-  <div class="field">
-    <%= f.label :google_calendar_email %><br />
-    <%= f.email_field :google_calendar_email, type: "email", autofocus: true, autocomplete: "email" %>
-  </div>
+<%if current_user.admin %>
 
-  <div class="field">
-    <%= f.label :google_calendar_refresh_token %><br />
-    <%= f.text_field :google_calendar_refresh_token, autofocus: true %>
-  </div>
+<div class="field">
+  <%= f.label :google_calendar_email %><br />
+  <%= f.email_field :google_calendar_email, type: "email", autofocus: true, autocomplete: "email" %>
+</div>
+
+<div class="field">
+  <%= f.label :google_calendar_refresh_token %><br />
+  <%= f.text_field :google_calendar_refresh_token, autofocus: true %>
+</div>
 <%end%>
 
-   <div class="field">
-    <%= f.label :medicare_number %><br />
-    <%= f.text_field :medicare_number, autofocus: true %>
-  </div>
+<div class="field">
+  <%= f.label :medicare_number %><br />
+  <%= f.text_field :medicare_number, autofocus: true %>
+</div>
 
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+<% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+<div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+<% end %>
+
+<div class="field">
+  <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
+  <%= f.password_field :password, autocomplete: "new-password" %>
+  <% if @minimum_password_length %>
+  <br />
+  <em><%= @minimum_password_length %> characters minimum</em>
   <% end %>
+</div>
 
-  <div class="field">
-    <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-    <% if @minimum_password_length %>
-      <br />
-      <em><%= @minimum_password_length %> characters minimum</em>
-    <% end %>
-  </div>
+<div class="field">
+  <%= f.label :password_confirmation %><br />
+  <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+</div>
 
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
+<div class="field">
+  <%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
+  <%= f.password_field :current_password, autocomplete: "current-password" %>
+</div>
 
-  <div class="field">
-    <%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
-    <%= f.password_field :current_password, autocomplete: "current-password" %>
-  </div>
-
-  <div class="actions">
+<div class="actions">
   <input type="submit" class="ui button" value="Update">
 
-  </div>
+</div>
 <% end %>
 
 <h3>Cancel my account</h3>
 
-<p>Unhappy? 
+<p>Unhappy?
   <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :delete}) do |f| %>
   <input type="submit" class="ui button" value="Cancel my account">
-<% end %>
+  <% end %>
 
 
 
 
 </p>
-  
 
 
- 
+
+
 
 <%= link_to "Back", :back %>

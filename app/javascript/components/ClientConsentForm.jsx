@@ -30,9 +30,15 @@ export default function ClientConsentForm() {
             <li>disclosure is otherwise required or authorised by law, eg. mandatory reporting of child abuse.</li>
         </ol>
 
-        <p>Your personal information is not disclosed to overseas recipients, unless you consent, or such disclosure is otherwise required by law. Your personal information will not be used, sold, rented or disclosed for any other purpose.</p>
+        <p>Your personal information will not be used, sold, rented or disclosed for any other purpose.</p>
 
         <Header as="h4" content="Cancellation Policy" />
         <p>If, for some reason you need to cancel or postpone your appointment, please give at least 24 hours’ notice, otherwise you will be charged the cost for the session.</p>
+
+        <Header as="h4" content="Fees for Psychological treatment" />
+        <p>The Australian Psychological Society recommended fee is $254/hour. My standard fee is $160 for individuals and $200 for couples. If you have a referral from your GP- a Mental Health Care Plan- Medicare subsides up to 10 sessions a calendar year and you will only pay an $80 gap fee. For pensioners, unemployed people and fulltime students, the gap fee is $50. Many Health Funds also cover psychology. Fees will be discussed at your initial free phone consultation.</p>
+
+        <p>If you have any questions about these terms and conditions, please speak with Susan.</p>
+
     </>
 }

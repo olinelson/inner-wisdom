@@ -140,6 +140,7 @@ function MyAccount(props) {
             {/* <h1>Account Details</h1> */}
             <h4>{user.first_name} {user.last_name}</h4>
             <h4>{user.email}</h4>
+            <h4>{user.occupation}</h4>
             <a href={`${process.env.BASE_URL}/users/edit`}>Change Details</a>
 
 

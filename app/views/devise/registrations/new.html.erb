@@ -1,120 +1,125 @@
 <h1>Sign up</h1>
-  <%= render "devise/shared/error_messages", resource: resource %>
+<%= render "devise/shared/error_messages", resource: resource %>
 
 
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name), :html => {class: 'ui form' } ) do |f| %>
- 
+
 
 <h4 class="ui header">
   <i aria-hidden="true" class="user icon"></i>
   <div class="content">Personal Details</div>
 </h4>
 
-  <div class="fields">
+<div class="fields">
   <div class="field">
     <%= f.label :first_name %><br />
     <%= f.text_field :first_name, autofocus: true, required: true, placeholder: "Sigmund" %>
   </div>
 
-   <div class="field">
+  <div class="field">
     <%= f.label :last_name %><br />
     <%= f.text_field :last_name, autofocus: true, required: true, placeholder: "Freud" %>
   </div>
-  </div>
+</div>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, type: 'email', autofocus: true,required: true, autocomplete: "email", placeholder: "sigmund_freud@gmail.com" %>
-  </div>
+<div class="field">
+  <%= f.label :email %><br />
+  <%= f.email_field :email, type: 'email', autofocus: true,required: true, autocomplete: "email", placeholder: "sigmund_freud@gmail.com" %>
+</div>
 
-  <div class="field">
-    <%= f.label :phone_number %><br />
-    <%= f.text_field :phone_number,required: true, autofocus: true,placeholder: "0402 123 123" %>
-  </div>
+<div class="field">
+  <%= f.label :phone_number %><br />
+  <%= f.text_field :phone_number,required: true, autofocus: true,placeholder: "0402 123 123" %>
+</div>
 
-  <div class="ui divider hidden"></div>
+<div class="ui divider hidden"></div>
 
-  <h4 class="ui header">
+<h4 class="ui header">
   <i aria-hidden="true" class="building icon"></i>
   <div class="content">Address <small style="color:grey;">(optional)</small></div>
-  </h4>
+</h4>
 
-  <div class="fields">
+<div class="fields">
 
-    <div class="field">
-      <%= f.label :street_address %><br />
-      <%= f.text_field :street_address, autofocus: true, placeholder: "42 Wallaby Way" %>
-    </div>
-
-    <div class="field">
-      <%= f.label :apartment_number %><br />
-      <%= f.text_field :apartment_number, autofocus: true, placeholder: "Apt 1" %>
-    </div>
+  <div class="field">
+    <%= f.label :street_address %><br />
+    <%= f.text_field :street_address, autofocus: true, placeholder: "42 Wallaby Way" %>
   </div>
 
-  <div class="fields">
-    <div class="field">
-      <%= f.label :suburb %><br />
-      <%= f.text_field :suburb, autofocus: true, placeholder: "Sydney" %>
-    </div>
+  <div class="field">
+    <%= f.label :apartment_number %><br />
+    <%= f.text_field :apartment_number, autofocus: true, placeholder: "Apt 1" %>
+  </div>
+</div>
 
-    <div class="field">
-      <%= f.label :state %><br />
-      <%= f.select :state, [ 'NSW', 'QLD', 'VIC', 'SA', 'WA', 'TAS', 'ACT', 'NT' ], :prompt => 'Select One' %>
-    </div>
-
-    
-
-    <div class="field">
-      <%= f.label :post_code %><br />
-      <%= f.number_field :post_code, autofocus: true, placeholder: "2000" %>
-    </div>
+<div class="fields">
+  <div class="field">
+    <%= f.label :suburb %><br />
+    <%= f.text_field :suburb, autofocus: true, placeholder: "Sydney" %>
   </div>
 
-  <h4 class="ui header">
+  <div class="field">
+    <%= f.label :state %><br />
+    <%= f.select :state, [ 'NSW', 'QLD', 'VIC', 'SA', 'WA', 'TAS', 'ACT', 'NT' ], :prompt => 'Select One' %>
+  </div>
+
+
+
+  <div class="field">
+    <%= f.label :post_code %><br />
+    <%= f.number_field :post_code, autofocus: true, placeholder: "2000" %>
+  </div>
+</div>
+
+<h4 class="ui header">
   <i aria-hidden="true" class="medkit icon"></i>
   <div class="content">Health Fund <small style="color:grey;">(optional)</small></div>
 
-  </h4>
+</h4>
 
-   <div class="field">
-      <%= f.label :medicare_number %><br />
-      <%= f.number_field :medicare_number, autofocus: true, placeholder: "123456781" %>
-    </div>
+<div class="field">
+  <%= f.label :medicare_number %><br />
+  <%= f.number_field :medicare_number, autofocus: true, placeholder: "123456781" %>
+</div>
+
+<div class="field">
+  <%= f.label :occupation %><br />
+  <%= f.text_field :occupation, required: true, autofocus: true %>
+</div>
 
 
-  <div class="ui divider hidden"></div>
+<div class="ui divider hidden"></div>
 
-  <h4 class="ui header">
+<h4 class="ui header">
   <i aria-hidden="true" class="key icon"></i>
   <div class="content">Password</div>
-  </h4>
+</h4>
 
 
-  <div class="field">
-    <%= f.label :password %>
-    <% if @minimum_password_length %>
-    <em>(<%= @minimum_password_length %> characters minimum)</em>
-    <% end %><br />
-    <%= f.password_field :password,required: true, autocomplete: "new-password" %>
-  </div>
+<div class="field">
+  <%= f.label :password %>
+  <% if @minimum_password_length %>
+  <em>(<%= @minimum_password_length %> characters minimum)</em>
+  <% end %><br />
+  <%= f.password_field :password,required: true, autocomplete: "new-password" %>
+</div>
 
-  <div class="field">
-    <%= f.label :password_confirmation  %><br />
-    <%= f.password_field :password_confirmation, required: true, autocomplete: "new-password" %>
-  </div>
+<div class="field">
+  <%= f.label :password_confirmation  %><br />
+  <%= f.password_field :password_confirmation, required: true, autocomplete: "new-password" %>
+</div>
 
-  
+
 <div class="ui checkbox">
   <input type="checkbox" required />
   <label><%= react_component('UserConsentCheckbox', resource: resource) %></label>
 </div>
 
-  <div class="ui divider hidden"></div>
+<div class="ui divider hidden"></div>
 
-  <div class="actions">
-    <input class="ui button" type="submit" value="Sign Up" />
-  </div>
+<div class="actions">
+  <input class="ui button" type="submit" value="Sign Up" />
+</div>
 <% end %>
 
 <%= render "devise/shared/links" %>
