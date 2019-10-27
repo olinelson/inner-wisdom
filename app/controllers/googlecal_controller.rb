@@ -90,12 +90,12 @@ class GooglecalController < ApplicationController
             end
             
             begin
-            @consults = @@consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
+            consults = @@consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
             rescue
             end
         else
             begin
-            @consults = @@consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees || doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
+            consults = @@consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 2500}).select{|a| !a.attendees || doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
 
             rescue 
             end
@@ -206,7 +206,7 @@ class GooglecalController < ApplicationController
 
         if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
             newTitle = fullName + "| Phone Call Consultation"
-            @cal = @@consultsCal
+            cal = @@consultsCal
 
             editedEvent = cal.find_or_create_event_by_id(event["id"]) do |e|
                  if e.attendees && e.attendees.length > 0
@@ -252,7 +252,7 @@ class GooglecalController < ApplicationController
         end
 
         if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
-            @cal = @@consultsCal
+            cal = @@consultsCal
             if inGracePeriod
                 event["title"] =  "Consult Slot"
             end
