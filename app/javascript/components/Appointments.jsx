@@ -360,6 +360,7 @@ function Appointments(props) {
                     <p>This is confirmation that your booking has been confirmed. Here are the details. You will receive an email confirmation.</p>
                     {showPrettyStartAndEndTime(confirmation.event)}
                     <p>{confirmation.event.location}</p>
+                    <small>If you wish to reschedule this appointment simply cancel this one and choose another.</small>
                 </ModalContent>}
                 actions={["Close"]}
             />
