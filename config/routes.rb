@@ -74,6 +74,5 @@ Rails.application.routes.draw do
   get "/clients" => "pages#clients"
   get "/blog" => "pages#blog"
 
-  
 
 end
