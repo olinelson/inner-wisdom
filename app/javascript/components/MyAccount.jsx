@@ -86,6 +86,8 @@ function MyAccount(props) {
 
     }
 
+    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
+
     const genNewCalAuthUrl = () => {
         fetch(`${process.env.BASE_URL}/googlecal/url`, {
             method: "POST",
@@ -93,7 +95,7 @@ function MyAccount(props) {
                 newPersonalEmail
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -114,7 +116,7 @@ function MyAccount(props) {
                 authCode
             }),
             headers: {
-                "X-CSRF-Token": props.csrfToken,
+                "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
