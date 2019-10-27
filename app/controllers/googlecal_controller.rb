@@ -343,19 +343,19 @@ end
         calEnd = DateTime.parse(params["calEnd"])
 
         begin
-            appointments = @@appointmentsCal.find_events_in_range(calStart,calEnd, options = {max_results: 100})
+            appointments = @@appointmentsCal.find_events_in_range(calStart,calEnd, options = {max_results: 1500})
             rescue
             appointments = []    
         end
 
         begin
-            consults = @@consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 100})
+            consults = @@consultsCal.find_events_in_range(calStart,calEnd, options = {max_results: 1500})
             rescue
             consults = []    
         end
 
         begin
-            personalEvents = @@personalCal.find_events_in_range(calStart,calEnd, options = {max_results: 100})
+            personalEvents = @@personalCal.find_events_in_range(calStart,calEnd, options = {max_results: 1500})
             rescue
             personalEvents = []    
         end
