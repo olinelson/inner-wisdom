@@ -32,7 +32,7 @@ before_fork do
     config.pre_term = -> (worker) { puts "Worker #{worker.inspect} being killed" }
   end
 
-  # PumaWorkerKiller.start# Default is every 6 hours
+  PumaWorkerKiller.start# Default is every 6 hours
 end
 # Specifies the number of `workers` to boot in clustered mode.
 # Workers are forked webserver processes. If using threads and workers together
