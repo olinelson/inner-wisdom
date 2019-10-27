@@ -410,7 +410,7 @@ function Appointments(props) {
                 <h1>Appointments</h1>
                 <p>To make a booking click on an appointment in the calendar below.</p>
                 {props.current_user && props.current_user.approved === false ?
-                    <p>Please choose a suitable time for your free 15 minute phone consultation. If we decide to go ahead you will be able to book full length Skype and in-person appointments.</p>
+                    <p>Please choose a suitable time for your free 15 minute phone consultation. Once booked, Sue will call you at the arranged time. After your phone consult is completed and we have decided to go ahead you will be able to book full length Skype and in-person appointments.</p>
                     : null
                 }
             </div>

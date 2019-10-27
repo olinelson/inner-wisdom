@@ -1,7 +1,10 @@
 <html>
-  <p>Hi, <%= @user.first_name %></p>
-  <p>This is confirmation of your phone call consultation at:</p>
-  <p><%=@time%></p>
-  <br/>
-  <p>If you need to reschedule or cancel your appointment go to <a target="_blank" href="<%=ENV["BASE_URL"]%>/users/sign_in">your appointments</a>.
+<p>Hi, <%= @user.first_name %></p>
+<p>This is confirmation of your phone call consultation at:</p>
+<p><%=@time%></p>
+<br />
+<p>Sue will call you at this time.</p>
+<p>If you need to reschedule or cancel your appointment go to <a target="_blank"
+    href="<%=ENV["BASE_URL"]%>/users/sign_in">your appointments</a>.
+
 </html>

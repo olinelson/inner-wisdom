@@ -46,7 +46,7 @@ Stripe.api_key = ENV["STRIPE_KEY"]
         stripe_id = params["user"]["stripe_id"]
         event = params["event"]
         dateString =  DateTime.parse(event["start_time"])
-        description = "#{dateString.day}/#{dateString.month}/#{dateString.year} Psychological services"
+        description = "#{dateString.day}/#{dateString.month}/#{dateString.year} Supervision"
 
         if stripe_id == nil || stripe_id.length < 1
             Stripe.api_key = ENV["STRIPE_KEY"]

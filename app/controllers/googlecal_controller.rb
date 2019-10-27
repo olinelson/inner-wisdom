@@ -113,7 +113,7 @@ class GooglecalController < ApplicationController
         end
 
         begin
-            @consults = eventsInDateWindow(@@consultsCal).select{|a| doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
+            consults = eventsInDateWindow(@@consultsCal).select{|a| doAnyAttendeesHaveThisEmail(current_user.email, a.attendees)}
         rescue
             consults = []    
         end
