@@ -17,16 +17,16 @@ admin:
   phone_number: '12345678'
   admin: true
 
-newClient:
-  first_name: 'newClient'
+unapprovedClient:
+  first_name: 'unapprovedClient'
   last_name: 'Gregson'
   email: 'greg@greg.com'
   phone_number: '12345678'
   admin: false
   approved: false
 
-client:
-  first_name: 'client'
+approvedClient:
+  first_name: 'approvedClient'
   last_name: 'Timson'
   email: 'timg@tim.com'
   phone_number: '12345678'

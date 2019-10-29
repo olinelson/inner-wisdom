@@ -49,13 +49,13 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'if client goes to client show, redirected to my account' do
-    sign_in users(:client)
-    get "/clients/#{User.find_by(first_name: 'client').id}"
+    sign_in users(:approvedClient)
+    get "/clients/#{User.find_by(first_name: 'approvedClient').id}"
     assert_response :redirect
   end
 
   test 'admin can access client show' do
-    client = User.find_by(first_name: 'client')
+    client = User.find_by(first_name: 'approvedClient')
     sign_in users(:admin)
     get "/clients/#{client.id}"
     assert_response :success

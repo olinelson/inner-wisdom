@@ -1,6 +1,15 @@
 class StripeController < ApplicationController
 Stripe.api_key = ENV["STRIPE_KEY"]
 
+    before_action :authenticate_user!
+    before_action :isAdmin, except: [:get_customer_invoice_items, :get_customer_invoices]
+   
+    def isAdmin
+        if !current_user.admin
+            redirect_to new_user_session_path and return
+        end
+    end
+
     def get_customer_invoice_items
         customer = params["user"]["stripe_id"]
         invoice_items = []

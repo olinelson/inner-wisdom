@@ -1,4 +1,13 @@
 class PostsController < ApplicationController
+   before_action :authenticate_user! , except: [:showPost, :getAllPublishedPosts]
+   before_action :isAdmin, except: [:showPost, :getAllPublishedPosts]
+   
+   def isAdmin
+        if !current_user.admin
+            redirect_to blog_path and return
+        end
+    end
+
     def edit
         @post = Post.find(params[:id])
         editedPost = params[:editedPost]
@@ -40,7 +49,7 @@ class PostsController < ApplicationController
          render json: {posts: Post.select{|p| p.published === true}}
     end
 
-     def getAllPosts
+    def getAllPosts
         render json:  { posts: Post.order("created_at DESC")}
     end
 

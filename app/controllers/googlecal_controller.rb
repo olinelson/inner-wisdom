@@ -368,7 +368,6 @@ end
     end
 
      def createEvent
-
         newEvent = params["event"]
         title= ""
 
@@ -402,6 +401,7 @@ end
 
 
     def createGoogleEvent(cal:, newEvent:, title:, attendees: [], recurrence: nil)
+        
         begin
         event = cal.create_event do |e|
             e.title = title
@@ -413,8 +413,9 @@ end
             e.recurrence = recurrence ? {freq: recurrence["freq"], count: 50} : nil
             e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => "", 'skype' => newEvent["extended_properties"]["private"]["skype"] || false}}
         end
-
-        render json: {newEvent: event}
+        byebug
+        
+        render json: {newEvent: event} and return
          rescue
             return
          end
@@ -426,7 +427,7 @@ end
          deleteAllReps = params["deleteFutureReps"]
 
         if event["calendar"]["id"] === current_user.google_calendar_email
-                @cal = @@personalCal
+                cal = @@personalCal
         end
 
         if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
@@ -434,7 +435,7 @@ end
         end
 
         if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
-            @cal = @@consultsCal
+            cal = @@consultsCal
         end
         
         results = cal.find_event_by_id(event["id"])
