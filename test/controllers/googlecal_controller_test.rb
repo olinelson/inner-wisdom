@@ -29,5 +29,14 @@ class GooglecalControllerTest < ActionDispatch::IntegrationTest
    assert body["consults"].length === 0
   end
 
+  test 'admin can get all events from schedule' do
+  sign_in users(:admin)
+
+   get "/events/schedule/#{Date.today}/#{Date.today + 1.weeks}"
+   body = JSON.parse(response.body)
+   assert body["appointments"].length > 1
+   assert body["consults"].length > 1
+  end
+
 
 end

@@ -1,5 +1,6 @@
 class GooglecalController < ApplicationController
     before_action :initAppointmentsCal, :initConsultsCal, :createPersonalCalInstance
+    before_action :authenticate_user! , only: [:getScheduleEvents]
 
     @@appointmentsCal = nil
     @@consultsCal = nil
@@ -338,6 +339,10 @@ end
 
     def getScheduleEvents
 
+        if !current_user.admin
+            render json: {error: 'Not Permitted'} and return
+        end
+
         calStart = DateTime.parse(params["calStart"])
         calEnd = DateTime.parse(params["calEnd"])
 
@@ -359,7 +364,7 @@ end
             personalEvents = []    
         end
 
-        render json: { events: appointments + consults + personalEvents}
+        render json: { events: appointments + consults + personalEvents, appointments: appointments, consults: consults}
     end
 
      def createEvent
