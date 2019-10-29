@@ -101,7 +101,7 @@ class GooglecalController < ApplicationController
             end
         end
 
-        render json: {events: appointments + consults}
+        render json: {events: appointments + consults, appointments: appointments, consults: consults}
     end
 
     def getUsersBookedEvents
@@ -144,7 +144,6 @@ class GooglecalController < ApplicationController
             rescue
             consults = []    
         end
-
         render json: { appointments: appointments, consults: consults}
     end
 
@@ -364,6 +363,7 @@ end
     end
 
      def createEvent
+
         newEvent = params["event"]
         title= ""
 

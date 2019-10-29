@@ -1,4 +1,7 @@
 class PagesController < ApplicationController
+    before_action :authenticate_user! , except: [:counselling, :supervision, :faqs, :contact, :home, :appointments, :blog]
+
+
     def counselling
          render react_component: 'Counselling'
     end
@@ -22,6 +25,9 @@ class PagesController < ApplicationController
     end
 
     def appointments
+        if current_user && current_user.admin
+            redirect_to schedule_url and return
+        end
         render react_component: 'Appointments', props: {current_user: current_user}
     end
 
@@ -30,7 +36,7 @@ class PagesController < ApplicationController
 
     end
     def schedule
-        if current_user.admin
+        if current_user && current_user.admin
             render react_component: 'Schedule', props: {current_user: current_user, users: User.where("admin = false").order(:first_name)}
         else
         redirect_to appointments_url and return
@@ -38,7 +44,7 @@ class PagesController < ApplicationController
     end
 
     def clients
-        if current_user.admin
+        if current_user && current_user.admin
             render react_component: 'Clients', props: {current_user: current_user, users: User.where("admin = false").order(:first_name)}
         else
         redirect_to appointments_url and return
@@ -46,7 +52,7 @@ class PagesController < ApplicationController
     end
 
     def clientShow
-        if current_user.admin
+        if current_user && current_user.admin
             user = User.find(params["id"])
             render react_component: 'ClientShow', props: {current_user: current_user, user: user}
         else

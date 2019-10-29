@@ -9,3 +9,26 @@
 #
 # two: {}
 # column: value
+
+admin:
+  first_name: 'admin'
+  last_name: 'Olafson'
+  email: 'olaf@olaf.com'
+  phone_number: '12345678'
+  admin: true
+
+newClient:
+  first_name: 'newClient'
+  last_name: 'Gregson'
+  email: 'greg@greg.com'
+  phone_number: '12345678'
+  admin: false
+  approved: false
+
+client:
+  first_name: 'client'
+  last_name: 'Timson'
+  email: 'timg@tim.com'
+  phone_number: '12345678'
+  admin: false
+  approved: true
