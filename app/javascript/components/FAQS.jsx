@@ -28,7 +28,7 @@ export default function FAQS() {
             key: 'medicare-rebate',
             title: 'What is the fee for psychological treatment? Are Medicare rebates available?',
             content: [
-                'The Australian Psychological Society recommended fee is $254/hour. My standard fee is $160 for individuals and $200 for couples. If you have a referral from your GP - a Mental Health Care Plan - Medicare subsides up to 10 sessions a calendar year and you will only pay an $80 gap fee.For pensioners, unemployed people and fulltime students, the gap fee is $50. Many Health Funds also cover psychology. Fees will be discussed at your initial free phone consultation.',
+                'The Australian Psychological Society recommended fee is $254/hour. My standard fee is $160 for individuals and $200 for couples. If you have a referral from your GP - a Mental Health Care Plan - Medicare subsides up to 10 sessions a calendar year and you will only pay an $80 gap fee. For pensioners, unemployed people and fulltime students, the gap fee is $50. Many Health Funds also cover psychology. Fees will be discussed at your initial free phone consultation.',
             ].join(' '),
         },
         {
