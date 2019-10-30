@@ -99,6 +99,7 @@ class GooglecalControllerTest < ActionDispatch::IntegrationTest
     assert body["deletedEvent"]
   end
   
+
   
 
 end
