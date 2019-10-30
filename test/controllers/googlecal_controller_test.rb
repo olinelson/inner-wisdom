@@ -1,14 +1,18 @@
 require 'test_helper'
 
 class GooglecalControllerTest < ActionDispatch::IntegrationTest
- 
+  @@appointmentSlot = nil
+  @@bookedAppointment = nil
+  @@consultSlot = nil
+  @@now = Time.now.utc + 3600
+  @@anHourFromNow = @@now + 3600 
+
   test 'anyone logged out can get free consoluts and events' do
     get "/events/public/#{Date.today}/#{Date.today + 1.weeks}"
     body = JSON.parse(response.body)
     assert body["appointments"]
     assert body["consults"]
   end
-
 
   # This assumes that there are some consult slots and appointment slots in the next week
   test 'unaproved clients can only see consults and existing appointments' do
@@ -35,13 +39,63 @@ class GooglecalControllerTest < ActionDispatch::IntegrationTest
     assert body["consults"].length > 1
   end
 
-  # test 'admin can create appointment slots' do
-  #   sign_in users(:admin)
-  #   post events_create_path, params: {event: {"slots"=>["2019-10-14T13:00:00.000Z"], "start"=>"2019-10-14T13:00:00.000Z", "end"=>"2019-10-14T13:00:00.000Z", "action"=>"click", "box"=>{"x"=>304, "y"=>495, "clientX"=>304, "clientY"=>495}, "title"=>"", "location"=>"", "start_time"=>"2019-10-14T13:00:00.000Z", "end_time"=>"2019-10-14T13:00:00.000Z", "personal"=>false, "extended_properties"=>{"private"=>{"skype"=>"false", "paid"=>"false"}}}}
-  #   # byebug
-  #   # body = JSON.parse(response.body)
+  test 'admin can create appointment slots' do
+    sign_in users(:admin)
+    post events_create_path, params: {appointmentSlot: true, event: { "start"=>"#{@@now.to_json}", "end"=>"#{@@anHourFromNow.to_json}", "action"=>"click", "box"=>{"x"=>304, "y"=>495, "clientX"=>304, "clientY"=>495}, "title"=>"", "location"=>"", "start_time"=>"#{@@now.to_json}", "end_time"=>"#{@@anHourFromNow.to_json}", "extended_properties"=>{"private"=>{"skype"=>"false", "paid"=>"false"}}}}
+    body = JSON.parse(response.body)
+    @@appointmentSlot = body["newEvent"]
+    assert body["newEvent"]["id"].length
+    body["newEvent"]["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
+  end
 
-  # end
+  test 'admin can create consult slots' do
+    sign_in users(:admin)
+    post events_create_path, params: {consultSlot: true, event: {"slots"=>["#{@@now.to_json}"], "start"=>"#{@@now.to_json}", "end"=>"#{@@anHourFromNow.to_json}", "action"=>"click", "box"=>{"x"=>304, "y"=>495, "clientX"=>304, "clientY"=>495}, "title"=>"", "location"=>"", "start_time"=>"#{@@now.to_json}", "end_time"=>"#{@@anHourFromNow.to_json}", "extended_properties"=>{"private"=>{"skype"=>"false", "paid"=>"false"}}}}
+    body = JSON.parse(response.body)
+    @@consultSlot = body["newEvent"]
+    assert body["newEvent"]["id"].length
+    assert body["newEvent"]["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
+  end
 
+  test 'admin can create booked appointments' do
+    sign_in users(:admin)
+    approvedClient = User.find_by(first_name: 'approvedClient')
+    post events_create_path, params: { event: { attendees: [{ email: approvedClient.email, first_name: approvedClient.first_name, last_name: approvedClient.last_name}], "slots"=>["#{@@now.to_json}"], "start"=>"#{@@now.to_json}", "end"=>"#{@@anHourFromNow.to_json}", "action"=>"click", "box"=>{"x"=>304, "y"=>495, "clientX"=>304, "clientY"=>495}, "title"=>"", "location"=>"", "start_time"=>"#{@@now.to_json}", "end_time"=>"#{@@anHourFromNow.to_json}", "extended_properties"=>{"private"=>{"skype"=>"false", "paid"=>"false"}}}}
+    body = JSON.parse(response.body)
+    @@bookedAppointment = body["newEvent"]
+    assert ["id"].length
+    assert body["newEvent"]["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
+    assert body["newEvent"]["attendees"][0]["email"] === approvedClient.email
+  end
+
+  test 'unapproved clients can book consults' do
+    sign_in users(:unapprovedClient)
+    unapprovedClient = User.find_by(first_name: 'unapprovedClient')
+    post '/events/book', params: { event: @@consultSlot}
+    body = JSON.parse(response.body)
+    assert body["editedEvent"]["attendees"][0]["email"] === unapprovedClient.email
+  end
+
+  test 'admin can delete booked appointments' do
+    sign_in users(:admin)
+    post '/events/delete', params: {event: @@bookedAppointment}
+    body = JSON.parse(response.body)
+    assert body["deletedEvent"]
+  end
+
+  test 'admin can delete appointment slots' do
+    sign_in users(:admin)
+    post '/events/delete', params: {event: @@appointmentSlot}
+    body = JSON.parse(response.body)
+    assert body["deletedEvent"]
+  end
+
+  test 'admin can delete consults' do
+    sign_in users(:admin)
+    post '/events/delete', params: {event: @@consultSlot}
+    body = JSON.parse(response.body)
+    assert body["deletedEvent"]
+  end
+  
 
 end

@@ -154,11 +154,13 @@ class GooglecalController < ApplicationController
 
 
     def bookEvent
+
         user = current_user
         event = params["event"]
 
 
         if DateTime.parse(event["start_time"]).past?
+            puts 'event in past'
             raise "error"
         end
 
@@ -228,6 +230,7 @@ class GooglecalController < ApplicationController
              NotificationMailer.admin_consult_confirmation(user, jsonEvent).deliver_later
         
         end
+        
         render json:{editedEvent: editedEvent }
 
     end
@@ -368,6 +371,7 @@ end
     end
 
      def createEvent
+
         newEvent = params["event"]
         title= ""
 
@@ -386,13 +390,16 @@ end
         end
 
         if newEvent["personal"]
+            puts 'is personal'
             return createGoogleEvent(cal: @@personalCal, newEvent: newEvent, title: newEvent["title"])
         end
 
         if params["appointmentSlot"]
+             puts 'app slot'
             return createGoogleEvent(cal: @@appointmentsCal,newEvent: newEvent, title: "Appointment Slot", recurrence:  newEvent["recurrence"])
         end
         if params["consultSlot"]
+            puts 'consult slot'
             return createGoogleEvent(cal: @@consultsCal,newEvent: newEvent, title: "Consult Slot", recurrence:  newEvent["recurrence"])
         end
         # if booked appointment
@@ -401,7 +408,6 @@ end
 
 
     def createGoogleEvent(cal:, newEvent:, title:, attendees: [], recurrence: nil)
-        
         begin
         event = cal.create_event do |e|
             e.title = title
@@ -413,7 +419,7 @@ end
             e.recurrence = recurrence ? {freq: recurrence["freq"], count: 50} : nil
             e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => "", 'skype' => newEvent["extended_properties"]["private"]["skype"] || false}}
         end
-        byebug
+
         
         render json: {newEvent: event} and return
          rescue
