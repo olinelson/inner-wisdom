@@ -62,7 +62,6 @@ class GooglecalControllerTest < ActionDispatch::IntegrationTest
     approvedClient = User.find_by(first_name: 'approvedClient')
     post events_create_path, params: { event: { attendees: [{ email: approvedClient.email, first_name: approvedClient.first_name, last_name: approvedClient.last_name}], "slots"=>["#{@@now.to_json}"], "start"=>"#{@@now.to_json}", "end"=>"#{@@anHourFromNow.to_json}", "action"=>"click", "box"=>{"x"=>304, "y"=>495, "clientX"=>304, "clientY"=>495}, "title"=>"", "location"=>"", "start_time"=>"#{@@now.to_json}", "end_time"=>"#{@@anHourFromNow.to_json}", "extended_properties"=>{"private"=>{"skype"=>"false", "paid"=>"false"}}}}
     body = JSON.parse(response.body)
-    byebug
     @@bookedAppointment = body["newEvent"]
     assert ["id"].length
     assert body["newEvent"]["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
@@ -78,7 +77,6 @@ class GooglecalControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'admin can delete booked appointments' do
-    byebug
     sign_in users(:admin)
     post '/events/delete', params: {event: @@bookedAppointment}
     body = JSON.parse(response.body)
