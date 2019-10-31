@@ -7,9 +7,9 @@ class GooglecalController < ApplicationController
     @@personalCal = nil
 
     def initAppointmentsCal
-        if @@appointmentsCal != nil
-            return @@appointmentsCal
-        end
+        # if @@appointmentsCal != nil
+        #     return @@appointmentsCal
+        # end
 
         begin
             @@appointmentsCal = Google::Calendar.new(
@@ -25,9 +25,9 @@ class GooglecalController < ApplicationController
     end
 
      def initConsultsCal
-        if @@consultsCal != nil
-            return @@consultsCal
-        end
+        # if @@consultsCal != nil
+        #     return @@consultsCal
+        # end
         begin
             @@consultsCal = Google::Calendar.new(
                 :client_id     => ENV['GOOGLE_CLIENT_ID'], 
@@ -43,9 +43,9 @@ class GooglecalController < ApplicationController
     end
 
     def createPersonalCalInstance
-         if @@personalCal != nil
-                return @@personalCal
-            end
+        #  if @@personalCal != nil
+        #         return @@personalCal
+        #     end
         if current_user && current_user.admin && current_user.google_calendar_email && current_user.google_calendar_refresh_token && current_user.google_calendar_refresh_token.length > 1
             begin
                 calendar_address = current_user.google_calendar_email
