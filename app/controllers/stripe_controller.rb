@@ -100,6 +100,7 @@ Stripe.api_key = ENV["STRIPE_KEY"]
     def mark_invoice_as_paid
         invoice_id = params["invoice"]["id"]
         invoice = Stripe::Invoice.pay(invoice_id,  {paid_out_of_band: true})
+        invoice = Stripe::Invoice.send_invoice(invoice_id)
         render json: {invoice: invoice}
     end
 
