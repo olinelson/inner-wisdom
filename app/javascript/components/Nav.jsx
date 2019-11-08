@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Menu, Icon, Dropdown, Divider } from 'semantic-ui-react'
 import styled from "styled-components"
-import LinkOrATag from "./LinkOrATag"
+
 
 function Nav(props) {
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
@@ -82,8 +82,8 @@ function Nav(props) {
 
     const menuOptions = () => {
         return <>
-            <Menu.Item active={pathname === '/'} >
-                <LinkOrATag to="/" static={props.static}>Inner Wisdom</LinkOrATag>
+            <Menu.Item href={process.env.BASE_URL} active={pathname === '/'} >
+                Inner Wisdom
             </Menu.Item>
 
 
@@ -128,7 +128,6 @@ function Nav(props) {
             props.current_user == null ?
                 <Menu.Item href={`${process.env.BASE_URL}/users/sign_in`}>
                     <Icon name="sign in"></Icon>
-                    {/* <a href={`${process.env.BASE_URL}/users/sign_in`}>Sign In</a> */}
                     Sign In
                 </Menu.Item>
 
@@ -141,7 +140,7 @@ function Nav(props) {
                                 active={pathname === '/schedule'}
                             >
 
-                                {/* <LinkOrATag static={props.static} to="/schedule">Schedule</LinkOrATag> */}
+
                                 Schedule
                             </Menu.Item>
                             <Menu.Item
@@ -149,7 +148,7 @@ function Nav(props) {
                                 active={pathname === '/clients'}
                             >
                                 Clients
-                                {/* <LinkOrATag static={props.static} to="/clients">Clients</LinkOrATag> */}
+
                             </Menu.Item>
                         </>
                         : null}
