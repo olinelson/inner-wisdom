@@ -74,6 +74,7 @@ Rails.application.routes.draw do
   get "/schedule" => "pages#schedule"
   get "/clients" => "pages#clients"
   get "/blog" => "pages#blog"
+  get "/fees" => "pages#fees"
 
 
 end

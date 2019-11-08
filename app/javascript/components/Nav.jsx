@@ -22,6 +22,7 @@ function Nav(props) {
             pathname.includes('/training') ||
             pathname.includes('/contact') ||
             pathname.includes('/faqs') ||
+            pathname.includes('/fees') ||
             pathname === ""
 
         ) return false
@@ -87,30 +88,34 @@ function Nav(props) {
 
 
 
-            <Menu.Item active={pathname === '/counselling'} >
-                <LinkOrATag static={props.static} to="/counselling">Counselling</LinkOrATag>
+            <Menu.Item href={process.env.BASE_URL + '/counselling'} active={pathname === '/counselling'} >
+                Counselling
             </Menu.Item>
 
-            <Menu.Item active={pathname === '/supervision'} >
-                <LinkOrATag static={props.static} to="/supervision">Supervision & Training</LinkOrATag>
+            <Menu.Item href={process.env.BASE_URL + '/supervision'} active={pathname === '/supervision'} >
+                Supervision
             </Menu.Item>
 
-            <Menu.Item active={pathname === '/faqs'} >
-                <LinkOrATag static={props.static} to="/faqs">FAQs</LinkOrATag>
+            <Menu.Item href={process.env.BASE_URL + '/fees'} active={pathname === '/fees'} >
+                Fees
             </Menu.Item>
 
-            <Menu.Item active={pathname === '/blog'} >
-                <LinkOrATag static={props.static} to="/blog">Blog</LinkOrATag>
+            <Menu.Item href={process.env.BASE_URL + '/faqs'} active={pathname === '/faqs'} >
+                FAQs
             </Menu.Item>
-            <Menu.Item active={pathname === '/contact'} >
-                <LinkOrATag static={props.static} to="/contact">Contact</LinkOrATag>
+
+            <Menu.Item href={process.env.BASE_URL + '/blog'} active={pathname === '/blog'} >
+                Blog
+            </Menu.Item>
+
+            <Menu.Item href={process.env.BASE_URL + '/contact'} active={pathname === '/contact'} >
+                Contact
             </Menu.Item>
 
             {
                 props.current_user && props.current_user.admin ? null :
-                    <Menu.Item active={pathname === '/appointments'}>
-
-                        <LinkOrATag static={props.static} to="/appointments">Appointments</LinkOrATag>
+                    <Menu.Item href={process.env.BASE_URL + '/appointments'} active={pathname === '/appointments'}>
+                        Appointments
                     </Menu.Item>
             }
 
@@ -121,9 +126,10 @@ function Nav(props) {
     const UserMenuOptions = () => {
         return <> {
             props.current_user == null ?
-                <Menu.Item>
+                <Menu.Item href={`${process.env.BASE_URL}/users/sign_in`}>
                     <Icon name="sign in"></Icon>
-                    <a href={`${process.env.BASE_URL}/users/sign_in`}>Sign In</a>
+                    {/* <a href={`${process.env.BASE_URL}/users/sign_in`}>Sign In</a> */}
+                    Sign In
                 </Menu.Item>
 
                 :
@@ -131,29 +137,34 @@ function Nav(props) {
                     {props.current_user.admin === true ?
                         <>
                             <Menu.Item
+                                href={`${process.env.BASE_URL}/schedule`}
                                 active={pathname === '/schedule'}
                             >
 
-                                <LinkOrATag static={props.static} to="/schedule">Schedule</LinkOrATag>
+                                {/* <LinkOrATag static={props.static} to="/schedule">Schedule</LinkOrATag> */}
+                                Schedule
                             </Menu.Item>
                             <Menu.Item
+                                href={`${process.env.BASE_URL}/clients`}
                                 active={pathname === '/clients'}
                             >
-
-                                <LinkOrATag static={props.static} to="/clients">Clients</LinkOrATag>
+                                Clients
+                                {/* <LinkOrATag static={props.static} to="/clients">Clients</LinkOrATag> */}
                             </Menu.Item>
                         </>
                         : null}
                     <Menu.Item
+                        href={`${process.env.BASE_URL}/myaccount`}
                         active={pathname === '/myaccount'}
                     >
 
-                        <LinkOrATag static={props.static} to="/myaccount">My Account</LinkOrATag>
+                        My Account
                     </Menu.Item>
 
-                    <Menu.Item>
+                    <Menu.Item onClick={signOutHandler}>
                         <Icon name="sign out"></Icon>
-                        <a style={{ cursor: "pointer" }} onClick={signOutHandler}>Sign Out</a>
+                        {/* <a style={{ cursor: "pointer" }} onClick={signOutHandler}>Sign Out</a> */}
+                        Sign Out
                     </Menu.Item>
                 </>
         }

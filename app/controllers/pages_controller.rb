@@ -1,5 +1,5 @@
 class PagesController < ApplicationController
-    before_action :authenticate_user! , except: [:counselling, :supervision, :faqs, :contact, :home, :appointments, :blog]
+    before_action :authenticate_user! , except: [:counselling, :supervision, :faqs, :contact, :home, :appointments, :blog, :fees]
 
 
     def counselling
@@ -12,6 +12,9 @@ class PagesController < ApplicationController
 
     def faqs
         render react_component: 'FAQS'
+    end
+    def fees
+        render react_component: 'Fees'
     end
 
     def contact
