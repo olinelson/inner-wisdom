@@ -83,8 +83,6 @@ function Appointments(props) {
 
 
     const rangeChangeHandler = (e) => {
-
-        console.log('range change', e)
         // is this month, week, or day view?
         let start
         let end
@@ -107,13 +105,11 @@ function Appointments(props) {
 
 
         if (end > calRange.end) {
-            console.log('this is in the future - adding new events')
             getEventsInRange(calRange.end, end)
             return setCalRange({ start: calRange.start, end })
         }
 
         if (start < calRange.start) {
-            console.log('this is in the past - adding new events')
             getEventsInRange(start, calRange.start)
             return setCalRange({ start, end: calRange.end })
         }
@@ -129,20 +125,21 @@ function Appointments(props) {
             url = `${process.env.BASE_URL}/events/public/${start}/${end}`
         }
 
-        let res = await fetch(url, {
-            headers: {
-                "X-CSRF-Token": csrfToken,
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        })
-        res = await res.json()
         try {
+            let res = await fetch(url, {
+                headers: {
+                    "X-CSRF-Token": csrfToken,
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+
+            res = await res.json()
             setEvents([...events.concat(res.events)])
             setLoading(false)
         } catch (error) {
-            setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Please refresh the page and try again. If this problem persists please contact your system administrator." }, ...notifications])
+            setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Please check your internet connection and try again. If this problem persists please contact your system administrator." }, ...notifications])
             console.error('Error:', error)
             setLoading(false)
         }

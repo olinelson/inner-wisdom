@@ -101,20 +101,19 @@ function Schedule(props) {
     }
 
 
-    const getEventsInRange = (start = calRange.start, end = calRange.end) => {
+    const getEventsInRange = async (start = calRange.start, end = calRange.end) => {
         setLoading(true)
 
-        fetch(`${process.env.BASE_URL}/events/schedule/${start}/${end}`)
-            .then(response => response.json())
-            .catch(error => {
-                setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
-                console.error('Error:', error)
-                setLoading(false)
-            })
-            .then((r) => {
-                setEvents([...events.concat(r.events)])
-                setLoading(false)
-            })
+        try {
+            let res = await fetch(`${process.env.BASE_URL}/events/schedule/${start}/${end}`)
+            res = await res.json()
+            setEvents([...events.concat(res.events)])
+            setLoading(false)
+        } catch (error) {
+            setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Check your internet connection and try again. If this problem persists please contact your system administratores." }, ...notifications])
+            console.error('Error:', error)
+            setLoading(false)
+        }
     }
 
     // fetch handlers
