@@ -7,6 +7,9 @@ import moment from "moment"
 import Event from "./Event"
 import Message from "./Message"
 
+// need to change this to get public or private events in range
+// simplify routes?
+
 export const isUserAnAttendeeOfEvent = (event, user) => {
     if (event.attendees === null) return false
     for (let att of event.attendees) {
@@ -43,7 +46,7 @@ function Appointments(props) {
     const [notifications, setNotifications] = useState([])
 
     const [calRange, setCalRange] = useState({
-        start: moment().startOf('month')._d,
+        start: moment().startOf('month').subtract(1, 'months')._d,
         end: moment().endOf('month')._d,
     })
 
@@ -53,12 +56,8 @@ function Appointments(props) {
 
 
     useEffect(() => {
-        if (props.current_user) {
-            getPrivateEvents()
-        } else {
-            getPublicEvents()
-        }
-    }, [calRange]);
+        getEventsInRange()
+    }, []);
 
 
 
@@ -84,17 +83,53 @@ function Appointments(props) {
 
 
     const rangeChangeHandler = (e) => {
-        if (e.start && e.end) return setCalRange({ start: e.start, end: e.end })
 
-        if (e.length === 1) return setCalRange({ start: moment(e[0]).subtract(1, 'days')._d, end: moment(e[0]).add(1, 'days')._d })
+        console.log('range change', e)
+        // is this month, week, or day view?
+        let start
+        let end
 
-        if (e.length > 1) return setCalRange({ start: e[0], end: moment(e[e.length - 1])._d })
+        // month view
+        if (e.start && e.end) {
+            start = e.start
+            end = e.end
+        }
+        // day view
+        else if (e.length === 1) {
+            start = moment(e[0]).startOf('month')._d
+            end = moment(e[0]).endOf('month')._d
+        }
+        // week view
+        else if (e.length > 1) {
+            start = moment(e[0]).startOf('month')._d
+            end = moment(e[e.length - 1]).endOf('month')._d
+        }
+
+
+        if (end > calRange.end) {
+            console.log('this is in the future - adding new events')
+            getEventsInRange(calRange.end, end)
+            return setCalRange({ start: calRange.start, end })
+        }
+
+        if (start < calRange.start) {
+            console.log('this is in the past - adding new events')
+            getEventsInRange(start, calRange.start)
+            return setCalRange({ start, end: calRange.end })
+        }
     }
 
-    const getPrivateEvents = () => {
-        if (loading !== true) setLoading(true)
+    const getEventsInRange = async (start = calRange.start, end = calRange.end) => {
+        setLoading(true)
+        let url
 
-        fetch(`${process.env.BASE_URL}/events/current_user/${calRange.start}/${calRange.end}`, {
+        if (props.current_user) {
+            url = `${process.env.BASE_URL}/events/current_user/${start}/${end}`
+        } else {
+            url = `${process.env.BASE_URL}/events/public/${start}/${end}`
+        }
+
+        let res = await fetch(url, {
             headers: {
                 "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
@@ -102,36 +137,15 @@ function Appointments(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(r => r.json())
-            .catch(error => {
-                setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Please refresh the page and try again. If this problem persists please contact your system administrator." }, ...notifications])
-                console.error('Error:', error)
-                setLoading(false)
-            })
-            .then(r => {
-                setEvents(r.events)
-                setLoading(false)
-            })
-    }
-
-    const getPublicEvents = () => {
-        if (loading !== true) setLoading(true)
-        fetch(`${process.env.BASE_URL}/events/public/${calRange.start}/${calRange.end}`, {
-            headers: {
-                "X-CSRF-Token": csrfToken,
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "X-Requested-With": "XMLHttpRequest"
-            },
-        }).then(r => r.json())
-            .catch(error => {
-                setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Please refresh the page and try again. If this problem persists please contact your system administrator." }, ...notifications])
-                console.error('Error:', error)
-            })
-            .then(r => {
-                setEvents(r.appointments.concat(r.consults))
-                setLoading(false)
-            })
+        res = await res.json()
+        try {
+            setEvents([...events.concat(res.events)])
+            setLoading(false)
+        } catch (error) {
+            setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Please refresh the page and try again. If this problem persists please contact your system administrator." }, ...notifications])
+            console.error('Error:', error)
+            setLoading(false)
+        }
     }
 
     // fetch handlers

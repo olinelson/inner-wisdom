@@ -44,7 +44,7 @@ function Schedule(props) {
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
     useEffect(() => {
-        getAllEvents()
+        getEventsInRange()
     }, []);
 
     useEffect(() => {
@@ -90,42 +90,19 @@ function Schedule(props) {
 
 
         if (end > calRange.end) {
-            console.log('this is in the future - adding new events')
-            getEventsInRange({ start: calRange.end, end })
+            getEventsInRange(calRange.end, end)
             return setCalRange({ start: calRange.start, end })
         }
 
         if (start < calRange.start) {
-            console.log('this is in the past - adding new events')
-            getEventsInRange({ start, end: calRange.start })
+            getEventsInRange(start, calRange.start)
             return setCalRange({ start, end: calRange.end })
         }
     }
 
 
-
-
-    const getAllEvents = () => {
-        console.log('getting all events')
-        console.log(calRange)
-        if (loading === false) setLoading(true)
-
-        fetch(`${process.env.BASE_URL}/events/schedule/${calRange.start}/${calRange.end}`)
-            .then(response => response.json())
-            .catch(error => {
-                setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
-                console.error('Error:', error)
-                setLoading(false)
-            })
-            .then((r) => {
-                setEvents(r.events)
-                setLoading(false)
-            })
-    }
-    const getEventsInRange = ({ start, end }) => {
-        console.log('getting events in range')
-        console.log(start, end)
-        if (loading === false) setLoading(true)
+    const getEventsInRange = (start = calRange.start, end = calRange.end) => {
+        setLoading(true)
 
         fetch(`${process.env.BASE_URL}/events/schedule/${start}/${end}`)
             .then(response => response.json())
@@ -135,9 +112,6 @@ function Schedule(props) {
                 setLoading(false)
             })
             .then((r) => {
-                console.log(r)
-                console.log(events)
-                console.log('new', [...events.concat(r.events)])
                 setEvents([...events.concat(r.events)])
                 setLoading(false)
             })

@@ -145,7 +145,7 @@ class GooglecalController < ApplicationController
             rescue
             consults = []    
         end
-        render json: { appointments: appointments, consults: consults}
+        render json: { events: appointments + consults}
     end
 
     def futureEvents(cal, maxResults)
