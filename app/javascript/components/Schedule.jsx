@@ -45,7 +45,7 @@ function Schedule(props) {
 
     useEffect(() => {
         getAllEvents()
-    }, [calRange]);
+    }, []);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -68,17 +68,46 @@ function Schedule(props) {
     }, [notifications]);
 
     const rangeChangeHandler = (e) => {
-        if (e.start && e.end) return setCalRange({ start: e.start, end: e.end })
+        // is this month, week, or day view?
+        let start
+        let end
 
-        if (e.length === 1) return setCalRange({ start: moment(e[0]).subtract(1, 'days')._d, end: moment(e[0]).add(1, 'days')._d })
+        // month view
+        if (e.start && e.end) {
+            start = e.start
+            end = e.end
+        }
+        // day view
+        else if (e.length === 1) {
+            start = moment(e[0]).startOf('month')._d
+            end = moment(e[0]).endOf('month')._d
+        }
+        // week view
+        else if (e.length > 1) {
+            start = moment(e[0]).startOf('month')._d
+            end = moment(e[e.length - 1]).endOf('month')._d
+        }
 
-        if (e.length > 1) return setCalRange({ start: e[0], end: moment(e[e.length - 1])._d })
+
+        if (end > calRange.end) {
+            console.log('this is in the future - adding new events')
+            getEventsInRange({ start: calRange.end, end })
+            return setCalRange({ start: calRange.start, end })
+        }
+
+        if (start < calRange.start) {
+            console.log('this is in the past - adding new events')
+            getEventsInRange({ start, end: calRange.start })
+            return setCalRange({ start, end: calRange.end })
+        }
     }
 
 
 
 
     const getAllEvents = () => {
+        console.log('getting all events')
+        console.log(calRange)
         if (loading === false) setLoading(true)
 
         fetch(`${process.env.BASE_URL}/events/schedule/${calRange.start}/${calRange.end}`)
@@ -92,7 +121,26 @@ function Schedule(props) {
                 setEvents(r.events)
                 setLoading(false)
             })
+    }
+    const getEventsInRange = ({ start, end }) => {
+        console.log('getting events in range')
+        console.log(start, end)
+        if (loading === false) setLoading(true)
 
+        fetch(`${process.env.BASE_URL}/events/schedule/${start}/${end}`)
+            .then(response => response.json())
+            .catch(error => {
+                setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
+                console.error('Error:', error)
+                setLoading(false)
+            })
+            .then((r) => {
+                console.log(r)
+                console.log(events)
+                console.log('new', [...events.concat(r.events)])
+                setEvents([...events.concat(r.events)])
+                setLoading(false)
+            })
     }
 
     // fetch handlers
