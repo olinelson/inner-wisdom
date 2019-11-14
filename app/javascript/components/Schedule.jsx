@@ -37,7 +37,7 @@ function Schedule(props) {
     const [notifications, setNotifications] = useState([])
 
     const [calRange, setCalRange] = useState({
-        start: moment().startOf('month')._d,
+        start: moment().startOf('month').subtract(1, 'months')._d,
         end: moment().endOf('month')._d,
     })
 
