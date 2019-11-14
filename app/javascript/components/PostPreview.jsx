@@ -5,15 +5,14 @@ import { EditorState, convertFromRaw } from 'draft-js';
 
 
 function PostPreview(props) {
-    const p = props.post
+    const post = props.post
     const handleCardClick = (id) => {
-        // props.history.push(`/posts/${id}`)
         window.location = `/posts/${id}`
     }
 
     const [editorState, setEditorState] = useState(
-        props.post.body && props.post.body.length > 0 ?
-            EditorState.createWithContent(convertFromRaw(JSON.parse(props.post.body)))
+        post.body && post.body.length > 0 ?
+            EditorState.createWithContent(convertFromRaw(JSON.parse(post.body)))
             :
             EditorState.createEmpty()
     );
@@ -24,18 +23,18 @@ function PostPreview(props) {
 
         <Item
             style={{ cursor: "pointer" }}
-            key={p.id}
-            onClick={() => handleCardClick(p.id)}>
+            key={post.id}
+            onClick={() => handleCardClick(post.id)}>
 
             <Item.Content>
-                <Image alt="post preview thumbnail" floated='left' size="small" src={p.feature_image} />
-                <Item.Header>{p.title}</Item.Header>
+                <Image alt="post preview thumbnail" floated='left' size="small" src={post.feature_image} />
+                <Item.Header>{post.title}</Item.Header>
                 <Item.Meta>
-                    <span className='date'>Created {moment(p.created_at).format('Do MMMM  YYYY')}</span>
+                    <span className='date'>Created {moment(post.created_at).format('Do MMMM  YYYY')}</span>
                     {props.blogView ? null :
                         <>
                             {
-                                p.published ?
+                                post.published ?
                                     <Label>
                                         <Icon name='share alternate' /> Published
                         </Label>
@@ -51,7 +50,7 @@ function PostPreview(props) {
                 </Item.Meta>
                 <Item.Description>
                     <p>{firstParagraph}</p>
-                    {props.readMoreButton ? <a onClick={() => handleCardClick(p.id)}>Read more.</a> : null}
+                    {props.readMoreButton ? <a onClick={() => handleCardClick(post.id)}>Read more.</a> : null}
                 </Item.Description>
             </Item.Content>
         </Item>

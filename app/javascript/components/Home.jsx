@@ -9,13 +9,6 @@ import { Jumbotron, JumboMessage } from './StyledComponents'
 import Memberships from "./Memberships"
 function Home(props) {
 
-    useEffect(() => {
-        // window.scroll({
-        //     top: 0,
-        //     left: 0,
-        // })
-    }, []);
-
 
 
     const BasicCard = styled.div`
@@ -37,6 +30,7 @@ function Home(props) {
 
 
     const showRecentBlogPost = () => {
+        console.log(props)
         if (props.lastPost) {
             return <>
                 <Divider />

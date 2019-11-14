@@ -22,8 +22,9 @@ class PagesController < ApplicationController
     end
 
     def home
+        lastPost = Post.order("created_at DESC").where("published = true").first
         render react_component: 'Home' ,props: { 
-           lastPost: Post.all.select{|p| p.published === true}.last
+            lastPost: lastPost
         } 
     end
 
