@@ -46,7 +46,9 @@ class PostsController < ApplicationController
     end
 
      def getAllPublishedPosts
-         render json: {posts: Post.select{|p| p.published === true}}
+        posts = Post.order("created_at DESC")
+        posts = posts.select{|p| p.published === true}
+        render json: {posts: posts}
     end
 
     def getAllPosts
