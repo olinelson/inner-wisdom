@@ -176,6 +176,11 @@ function ClientShowApp(props) {
                     ...state,
                     creating: action.creating,
                 }
+            case 'setUser':
+                return {
+                    ...state,
+                    user: action.user,
+                }
 
             default:
                 return state;

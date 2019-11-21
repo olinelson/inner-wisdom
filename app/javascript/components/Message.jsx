@@ -1,8 +1,35 @@
 import React, { useState, useEffect } from 'react'
 import { Message as SemanticMessage } from "semantic-ui-react"
 
+import moment from 'moment'
+
 export default function Message(props) {
-    const [hidden, setHidden] = useState(false)
+
+
+    let createdAt = moment(props.message.id)
+
+    let deadline = createdAt.add(10, 'seconds')
+
+    const [hidden, setHidden] = useState(moment().isAfter(deadline))
+
+    // if (moment().isAfter(deadline)) {
+    //     return null
+    // }
+
+
+
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            console.log('This will run after 1 second!')
+            setHidden(true)
+        }, 10000);
+        return () => clearTimeout(timer);
+    }, []);
+
+
+
+
 
 
     if (!props.message) return null

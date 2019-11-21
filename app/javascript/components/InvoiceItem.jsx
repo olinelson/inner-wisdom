@@ -2,14 +2,26 @@ import React, { useState } from 'react'
 import { Table, Label, Input, Modal, } from "semantic-ui-react"
 import moment from 'moment'
 
+import { useStateValue } from '../context/ClientShowContext'
+import { getEvents, getInvoiceItems, getInvoices } from './ClientShowApp'
 
 function InvoiceItem(props) {
     const [i, setI] = useState(props.item)
-    const [loading, setLoading] = useState(false)
+    // const [loading, setLoading] = useState(false)
     const [modalOpen, setModalOpen] = useState(false)
     const [deleted, setDeleted] = useState(false)
 
-    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
+    const [appState,
+        dispatch] = useStateValue();
+
+    const { csrfToken } = appState
+
+    const refreshAction = () => {
+        getInvoices(appState, dispatch)
+        getInvoiceItems(appState, dispatch)
+        getEvents(appState, dispatch)
+    }
+
 
 
     const editable = props.invoice && props.invoice.status === "paid" ? false : true
@@ -17,7 +29,7 @@ function InvoiceItem(props) {
     // const [editable, setEditable] = useState(isEditable)
 
     const updateItemHandler = () => {
-        setLoading(true)
+        // setLoading(true)
         fetch(`${process.env.BASE_URL}/stripe/invoice_items`, {
             method: "PATCH",
             body: JSON.stringify({
@@ -33,17 +45,17 @@ function InvoiceItem(props) {
             .then(res => res.json())
             .catch(error => {
                 console.error('Error:', error)
-                setLoading(false)
-                props.refreshAction()
+                // setLoading(false)
+                refreshAction()
             })
             .then((res) => {
-                setLoading(false)
+                // setLoading(false)
 
                 setI(res.updated_item)
                 setModalOpen(false)
                 if (props.invoice) {
 
-                    props.refreshAction()
+                    refreshAction()
                 }
             })
     }
@@ -64,12 +76,12 @@ function InvoiceItem(props) {
             .then(res => res.json())
             .catch(error => {
                 console.error('Error:', error)
-                setLoading(false)
+                // setLoading(false)
                 setModalOpen(false)
             })
             .then(() => {
                 setModalOpen(false)
-                setLoading(false)
+                // setLoading(false)
 
             })
     }
@@ -92,7 +104,7 @@ function InvoiceItem(props) {
             .then(res => res.json())
             .catch(error => {
                 console.error('Error:', error)
-                setLoading(false)
+                // setLoading(false)
                 setModalOpen(false)
             })
             .then(() => removeStripeIdFromEvent(i))

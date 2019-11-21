@@ -43,6 +43,13 @@ function ClientShow() {
     }, [])
 
 
+    const setUser = (user) => {
+        console.log(user)
+        dispatch({
+            type: 'setUser',
+            user
+        })
+    }
 
 
 
@@ -66,28 +73,31 @@ function ClientShow() {
 
 
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
+    // useEffect(() => {
+    //     const timer = setTimeout(() => {
 
-            if (notifications === []) return () => clearTimeout(timer)
-            if (notifications.length > 1) {
-                let newVal = [...notifications]
-                newVal.pop()
-                setNotifications(newVal)
-            }
-            else if (notifications.length === 1) {
-                setNotifications([])
-            }
-            else {
-                return () => clearTimeout(timer)
-            }
+    //         if (notifications === []) return () => clearTimeout(timer)
+    //         if (notifications.length > 1) {
+    //             let newVal = [...notifications]
+    //             newVal.pop()
+    //             setNotifications(newVal)
+    //         }
+    //         else if (notifications.length === 1) {
+    //             setNotifications([])
+    //         }
+    //         else {
+    //             return () => clearTimeout(timer)
+    //         }
 
-        }, 10000);
-        return () => clearTimeout(timer);
-    }, [notifications]);
+    //     }, 10000);
+    //     return () => clearTimeout(timer);
+    // }, [notifications]);
 
     const approveUserHandler = () => {
-        setApproving(true)
+        dispatch({
+            type: 'setApproving',
+            approving: true
+        })
         let editedUser = { ...user, approved: !user.approved }
         editUserHandler(editedUser)
     }
@@ -107,14 +117,24 @@ function ClientShow() {
         })
             .then(res => res.json())
             .catch(error => {
-                setNotifications([{ id: new Date, type: "alert", message: "Could not edit client. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
+                dispatch({
+                    type: 'addNotification',
+                    notification: { id: new Date, type: "alert", message: "Could not edit client. Please try again. If this problem persists please contact your system administrator." }
+                })
                 console.error('Error:', error)
                 setLoading(false)
             })
             .then((res) => {
-                setApproving(false)
+                dispatch({
+                    type: 'setApproving',
+                    approving: false
+                })
+                // setApproving(false)
                 setUser(res.user)
-                setNotifications([{ id: new Date, type: "notice", message: "Client changes successfully saved" }, ...notifications])
+                dispatch({
+                    type: 'addNotification',
+                    notification: { id: new Date, type: "notice", message: "Client changes successfully saved" }
+                })
             })
     }
 
@@ -131,7 +151,11 @@ function ClientShow() {
         })
             .then(res => res.json())
             .catch(error => {
-                setNotifications([{ id: new Date, type: "alert", message: "Could not delete user. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
+                dispatch({
+                    type: 'addNotification',
+                    notification: { id: new Date, type: "alert", message: "Could not delete user. Please try again. If this problem persists please contact your system administrator." }
+                })
+
                 console.error('Error:', error)
                 setLoading(false)
             })
@@ -178,7 +202,7 @@ function ClientShow() {
 
                             <Form.Input value={user.suburb || ""} label="Suburb" placeholder='Hornsby' onChange={(e) => setUser({ ...user, suburb: e.target.value })} />
 
-                            <Form.Input value={user.address_state || ""} label="State" placeholder='NSW' onChange={(e) => setUser({ ...user, address_state: e.target.value })} />
+                            <Form.Input value={user.state || ""} label="State" placeholder='NSW' onChange={(e) => setUser({ ...user, state: e.target.value })} />
 
                             <Form.Input value={user.post_code || ""} label="Post Code" placeholder='2017' onChange={(e) => setUser({ ...user, post_code: e.target.value })} />
 
