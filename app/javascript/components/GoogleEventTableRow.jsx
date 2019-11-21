@@ -2,12 +2,21 @@ import React, { useState } from 'react'
 import { Table, Icon, Label, Button, } from "semantic-ui-react"
 import moment from 'moment'
 
+import { useStateValue } from '../context/ClientShowContext';
+import { getInvoiceItems } from './ClientShowApp';
+
+
 const uuidv1 = require('uuid/v1')
 
 function GoogleEventTableRow(props) {
+
+
+    const [appState, dispatch] = useStateValue();
+
+    const { csrfToken, user } = appState
+
     const [loading, setLoading] = useState(false)
-    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
-    const [event, setEvent] = useState(props.event)
+    const event = props.event
     let type = ""
 
     if (event.calendar.id === process.env.APPOINTMENTS_CALENDAR_ID) type = "Appointment"
@@ -22,7 +31,7 @@ function GoogleEventTableRow(props) {
         fetch(`${process.env.BASE_URL}/events/update`, {
             method: "POST",
             body: JSON.stringify({
-                event: event
+                event
             }),
             headers: {
                 "X-CSRF-Token": csrfToken,
@@ -33,16 +42,26 @@ function GoogleEventTableRow(props) {
         })
             .then(response => response.json())
             .catch(error => {
-                props.addNotification({ id: new Date, type: "alert", message: "Could not update event. Please try again. If this problem persists please contact your system administrator." })
+                dispatch({
+                    type: 'addNotification',
+                    notification: { id: new Date, type: "alert", message: "Could not update event. Please try again. If this problem persists please contact your system administrator." }
+                })
                 console.error('Error:', error)
                 setLoading(false)
                 return null
             })
             .then(r => {
                 if (r !== null) {
-                    props.addNotification({ id: new Date, type: "notice", message: "Event updated successfully." })
+                    dispatch({
+                        type: 'addNotification',
+                        notification: { id: new Date, type: "notice", message: "Event updated successfully." }
+                    })
                     setLoading(false)
-                    setEvent(r.editedEvent)
+                    dispatch({
+                        type: 'setEvents',
+                        events: [...appState.events.filter(e => e.id !== r.editedEvent.id), r.editedEvent]
+                    })
+                    getInvoiceItems(appState, dispatch)
                 }
 
             })
@@ -54,10 +73,10 @@ function GoogleEventTableRow(props) {
             method: "POST",
             body: JSON.stringify({
                 event,
-                user: props.user,
+                user,
             }),
             headers: {
-                "X-CSRF-Token": csrfToken,
+                "X-CSRF-Token": appState.csrfToken,
                 "Content-Type": "application/json",
                 Accept: "application/json",
                 "X-Requested-With": "XMLHttpRequest"
@@ -65,7 +84,10 @@ function GoogleEventTableRow(props) {
         })
             .then(res => res.json())
             .catch(error => {
-                props.addNotification({ id: new Date, type: "alert", message: "Could not create invoice item. Please try again. If this problem persists please contact your system administrator." })
+                dispatch({
+                    type: 'addNotification',
+                    notification: { id: new Date, type: "alert", message: "Could not create invoice item. Please try again. If this problem persists please contact your system administrator." }
+                })
                 console.error('Error:', error)
                 setLoading(false)
                 return null
@@ -92,7 +114,7 @@ function GoogleEventTableRow(props) {
             <Table.Cell>
                 <Label>
                     <Icon name='user' />
-                    {props.user.first_name + " " + props.user.last_name}
+                    {user.first_name + " " + user.last_name}
                 </Label>
             </Table.Cell>
             <Table.Cell>

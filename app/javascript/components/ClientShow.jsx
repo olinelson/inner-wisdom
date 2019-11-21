@@ -7,19 +7,46 @@ import InvoiceItemList from './InvoiceItemList';
 import InvoiceList from './InvoiceList';
 import Message from './Message'
 
+import { useStateValue } from '../context/ClientShowContext';
+
+
 const uuidv1 = require('uuid/v1')
 
+import { getEvents, getInvoiceItems, getInvoices } from './ClientShowApp'
 
-function ClientShow(props) {
-    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
-    const [events, setEvents] = useState([])
-    const [user, setUser] = useState(props.user)
-    const [loading, setLoading] = useState(true)
-    const [approving, setApproving] = useState(false)
-    const [deleting, setDeleting] = useState(false)
-    const [notifications, setNotifications] = useState([])
 
-    const [emailError, setEmailError] = useState(false)
+function ClientShow() {
+
+    const [appState,
+        dispatch] = useStateValue();
+
+    const {
+        notifications,
+        user,
+        emailError,
+        deleting,
+        approving,
+        csrfToken,
+        events,
+        invoiceItems,
+        invoices,
+        loadingEvents,
+        loadingInvoiceItems,
+        loadingInvoices
+
+    } = appState
+
+    useEffect(() => {
+        getEvents(appState, dispatch)
+        getInvoiceItems(appState, dispatch)
+        getInvoices(appState, dispatch)
+    }, [])
+
+
+
+
+
+
 
     const isEmailValid = (email) => {
         if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
@@ -27,6 +54,7 @@ function ClientShow(props) {
         }
         return (false)
     }
+
 
     const setAndValidateEmail = (emailAddress) => {
         if (isEmailValid(emailAddress) === false) setEmailError(true)
@@ -113,15 +141,10 @@ function ClientShow(props) {
 
     }
 
-    const addNotification = (newNotification) => {
-        let current = [...notifications]
-        setNotifications([newNotification, ...current])
-    }
-
     const panes = [
-        { menuItem: 'Appointment History', render: () => <AdminAppointmentHistoryTable addNotification={(e) => addNotification(e)} user={user} /> },
-        { menuItem: 'Billable Items', render: () => <InvoiceItemList addNotification={(e) => addNotification(e)} user={user} /> },
-        { menuItem: 'Invoices', render: () => <InvoiceList addNotification={(e) => addNotification(e)} user={user} /> },
+        { menuItem: 'Appointment History', render: () => <AdminAppointmentHistoryTable /> },
+        { menuItem: 'Billable Items', render: () => <InvoiceItemList /> },
+        { menuItem: 'Invoices', render: () => <InvoiceList /> },
 
     ]
 
@@ -216,6 +239,9 @@ function ClientShow(props) {
             <Tab panes={panes} renderActiveOnly={true} />
         </Container>
     </>
+
+
+
 }
 
 

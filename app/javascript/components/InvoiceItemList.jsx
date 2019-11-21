@@ -3,50 +3,32 @@ import { Tab, Table, Button } from "semantic-ui-react"
 import moment from "moment"
 import InvoiceItem from './InvoiceItem'
 
+import { useStateValue } from '../context/ClientShowContext'
+import { getInvoiceItems, getInvoices } from './ClientShowApp'
+
 const uuidv1 = require('uuid/v1')
 
 function InvoiceItemList(props) {
-    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
-    const [loading, setLoading] = useState(true)
-    const [invoiceItems, setInvoiceItems] = useState(null)
-    const [creating, setCreating] = useState(false)
+    const [appState, dispatch] = useStateValue();
 
-    const getInvoiceItems = () => {
-        fetch(`${process.env.BASE_URL}/stripe/invoice_items`, {
-            method: "POST",
-            body: JSON.stringify({
-                user: props.user
-            }),
-            headers: {
-                "X-CSRF-Token": csrfToken,
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        })
-            .then(res => res.json())
-            .catch(error => {
-                props.addNotification({ id: new Date, type: "alert", message: "Could not retrieve invoice items. Please try again. If this problem persists please contact your system administrator." })
-                console.error('Error:', error)
-                setLoading(false)
-            })
-            .then((res) => {
-                if (res.invoice_items.data) {
-                    setInvoiceItems(res.invoice_items)
-                } else {
-                    setInvoiceItems(null)
-                }
-
-            })
-            .then(() => setLoading(false))
-    }
+    const {
+        events,
+        csrfToken,
+        user,
+        invoiceItems,
+        creating,
+        loadingInvoiceItems } = appState
 
     const createNewInvoice = () => {
-        setCreating(true)
+        dispatch({
+            type: 'setCreating',
+            creating: true
+        })
+
         fetch(`${process.env.BASE_URL}/stripe/invoices/new`, {
             method: "POST",
             body: JSON.stringify({
-                user: props.user
+                user: user
             }),
             headers: {
                 "X-CSRF-Token": csrfToken,
@@ -57,24 +39,42 @@ function InvoiceItemList(props) {
         })
             .then(res => res.json())
             .catch(error => {
-                props.addNotification({ id: new Date, type: "alert", message: "Could not create new invoice. Please try again. If this problem persists please contact your system administrator." })
+                dispatch({
+                    type: 'addNotification',
+                    notification: { id: new Date, type: "alert", message: "Could not create new invoice. Please try again. If this problem persists please contact your system administrator." }
+                })
                 console.error('Error:', error)
-                setCreating(false)
+                dispatch({
+                    type: 'setCreating',
+                    creating: false
+                })
             })
             .then((res) => {
                 if (res.invoice) {
-                    props.addNotification({ id: new Date, type: "notice", message: "New invoice created successfully." })
-                    setInvoiceItems(null)
+                    dispatch({
+                        type: 'addNotification',
+                        notification: { id: new Date, type: "notice", message: "New invoice created successfully." }
+                    })
+
+                    dispatch({
+                        type: 'setInvoiceItems',
+                        invoiceItems: null
+                    })
+                    getInvoiceItems(appState, dispatch)
+                    getInvoices(appState, dispatch)
                 }
-                setCreating(false)
+                dispatch({
+                    type: 'setCreating',
+                    creating: false
+                })
             })
 
     }
 
 
-    useEffect(() => {
-        getInvoiceItems()
-    }, [])
+    // useEffect(() => {
+    //     getInvoiceItems()
+    // }, [])
 
 
     const invoiceItemsTableRows = () => {
@@ -89,15 +89,15 @@ function InvoiceItemList(props) {
                 let duration = moment(i.metadata.end_time) - moment(i.metadata.start_time)
                 let prettyDuration = moment.duration(duration).humanize()
 
-                return <InvoiceItem key={i.id} customer={props.user} item={i} />
+                return <InvoiceItem key={i.id} customer={user} item={i} />
 
             }
             )
         }
     }
-
+    console.log("invoice item list", loadingInvoiceItems)
     return (
-        <Tab.Pane loading={loading}>
+        <Tab.Pane loading={loadingInvoiceItems}>
             <Button loading={creating} disabled={!invoiceItems || invoiceItems.data.length < 1 ? true : false} onClick={() => createNewInvoice()}>Add All To New Invoice</Button>
             <Table selectable basic="very" >
                 <Table.Header>

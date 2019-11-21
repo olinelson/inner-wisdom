@@ -2,10 +2,19 @@ import React, { useState } from 'react'
 import { Modal, Button, Table, Label, Icon, } from "semantic-ui-react"
 import InvoiceItem from "./InvoiceItem"
 import moment from 'moment'
+import { getInvoices, getInvoiceItems, getEvents } from './ClientShowApp'
+
+import { useStateValue } from '../context/ClientShowContext';
+
 
 const uuidv1 = require('uuid/v1')
 
 function InvoiceTableRow(props) {
+
+    const [appState,
+        dispatch] = useStateValue();
+
+    const { csrfToken } = appState
 
     const [modalOpen, setModalOpen] = useState(false)
     const [voiding, setVoiding] = useState(false)
@@ -13,10 +22,13 @@ function InvoiceTableRow(props) {
     const [deleting, setDeleting] = useState(false)
     const [paying, setPaying] = useState(false)
 
-    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
-
-
     const invoice = props.invoice
+
+    const refreshAction = () => {
+        getInvoices(appState, dispatch)
+        getInvoiceItems(appState, dispatch)
+        getEvents(appState, dispatch)
+    }
 
     const deleteInvoiceHandler = () => {
         setDeleting(true)
@@ -35,9 +47,11 @@ function InvoiceTableRow(props) {
             .then(res => res.json())
             .catch(error => {
                 props.addNotification({ id: new Date, type: "alert", message: "Could not delete invoice. Please try again. If this problem persists please contact your system administrator." })
+
                 console.error('Error:', error)
                 setDeleting(false)
-                props.refreshAction()
+
+
             })
             .then((res) => {
                 if (res.invoice) {
@@ -67,7 +81,10 @@ function InvoiceTableRow(props) {
             })
             .then(() => {
                 setDeleting(false)
-                props.refreshAction()
+
+                getInvoices(appState, dispatch)
+                getInvoiceItems(appState, dispatch)
+                getEvents(appState, dispatch)
             })
     }
 
@@ -91,14 +108,14 @@ function InvoiceTableRow(props) {
                 console.error('Error:', error)
                 setSending(false)
                 setModalOpen(false)
-                props.refreshAction()
+                refreshAction()
             })
             .then((res) => {
                 if (res.invoice) {
                     setSending(false)
                     setModalOpen(false)
                     props.addNotification({ id: new Date, type: "notice", message: "Invoice finalized and sent." })
-                    props.refreshAction()
+                    refreshAction()
                 }
             })
     }
@@ -122,13 +139,13 @@ function InvoiceTableRow(props) {
                 console.error('Error:', error)
                 setPaying(false)
                 setModalOpen(false)
-                props.refreshAction()
+                refreshAction()
             })
             .then((res) => {
                 if (res.invoice) {
                     setPaying(false)
                     setModalOpen(false)
-                    props.refreshAction()
+                    refreshAction()
                     props.addNotification({ id: new Date, type: "notice", message: "Invoice marked as paid." })
                 }
             })
@@ -154,14 +171,14 @@ function InvoiceTableRow(props) {
                 console.error('Error:', error)
                 setVoiding(false)
                 setModalOpen(false)
-                props.refreshAction()
+                refreshAction()
             })
             .then((res) => {
                 if (res.invoice) {
                     props.addNotification({ id: new Date, type: "warning", message: "Invoice successfully voided." })
                     setVoiding(false)
                     setModalOpen(false)
-                    props.refreshAction()
+                    refreshAction()
                 }
             })
         // .then(() => setLoading(false))
@@ -273,7 +290,6 @@ function InvoiceTableRow(props) {
             negative={invoice.status === "void"}
             key={invoice.number}>
 
-            {/* <Table.Cell>{moment(invoice.created).format('Do MMM YYYY')}</Table.Cell> */}
             <Table.Cell>{invoice.status}</Table.Cell>
             <Table.Cell>{invoice.number}</Table.Cell>
             <Table.Cell>{"$" + invoice.amount_due / 100}</Table.Cell>
