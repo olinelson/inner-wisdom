@@ -60,8 +60,9 @@ function InvoiceItem(props) {
             })
     }
 
-    const removeStripeIdFromEvent = (invoice_item) => {
-        fetch(`${process.env.BASE_URL}/remove_stripe_id_from_event`, {
+    const removeStripeIdFromEvent = async (invoice_item) => {
+        setModalOpen(false)
+        const res = await fetch(`${process.env.BASE_URL}/remove_stripe_id_from_event`, {
             method: "POST",
             body: JSON.stringify({
                 invoice_item
@@ -73,23 +74,25 @@ function InvoiceItem(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(res => res.json())
-            .catch(error => {
-                console.error('Error:', error)
-                // setLoading(false)
-                setModalOpen(false)
+        try {
+            await res.json()
+            dispatch({
+                type: 'removeInvoiceItemAndUpdateEvent',
+                invoiceItem: invoice_item
             })
-            .then(() => {
-                setModalOpen(false)
-                // setLoading(false)
+            getEvents(appState, dispatch)
+        } catch (error) {
+            console.error('Error:', error)
+        }
 
-            })
+
+
     }
 
 
-    const deleteItemHandler = () => {
+    const deleteItemHandler = async () => {
         setDeleted(true)
-        fetch(`${process.env.BASE_URL}/stripe/invoice_items/delete`, {
+        const res = await fetch(`${process.env.BASE_URL}/stripe/invoice_items/delete`, {
             method: "POST",
             body: JSON.stringify({
                 invoice_item: i
@@ -101,13 +104,12 @@ function InvoiceItem(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(res => res.json())
-            .catch(error => {
-                console.error('Error:', error)
-                // setLoading(false)
-                setModalOpen(false)
-            })
-            .then(() => removeStripeIdFromEvent(i))
+        try {
+            await res.json()
+            removeStripeIdFromEvent(i)
+        } catch{
+            console.error('Error:', error)
+        }
     }
 
     let strArray = i.amount.toString().split("")

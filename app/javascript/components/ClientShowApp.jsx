@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import ClientShow from './ClientShow'
+import InvoiceNotificationManager from './InvoiceNotificationManager'
 
 // new appState stuff
 import { StateProvider, useStateValue } from '../context/ClientShowContext';
+import moment from 'moment';
 
 
 const uuidv1 = require('uuid/v1')
@@ -66,7 +68,7 @@ export const getInvoiceItems = (appState, dispatch) => {
             if (res.invoice_items.data) {
                 dispatch({
                     type: 'setInvoiceItems',
-                    invoiceItems: res.invoice_items
+                    invoiceItems: res.invoice_items.data
                 })
             } else {
                 dispatch({
@@ -150,9 +152,13 @@ function ClientShowApp(props) {
                     loadingEvents: false
                 };
             case 'addNotification':
+                let newNotification = action.notification
+                newNotification.createdAt = moment()
+                newNotification.expiresAt = moment().add(5, 'seconds')
+
                 return {
                     ...state,
-                    notifications: [...state.notifications, action.notification]
+                    notifications: [...state.notifications, newNotification]
                 };
             case 'setLoadingEvents':
                 return {
@@ -163,6 +169,15 @@ function ClientShowApp(props) {
                 return {
                     ...state,
                     invoiceItems: action.invoiceItems,
+                    loadingInvoiceItems: false
+                }
+            case 'removeInvoiceItemAndUpdateEvent':
+                let invoiceItem = action.invoiceItem
+                let filteredInvoiceItems = state.invoiceItems.filter(i => i.id !== invoiceItem.id)
+
+                return {
+                    ...state,
+                    invoiceItems: filteredInvoiceItems,
                     loadingInvoiceItems: false
                 }
             case 'setInvoices':
@@ -181,6 +196,14 @@ function ClientShowApp(props) {
                     ...state,
                     user: action.user,
                 }
+            case 'unShiftNotifications':
+                let shiftedNotifications = [...state.notifications]
+                shiftedNotifications.shift()
+
+                return {
+                    ...state,
+                    notifications: shiftedNotifications
+                }
 
             default:
                 return state;
@@ -195,6 +218,7 @@ function ClientShowApp(props) {
 
 
     return <StateProvider initialState={initialState} reducer={reducer}>
+        <InvoiceNotificationManager />
         <ClientShow />
     </StateProvider>
 

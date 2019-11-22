@@ -30,7 +30,7 @@ function Home(props) {
 
 
     const showRecentBlogPost = () => {
-        console.log(props)
+
         if (props.lastPost) {
             return <>
                 <Divider />

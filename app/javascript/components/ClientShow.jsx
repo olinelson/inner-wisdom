@@ -44,12 +44,13 @@ function ClientShow() {
 
 
     const setUser = (user) => {
-        console.log(user)
         dispatch({
             type: 'setUser',
             user
         })
     }
+
+
 
 
 
@@ -173,9 +174,14 @@ function ClientShow() {
     ]
 
     return <>
-        <div style={{ position: "fixed", right: "1rem", zIndex: "100" }}>
-            {notifications.map(n => <Message key={uuidv1()} message={n} />)}
-        </div>
+        {/* <div style={{ position: "fixed", right: "1rem", zIndex: "100" }}>
+            {notifications.map(n => {
+                let deadline = moment(n.id).add(10, 'seconds')
+                if (moment(n.id).isBefore(deadline)) return < Message key={uuidv1()} message={n} />
+                return null
+            })}
+            {notifications.map(n => < Message key={uuidv1()} message={n} />)}
+        </div> */}
         <Container>
 
             <h1>{user.first_name + " " + user.last_name}</h1>

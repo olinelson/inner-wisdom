@@ -79,8 +79,8 @@ function InvoiceItemList(props) {
 
     const invoiceItemsTableRows = () => {
         if (invoiceItems) {
-            if (invoiceItems.data.length < 1) return <Table.Row><Table.Cell><p>No billable items yet... Or they are all on invoices</p></Table.Cell></Table.Row>
-            return invoiceItems.data.map(i => {
+            if (invoiceItems.length < 1) return <Table.Row><Table.Cell><p>No billable items yet... Or they are all on invoices</p></Table.Cell></Table.Row>
+            return invoiceItems.map(i => {
 
                 let strArray = i.amount.toString().split("")
                 strArray.splice(strArray.length - 2, 0, ".")
@@ -95,10 +95,9 @@ function InvoiceItemList(props) {
             )
         }
     }
-    console.log("invoice item list", loadingInvoiceItems)
     return (
         <Tab.Pane loading={loadingInvoiceItems}>
-            <Button loading={creating} disabled={!invoiceItems || invoiceItems.data.length < 1 ? true : false} onClick={() => createNewInvoice()}>Add All To New Invoice</Button>
+            <Button loading={creating} disabled={!invoiceItems || invoiceItems.length < 1 ? true : false} onClick={() => createNewInvoice()}>Add All To New Invoice</Button>
             <Table selectable basic="very" >
                 <Table.Header>
                     <Table.Row>
