@@ -3,14 +3,14 @@ import ClientShow from './ClientShow'
 import InvoiceNotificationManager from './InvoiceNotificationManager'
 
 // new appState stuff
-import { StateProvider, useStateValue } from '../context/ClientShowContext';
+import { StateProvider, useStateValue } from '../../context/ClientShowContext';
 import moment from 'moment';
 
 
 const uuidv1 = require('uuid/v1')
 
-export const getEvents = (appState, dispatch) => {
-    fetch(`${process.env.BASE_URL}/events/booked/${appState.user.id}`, {
+export const getEvents = async (appState, dispatch) => {
+    const res = await fetch(`${process.env.BASE_URL}/events/booked/${appState.user.id}`, {
         headers: {
             "X-CSRF-Token": appState.csrfToken,
             "Content-Type": "application/json",
@@ -18,29 +18,30 @@ export const getEvents = (appState, dispatch) => {
             "X-Requested-With": "XMLHttpRequest"
         }
     })
-        .then(res => res.json())
-        .catch(error => {
-            dispatch({
-                type: 'addNotification',
-                notification: { id: new Date, type: "alert", message: "Could not retrieve events. Please refresh the page and try again. If this problem persists please contact your system administrator." }
-            })
-            console.error('Error:', error)
-            dispatch({
-                type: 'setLoadingEvents',
-                loadingEvents: false
-            })
+
+    try {
+        const json = await res.json()
+        console.log(json)
+        dispatch({
+            type: 'setEvents',
+            events: json.events
         })
-        .then((res) => {
-            dispatch({
-                type: 'setEvents',
-                events: res.events
-            })
+    } catch (error) {
+        dispatch({
+            type: 'addNotification',
+            notification: { id: new Date, type: "alert", message: "Could not retrieve events. Please refresh the page and try again. If this problem persists please contact your system administrator." }
         })
+        console.error('Error:', error)
+        dispatch({
+            type: 'setLoadingEvents',
+            loadingEvents: false
+        })
+    }
 }
 
 
-export const getInvoiceItems = (appState, dispatch) => {
-    fetch(`${process.env.BASE_URL}/stripe/invoice_items`, {
+export const getInvoiceItems = async (appState, dispatch) => {
+    const res = await fetch(`${process.env.BASE_URL}/stripe/invoice_items`, {
         method: "POST",
         body: JSON.stringify({
             user: appState.user
@@ -52,37 +53,36 @@ export const getInvoiceItems = (appState, dispatch) => {
             "X-Requested-With": "XMLHttpRequest"
         }
     })
-        .then(res => res.json())
-        .catch(error => {
+    try {
+        const json = await res.json()
+        if (json.invoice_items.data) {
             dispatch({
-                type: 'addNotification',
-                notification: { id: new Date, type: "alert", message: "Could not retrieve invoice items. Please try again. If this problem persists please contact your system administrator." }
+                type: 'setInvoiceItems',
+                invoiceItems: json.invoice_items.data
             })
-            console.error('Error:', error)
+        } else {
             dispatch({
-                type: 'setLoadingInvoiceItems',
-                loadingInvoiceItems: false
+                type: 'setInvoiceItems',
+                invoiceItems: null
             })
+        }
+    } catch (error) {
+        dispatch({
+            type: 'addNotification',
+            notification: { id: new Date, type: "alert", message: "Could not retrieve invoice items. Please try again. If this problem persists please contact your system administrator." }
         })
-        .then((res) => {
-            if (res.invoice_items.data) {
-                dispatch({
-                    type: 'setInvoiceItems',
-                    invoiceItems: res.invoice_items.data
-                })
-            } else {
-                dispatch({
-                    type: 'setInvoiceItems',
-                    invoiceItems: null
-                })
-            }
+        console.error('Error:', error)
+        dispatch({
+            type: 'setLoadingInvoiceItems',
+            loadingInvoiceItems: false
+        })
+    }
 
-        })
 }
 
 
-export const getInvoices = (appState, dispatch) => {
-    fetch(`${process.env.BASE_URL}/stripe/invoices`, {
+export const getInvoices = async (appState, dispatch) => {
+    const res = await fetch(`${process.env.BASE_URL}/stripe/invoices`, {
         method: "POST",
         body: JSON.stringify({
             user: appState.user
@@ -94,24 +94,30 @@ export const getInvoices = (appState, dispatch) => {
             "X-Requested-With": "XMLHttpRequest"
         }
     })
-        .then(res => res.json())
-        .catch(error => {
-            dispatch({
-                type: 'addNotification',
-                notification: { id: new Date, type: "alert", message: "Could not retrieve invoices. Please try again. If this problem persists please contact your system administrator." }
-            })
-            console.error('Error:', error)
-            dispatch({
-                type: 'setLoadingInvoices',
-                loadingInvoices: false
-            })
+    try {
+        const json = await res.json()
+        dispatch({
+            type: 'setInvoices',
+            invoices: json.invoices
         })
-        .then((res) => {
-            dispatch({
-                type: 'setInvoices',
-                invoices: res.invoices
-            })
+    } catch (error) {
+        dispatch({
+            type: 'addNotification',
+            notification: { id: new Date, type: "alert", message: "Could not retrieve invoices. Please try again. If this problem persists please contact your system administrator." }
         })
+        console.error('Error:', error)
+        dispatch({
+            type: 'setLoadingInvoices',
+            loadingInvoices: false
+        })
+    }
+
+}
+
+export const refreshAction = (appState, dispatch) => {
+    getInvoices(appState, dispatch)
+    getInvoiceItems(appState, dispatch)
+    getEvents(appState, dispatch)
 }
 
 
@@ -123,8 +129,10 @@ function ClientShowApp(props) {
 
     const initialState = {
         csrfToken,
+
         events: [],
         invoiceItems: null,
+        invoices: [],
         user: props.user,
 
         loadingEvents: true,

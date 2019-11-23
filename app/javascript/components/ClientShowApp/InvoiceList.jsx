@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Tab, Table } from "semantic-ui-react"
 import InvoiceTableRow from './InvoiceTableRow';
 
-import { useStateValue } from '../context/ClientShowContext'
+import { useStateValue } from '../../context/ClientShowContext'
 
 
 function InvoiceList() {

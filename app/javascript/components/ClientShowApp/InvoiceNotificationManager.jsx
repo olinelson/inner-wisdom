@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import Message from './Message'
+import Message from '../Message'
 const uuidv1 = require('uuid/v1')
 import moment from 'moment'
 
-import { useStateValue } from '../context/ClientShowContext'
+import { useStateValue } from '../../context/ClientShowContext'
 
 
 export default function InvoiceNotificationManager() {

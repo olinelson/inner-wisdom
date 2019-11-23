@@ -1,29 +1,16 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { Table, Label, Icon, Button, Checkbox, Modal, Header, Tab, Input, Divider } from "semantic-ui-react"
-import moment from "moment"
+import React, { } from 'react'
+import { Table, Tab } from "semantic-ui-react"
 import GoogleEventTableRow from './GoogleEventTableRow';
 
-import { useStateValue } from '../context/ClientShowContext';
+import { useStateValue } from '../../context/ClientShowContext';
 
 function AdminAppointmentHistoryTable() {
-    const [{ loadingEvents, events }, dispatch] = useStateValue();
-
-    const formattedDuration = (duration) => {
-        let hours = duration.hours()
-        let minutes = duration.minutes()
-
-        hours < 1 ? hours = '' : hours = `${hours} hr`
-        minutes < 1 ? minutes = '' : minutes = ` ${minutes} min`
-
-        return hours + minutes
-    }
+    const [{ loadingEvents, events }] = useStateValue();
 
     const appointmentHistoryTableRows = () => {
         if (events.length < 1 && loadingEvents === false) return <Table.Row><Table.Cell><p>No recent appointments...</p></Table.Cell></Table.Row>
-        return events.sort((b, a) => new Date(a.start_time) - new Date(b.end_time)).map(a => <GoogleEventTableRow key={a.id} event={a} />)
+        return events.sort((b, a) => new Date(a.start_time) - new Date(b.start_time)).map(a => <GoogleEventTableRow key={a.id} event={a} />)
     }
-
-
 
     return (
         <Tab.Pane loading={loadingEvents}>

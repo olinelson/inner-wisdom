@@ -15,8 +15,8 @@ import Appointments from "components/Appointments"
 import MyAccount from "components/MyAccount"
 import Schedule from "components/Schedule"
 import Clients from "components/Clients"
-import ClientShow from "components/ClientShow"
-import ClientShowApp from "components/ClientShowApp"
+// import ClientShow from "components/ClientShow"
+import ClientShowApp from "components/ClientShowApp/ClientShowApp"
 import Footer from "components/Footer"
 import Fees from "components/Fees"
 
@@ -27,4 +27,4 @@ import "components/stylesheet.css"
 import 'draft-js/dist/Draft.css';
 
 
-WebpackerReact.setup({ PostEditor, ClientShowApp, ClientShow, Schedule, Footer, MyAccount, Clients, Home, Appointments, Counselling, FAQS, Supervision, Contact, Blog, FlashNotification, Nav, UserConsentCheckbox, Fees }) // ES6 shorthand for {Hello: Hello}
+WebpackerReact.setup({ PostEditor, ClientShowApp, Schedule, Footer, MyAccount, Clients, Home, Appointments, Counselling, FAQS, Supervision, Contact, Blog, FlashNotification, Nav, UserConsentCheckbox, Fees }) // ES6 shorthand for {Hello: Hello}

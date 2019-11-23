@@ -2,35 +2,37 @@ import React, { useState } from 'react'
 import { Table, Label, Input, Modal, } from "semantic-ui-react"
 import moment from 'moment'
 
-import { useStateValue } from '../context/ClientShowContext'
-import { getEvents, getInvoiceItems, getInvoices } from './ClientShowApp'
+import { useStateValue } from '../../context/ClientShowContext'
+import { getEvents, getInvoiceItems, getInvoices, refreshAction, dispatch } from './ClientShowApp'
 
 function InvoiceItem(props) {
     const [i, setI] = useState(props.item)
-    // const [loading, setLoading] = useState(false)
     const [modalOpen, setModalOpen] = useState(false)
-    const [deleted, setDeleted] = useState(false)
+
+    const [deleting, setDeleting] = useState(false)
+    const [saving, setSaving] = useState(false)
+
+
 
     const [appState,
         dispatch] = useStateValue();
 
     const { csrfToken } = appState
 
-    const refreshAction = () => {
-        getInvoices(appState, dispatch)
-        getInvoiceItems(appState, dispatch)
-        getEvents(appState, dispatch)
+
+    let editable = true
+
+    if (props.invoice) {
+        let status = props.invoice.status
+
+        if (status === "paid" || status === "void" || status === "open") editable = false
     }
+    // props.invoice && props.invoice.status === "paid" ? false : true
 
-
-
-    const editable = props.invoice && props.invoice.status === "paid" ? false : true
-
-    // const [editable, setEditable] = useState(isEditable)
-
-    const updateItemHandler = () => {
+    const updateItemHandler = async () => {
+        setSaving(true)
         // setLoading(true)
-        fetch(`${process.env.BASE_URL}/stripe/invoice_items`, {
+        const res = await fetch(`${process.env.BASE_URL}/stripe/invoice_items`, {
             method: "PATCH",
             body: JSON.stringify({
                 invoice_item: i
@@ -42,26 +44,25 @@ function InvoiceItem(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(res => res.json())
-            .catch(error => {
-                console.error('Error:', error)
-                // setLoading(false)
-                refreshAction()
-            })
-            .then((res) => {
-                // setLoading(false)
+        try {
+            const json = await res.json()
+            setI(json.updated_item)
+            setModalOpen(false)
+            if (props.invoice) {
 
-                setI(res.updated_item)
-                setModalOpen(false)
-                if (props.invoice) {
+                refreshAction(appState, dispatch)
+            }
+        } catch (error) {
+            console.error('Error:', error)
+            // setLoading(false)
+            refreshAction(appState, dispatch)
+        }
+        setSaving(false)
 
-                    refreshAction()
-                }
-            })
     }
 
     const removeStripeIdFromEvent = async (invoice_item) => {
-        setModalOpen(false)
+
         const res = await fetch(`${process.env.BASE_URL}/remove_stripe_id_from_event`, {
             method: "POST",
             body: JSON.stringify({
@@ -75,23 +76,29 @@ function InvoiceItem(props) {
             }
         })
         try {
-            await res.json()
-            dispatch({
-                type: 'removeInvoiceItemAndUpdateEvent',
-                invoiceItem: invoice_item
-            })
-            getEvents(appState, dispatch)
+            if (res.ok) {
+                dispatch({
+                    type: 'removeInvoiceItemAndUpdateEvent',
+                    invoiceItem: invoice_item
+                })
+                // getEvents(appState, dispatch)
+                dispatch({
+                    type: 'addNotification',
+                    notification: {
+                        id: new Date, type: "warning", message: "Billable Item Deleted"
+                    }
+                })
+            }
         } catch (error) {
             console.error('Error:', error)
         }
-
-
-
+        setModalOpen(false)
+        refreshAction(appState, dispatch)
     }
 
 
     const deleteItemHandler = async () => {
-        setDeleted(true)
+        setDeleting(true)
         const res = await fetch(`${process.env.BASE_URL}/stripe/invoice_items/delete`, {
             method: "POST",
             body: JSON.stringify({
@@ -105,11 +112,14 @@ function InvoiceItem(props) {
             }
         })
         try {
-            await res.json()
-            removeStripeIdFromEvent(i)
+            if (res.ok) removeStripeIdFromEvent(i)
+
         } catch{
             console.error('Error:', error)
+            setModalOpen(false)
+            refreshAction(appState, dispatch)
         }
+
     }
 
     let strArray = i.amount.toString().split("")
@@ -123,6 +133,9 @@ function InvoiceItem(props) {
     return <>
         {editable ?
             <Modal
+                open={modalOpen}
+                onOpen={() => setModalOpen(true)}
+                // onClose={() => setModalOpen(false)}
                 trigger={<Table.Row >
                     <Table.Cell>{moment(i.metadata.start_time).format('Do MMMM YYYY, h:mm a')}</Table.Cell>
                     <Table.Cell>{i.description}</Table.Cell>
@@ -154,10 +167,10 @@ function InvoiceItem(props) {
                         </Table.Row>
                     </Table.Body>
                 </Table>}
-                actions={['Cancel', { key: 'save', content: 'Save', positive: true, onClick: () => updateItemHandler() }, { key: 'delete', content: 'Delete', negative: true, onClick: () => deleteItemHandler() }]}
+                actions={[{ key: 'cancel', content: 'Cancel', onClick: () => setModalOpen(false) }, { key: 'save', loading: saving, content: 'Save', positive: true, onClick: () => updateItemHandler() }, { key: 'delete', content: 'Delete', loading: deleting, negative: true, onClick: () => deleteItemHandler() }]}
             />
             :
-            <Table.Row disabled={deleted} >
+            <Table.Row  >
 
                 <Table.Cell>{moment(i.metadata.start_time).format('Do MMMM YYYY, h:mm a')}</Table.Cell>
                 <Table.Cell>{i.description}</Table.Cell>

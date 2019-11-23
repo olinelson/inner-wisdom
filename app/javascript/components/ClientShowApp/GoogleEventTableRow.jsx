@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Table, Icon, Label, Button, } from "semantic-ui-react"
 import moment from 'moment'
 
-import { useStateValue } from '../context/ClientShowContext';
+import { useStateValue } from '../../context/ClientShowContext';
 import { getInvoiceItems } from './ClientShowApp';
 
 
@@ -106,8 +106,6 @@ function GoogleEventTableRow(props) {
 
     return (
         <Table.Row>
-
-
             <Table.Cell>{moment(event.start_time).format('Do MMMM  YYYY h:mm a')}</Table.Cell>
             <Table.Cell>{type}</Table.Cell>
             <Table.Cell>{duration}</Table.Cell>

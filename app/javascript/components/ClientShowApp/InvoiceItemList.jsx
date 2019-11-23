@@ -3,32 +3,27 @@ import { Tab, Table, Button } from "semantic-ui-react"
 import moment from "moment"
 import InvoiceItem from './InvoiceItem'
 
-import { useStateValue } from '../context/ClientShowContext'
+import { useStateValue } from '../../context/ClientShowContext'
 import { getInvoiceItems, getInvoices } from './ClientShowApp'
 
 const uuidv1 = require('uuid/v1')
 
-function InvoiceItemList(props) {
+function InvoiceItemList() {
     const [appState, dispatch] = useStateValue();
 
+    const [creating, setCreating] = useState(false)
     const {
-        events,
         csrfToken,
         user,
         invoiceItems,
-        creating,
         loadingInvoiceItems } = appState
 
-    const createNewInvoice = () => {
-        dispatch({
-            type: 'setCreating',
-            creating: true
-        })
-
-        fetch(`${process.env.BASE_URL}/stripe/invoices/new`, {
+    const createNewInvoice = async () => {
+        setCreating(true)
+        const res = await fetch(`${process.env.BASE_URL}/stripe/invoices/new`, {
             method: "POST",
             body: JSON.stringify({
-                user: user
+                user
             }),
             headers: {
                 "X-CSRF-Token": csrfToken,
@@ -37,44 +32,34 @@ function InvoiceItemList(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(res => res.json())
-            .catch(error => {
+        try {
+            const json = await res.json()
+            console.log(json)
+            if (json.invoice) {
                 dispatch({
                     type: 'addNotification',
-                    notification: { id: new Date, type: "alert", message: "Could not create new invoice. Please try again. If this problem persists please contact your system administrator." }
+                    notification: { id: new Date, type: "notice", message: "New invoice created successfully." }
                 })
-                console.error('Error:', error)
                 dispatch({
-                    type: 'setCreating',
-                    creating: false
+                    type: 'setInvoiceItems',
+                    invoiceItems: []
                 })
-            })
-            .then((res) => {
-                if (res.invoice) {
-                    dispatch({
-                        type: 'addNotification',
-                        notification: { id: new Date, type: "notice", message: "New invoice created successfully." }
-                    })
+                getInvoices(appState, dispatch)
+            }
+            setCreating(false)
 
-                    dispatch({
-                        type: 'setInvoiceItems',
-                        invoiceItems: null
-                    })
-                    getInvoiceItems(appState, dispatch)
-                    getInvoices(appState, dispatch)
-                }
-                dispatch({
-                    type: 'setCreating',
-                    creating: false
-                })
+        } catch (error) {
+            dispatch({
+                type: 'addNotification',
+                notification: { id: new Date, type: "alert", message: "Could not create new invoice. Please try again. If this problem persists please contact your system administrator." }
             })
-
+            console.error('Error:', error)
+            dispatch({
+                type: 'setCreating',
+                creating: false
+            })
+        }
     }
-
-
-    // useEffect(() => {
-    //     getInvoiceItems()
-    // }, [])
 
 
     const invoiceItemsTableRows = () => {

@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import { Modal, Button, Table, Label, Icon, } from "semantic-ui-react"
 import InvoiceItem from "./InvoiceItem"
 import moment from 'moment'
-import { getInvoices, getInvoiceItems, getEvents } from './ClientShowApp'
+import { getInvoices, getInvoiceItems, getEvents, refreshAction } from './ClientShowApp'
 
-import { useStateValue } from '../context/ClientShowContext';
+import { useStateValue } from '../../context/ClientShowContext';
 
 
 const uuidv1 = require('uuid/v1')
@@ -24,15 +24,9 @@ function InvoiceTableRow(props) {
 
     const invoice = props.invoice
 
-    const refreshAction = () => {
-        getInvoices(appState, dispatch)
-        getInvoiceItems(appState, dispatch)
-        getEvents(appState, dispatch)
-    }
-
-    const deleteInvoiceHandler = () => {
+    const deleteInvoiceHandler = async () => {
         setDeleting(true)
-        fetch(`${process.env.BASE_URL}/stripe/invoices/delete`, {
+        const res = await fetch(`${process.env.BASE_URL}/stripe/invoices/delete`, {
             method: "POST",
             body: JSON.stringify({
                 invoice
@@ -44,27 +38,29 @@ function InvoiceTableRow(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(res => res.json())
-            .catch(error => {
-                dispatch({
-                    type: 'addNotification',
-                    notification: { id: new Date, type: "alert", message: "Could not delete invoice. Please try again. If this problem persists please contact your system administrator." }
-                })
-
-                console.error('Error:', error)
-                setDeleting(false)
-
-
+        try {
+            console.log('delete invoice handler', res)
+            const json = await res.json()
+            if (json.invoice) {
+                deleteStripeIdsFromEvents(json.invoice)
+            }
+        } catch (error) {
+            dispatch({
+                type: 'addNotification',
+                notification: { id: new Date, type: "alert", message: "Could not delete invoice. Please try again. If this problem persists please contact your system administrator." }
             })
-            .then((res) => {
-                if (res.invoice) {
-                    deleteStripeIdsFromEvents(res.invoice)
-                }
-            })
+
+            console.error('Error:', error)
+            setDeleting(false)
+            refreshAction(appState, dispatch)
+
+        }
+
     }
 
-    const deleteStripeIdsFromEvents = () => {
-        fetch(`${process.env.BASE_URL}/remove_many_stripe_ids`, {
+    const deleteStripeIdsFromEvents = async () => {
+        console.log('deleting stripe ids')
+        const res = await fetch(`${process.env.BASE_URL}/remove_many_stripe_ids`, {
             method: "POST",
             body: JSON.stringify({
                 invoice
@@ -76,22 +72,23 @@ function InvoiceTableRow(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(res => res.json())
-            .catch(error => {
+        try {
+            if (res.ok) {
                 dispatch({
                     type: 'addNotification',
-                    notification: { id: new Date, type: "alert", message: "Could not update events. Please try again. If this problem persists please contact your system administrator." }
+                    notification: { id: new Date, type: "notice", message: "Multiple Billable Items Deleted" }
                 })
-                console.error('Error:', error)
-                setDeleting(false)
-            })
-            .then(() => {
-                setDeleting(false)
+            }
 
-                getInvoices(appState, dispatch)
-                getInvoiceItems(appState, dispatch)
-                getEvents(appState, dispatch)
+        } catch (error) {
+            dispatch({
+                type: 'addNotification',
+                notification: { id: new Date, type: "alert", message: "Could not update events. Please try again. If this problem persists please contact your system administrator." }
             })
+            console.error('Error:', error)
+
+        }
+        refreshAction(appState, dispatch)
     }
 
     const sendInvoiceHandler = async () => {
@@ -117,7 +114,7 @@ function InvoiceTableRow(props) {
                 type: 'addNotification',
                 notification: { id: new Date, type: "notice", message: "Invoice finalized and sent." }
             })
-            refreshAction()
+            refreshAction(appState, dispatch)
 
         } catch (error) {
             dispatch({
@@ -127,7 +124,7 @@ function InvoiceTableRow(props) {
             console.error('Error:', error)
             setSending(false)
             setModalOpen(false)
-            refreshAction()
+            refreshAction(appState, dispatch)
         }
     }
 
@@ -151,7 +148,7 @@ function InvoiceTableRow(props) {
             let invoice = res.invoice
             setPaying(false)
             setModalOpen(false)
-            refreshAction()
+            refreshAction(appState, dispatch)
             dispatch({
                 type: 'addNotification',
                 notification: { id: new Date, type: "notice", message: "Invoice marked as paid." }
@@ -165,7 +162,7 @@ function InvoiceTableRow(props) {
             console.error('Error:', error)
             setPaying(false)
             setModalOpen(false)
-            refreshAction()
+            refreshAction(appState, dispatch)
 
         }
     }
@@ -193,7 +190,7 @@ function InvoiceTableRow(props) {
                 console.error('Error:', error)
                 setVoiding(false)
                 setModalOpen(false)
-                refreshAction()
+                refreshAction(appState, dispatch)
             })
             .then((res) => {
                 if (res.invoice) {
@@ -203,7 +200,7 @@ function InvoiceTableRow(props) {
                     })
                     setVoiding(false)
                     setModalOpen(false)
-                    refreshAction()
+                    refreshAction(appState, dispatch)
                 }
             })
         // .then(() => setLoading(false))

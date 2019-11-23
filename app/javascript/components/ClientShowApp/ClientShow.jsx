@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Container, Card, Item, Table, Label, Menu, Button, Icon, Checkbox, Modal, Form, Header, Tab, Divider } from 'semantic-ui-react';
-import { isUserAnAttendeeOfEvent, relevantEvents, flatten } from "./Appointments"
+import { isUserAnAttendeeOfEvent, relevantEvents, flatten } from "../Appointments"
 import moment from "moment"
 import AdminAppointmentHistoryTable from './AdminAppointmentHistoryTable';
 import InvoiceItemList from './InvoiceItemList';
 import InvoiceList from './InvoiceList';
-import Message from './Message'
+import Message from '../Message'
 
-import { useStateValue } from '../context/ClientShowContext';
+import { useStateValue } from '../../context/ClientShowContext';
 
 
 const uuidv1 = require('uuid/v1')
@@ -49,6 +49,8 @@ function ClientShow() {
             user
         })
     }
+
+    console.log('invoices', appState.invoices)
 
 
 
