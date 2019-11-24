@@ -542,11 +542,12 @@ function Schedule(props) {
                     events={events}
                     defaultDate={new Date}
                     popup
-                    views={['month', 'day', 'week']}
+                    views={['month', 'day', 'week', 'agenda']}
+                    scrollToTime={moment().startOf('hour').subtract(1, 'hours').toDate()}
+                    defaultView={Views.WEEK}
                     step={15}
                     timeslots={1}
                     onSelectSlot={(e) => selectSlotHandler(e)}
-                    onViewChange={(e) => console.log("view change", e)}
                     onRangeChange={(e) => { rangeChangeHandler(e) }}
                 />
             </Dimmer.Dimmable>
