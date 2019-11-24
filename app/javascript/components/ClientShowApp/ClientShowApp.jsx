@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React from 'react'
 import ClientShow from './ClientShow'
 import InvoiceNotificationManager from './InvoiceNotificationManager'
-
-// new appState stuff
-import { StateProvider, useStateValue } from '../../context/ClientShowContext';
 import moment from 'moment';
 
+import { StateProvider } from './ClientShowContext';
 
-const uuidv1 = require('uuid/v1')
+
+
 
 export const getEvents = async (appState, dispatch) => {
     const res = await fetch(`${process.env.BASE_URL}/events/booked/${appState.user.id}`, {
@@ -18,10 +17,8 @@ export const getEvents = async (appState, dispatch) => {
             "X-Requested-With": "XMLHttpRequest"
         }
     })
-
     try {
         const json = await res.json()
-        console.log(json)
         dispatch({
             type: 'setEvents',
             events: json.events
@@ -121,8 +118,6 @@ export const refreshAction = (appState, dispatch) => {
 }
 
 
-
-
 function ClientShowApp(props) {
 
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
@@ -139,8 +134,6 @@ function ClientShowApp(props) {
         loadingInvoiceItems: true,
         loadingInvoices: true,
 
-        approving: false,
-        deleting: false,
         creating: false,
         notifications: [],
         emailError: false

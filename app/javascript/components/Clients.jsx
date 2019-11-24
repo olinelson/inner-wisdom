@@ -99,8 +99,7 @@ function Clients(props) {
             <h1>Clients</h1>
             <Menu fluid secondary >
                 <Menu.Item
-
-                    content={<Button basic onClick={() => setModalOpen(!modalOpen)} icon="plus" content="Create" />}
+                    content={<Button basic onClick={() => setModalOpen(true)} icon="plus" content="Create" />}
                 />
 
                 <Menu.Item
@@ -175,7 +174,7 @@ function Clients(props) {
                             </Form.Field>
                             <Form.Field>
                                 <label>Email</label>
-                                <input value={email} onChange={(e) => setEmail(e.target.value)} required placeholder='newclient@gmail.com' />
+                                <input value={email} type="email" onChange={(e) => setEmail(e.target.value)} required placeholder='newclient@gmail.com' />
                             </Form.Field>
                             <Form.Field>
                                 <Checkbox checked={sendWelcomeEmail} onChange={() => setSendWelcomeEmail(!sendWelcomeEmail)} label='Send User Welcome Email' />

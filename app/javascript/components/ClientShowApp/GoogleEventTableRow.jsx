@@ -2,20 +2,18 @@ import React, { useState } from 'react'
 import { Table, Icon, Label, Button, } from "semantic-ui-react"
 import moment from 'moment'
 
-import { useStateValue } from '../../context/ClientShowContext';
+import { useStateValue } from './ClientShowContext';
 import { getInvoiceItems } from './ClientShowApp';
 
 
-const uuidv1 = require('uuid/v1')
-
 function GoogleEventTableRow(props) {
-
 
     const [appState, dispatch] = useStateValue();
 
     const { csrfToken, user } = appState
 
     const [loading, setLoading] = useState(false)
+
     const event = props.event
     let type = ""
 
@@ -27,8 +25,8 @@ function GoogleEventTableRow(props) {
 
     let duration = moment.duration(moment(event.end_time) - moment(event.start_time)).humanize()
 
-    const updateGoogleCalEvent = (event) => {
-        fetch(`${process.env.BASE_URL}/events/update`, {
+    const updateGoogleCalEvent = async (event) => {
+        const res = await fetch(`${process.env.BASE_URL}/events/update`, {
             method: "POST",
             body: JSON.stringify({
                 event
@@ -40,36 +38,33 @@ function GoogleEventTableRow(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(response => response.json())
-            .catch(error => {
+        try {
+            const json = await res.json()
+            if (json !== null) {
                 dispatch({
                     type: 'addNotification',
-                    notification: { id: new Date, type: "alert", message: "Could not update event. Please try again. If this problem persists please contact your system administrator." }
+                    notification: { id: new Date, type: "notice", message: "Event updated successfully." }
                 })
-                console.error('Error:', error)
                 setLoading(false)
-                return null
+                dispatch({
+                    type: 'setEvents',
+                    events: [...appState.events.filter(e => e.id !== json.editedEvent.id), json.editedEvent]
+                })
+                getInvoiceItems(appState, dispatch)
+            }
+        } catch (error) {
+            dispatch({
+                type: 'addNotification',
+                notification: { id: new Date, type: "alert", message: "Could not update event. Please try again. If this problem persists please contact your system administrator." }
             })
-            .then(r => {
-                if (r !== null) {
-                    dispatch({
-                        type: 'addNotification',
-                        notification: { id: new Date, type: "notice", message: "Event updated successfully." }
-                    })
-                    setLoading(false)
-                    dispatch({
-                        type: 'setEvents',
-                        events: [...appState.events.filter(e => e.id !== r.editedEvent.id), r.editedEvent]
-                    })
-                    getInvoiceItems(appState, dispatch)
-                }
-
-            })
+            console.error('Error:', error)
+            setLoading(false)
+        }
     }
 
-    const createInvoiceItem = () => {
+    const createInvoiceItem = async () => {
         setLoading(true)
-        fetch(`${process.env.BASE_URL}/stripe/invoice_items/create`, {
+        const res = await fetch(`${process.env.BASE_URL}/stripe/invoice_items/create`, {
             method: "POST",
             body: JSON.stringify({
                 event,
@@ -82,25 +77,20 @@ function GoogleEventTableRow(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(res => res.json())
-            .catch(error => {
-                dispatch({
-                    type: 'addNotification',
-                    notification: { id: new Date, type: "alert", message: "Could not create invoice item. Please try again. If this problem persists please contact your system administrator." }
-                })
-                console.error('Error:', error)
-                setLoading(false)
-                return null
+        try {
+            const json = await res.json()
+            if (json.invoice_item) {
+                let editedEvent = { ...event, extended_properties: { private: { paid: false, stripe_id: json.invoice_item.id } } }
+                updateGoogleCalEvent(editedEvent)
+            }
+        } catch (error) {
+            dispatch({
+                type: 'addNotification',
+                notification: { id: new Date, type: "alert", message: "Could not create invoice item. Please try again. If this problem persists please contact your system administrator." }
             })
-            .then((res) => {
-                if (res.invoice_item) {
-                    let editedEvent = { ...event, extended_properties: { private: { paid: false, stripe_id: res.invoice_item.id } } }
-                    updateGoogleCalEvent(editedEvent)
-                }
-
-
-
-            })
+            console.error('Error:', error)
+            setLoading(false)
+        }
     }
 
 

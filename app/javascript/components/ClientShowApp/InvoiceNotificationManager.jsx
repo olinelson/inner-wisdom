@@ -3,12 +3,10 @@ import Message from '../Message'
 const uuidv1 = require('uuid/v1')
 import moment from 'moment'
 
-import { useStateValue } from '../../context/ClientShowContext'
-
+import { useStateValue } from './ClientShowContext'
 
 export default function InvoiceNotificationManager() {
-    const [appState,
-        dispatch] = useStateValue();
+    const [appState, dispatch] = useStateValue();
 
     const { notifications } = appState
 

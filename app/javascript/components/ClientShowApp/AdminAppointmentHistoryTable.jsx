@@ -1,8 +1,8 @@
-import React, { } from 'react'
+import React from 'react'
 import { Table, Tab } from "semantic-ui-react"
 import GoogleEventTableRow from './GoogleEventTableRow';
 
-import { useStateValue } from '../../context/ClientShowContext';
+import { useStateValue } from './ClientShowContext';
 
 function AdminAppointmentHistoryTable() {
     const [{ loadingEvents, events }] = useStateValue();

@@ -3,7 +3,7 @@ import { Tab, Table, Button } from "semantic-ui-react"
 import moment from "moment"
 import InvoiceItem from './InvoiceItem'
 
-import { useStateValue } from '../../context/ClientShowContext'
+import { useStateValue } from './ClientShowContext'
 import { getInvoiceItems, getInvoices } from './ClientShowApp'
 
 const uuidv1 = require('uuid/v1')
@@ -34,7 +34,6 @@ function InvoiceItemList() {
         })
         try {
             const json = await res.json()
-            console.log(json)
             if (json.invoice) {
                 dispatch({
                     type: 'addNotification',

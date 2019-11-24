@@ -4,15 +4,14 @@ import InvoiceItem from "./InvoiceItem"
 import moment from 'moment'
 import { getInvoices, getInvoiceItems, getEvents, refreshAction } from './ClientShowApp'
 
-import { useStateValue } from '../../context/ClientShowContext';
+import { useStateValue } from './ClientShowContext';
 
 
 const uuidv1 = require('uuid/v1')
 
 function InvoiceTableRow(props) {
 
-    const [appState,
-        dispatch] = useStateValue();
+    const [appState, dispatch] = useStateValue();
 
     const { csrfToken } = appState
 
@@ -39,7 +38,6 @@ function InvoiceTableRow(props) {
             }
         })
         try {
-            console.log('delete invoice handler', res)
             const json = await res.json()
             if (json.invoice) {
                 deleteStripeIdsFromEvents(json.invoice)
@@ -59,7 +57,6 @@ function InvoiceTableRow(props) {
     }
 
     const deleteStripeIdsFromEvents = async () => {
-        console.log('deleting stripe ids')
         const res = await fetch(`${process.env.BASE_URL}/remove_many_stripe_ids`, {
             method: "POST",
             body: JSON.stringify({
@@ -106,8 +103,7 @@ function InvoiceTableRow(props) {
             }
         })
         try {
-            await res.json()
-            let invoice = res.invoice
+            if (!res.ok) throw "Invoice not sent"
             setSending(false)
             setModalOpen(false)
             dispatch({
@@ -115,7 +111,6 @@ function InvoiceTableRow(props) {
                 notification: { id: new Date, type: "notice", message: "Invoice finalized and sent." }
             })
             refreshAction(appState, dispatch)
-
         } catch (error) {
             dispatch({
                 type: 'addNotification',
@@ -144,8 +139,7 @@ function InvoiceTableRow(props) {
         })
 
         try {
-            await res.json()
-            let invoice = res.invoice
+            if (!res.ok) throw "Invoice not marked as paid"
             setPaying(false)
             setModalOpen(false)
             refreshAction(appState, dispatch)
@@ -167,9 +161,9 @@ function InvoiceTableRow(props) {
         }
     }
 
-    const voidInvoiceHandler = () => {
+    const voidInvoiceHandler = async () => {
         setVoiding(true)
-        fetch(`${process.env.BASE_URL}/stripe/invoices/void`, {
+        const res = await fetch(`${process.env.BASE_URL}/stripe/invoices/void`, {
             method: "POST",
             body: JSON.stringify({
                 invoice
@@ -181,29 +175,27 @@ function InvoiceTableRow(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(res => res.json())
-            .catch(error => {
+        try {
+            const json = await res.json()
+            if (json.invoice) {
                 dispatch({
                     type: 'addNotification',
-                    notification: { id: new Date, type: "alert", message: "Could not void invoice. Please try again. If this problem persists please contact your system administrator." }
+                    notification: { id: new Date, type: "warning", message: "Invoice successfully voided." }
                 })
-                console.error('Error:', error)
                 setVoiding(false)
                 setModalOpen(false)
                 refreshAction(appState, dispatch)
+            }
+        } catch (error) {
+            dispatch({
+                type: 'addNotification',
+                notification: { id: new Date, type: "alert", message: "Could not void invoice. Please try again. If this problem persists please contact your system administrator." }
             })
-            .then((res) => {
-                if (res.invoice) {
-                    dispatch({
-                        type: 'addNotification',
-                        notification: { id: new Date, type: "warning", message: "Invoice successfully voided." }
-                    })
-                    setVoiding(false)
-                    setModalOpen(false)
-                    refreshAction(appState, dispatch)
-                }
-            })
-        // .then(() => setLoading(false))
+            console.error('Error:', error)
+            setVoiding(false)
+            setModalOpen(false)
+            refreshAction(appState, dispatch)
+        }
     }
 
     const invoiceIconSwitch = (status) => {
@@ -277,7 +269,6 @@ function InvoiceTableRow(props) {
                     />
                     <Button basic as="a" icon="download" href={invoice.invoice_pdf} content="PDF" />
                     <Button basic onClick={() => window.open(invoice.hosted_invoice_url, '_blank')} icon="chain" content="Link" />
-                    {/* <Button icon="mail" content="Send Invoice" onClick={() => sendInvoiceHandler()} /> */}
 
                     <Button
                         loading={sending}
@@ -318,26 +309,14 @@ function InvoiceTableRow(props) {
             <Table.Cell>{invoice.status === "open" || invoice.status === "paid" ? <Icon name="check" /> : <Icon name="close" />}</Table.Cell>
         </Table.Row>
 
-        <Modal
-
-            open={modalOpen}
-            onClose={() => setModalOpen(false)}
-            closeIcon
-        >
-
-
+        <Modal open={modalOpen} onClose={() => setModalOpen(false)} closeIcon >
             <Modal.Header>
                 <h1>Invoice</h1>
-                <Label
-                    content={invoice.status}
-                    color={invoiceColorSwitch(invoice.status)}
-                    icon={invoiceIconSwitch(invoice.status)}
-                />
+                <Label content={invoice.status} color={invoiceColorSwitch(invoice.status)} icon={invoiceIconSwitch(invoice.status)} />
             </Modal.Header>
+
             <Modal.Content>
                 <h4>{invoice.customer_name}</h4>
-
-
                 <Modal.Description>
 
                     <Table basic selectable={invoice.status === "draft" ? true : false}>
@@ -347,16 +326,18 @@ function InvoiceTableRow(props) {
                                 <Table.HeaderCell>Type</Table.HeaderCell>
                                 <Table.HeaderCell>Amount</Table.HeaderCell>
                                 <Table.HeaderCell>Duration</Table.HeaderCell>
-
                             </Table.Row>
                         </Table.Header>
+
                         <Table.Body>
                             {invoice.lines.data.map(item => <InvoiceItem {...props} setInvoice={(e) => setInvoice(e)} invoice={invoice} key={item.id} item={item} />)}
                         </Table.Body>
                     </Table>
 
                 </Modal.Description >
+
             </Modal.Content>
+
             <Modal.Actions>
                 {showActionButtons()}
             </Modal.Actions>
