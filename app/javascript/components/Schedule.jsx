@@ -38,7 +38,7 @@ function Schedule(props) {
 
     const [calRange, setCalRange] = useState({
         start: moment().startOf('month').subtract(1, 'months')._d,
-        end: moment().endOf('month')._d,
+        end: moment().add(1, 'months').endOf('month')._d,
     })
 
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content

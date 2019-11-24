@@ -155,12 +155,6 @@ export const CalendarContainer = styled.div`
         min-height: 50rem;
         justify-self: center;
         max-width: ${(props) => props.fullWidth === true ? "95vw" : "60vw"};
-
-    //    @media (max-width: 50rem) {
-    //       max-width: 95vw;
-    //   ;
-    // }
-
   }
       `
 

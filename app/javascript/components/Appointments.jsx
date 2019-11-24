@@ -24,7 +24,7 @@ export const isInTheFuture = (event) => {
 export const FullWidthCalendarContainer = styled(Container)`
         display: grid !Important;
         grid-template-columns: 1fr;
-        grid-template-areas: "heading" "divider" "panel";a
+        grid-template-areas: "heading" "divider" "panel";
         justify-content: center ;
     `
 
@@ -44,7 +44,7 @@ function Appointments(props) {
 
     const [calRange, setCalRange] = useState({
         start: moment().startOf('month').subtract(1, 'months')._d,
-        end: moment().endOf('month')._d,
+        end: moment().add(1, 'months').endOf('month')._d,
     })
 
 
