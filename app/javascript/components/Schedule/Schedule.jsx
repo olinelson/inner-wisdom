@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react'
 
 // components / styles
 import { Divider, Modal, Popup, Dimmer, Button, Input, Label, Icon, Segment, Dropdown, Checkbox, Form, Loader } from 'semantic-ui-react'
-import { BusinessEventSegment, CalendarContainer, ModalContent } from "./StyledComponents"
-import { FullWidthCalendarContainer } from "./Appointments"
-import Event from "./Event"
-import UserPickerDropDown from './UserPickerDropDown';
-import Message from './Message'
+import { BusinessEventSegment, CalendarContainer, ModalContent } from "../StyledComponents"
+import { FullWidthCalendarContainer } from "../Appointments"
+import Event from "../Event"
+import UserPickerDropDown from '../UserPickerDropDown';
+import Message from '../Message'
+
+import ScheduleNotificationManager from './ScheduleNotificationsManager'
 
 // packages
 import moment from "moment"
@@ -46,26 +48,6 @@ function Schedule(props) {
     useEffect(() => {
         getEventsInRange()
     }, []);
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-
-            if (notifications === []) return () => clearTimeout(timer)
-            if (notifications.length > 1) {
-                let newVal = [...notifications]
-                newVal.pop()
-                setNotifications(newVal)
-            }
-            else if (notifications.length === 1) {
-                setNotifications([])
-            }
-            else {
-                return () => clearTimeout(timer)
-            }
-
-        }, 3000);
-        return () => clearTimeout(timer);
-    }, [notifications]);
 
     const rangeChangeHandler = (e) => {
         // is this month, week, or day view?
@@ -110,7 +92,7 @@ function Schedule(props) {
             setEvents([...events.concat(res.events)])
             setLoading(false)
         } catch (error) {
-            setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Check your internet connection and try again. If this problem persists please contact your system administratores." }, ...notifications])
+            setNotifications([{ id: new Date, type: "alert", message: "Could not get events. Check your internet connection and try again. If this problem persists please contact your system administratores.", expiresAt: moment().add(5, 'seconds') }, ...notifications])
             console.error('Error:', error)
             setLoading(false)
         }
@@ -139,7 +121,7 @@ function Schedule(props) {
         })
             .then(response => response.json())
             .catch(error => {
-                setNotifications([{ id: new Date, type: "alert", message: "There was an error creating this event. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
+                setNotifications([{ id: new Date, type: "alert", message: "There was an error creating this event. Please try again. If this problem persists please contact your system administrator.", expiresAt: moment().add(5, 'seconds') }, ...notifications])
                 console.error('Error:', error)
                 setLoading(false)
                 setEvents([...events])
@@ -147,7 +129,7 @@ function Schedule(props) {
             .then(r => {
                 let currentEvents = [...events].filter(e => e.id !== event.id)
                 setEvents([...currentEvents, r.newEvent])
-                setNotifications([{ id: new Date, type: "notice", message: "Event successfully created." }, ...notifications])
+                setNotifications([{ id: new Date, type: "notice", message: "Event successfully created.", expiresAt: moment().add(5, 'seconds') }, ...notifications])
                 if (event.recurrence) getAllEvents()
             })
     }
@@ -173,14 +155,14 @@ function Schedule(props) {
         })
             .then(response => response.json())
             .catch(error => {
-                setNotifications([{ id: new Date, type: "alert", message: "There was an error updating this event. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
+                setNotifications([{ id: new Date, type: "alert", message: "There was an error updating this event. Please try again. If this problem persists please contact your system administrator.", expiresAt: moment().add(5, 'seconds') }, ...notifications])
                 console.error('Error:', error)
                 setEvents([...events])
             })
             .then((r) => {
                 let filteredEvents = [...events].filter(e => e.id !== r.editedEvent.id)
                 setEvents([...filteredEvents, r.editedEvent])
-                setNotifications([{ id: new Date, type: "notice", message: "Event successfully updated" }, ...notifications])
+                setNotifications([{ id: new Date, type: "notice", message: "Event successfully updated", expiresAt: moment().add(5, 'seconds') }, ...notifications])
             })
     }
 
@@ -205,13 +187,13 @@ function Schedule(props) {
         })
             .then(res => res.json())
             .catch(error => {
-                setNotifications([{ id: new Date, type: "alert", message: "There was an error deleting this event. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
+                setNotifications([{ id: new Date, type: "alert", message: "There was an error deleting this event. Please try again. If this problem persists please contact your system administrator.", expiresAt: moment().add(5, 'seconds') }, ...notifications])
                 console.error('Error:', error)
             })
             .then(r => {
                 let filteredEvents = [...events].filter(e => e.id !== selectedEvent.id)
                 setEvents(filteredEvents)
-                setNotifications([{ id: new Date, type: "warning", message: "Event successfully deleted" }, ...notifications])
+                setNotifications([{ id: new Date, type: "warning", message: "Event successfully deleted", expiresAt: moment().add(5, 'seconds') }, ...notifications])
                 if (deleteFutureReps) getAllEvents()
             })
     }
@@ -512,9 +494,10 @@ function Schedule(props) {
     }
 
     return <>
-        <div style={{ position: "fixed", right: "1rem", zIndex: "100" }}>
+        <ScheduleNotificationManager notifications={notifications} />
+        {/* <div style={{ position: "fixed", right: "1rem", zIndex: "100" }}>
             {notifications.map(n => <Message key={uuidv1()} message={n} />)}
-        </div>
+        </div> */}
         <Divider hidden />
         <Divider hidden />
         <FullWidthCalendarContainer fluid >
