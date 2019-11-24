@@ -7,9 +7,6 @@ import moment from "moment"
 import Event from "./Event"
 import Message from "./Message"
 
-// need to change this to get public or private events in range
-// simplify routes?
-
 export const isUserAnAttendeeOfEvent = (event, user) => {
     if (event.attendees === null) return false
     for (let att of event.attendees) {
