@@ -60,5 +60,7 @@ blockquote:before {
 
 }
 
-
+.ui.page.modals.dimmer.transition.visible.active{
+  z-index: 50 !important;
+}
 
