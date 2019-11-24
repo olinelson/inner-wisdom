@@ -445,7 +445,6 @@ function Appointments(props) {
                     views={['month', 'day', 'week']}
                     onRangeChange={(e) => rangeChangeHandler(e)}
                     scrollToTime={moment().startOf('hour').subtract(1, 'hours').toDate()}
-                    defaultView={Views.WEEK}
                 />
 
             </Dimmer.Dimmable>
