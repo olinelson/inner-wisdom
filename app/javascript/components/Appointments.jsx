@@ -442,7 +442,7 @@ function Appointments(props) {
                     step={15}
                     timeslots={1}
                     onSelecting={() => false}
-                    views={['month', 'day', 'week', 'agenda']}
+                    views={['month', 'day', 'week']}
                     onRangeChange={(e) => rangeChangeHandler(e)}
                     scrollToTime={moment().startOf('hour').subtract(1, 'hours').toDate()}
                     defaultView={Views.WEEK}
