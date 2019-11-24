@@ -89,7 +89,7 @@ function InvoiceItemList() {
                         <Table.HeaderCell>Description</Table.HeaderCell>
                         <Table.HeaderCell>Amount</Table.HeaderCell>
                         <Table.HeaderCell>Duration</Table.HeaderCell>
-                        <Table.HeaderCell>Attendees</Table.HeaderCell>
+                        {/* <Table.HeaderCell>Attendees</Table.HeaderCell> */}
                     </Table.Row>
                 </Table.Header>
 
