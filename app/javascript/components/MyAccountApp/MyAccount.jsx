@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { Container, Menu, Divider, Button, Modal, Tab, Input } from "semantic-ui-react"
 import styled from "styled-components"
 
-import PostsList from './PostsList';
+import PostsList from '../PostsList';
 import AppointmentHistoryTable from './AppointmentHistoryTable';
 import ClientInvoiceList from './ClientInvoiceList';
 
