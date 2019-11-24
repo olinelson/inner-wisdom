@@ -47,6 +47,7 @@ function InvoiceItem(props) {
             }
         })
         try {
+            if (!res.ok) throw 'Could not update invoice item'
             const json = await res.json()
             setI(json.updated_item)
             setModalOpen(false)

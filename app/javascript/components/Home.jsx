@@ -73,7 +73,7 @@ function Home(props) {
             {/* <Segment> */}
             <Item.Group>
                 <Item>
-                    <Item.Image alt="Susan Stephenson, Director" size='medium' src='https://storage.googleapis.com/inner_wisdom_bucket/DSC_0014.jpg' />
+                    <Item.Image alt="Susan Stephenson, Director" size='medium' src={`${process.env.BASE_URL}/headshot.jpg`} />
                     {/* <Item.Image alt="Susan Stephenson, Director" size='medium' src='https://storage.googleapis.com/inner_wisdom_bucket/headshot_noExifRotated.jpg' /> */}
 
                     <Item.Content verticalAlign='top'>
