@@ -43,7 +43,7 @@ function Appointments(props) {
     const [notifications, setNotifications] = useState([])
 
     const [calRange, setCalRange] = useState({
-        start: moment().startOf('month').subtract(1, 'months')._d,
+        start: moment().startOf('month')._d,
         end: moment().add(1, 'months').endOf('month')._d,
     })
 
