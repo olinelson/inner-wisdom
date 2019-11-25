@@ -9,7 +9,7 @@ import { StateProvider } from './ClientShowContext';
 
 
 export const getEvents = async (appState, dispatch) => {
-    const res = await fetch(`${process.env.BASE_URL}/events/booked/${appState.user.id}`, {
+    const res = await fetch(`${process.env.BASE_URL}/api/v1/api/v1/events/booked/${appState.user.id}`, {
         headers: {
             "X-CSRF-Token": appState.csrfToken,
             "Content-Type": "application/json",
@@ -38,7 +38,7 @@ export const getEvents = async (appState, dispatch) => {
 
 
 export const getInvoiceItems = async (appState, dispatch) => {
-    const res = await fetch(`${process.env.BASE_URL}/stripe/invoice_items`, {
+    const res = await fetch(`${process.env.BASE_URL}/api/v1/stripe/invoice_items`, {
         method: "POST",
         body: JSON.stringify({
             user: appState.user
@@ -79,7 +79,7 @@ export const getInvoiceItems = async (appState, dispatch) => {
 
 
 export const getInvoices = async (appState, dispatch) => {
-    const res = await fetch(`${process.env.BASE_URL}/stripe/invoices`, {
+    const res = await fetch(`${process.env.BASE_URL}/api/v1/stripe/invoices`, {
         method: "POST",
         body: JSON.stringify({
             user: appState.user

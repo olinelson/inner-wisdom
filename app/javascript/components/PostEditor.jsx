@@ -131,7 +131,7 @@ function PostEditor(props) {
         setFeatureImageLoading(true)
         let formData = new FormData();
         formData.append('file', acceptedFiles[0])
-        fetch(`${process.env.BASE_URL}/attach/posts/${savedPost.id}`, {
+        fetch(`${process.env.BASE_URL}/api/v1/attach/posts/${savedPost.id}`, {
             method: "POST",
             body: formData,
             headers: {
@@ -157,7 +157,7 @@ function PostEditor(props) {
         setInserting(true)
         let formData = new FormData();
         formData.append('file', acceptedFiles[0])
-        fetch(`${process.env.BASE_URL}/insert/posts/${savedPost.id}`, {
+        fetch(`${process.env.BASE_URL}/api/v1/insert/posts/${savedPost.id}`, {
             method: "POST",
             body: formData,
             headers: {

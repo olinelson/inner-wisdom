@@ -6,7 +6,6 @@ import moment from 'moment'
 export default function ScheduleNotificationsManager(props) {
 
     const { notifications } = props
-    console.log(notifications)
     return (
 
         <div style={{ position: "fixed", right: "1rem", zIndex: "100" }}>

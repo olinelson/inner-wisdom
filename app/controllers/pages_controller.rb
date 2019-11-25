@@ -67,4 +67,11 @@ class PagesController < ApplicationController
     def blog
         render react_component: 'Blog', props: {current_user: current_user}
     end
+
+    def showPost
+        render react_component: 'PostEditor', props: { 
+            post: Post.find(params["id"]),
+            current_user: current_user  
+        }
+    end
 end

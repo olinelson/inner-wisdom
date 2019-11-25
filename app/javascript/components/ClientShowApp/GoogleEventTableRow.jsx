@@ -26,7 +26,7 @@ function GoogleEventTableRow(props) {
     let duration = moment.duration(moment(event.end_time) - moment(event.start_time)).humanize()
 
     const updateGoogleCalEvent = async (event) => {
-        const res = await fetch(`${process.env.BASE_URL}/events/update`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/events/update`, {
             method: "POST",
             body: JSON.stringify({
                 event
@@ -64,7 +64,7 @@ function GoogleEventTableRow(props) {
 
     const createInvoiceItem = async () => {
         setLoading(true)
-        const res = await fetch(`${process.env.BASE_URL}/stripe/invoice_items/create`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/stripe/invoice_items/create`, {
             method: "POST",
             body: JSON.stringify({
                 event,

@@ -89,7 +89,7 @@ function MyAccount(props) {
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
     const genNewCalAuthUrl = () => {
-        fetch(`${process.env.BASE_URL}/googlecal/url`, {
+        fetch(`${process.env.BASE_URL}/api/v1/googlecal/url`, {
             method: "POST",
             body: JSON.stringify({
                 newPersonalEmail
@@ -109,7 +109,7 @@ function MyAccount(props) {
     }
 
     const saveNewCredentials = () => {
-        fetch(`${process.env.BASE_URL}/googlecal/token`, {
+        fetch(`${process.env.BASE_URL}/api/v1/googlecal/token`, {
             method: "POST",
             body: JSON.stringify({
                 newPersonalEmail,

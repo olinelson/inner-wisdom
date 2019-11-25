@@ -33,7 +33,7 @@ function InvoiceList() {
                             <Table.HeaderCell>Status</Table.HeaderCell>
                             <Table.HeaderCell>Invoice No.</Table.HeaderCell>
                             <Table.HeaderCell>Amount Due</Table.HeaderCell>
-                            <Table.HeaderCell>Email Delivered</Table.HeaderCell>
+                            <Table.HeaderCell>Email Sent</Table.HeaderCell>
 
                         </Table.Row>
                     </Table.Header>

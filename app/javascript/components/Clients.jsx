@@ -46,7 +46,7 @@ function Clients(props) {
     const createUserHandler = (e) => {
         setLoading(true)
         let newUser = { first_name, last_name, email, password: tempPassword, sendWelcomeEmail }
-        fetch(`${process.env.BASE_URL}/clients`, {
+        fetch(`${process.env.BASE_URL}/api/v1/clients`, {
             method: "POST",
             body: JSON.stringify({
                 user: newUser
@@ -80,7 +80,7 @@ function Clients(props) {
     }
 
     const handleResultSelect = (e, { result }) => {
-        window.location = `/clients/${result.id}`
+        window.location = `/api/v1/clients/${result.id}`
     }
 
     const handleSearchChange = (e, { value }) => {
@@ -125,7 +125,7 @@ function Clients(props) {
 
                 {users.map(user => {
                     return <Card
-                        onClick={() => window.location = `/clients/${user.id}`}
+                        onClick={() => window.location = `/api/v1/clients/${user.id}`}
                         key={user.id}>
                         <Card.Content>
 

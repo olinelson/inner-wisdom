@@ -117,9 +117,9 @@ function Appointments(props) {
         let url
 
         if (props.current_user) {
-            url = `${process.env.BASE_URL}/events/current_user/${start}/${end}`
+            url = `${process.env.BASE_URL}/api/v1/events/current_user/${start}/${end}`
         } else {
-            url = `${process.env.BASE_URL}/events/public/${start}/${end}`
+            url = `${process.env.BASE_URL}/api/v1/events/public/${start}/${end}`
         }
 
         try {
@@ -145,7 +145,7 @@ function Appointments(props) {
     // fetch handlers
     const bookAppointment = () => {
         setBooking(true)
-        fetch(`${process.env.BASE_URL}/events/book`, {
+        fetch(`${process.env.BASE_URL}/api/v1/events/book`, {
             method: "POST",
             body: JSON.stringify({
                 event: selectedEvent,
@@ -190,7 +190,7 @@ function Appointments(props) {
         let newTitle = "*Canceled " + event.title
         let editedEvent = { ...event, title: newTitle }
 
-        fetch(`${baseUrl}/events/cancel`, {
+        fetch(`${baseUrl}/api/v1/events/cancel`, {
             method: "POST",
             body: JSON.stringify({
                 inGracePeriod,

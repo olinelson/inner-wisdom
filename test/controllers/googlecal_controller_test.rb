@@ -8,7 +8,7 @@ class GooglecalControllerTest < ActionDispatch::IntegrationTest
   @@anHourFromNow = @@now + 3600 
 
   test 'anyone logged out can get free consoluts and events' do
-    get "/events/public/#{Date.today}/#{Date.today + 1.weeks}"
+    get "/api/v1/events/public/#{Date.today}/#{Date.today + 1.weeks}"
     body = JSON.parse(response.body)
     assert body["events"]
   end
@@ -16,7 +16,7 @@ class GooglecalControllerTest < ActionDispatch::IntegrationTest
   # This assumes that there are some consult slots and appointment slots in the next week
   test 'unaproved clients can only see consults and existing appointments' do
     sign_in users(:unapprovedClient)
-    get "/events/current_user/#{Date.today}/#{Date.today + 1.weeks}"
+    get "/api/v1/events/current_user/#{Date.today}/#{Date.today + 1.weeks}"
     body = JSON.parse(response.body)
     # must figure out a better way to test this!
     assert body["events"]
@@ -24,7 +24,7 @@ class GooglecalControllerTest < ActionDispatch::IntegrationTest
 
   test 'approved clients can only see appointment slots and existing appointments' do
     sign_in users(:approvedClient)
-    get "/events/current_user/#{Date.today}/#{Date.today + 1.weeks}"
+    get "/api/v1/events/current_user/#{Date.today}/#{Date.today + 1.weeks}"
     body = JSON.parse(response.body)
     assert body["appointments"].length > 1
     assert body["consults"].length === 0
@@ -32,7 +32,7 @@ class GooglecalControllerTest < ActionDispatch::IntegrationTest
 
   test 'admin can get all events from schedule' do
     sign_in users(:admin)
-    get "/events/schedule/#{Date.today}/#{Date.today + 1.weeks}"
+    get "/api/v1/events/schedule/#{Date.today}/#{Date.today + 1.weeks}"
     body = JSON.parse(response.body)
     assert body["appointments"].length > 1
     assert body["consults"].length > 1
@@ -70,28 +70,28 @@ class GooglecalControllerTest < ActionDispatch::IntegrationTest
   test 'unapproved clients can book consults' do
     sign_in users(:unapprovedClient)
     unapprovedClient = User.find_by(first_name: 'unapprovedClient')
-    post '/events/book', params: { event: @@consultSlot}
+    post '/api/v1/events/book', params: { event: @@consultSlot}
     body = JSON.parse(response.body)
     assert body["editedEvent"]["attendees"][0]["email"] === unapprovedClient.email
   end
 
   test 'admin can delete booked appointments' do
     sign_in users(:admin)
-    post '/events/delete', params: {event: @@bookedAppointment}
+    post '/api/v1/events/delete', params: {event: @@bookedAppointment}
     body = JSON.parse(response.body)
     assert body["deletedEvent"]
   end
 
   test 'admin can delete appointment slots' do
     sign_in users(:admin)
-    post '/events/delete', params: {event: @@appointmentSlot}
+    post '/api/v1/events/delete', params: {event: @@appointmentSlot}
     body = JSON.parse(response.body)
     assert body["deletedEvent"]
   end
 
   test 'admin can delete consults' do
     sign_in users(:admin)
-    post '/events/delete', params: {event: @@consultSlot}
+    post '/api/v1/events/delete', params: {event: @@consultSlot}
     body = JSON.parse(response.body)
     assert body["deletedEvent"]
   end

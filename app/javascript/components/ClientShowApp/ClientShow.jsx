@@ -47,7 +47,7 @@ function ClientShow() {
     }
 
     const editUserHandler = async (editedUser = user) => {
-        const res = await fetch(`${process.env.BASE_URL}/clients/${user.id}`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/clients/${user.id}`, {
             method: "PATCH",
             body: JSON.stringify({
                 user: editedUser
@@ -79,7 +79,7 @@ function ClientShow() {
 
     const deleteUserHandler = async () => {
         setDeleting(true)
-        const res = await fetch(`${process.env.BASE_URL}/clients/${user.id}`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/clients/${user.id}`, {
             method: "DELETE",
             headers: {
                 "X-CSRF-Token": csrfToken,

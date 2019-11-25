@@ -17,7 +17,7 @@ function PostsList(props) {
     }
 
     const getAllPosts = () => {
-        fetch(`${process.env.BASE_URL}/posts`, {
+        fetch(`${process.env.BASE_URL}/api/v1/posts`, {
             headers: {
                 "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
@@ -36,7 +36,7 @@ function PostsList(props) {
             })
     }
     const getPublishedPosts = () => {
-        fetch(`${process.env.BASE_URL}/posts/published`, {
+        fetch(`${process.env.BASE_URL}/api/v1/posts/published`, {
             headers: {
                 "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
@@ -58,7 +58,7 @@ function PostsList(props) {
 
 
     const createNewPost = () => {
-        fetch(`${process.env.BASE_URL}/posts`, {
+        fetch(`${process.env.BASE_URL}/api/v1/posts`, {
             method: "POST",
             headers: {
                 "X-CSRF-Token": csrfToken,

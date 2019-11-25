@@ -20,7 +20,7 @@ function InvoiceItemList() {
 
     const createNewInvoice = async () => {
         setCreating(true)
-        const res = await fetch(`${process.env.BASE_URL}/stripe/invoices/new`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/stripe/invoices/new`, {
             method: "POST",
             body: JSON.stringify({
                 user

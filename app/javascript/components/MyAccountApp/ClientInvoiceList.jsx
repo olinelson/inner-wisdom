@@ -8,7 +8,7 @@ function InvoiceList(props) {
     const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
 
     const getInvoices = () => {
-        fetch(`${process.env.BASE_URL}/stripe/invoices`, {
+        fetch(`${process.env.BASE_URL}/api/v1/stripe/invoices`, {
             method: "POST",
             body: JSON.stringify({
                 user: props.client,

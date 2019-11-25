@@ -87,7 +87,7 @@ function Schedule(props) {
         setLoading(true)
 
         try {
-            let res = await fetch(`${process.env.BASE_URL}/events/schedule/${start}/${end}`)
+            let res = await fetch(`${process.env.BASE_URL}/api/v1/events/schedule/${start}/${end}`)
             res = await res.json()
             setEvents([...events.concat(res.events)])
             setLoading(false)
@@ -105,7 +105,7 @@ function Schedule(props) {
 
         setSelectedSlot(null)
         let event = { ...selectedSlot }
-        fetch(`${process.env.BASE_URL}/events/create`, {
+        fetch(`${process.env.BASE_URL}/api/v1/events/create`, {
             method: "POST",
             body: JSON.stringify({
                 event: event,
@@ -141,7 +141,7 @@ function Schedule(props) {
 
         let event = { ...selectedEvent }
         setSelectedEvent(null)
-        fetch(`${process.env.BASE_URL}/events/update`, {
+        fetch(`${process.env.BASE_URL}/api/v1/events/update`, {
             method: "POST",
             body: JSON.stringify({
                 event: selectedEvent
@@ -172,7 +172,7 @@ function Schedule(props) {
         let filteredEvents = [...events].filter(e => e.id !== selectedEvent.id)
         setEvents([...filteredEvents, { ...selectedEvent, placeholder: true }])
 
-        fetch(`${process.env.BASE_URL}/events/delete`, {
+        fetch(`${process.env.BASE_URL}/api/v1/events/delete`, {
             method: "POST",
             body: JSON.stringify({
                 event: selectedEvent,
@@ -214,7 +214,7 @@ function Schedule(props) {
         let foundUser = props.users.find(u => u.email === input.email)
         if (foundUser) return <>
             <Icon name='user' />
-            <span style={{ cursor: "pointer" }} onClick={() => window.location = `/clients/${foundUser.id}`}>{foundUser.first_name + " " + foundUser.last_name}</span>
+            <span style={{ cursor: "pointer" }} onClick={() => window.location = `/api/v1/clients/${foundUser.id}`}>{foundUser.first_name + " " + foundUser.last_name}</span>
         </>
 
         return <>

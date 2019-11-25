@@ -55,10 +55,5 @@ class PostsController < ApplicationController
         render json:  { posts: Post.order("created_at DESC")}
     end
 
-    def showPost
-        render react_component: 'PostEditor', props: { 
-            post: Post.find(params["id"]),
-            current_user: current_user  
-        }
-    end
+   
 end

@@ -25,7 +25,7 @@ function InvoiceTableRow(props) {
 
     const deleteInvoiceHandler = async () => {
         setDeleting(true)
-        const res = await fetch(`${process.env.BASE_URL}/stripe/invoices/delete`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/stripe/invoices/delete`, {
             method: "POST",
             body: JSON.stringify({
                 invoice
@@ -57,7 +57,7 @@ function InvoiceTableRow(props) {
     }
 
     const deleteStripeIdsFromEvents = async () => {
-        const res = await fetch(`${process.env.BASE_URL}/remove_many_stripe_ids`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/remove_many_stripe_ids`, {
             method: "POST",
             body: JSON.stringify({
                 invoice
@@ -90,7 +90,7 @@ function InvoiceTableRow(props) {
 
     const sendInvoiceHandler = async () => {
         setSending(true)
-        const res = await fetch(`${process.env.BASE_URL}/stripe/invoices/send`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/stripe/invoices/send`, {
             method: "POST",
             body: JSON.stringify({
                 invoice
@@ -125,7 +125,7 @@ function InvoiceTableRow(props) {
 
     const markInvoiceAsPaidHandler = async () => {
         setPaying(true)
-        const res = await fetch(`${process.env.BASE_URL}/stripe/invoices/mark_as_paid`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/stripe/invoices/mark_as_paid`, {
             method: "POST",
             body: JSON.stringify({
                 invoice
@@ -163,7 +163,7 @@ function InvoiceTableRow(props) {
 
     const voidInvoiceHandler = async () => {
         setVoiding(true)
-        const res = await fetch(`${process.env.BASE_URL}/stripe/invoices/void`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/stripe/invoices/void`, {
             method: "POST",
             body: JSON.stringify({
                 invoice

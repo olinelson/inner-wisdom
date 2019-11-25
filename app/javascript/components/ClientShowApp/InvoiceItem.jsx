@@ -34,7 +34,7 @@ function InvoiceItem(props) {
     const updateItemHandler = async () => {
         setSaving(true)
         // setLoading(true)
-        const res = await fetch(`${process.env.BASE_URL}/stripe/invoice_items`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/stripe/invoice_items`, {
             method: "PATCH",
             body: JSON.stringify({
                 invoice_item: i
@@ -71,7 +71,7 @@ function InvoiceItem(props) {
 
     const removeStripeIdFromEvent = async (invoice_item) => {
 
-        const res = await fetch(`${process.env.BASE_URL}/remove_stripe_id_from_event`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/remove_stripe_id_from_event`, {
             method: "POST",
             body: JSON.stringify({
                 invoice_item
@@ -107,7 +107,7 @@ function InvoiceItem(props) {
 
     const deleteItemHandler = async () => {
         setDeleting(true)
-        const res = await fetch(`${process.env.BASE_URL}/stripe/invoice_items/delete`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/stripe/invoice_items/delete`, {
             method: "POST",
             body: JSON.stringify({
                 invoice_item: i
