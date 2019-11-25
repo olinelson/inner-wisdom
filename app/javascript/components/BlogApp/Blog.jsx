@@ -2,7 +2,7 @@ import React from 'react'
 import PostsList from './PostsList';
 import { Container, Divider } from 'semantic-ui-react';
 
-import { Jumbotron } from './StyledComponents';
+import { Jumbotron } from '../StyledComponents';
 import { createSecureContext } from 'tls';
 
 

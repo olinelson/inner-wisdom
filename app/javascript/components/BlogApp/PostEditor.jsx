@@ -3,7 +3,7 @@ import { EditorState, RichUtils, convertToRaw, convertFromRaw, AtomicBlockUtils 
 import { Container, Input, Divider, Checkbox, Label, Modal, Popup, Button, Icon, Image, Segment, Placeholder, Dimmer, Loader } from "semantic-ui-react"
 import Dropzone from 'react-dropzone'
 import styled from "styled-components"
-import { Jumbotron, EditorButtons } from './StyledComponents';
+import { Jumbotron, EditorButtons } from '../StyledComponents';
 
 
 import Editor from 'draft-js-plugins-editor';

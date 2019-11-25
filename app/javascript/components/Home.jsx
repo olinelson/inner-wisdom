@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 
 import { Header, Container, Segment, Item, Divider, Label } from "semantic-ui-react"
 
-import PostPreview from './PostPreview';
+import PostPreview from './BlogApp/PostPreview';
 import styled from "styled-components"
 
 import { Jumbotron, JumboMessage } from './StyledComponents'

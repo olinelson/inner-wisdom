@@ -1,25 +1,31 @@
 import WebpackerReact from 'webpacker-react'
-// import App from 'components/App'
 
-import FlashNotification from 'components/FlashNotification'
+
+// global components
 import Nav from "components/Nav"
 import UserConsentCheckbox from "components/UserConsentCheckbox"
-import Blog from "components/Blog"
-import PostEditor from "components/PostEditor"
-import Counselling from "components/Counselling"
-import FAQS from "components/FAQS"
-import Supervision from "components/Supervision"
-import Contact from "components/Contact"
+import FlashNotification from 'components/FlashNotification'
+import Footer from "components/Footer"
+
+
+// pages
 import Home from "components/Home"
+import Counselling from "components/Counselling"
+import Supervision from "components/Supervision"
+import Fees from "components/Fees"
+import FAQS from "components/FAQS"
+import Blog from "components/BlogApp/Blog"
+import Contact from "components/Contact"
 import Appointments from "components/Appointments"
 import MyAccount from "components/MyAccountApp/MyAccount"
-import Schedule from "components/Schedule/Schedule"
-import Clients from "components/Clients"
-// import ClientShow from "components/ClientShow"
-import ClientShowApp from "components/ClientShowApp/ClientShowApp"
-import Footer from "components/Footer"
-import Fees from "components/Fees"
 
+
+// admin pages
+import Schedule from "components/ScheduleApp/Schedule"
+import Clients from "components/Clients"
+import ClientShowApp from "components/ClientShowApp/ClientShowApp"
+
+// styles
 import "styled-components"
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'semantic-ui-css/semantic.min.css'
@@ -27,4 +33,4 @@ import "components/stylesheet.css"
 import 'draft-js/dist/Draft.css';
 
 
-WebpackerReact.setup({ PostEditor, ClientShowApp, Schedule, Footer, MyAccount, Clients, Home, Appointments, Counselling, FAQS, Supervision, Contact, Blog, FlashNotification, Nav, UserConsentCheckbox, Fees }) // ES6 shorthand for {Hello: Hello}
+WebpackerReact.setup({ ClientShowApp, Schedule, Footer, MyAccount, Clients, Home, Appointments, Counselling, FAQS, Supervision, Contact, Blog, FlashNotification, Nav, UserConsentCheckbox, Fees }) // ES6 shorthand for {Hello: Hello}
