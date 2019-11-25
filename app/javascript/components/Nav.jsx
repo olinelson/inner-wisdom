@@ -30,8 +30,8 @@ function Nav(props) {
         return true
     }
 
-    const signOutHandler = () => {
-        fetch(`${process.env.BASE_URL}/users/sign_out`, {
+    const signOutHandler = async () => {
+        const res = await fetch(`${process.env.BASE_URL}/users/sign_out`, {
             method: "DELETE",
             headers: {
                 "X-CSRF-Token": csrfToken,
@@ -40,7 +40,13 @@ function Nav(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(() => window.location.href = `${process.env.BASE_URL}`)
+        try {
+            if (!res.ok) throw 'Couldn\'t sign out'
+            window.location.href = `${process.env.BASE_URL}`
+        } catch (error) {
+            console.error(error)
+        }
+
     }
 
     const FixedMenu = styled(Menu)`

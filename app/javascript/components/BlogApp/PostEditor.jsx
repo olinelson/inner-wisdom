@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { EditorState, RichUtils, convertToRaw, convertFromRaw, AtomicBlockUtils } from 'draft-js';
-import { Container, Input, Divider, Checkbox, Label, Modal, Popup, Button, Icon, Image, Segment, Placeholder, Dimmer, Loader } from "semantic-ui-react"
+import { Container, Input, Divider, Checkbox, Label, Modal, Button, Icon, Segment, Placeholder, Dimmer, Loader } from "semantic-ui-react"
 import Dropzone from 'react-dropzone'
 import styled from "styled-components"
 import { Jumbotron, EditorButtons } from '../StyledComponents';
@@ -64,13 +64,12 @@ function PostEditor(props) {
         return 'not-handled';
     }
 
-    const saveChanges = () => {
+    const saveChanges = async () => {
         setSaving(true)
-
         let body = JSON.stringify(convertToRaw(editorState.getCurrentContent()))
 
         let editedPost = { ...post, body }
-        fetch(`${process.env.BASE_URL}/posts/${post.id}`, {
+        const res = await fetch(`${process.env.BASE_URL}/posts/${post.id}`, {
             method: "PATCH",
             body: JSON.stringify({
                 editedPost
@@ -82,17 +81,15 @@ function PostEditor(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-
-            .then(response => response.json())
-            .catch(error => {
-                console.error('Error:', error)
-                setSaving(false)
-            })
-            .then((e) => {
-                setSaving(false)
-                setSavedPost(editedPost)
-            })
-
+        try {
+            const json = await res.json()
+            if (!res.ok) throw 'Couldn\'t save post'
+            setSaving(false)
+            setSavedPost(editedPost)
+        } catch (error) {
+            console.error('Error:', error)
+            setSaving(false)
+        }
     }
 
     const onStyleClick = (command) => {
@@ -104,8 +101,8 @@ function PostEditor(props) {
     }
 
 
-    const deletePost = () => {
-        fetch(`${process.env.BASE_URL}/posts/${savedPost.id}`, {
+    const deletePost = async () => {
+        const res = await fetch(`${process.env.BASE_URL}/posts/${savedPost.id}`, {
             method: "DELETE",
             headers: {
                 "X-CSRF-Token": csrfToken,
@@ -114,19 +111,20 @@ function PostEditor(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(response => response.json())
-            .then((e) => {
-                window.location = "/blog"
-            })
-
+        try {
+            if (!res.ok) throw 'couldn\'t delete post'
+            window.location = "/blog"
+        } catch (error) {
+            console.error('Error:', error)
+        }
     }
 
 
-    const uploadFeatureImage = (acceptedFiles) => {
+    const uploadFeatureImage = async (acceptedFiles) => {
         setFeatureImageLoading(true)
         let formData = new FormData();
         formData.append('file', acceptedFiles[0])
-        fetch(`${process.env.BASE_URL}/api/v1/attach/posts/${savedPost.id}`, {
+        const res = fetch(`${process.env.BASE_URL}/api/v1/attach/posts/${savedPost.id}`, {
             method: "POST",
             body: formData,
             headers: {
@@ -135,24 +133,23 @@ function PostEditor(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(response => response.json())
-            .catch(error => {
-                console.error('Error:', error)
-                setFeatureImageLoading(false)
-            })
-            .then((r) => {
-                setFeatureImage(r.editedPost.feature_image)
-                setFeatureImageLoading(false)
-            })
+        try {
+            if (!res.ok) throw 'Problem uploading image'
+            setFeatureImage(r.editedPost.feature_image)
+            setFeatureImageLoading(false)
+        } catch (error) {
+            console.error('Error:', error)
+            setFeatureImageLoading(false)
+        }
     }
 
 
 
-    const insertImage = (acceptedFiles) => {
+    const insertImage = async (acceptedFiles) => {
         setInserting(true)
         let formData = new FormData();
         formData.append('file', acceptedFiles[0])
-        fetch(`${process.env.BASE_URL}/api/v1/insert/posts/${savedPost.id}`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/insert/posts/${savedPost.id}`, {
             method: "POST",
             body: formData,
             headers: {
@@ -161,26 +158,21 @@ function PostEditor(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(response => response.json())
-            .catch(error => {
-                console.error('Error:', error)
-                setInserting(false)
-            })
-            .then((r) => {
-                const contentState = editorState.getCurrentContent();
-                const contentStateWithEntity = contentState.createEntity(
-                    'image',
-                    'IMMUTABLE',
-                    { src: r.src },
-                );
-                const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
-                setEditorState(AtomicBlockUtils.insertAtomicBlock(editorState, entityKey, ' '))
-                setInserting(false)
-            })
-
-
-
-
+        try {
+            const json = await res.json()
+            const contentState = editorState.getCurrentContent();
+            const contentStateWithEntity = contentState.createEntity(
+                'image',
+                'IMMUTABLE',
+                { src: json.src },
+            );
+            const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+            setEditorState(AtomicBlockUtils.insertAtomicBlock(editorState, entityKey, ' '))
+            setInserting(false)
+        } catch (error) {
+            console.error('Error:', error)
+            setInserting(false)
+        }
     };
 
     const editingView = () => {
@@ -282,7 +274,7 @@ function PostEditor(props) {
 
             <Container text style={!editingDisabled ? { border: "1px solid grey" } : null}>
                 <Dropzone onDrop={(acceptedFiles) => insertImage(acceptedFiles)}>
-                    {({ getRootProps, getInputProps }) => (
+                    {({ getRootProps }) => (
                         <Dimmer.Dimmable as={Container} dimmed={inserting} >
                             <Dimmer active={inserting} inverted>
                                 <Loader>Inserting Image</Loader>

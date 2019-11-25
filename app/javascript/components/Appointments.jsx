@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Container, Divider, Button, Modal, Form, Header, Message as StaticMessage, Loader, Dimmer } from 'semantic-ui-react'
 import styled from "styled-components"
 import { CalendarContainer, ModalContent } from "./StyledComponents"
-import { Calendar as BigCalendar, momentLocalizer, Views } from 'react-big-calendar'
+import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar'
 import moment from "moment"
 import Event from "./Event"
 import Message from "./Message"
@@ -143,9 +143,9 @@ function Appointments(props) {
     }
 
     // fetch handlers
-    const bookAppointment = () => {
+    const bookAppointment = async () => {
         setBooking(true)
-        fetch(`${process.env.BASE_URL}/api/v1/events/book`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/events/book`, {
             method: "POST",
             body: JSON.stringify({
                 event: selectedEvent,
@@ -157,40 +157,33 @@ function Appointments(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(res => res.json())
-            .catch(error => {
-                setNotifications([{ id: new Date, type: "alert", message: "Could not book appointment. Please refresh the page and try again. If this problem persists please contact your system administrator." }, ...notifications])
-                console.error('Error:', error)
-                setBooking(false)
-                setEventModalOpen(false)
-                setSelectedEvent(null)
-            })
-            .then(res => {
+        try {
+            const json = await res.json()
+            let currentEvents = [...events].filter(e => e.id !== json.editedEvent.id)
+            setEvents(currentEvents.concat(json.editedEvent))
+            setBooking(false)
+            setEventModalOpen(false)
+            setConfirmation({ type: "booking", event: json.editedEvent })
+            setNotifications([{ id: new Date, type: "notice", message: "Appointment successfully booked!" }, ...notifications])
 
-                let currentEvents = [...events].filter(e => e.id !== res.editedEvent.id)
-                setEvents(currentEvents.concat(res.editedEvent))
-                setBooking(false)
-                setEventModalOpen(false)
-                setConfirmation({ type: "booking", event: res.editedEvent })
-                setNotifications([{ id: new Date, type: "notice", message: "Appointment successfully booked!" }, ...notifications])
-            })
-            .then(() => setSelectedEvent(null))
-
-
+        } catch (error) {
+            setNotifications([{ id: new Date, type: "alert", message: "Could not book appointment. Please refresh the page and try again. If this problem persists please contact your system administrator." }, ...notifications])
+            console.error('Error:', error)
+            setBooking(false)
+            setEventModalOpen(false)
+            setSelectedEvent(null)
+        }
+        setSelectedEvent(null)
     }
-    const cancelEvent = () => {
+
+    const cancelEvent = async () => {
         setCanceling(true)
         let currentTime = new Date
         let eventTime = new Date(selectedEvent.start_time)
         let hours = (eventTime.getTime() - currentTime.getTime()) / 3600000;
         const inGracePeriod = hours > 24
 
-        let baseUrl = process.env.BASE_URL
-
-        let newTitle = "*Canceled " + event.title
-        let editedEvent = { ...event, title: newTitle }
-
-        fetch(`${baseUrl}/api/v1/events/cancel`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/events/cancel`, {
             method: "POST",
             body: JSON.stringify({
                 inGracePeriod,
@@ -203,22 +196,22 @@ function Appointments(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(response => response.json())
-            .catch(error => {
-                setNotifications([{ id: new Date, type: "alert", message: "Could not cancel this event. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
-                console.error('Error:', error)
-                setEventModalOpen(false)
-                setCanceling(false)
-            })
-            .then((res) => {
-                let currentEvents = [...events].filter(e => e.id !== res.editedEvent.id)
-                setEvents(currentEvents.concat(res.editedEvent))
-                setEventModalOpen(false)
-                setCanceling(false)
-                setConfirmation({ type: "cancelation", event: { ...res.editedEvent } })
-                setNotifications([{ id: new Date, type: "warning", message: "Appointment successully canceled" }, ...notifications])
-            })
-            .then(() => setSelectedEvent(null))
+        try {
+            const json = await res.json()
+            let currentEvents = [...events].filter(e => e.id !== json.editedEvent.id)
+            setEvents(currentEvents.concat(json.editedEvent))
+            setEventModalOpen(false)
+            setCanceling(false)
+            setConfirmation({ type: "cancelation", event: { ...json.editedEvent } })
+            setNotifications([{ id: new Date, type: "warning", message: "Appointment successully canceled" }, ...notifications])
+
+        } catch (error) {
+            setNotifications([{ id: new Date, type: "alert", message: "Could not cancel this event. Please try again. If this problem persists please contact your system administrator." }, ...notifications])
+            console.error('Error:', error)
+            setEventModalOpen(false)
+            setCanceling(false)
+        }
+        setSelectedEvent(null)
     }
 
     const showPrettyStartAndEndTime = (selectedEvent) => {

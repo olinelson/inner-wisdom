@@ -26,8 +26,8 @@ function MyAccount(props) {
         }
     }, [])
 
-    const getEvents = () => {
-        fetch(`${process.env.BASE_URL}/api/v1/api/v1/events/booked/${props.current_user.id}`, {
+    const getEvents = async () => {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/api/v1/events/booked/${props.current_user.id}`, {
             headers: {
                 "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
@@ -35,20 +35,18 @@ function MyAccount(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(res => res.json())
-            .catch(error => {
-                console.error('Error:', error)
-                setLoadingEvents(false)
-            })
-            .then((res) => {
-                setEvents(res.events.sort((b, a) => new Date(a.start_time) - new Date(b.end_time)))
-                setLoadingEvents(false)
-            })
-
+        try {
+            const json = await res.json()
+            setEvents(json.events.sort((b, a) => new Date(a.start_time) - new Date(b.end_time)))
+            setLoadingEvents(false)
+        } catch (error) {
+            console.error('Error:', error)
+            setLoadingEvents(false)
+        }
     }
 
-    const getInvoices = () => {
-        fetch(`${process.env.BASE_URL}/api/v1/stripe/invoices`, {
+    const getInvoices = async () => {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/stripe/invoices`, {
             method: "POST",
             body: JSON.stringify({
                 user: props.current_user,
@@ -60,19 +58,18 @@ function MyAccount(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(res => res.json())
-            .catch(error => {
-                console.error('Error:', error)
-                setLoadingInvoices(false)
-            })
-            .then((res) => {
-                setInvoices(res.invoices)
-                setLoadingInvoices(false)
-            })
+        try {
+            const json = res.json()
+            setInvoices(json.invoices)
+            setLoadingInvoices(false)
+        } catch (error) {
+            console.error('Error:', error)
+            setLoadingInvoices(false)
+        }
     }
 
-    const genNewCalAuthUrl = () => {
-        fetch(`${process.env.BASE_URL}/api/v1/googlecal/url`, {
+    const genNewCalAuthUrl = async () => {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/googlecal/url`, {
             method: "POST",
             body: JSON.stringify({
                 newPersonalEmail
@@ -84,15 +81,16 @@ function MyAccount(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(res => res.json())
-            .catch(error => {
-                console.error('Error:', error)
-            })
-            .then((res) => { window.open(res.authUrl, '_blank') })
+        try {
+            const json = await res.json()
+            window.open(json.authUrl, '_blank')
+        } catch (error) {
+            console.error('Error:', error)
+        }
     }
 
-    const saveNewCredentials = () => {
-        fetch(`${process.env.BASE_URL}/api/v1/googlecal/token`, {
+    const saveNewCredentials = async () => {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/googlecal/token`, {
             method: "POST",
             body: JSON.stringify({
                 newPersonalEmail,
@@ -105,14 +103,11 @@ function MyAccount(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(res => res.json())
-            .catch(error => {
-                console.error('Error:', error)
-            })
-            .then(res => {
-                if (res.status == "success") location.reload()
-            })
-
+        try {
+            if (res.ok) location.reload()
+        } catch (error) {
+            console.error('Error:', error)
+        }
     }
 
 

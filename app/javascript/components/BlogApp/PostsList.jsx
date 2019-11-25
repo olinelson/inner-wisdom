@@ -18,8 +18,8 @@ function PostsList(props) {
         return <PostsPreview isAdmin={isAdmin} key={p.id + "preview"} post={p} />
     }
 
-    const getAllPosts = () => {
-        fetch(`${process.env.BASE_URL}/api/v1/posts`, {
+    const getAllPosts = async () => {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/posts`, {
             headers: {
                 "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
@@ -27,18 +27,18 @@ function PostsList(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(response => response.json())
-            .catch(error => {
-                console.error('Error:', error)
-                setLoading(false)
-            })
-            .then((r) => {
-                setPosts(r.posts)
-                setLoading(false)
-            })
+        try {
+            const json = await res.json()
+            setPosts(json.posts)
+            setLoading(false)
+        } catch (error) {
+            console.error('Error:', error)
+            setLoading(false)
+        }
     }
-    const getPublishedPosts = () => {
-        fetch(`${process.env.BASE_URL}/api/v1/posts/published`, {
+
+    const getPublishedPosts = async () => {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/posts/published`, {
             headers: {
                 "X-CSRF-Token": csrfToken,
                 "Content-Type": "application/json",
@@ -46,21 +46,20 @@ function PostsList(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(response => response.json())
-            .catch(error => {
-                console.error('Error:', error)
-                setLoading(false)
-            })
-            .then((r) => {
-                setPosts(r.posts)
-                setLoading(false)
-            })
+        try {
+            const json = await res.json()
+            setPosts(json.posts)
+            setLoading(false)
+        } catch (error) {
+            console.error('Error:', error)
+            setLoading(false)
+        }
     }
 
 
 
-    const createNewPost = () => {
-        fetch(`${process.env.BASE_URL}/api/v1/posts`, {
+    const createNewPost = async () => {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/posts`, {
             method: "POST",
             headers: {
                 "X-CSRF-Token": csrfToken,
@@ -69,15 +68,13 @@ function PostsList(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(response => response.json())
-            .catch(error => {
-                console.error('Error:', error)
-                setLoading(false)
-            })
-            .then((r) => {
-                setPosts([r.newPost, ...posts])
-
-            })
+        try {
+            const json = await res.json()
+            setPosts([json.newPost, ...posts])
+        } catch (error) {
+            console.error('Error:', error)
+            setLoading(false)
+        }
     }
 
 

@@ -43,10 +43,10 @@ function Clients(props) {
         return () => clearTimeout(timer);
     }, [notifications]);
 
-    const createUserHandler = (e) => {
+    const createUserHandler = async (e) => {
         setLoading(true)
         let newUser = { first_name, last_name, email, password: tempPassword, sendWelcomeEmail }
-        fetch(`${process.env.BASE_URL}/api/v1/clients`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/clients`, {
             method: "POST",
             body: JSON.stringify({
                 user: newUser
@@ -58,18 +58,17 @@ function Clients(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(res => res.json())
-            .catch(error => {
-                setNotifications([{ id: new Date, type: "alert", message: "Could not create user" }, ...notifications])
-                console.error('Error:', error)
-                setLoading(false)
-                setModalOpen(false)
-            })
-            .then((res) => {
-                setLoading(false)
-                setModalOpen(false)
-                setUsers([...users, res.newUser])
-            })
+        try {
+            const json = await res.json()
+            setLoading(false)
+            setModalOpen(false)
+            setUsers([...users, json.newUser])
+        } catch (error) {
+            setNotifications([{ id: new Date, type: "alert", message: "Could not create user" }, ...notifications])
+            console.error('Error:', error)
+            setLoading(false)
+            setModalOpen(false)
+        }
     }
 
     const userFilter = (user, query) => {

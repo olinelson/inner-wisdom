@@ -6,7 +6,6 @@ import { BusinessEventSegment, CalendarContainer, ModalContent } from "../Styled
 import { FullWidthCalendarContainer } from "../Appointments"
 import Event from "../Event"
 import UserPickerDropDown from '../UserPickerDropDown';
-import Message from '../Message'
 
 import ScheduleNotificationManager from './ScheduleNotificationsManager'
 
@@ -16,10 +15,9 @@ import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
 import TimePicker from 'rc-time-picker';
 import "rc-time-picker/assets/index.css"
-import { Calendar as BigCalendar, momentLocalizer, Views } from 'react-big-calendar'
+import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar'
 
 
-const uuidv1 = require('uuid/v1')
 
 const localizer = momentLocalizer(moment)
 
@@ -99,13 +97,13 @@ function Schedule(props) {
     }
 
     // fetch handlers
-    const createEventHandler = (isAppointmentSlot = false, isConsultSlot = false) => {
+    const createEventHandler = async (isAppointmentSlot = false, isConsultSlot = false) => {
 
         setEvents([...events, { ...selectedSlot, placeholder: true }])
 
         setSelectedSlot(null)
         let event = { ...selectedSlot }
-        fetch(`${process.env.BASE_URL}/api/v1/events/create`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/events/create`, {
             method: "POST",
             body: JSON.stringify({
                 event: event,
@@ -119,29 +117,27 @@ function Schedule(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(response => response.json())
-            .catch(error => {
-                setNotifications([{ id: new Date, type: "alert", message: "There was an error creating this event. Please try again. If this problem persists please contact your system administrator.", expiresAt: moment().add(5, 'seconds') }, ...notifications])
-                console.error('Error:', error)
-                setLoading(false)
-                setEvents([...events])
-            })
-            .then(r => {
-                let currentEvents = [...events].filter(e => e.id !== event.id)
-                setEvents([...currentEvents, r.newEvent])
-                setNotifications([{ id: new Date, type: "notice", message: "Event successfully created.", expiresAt: moment().add(5, 'seconds') }, ...notifications])
-                if (event.recurrence) getAllEvents()
-            })
+        try {
+            const json = await res.json()
+            let currentEvents = [...events].filter(e => e.id !== event.id)
+            setEvents([...currentEvents, json.newEvent])
+            setNotifications([{ id: new Date, type: "notice", message: "Event successfully created.", expiresAt: moment().add(5, 'seconds') }, ...notifications])
+            if (event.recurrence) getEventsInRange()
+        } catch (error) {
+            setNotifications([{ id: new Date, type: "alert", message: "There was an error creating this event. Please try again. If this problem persists please contact your system administrator.", expiresAt: moment().add(5, 'seconds') }, ...notifications])
+            console.error('Error:', error)
+            setLoading(false)
+            setEvents([...events])
+        }
+
     }
 
-    const updateSelectedEventHandler = () => {
-        // setLoading(true)
+    const updateSelectedEventHandler = async () => {
         let filteredEvents = [...events].filter(e => e.id !== selectedEvent.id)
         setEvents([...filteredEvents, { ...selectedEvent, placeholder: true }])
 
-        let event = { ...selectedEvent }
         setSelectedEvent(null)
-        fetch(`${process.env.BASE_URL}/api/v1/events/update`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/events/update`, {
             method: "POST",
             body: JSON.stringify({
                 event: selectedEvent
@@ -153,26 +149,26 @@ function Schedule(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(response => response.json())
-            .catch(error => {
-                setNotifications([{ id: new Date, type: "alert", message: "There was an error updating this event. Please try again. If this problem persists please contact your system administrator.", expiresAt: moment().add(5, 'seconds') }, ...notifications])
-                console.error('Error:', error)
-                setEvents([...events])
-            })
-            .then((r) => {
-                let filteredEvents = [...events].filter(e => e.id !== r.editedEvent.id)
-                setEvents([...filteredEvents, r.editedEvent])
-                setNotifications([{ id: new Date, type: "notice", message: "Event successfully updated", expiresAt: moment().add(5, 'seconds') }, ...notifications])
-            })
+        try {
+            const json = await res.json()
+            let filteredEvents = [...events].filter(e => e.id !== json.editedEvent.id)
+            setEvents([...filteredEvents, json.editedEvent])
+            setNotifications([{ id: new Date, type: "notice", message: "Event successfully updated", expiresAt: moment().add(5, 'seconds') }, ...notifications])
+        } catch (error) {
+            setNotifications([{ id: new Date, type: "alert", message: "There was an error updating this event. Please try again. If this problem persists please contact your system administrator.", expiresAt: moment().add(5, 'seconds') }, ...notifications])
+            console.error('Error:', error)
+            setEvents([...events])
+        }
+
     }
 
-    const deleteSelectedEventHandler = (deleteReps) => {
+    const deleteSelectedEventHandler = async (deleteReps) => {
         let deleteFutureReps = deleteReps === "future"
 
         let filteredEvents = [...events].filter(e => e.id !== selectedEvent.id)
         setEvents([...filteredEvents, { ...selectedEvent, placeholder: true }])
 
-        fetch(`${process.env.BASE_URL}/api/v1/events/delete`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/events/delete`, {
             method: "POST",
             body: JSON.stringify({
                 event: selectedEvent,
@@ -185,17 +181,16 @@ function Schedule(props) {
                 "X-Requested-With": "XMLHttpRequest"
             }
         })
-            .then(res => res.json())
-            .catch(error => {
-                setNotifications([{ id: new Date, type: "alert", message: "There was an error deleting this event. Please try again. If this problem persists please contact your system administrator.", expiresAt: moment().add(5, 'seconds') }, ...notifications])
-                console.error('Error:', error)
-            })
-            .then(r => {
-                let filteredEvents = [...events].filter(e => e.id !== selectedEvent.id)
-                setEvents(filteredEvents)
-                setNotifications([{ id: new Date, type: "warning", message: "Event successfully deleted", expiresAt: moment().add(5, 'seconds') }, ...notifications])
-                if (deleteFutureReps) getAllEvents()
-            })
+        try {
+            if (!res.ok) throw 'Couldn\'t delete event'
+            let filteredEvents = [...events].filter(e => e.id !== selectedEvent.id)
+            setEvents(filteredEvents)
+            setNotifications([{ id: new Date, type: "warning", message: "Event successfully deleted", expiresAt: moment().add(5, 'seconds') }, ...notifications])
+            if (deleteFutureReps) getEventsInRange()
+        } catch (error) {
+            setNotifications([{ id: new Date, type: "alert", message: "There was an error deleting this event. Please try again. If this problem persists please contact your system administrator.", expiresAt: moment().add(5, 'seconds') }, ...notifications])
+            console.error('Error:', error)
+        }
     }
 
     // attendee helper methods
@@ -272,7 +267,6 @@ function Schedule(props) {
             endTimeOptions = [subEndTime, ...endTimeOptions, addEndTime]
         }
 
-        const now = moment().hour(0).minute(0)
 
         return <>
 
