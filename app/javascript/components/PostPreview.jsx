@@ -31,7 +31,7 @@ function PostPreview(props) {
                 <Item.Header>{post.title}</Item.Header>
                 <Item.Meta>
                     <span className='date'>Created {moment(post.created_at).format('Do MMMM  YYYY')}</span>
-                    {props.blogView ? null :
+                    {!props.isAdmin ? null :
                         <>
                             {
                                 post.published ?

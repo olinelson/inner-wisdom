@@ -7,13 +7,15 @@ function PostsList(props) {
     const [loading, setLoading] = useState(true)
     const [posts, setPosts] = useState([])
 
+    const isAdmin = props.isAdmin
+
 
     useEffect(() => {
-        props.blogView ? getPublishedPosts() : getAllPosts()
+        isAdmin ? getAllPosts() : getPublishedPosts()
     }, []);
 
     const cardMapper = (p) => {
-        return <PostsPreview blogView={props.blogView} key={p.id + "preview"} post={p} />
+        return <PostsPreview isAdmin={isAdmin} key={p.id + "preview"} post={p} />
     }
 
     const getAllPosts = () => {
@@ -93,7 +95,7 @@ function PostsList(props) {
 
     return <>
 
-        {props.creatable ? showToolBar() : null}
+        {isAdmin ? showToolBar() : null}
 
         <Item.Group style={{ gridArea: "panel" }}  >
             {loading ?

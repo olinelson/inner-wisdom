@@ -38,12 +38,7 @@ function PostEditor(props) {
             EditorState.createEmpty()
     );
 
-    useEffect(() => {
-        // window.scroll({
-        //     top: 0,
-        //     left: 0,
-        // })
-    }, []);
+
 
     const editingDisabled = props.current_user && props.current_user.admin ? false : true
 
@@ -121,7 +116,7 @@ function PostEditor(props) {
         })
             .then(response => response.json())
             .then((e) => {
-                window.location = "/myaccount"
+                window.location = "/blog"
             })
 
     }

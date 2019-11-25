@@ -4,41 +4,8 @@ import moment from "moment"
 
 
 function AppointmentHistoryTable(props) {
-
-    const [selectedEvent, setSelectedEvent] = useState(null)
-    const [modalOpen, setModalOpen] = useState(false)
-    const [events, setEvents] = useState([])
-    const [loading, setLoading] = useState(true)
-
-    const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].content
-
-    const getEvents = () => {
-        fetch(`${process.env.BASE_URL}/api/v1/api/v1/events/booked/${props.current_user.id}`, {
-            headers: {
-                "X-CSRF-Token": csrfToken,
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        })
-            .then(res => res.json())
-            .catch(error => {
-                console.error('Error:', error)
-                setLoading(false)
-            })
-            .then((res) => {
-                setEvents(res.events.sort((b, a) => new Date(a.start_time) - new Date(b.end_time)))
-                setLoading(false)
-            })
-
-    }
-
-
-    useEffect(() => {
-        getEvents()
-    }, [])
-
-
+    const { events } = props
+    const loading = props.loading
 
     let chronologicalSorted = events.sort((b, a) => new Date(a.start_time) - new Date(b.end_time))
 

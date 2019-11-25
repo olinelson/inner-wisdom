@@ -78,7 +78,7 @@
 <% end %>
 
 <div class="field">
-  <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
+  <%= f.label "new password" %> <i>(leave blank if you don't want to change it)</i><br />
   <%= f.password_field :password, autocomplete: "new-password" %>
   <% if @minimum_password_length %>
   <br />
@@ -87,7 +87,7 @@
 </div>
 
 <div class="field">
-  <%= f.label :password_confirmation %><br />
+  <%= f.label "confirm new password" %><br />
   <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
 </div>
 
@@ -102,9 +102,11 @@
 </div>
 <% end %>
 
-<h3>Cancel my account</h3>
+<!-- this was just too easy to cancel your account!!! -->
 
-<p>Unhappy?
+<!-- <h3>Cancel my account</h3> -->
+
+<!-- <p>Unhappy?
   <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :delete}) do |f| %>
   <input type="submit" class="ui button" value="Cancel my account">
   <% end %>
@@ -112,7 +114,7 @@
 
 
 
-</p>
+</p> -->
 
 
 
