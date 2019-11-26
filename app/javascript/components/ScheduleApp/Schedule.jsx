@@ -520,7 +520,7 @@ function Schedule(props) {
                     defaultDate={new Date}
                     popup
                     views={['month', 'day', 'week']}
-                    scrollToTime={moment().startOf('hour').subtract(1, 'hours').toDate()}
+                    scrollToTime={new Date}
                     defaultView={Views.WEEK}
                     step={15}
                     timeslots={1}
