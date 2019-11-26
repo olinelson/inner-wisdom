@@ -121,7 +121,7 @@ function PostEditor(props) {
 
 
     const uploadFeatureImage = async (acceptedFiles) => {
-        console.log(process.env)
+        console.log(ENV['GOOGLE_APPLICATION_CREDENTIALS'])
         setFeatureImageLoading(true)
         let formData = new FormData();
         formData.append('file', acceptedFiles[0])
