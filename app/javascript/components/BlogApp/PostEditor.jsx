@@ -122,8 +122,6 @@ function PostEditor(props) {
 
 
     const uploadFeatureImage = async (acceptedFiles) => {
-
-        console.log(process.env.GOOGLE_APPLICATION_CREDENTIALS)
         setFeatureImageLoading(true)
         let formData = new FormData();
         formData.append('file', acceptedFiles[0])
@@ -137,9 +135,7 @@ function PostEditor(props) {
             }
         })
         try {
-            console.log(res)
             const json = await res.json()
-            console.log(json)
             setFeatureImage(json.editedPost.feature_image)
             setFeatureImageLoading(false)
         } catch (error) {
