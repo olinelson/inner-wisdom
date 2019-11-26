@@ -40,7 +40,7 @@ function PostEditor(props) {
 
 
 
-    const editingDisabled = props.current_user && props.current_user.admin ? false : true
+    const editingDisabled = !props.isAdmin
 
     let saved = true
     savedPost.body !== JSON.stringify(convertToRaw(editorState.getCurrentContent())) ? saved = false : null

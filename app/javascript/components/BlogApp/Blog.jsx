@@ -8,8 +8,8 @@ import { createSecureContext } from 'tls';
 
 export default function Blog(props) {
 
-    let isAdmin = false
-    if (props.current_user && props.current_user.admin) isAdmin = true
+    let isAdmin = props.isAdmin
+
 
 
     return <>
@@ -18,7 +18,7 @@ export default function Blog(props) {
 
         <Container text>
             <Divider hidden />
-            <PostsList isAdmin={props.current_user.admin} posts={props.posts} blogView />
+            <PostsList isAdmin={isAdmin} posts={props.posts} blogView />
         </Container>
     </>
 }

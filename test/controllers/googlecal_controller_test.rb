@@ -40,7 +40,7 @@ class GooglecalControllerTest < ActionDispatch::IntegrationTest
 
   test 'admin can create appointment slots' do
     sign_in users(:admin)
-    post events_create_path, params: {appointmentSlot: true, event: { "start"=>"#{@@now.to_json}", "end"=>"#{@@anHourFromNow.to_json}", "action"=>"click", "box"=>{"x"=>304, "y"=>495, "clientX"=>304, "clientY"=>495}, "title"=>"", "location"=>"", "start_time"=>"#{@@now.to_json}", "end_time"=>"#{@@anHourFromNow.to_json}", "extended_properties"=>{"private"=>{"skype"=>"false", "paid"=>"false"}}}}
+    post api_v1_events_create_path, params: {appointmentSlot: true, event: { "start"=>"#{@@now.to_json}", "end"=>"#{@@anHourFromNow.to_json}", "action"=>"click", "box"=>{"x"=>304, "y"=>495, "clientX"=>304, "clientY"=>495}, "title"=>"", "location"=>"", "start_time"=>"#{@@now.to_json}", "end_time"=>"#{@@anHourFromNow.to_json}", "extended_properties"=>{"private"=>{"skype"=>"false", "paid"=>"false"}}}}
     body = JSON.parse(response.body)
     @@appointmentSlot = body["newEvent"]
     assert body["newEvent"]["id"].length
@@ -49,7 +49,7 @@ class GooglecalControllerTest < ActionDispatch::IntegrationTest
 
   test 'admin can create consult slots' do
     sign_in users(:admin)
-    post events_create_path, params: {consultSlot: true, event: {"slots"=>["#{@@now.to_json}"], "start"=>"#{@@now.to_json}", "end"=>"#{@@anHourFromNow.to_json}", "action"=>"click", "box"=>{"x"=>304, "y"=>495, "clientX"=>304, "clientY"=>495}, "title"=>"", "location"=>"", "start_time"=>"#{@@now.to_json}", "end_time"=>"#{@@anHourFromNow.to_json}", "extended_properties"=>{"private"=>{"skype"=>"false", "paid"=>"false"}}}}
+    post api_v1_events_create_path, params: {consultSlot: true, event: {"slots"=>["#{@@now.to_json}"], "start"=>"#{@@now.to_json}", "end"=>"#{@@anHourFromNow.to_json}", "action"=>"click", "box"=>{"x"=>304, "y"=>495, "clientX"=>304, "clientY"=>495}, "title"=>"", "location"=>"", "start_time"=>"#{@@now.to_json}", "end_time"=>"#{@@anHourFromNow.to_json}", "extended_properties"=>{"private"=>{"skype"=>"false", "paid"=>"false"}}}}
     body = JSON.parse(response.body)
     @@consultSlot = body["newEvent"]
     assert body["newEvent"]["id"].length
@@ -59,7 +59,7 @@ class GooglecalControllerTest < ActionDispatch::IntegrationTest
   test 'admin can create booked appointments' do
     sign_in users(:admin)
     approvedClient = User.find_by(first_name: 'approvedClient')
-    post events_create_path, params: { event: { attendees: [{ email: approvedClient.email, first_name: approvedClient.first_name, last_name: approvedClient.last_name}], "slots"=>["#{@@now.to_json}"], "start"=>"#{@@now.to_json}", "end"=>"#{@@anHourFromNow.to_json}", "action"=>"click", "box"=>{"x"=>304, "y"=>495, "clientX"=>304, "clientY"=>495}, "title"=>"", "location"=>"", "start_time"=>"#{@@now.to_json}", "end_time"=>"#{@@anHourFromNow.to_json}", "extended_properties"=>{"private"=>{"skype"=>"false", "paid"=>"false"}}}}
+    post api_v1_events_create_path, params: { event: { attendees: [{ email: approvedClient.email, first_name: approvedClient.first_name, last_name: approvedClient.last_name}], "slots"=>["#{@@now.to_json}"], "start"=>"#{@@now.to_json}", "end"=>"#{@@anHourFromNow.to_json}", "action"=>"click", "box"=>{"x"=>304, "y"=>495, "clientX"=>304, "clientY"=>495}, "title"=>"", "location"=>"", "start_time"=>"#{@@now.to_json}", "end_time"=>"#{@@anHourFromNow.to_json}", "extended_properties"=>{"private"=>{"skype"=>"false", "paid"=>"false"}}}}
     body = JSON.parse(response.body)
     @@bookedAppointment = body["newEvent"]
     assert ["id"].length

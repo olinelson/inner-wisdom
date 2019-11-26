@@ -1,5 +1,5 @@
 class PagesController < ApplicationController
-    before_action :authenticate_user! , except: [:counselling, :supervision, :faqs, :contact, :home, :appointments, :blog, :fees]
+    before_action :authenticate_user! , except: [:counselling, :supervision, :faqs, :contact, :home, :appointments, :blog, :fees, :showPost]
 
 
     def counselling
@@ -65,13 +65,22 @@ class PagesController < ApplicationController
     end
 
     def blog
-        render react_component: 'Blog', props: {current_user: current_user}
+        isAdmin = false
+        if current_user && current_user.admin
+            isAdmin = true
+        end
+        render react_component: 'Blog', props: {isAdmin: isAdmin}
     end
 
     def showPost
+        isAdmin = false
+        if current_user && current_user.admin
+            isAdmin = true
+        end
+
         render react_component: 'PostEditor', props: { 
             post: Post.find(params["id"]),
-            current_user: current_user  
+            isAdmin: isAdmin 
         }
     end
 end
