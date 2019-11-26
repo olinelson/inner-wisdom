@@ -37,7 +37,6 @@ class PostsController < ApplicationController
     end
 
     def attach_feature_image
-        byebug
      @post = Post.find(params[:id])
      @post.images.attach(params["file"])
      feature_image = "https://storage.googleapis.com/inner_wisdom_bucket/#{@post.images.last.key}"
