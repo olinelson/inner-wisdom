@@ -121,6 +121,7 @@ function PostEditor(props) {
 
 
     const uploadFeatureImage = async (acceptedFiles) => {
+        console.log(process.env)
         setFeatureImageLoading(true)
         let formData = new FormData();
         formData.append('file', acceptedFiles[0])
