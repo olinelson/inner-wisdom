@@ -79,7 +79,7 @@ function Clients(props) {
     }
 
     const handleResultSelect = (e, { result }) => {
-        window.location = `/api/v1/clients/${result.id}`
+        window.location = `/clients/${result.id}`
     }
 
     const handleSearchChange = (e, { value }) => {
@@ -124,7 +124,7 @@ function Clients(props) {
 
                 {users.map(user => {
                     return <Card
-                        onClick={() => window.location = `/api/v1/clients/${user.id}`}
+                        onClick={() => window.location = `/clients/${user.id}`}
                         key={user.id}>
                         <Card.Content>
 

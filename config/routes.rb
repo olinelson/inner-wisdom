@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
   # pages
   root to: 'pages#home'
-  get "/api/v1/clients/:id" => 'pages#clientShow'
+  get "/clients/:id" => 'pages#clientShow'
   get "/counselling" => "pages#counselling"
   get "/faqs" => "pages#faqs"
   get "/contact" => "pages#contact"
