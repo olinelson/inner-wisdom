@@ -120,6 +120,7 @@ function PostEditor(props) {
     }
 
 
+
     const uploadFeatureImage = async (acceptedFiles) => {
         console.log(process.env.GOOGLE_APPLICATION_CREDENTIALS)
         setFeatureImageLoading(true)
