@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
-import { Table, Label, Input, Modal, } from "semantic-ui-react"
+import { Table, Input, Modal, } from "semantic-ui-react"
 import moment from 'moment'
-
-import InvoiceNotificationManager from './InvoiceNotificationManager'
 
 import { useStateValue } from './ClientShowContext'
 import { refreshAction } from './ClientShowApp'
@@ -29,11 +27,9 @@ function InvoiceItem(props) {
 
         if (status === "paid" || status === "void" || status === "open") editable = false
     }
-    // props.invoice && props.invoice.status === "paid" ? false : true
 
     const updateItemHandler = async () => {
         setSaving(true)
-        // setLoading(true)
         const res = await fetch(`${process.env.BASE_URL}/api/v1/stripe/invoice_items`, {
             method: "PATCH",
             body: JSON.stringify({
@@ -89,7 +85,6 @@ function InvoiceItem(props) {
                     type: 'removeInvoiceItemAndUpdateEvent',
                     invoiceItem: invoice_item
                 })
-                // getEvents(appState, dispatch)
                 dispatch({
                     type: 'addNotification',
                     notification: {
@@ -100,7 +95,6 @@ function InvoiceItem(props) {
         } catch (error) {
             console.error('Error:', error)
         }
-        setModalOpen(false)
         refreshAction(appState, dispatch)
     }
 
