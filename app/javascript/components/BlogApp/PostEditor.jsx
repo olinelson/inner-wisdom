@@ -134,9 +134,7 @@ function PostEditor(props) {
             }
         })
         try {
-            console.log(res)
             const json = await res.json()
-            console.log(json)
             setFeatureImage(json.editedPost.feature_image)
             setFeatureImageLoading(false)
         } catch (error) {
