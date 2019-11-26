@@ -18,6 +18,7 @@ import Blog from "components/BlogApp/Blog"
 import Contact from "components/Contact"
 import Appointments from "components/Appointments"
 import MyAccount from "components/MyAccountApp/MyAccount"
+import PostEditor from "components/BlogApp/PostEditor"
 
 
 // admin pages
@@ -33,4 +34,22 @@ import "components/stylesheet.css"
 import 'draft-js/dist/Draft.css';
 
 
-WebpackerReact.setup({ ClientShowApp, Schedule, Footer, MyAccount, Clients, Home, Appointments, Counselling, FAQS, Supervision, Contact, Blog, FlashNotification, Nav, UserConsentCheckbox, Fees }) // ES6 shorthand for {Hello: Hello}
+WebpackerReact.setup({
+    ClientShowApp,
+    PostEditor,
+    Schedule,
+    Footer,
+    MyAccount,
+    Clients,
+    Home,
+    Appointments,
+    Counselling,
+    FAQS,
+    Supervision,
+    Contact,
+    Blog,
+    FlashNotification,
+    Nav,
+    UserConsentCheckbox,
+    Fees
+}) // ES6 shorthand for {Hello: Hello}

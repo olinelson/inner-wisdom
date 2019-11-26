@@ -124,7 +124,7 @@ function PostEditor(props) {
         setFeatureImageLoading(true)
         let formData = new FormData();
         formData.append('file', acceptedFiles[0])
-        const res = fetch(`${process.env.BASE_URL}/api/v1/attach/posts/${savedPost.id}`, {
+        const res = await fetch(`${process.env.BASE_URL}/api/v1/attach/posts/${savedPost.id}`, {
             method: "POST",
             body: formData,
             headers: {
@@ -134,8 +134,10 @@ function PostEditor(props) {
             }
         })
         try {
-            if (!res.ok) throw 'Problem uploading image'
-            setFeatureImage(r.editedPost.feature_image)
+            console.log(res)
+            const json = await res.json()
+            console.log(json)
+            setFeatureImage(json.editedPost.feature_image)
             setFeatureImageLoading(false)
         } catch (error) {
             console.error('Error:', error)

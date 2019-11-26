@@ -59,7 +59,7 @@ function MyAccount(props) {
             }
         })
         try {
-            const json = res.json()
+            const json = await res.json()
             setInvoices(json.invoices)
             setLoadingInvoices(false)
         } catch (error) {

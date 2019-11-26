@@ -18,7 +18,7 @@ export default function Blog(props) {
 
         <Container text>
             <Divider hidden />
-            <PostsList isAdmin={props.current_user} posts={props.posts} blogView />
+            <PostsList isAdmin={props.current_user.admin} posts={props.posts} blogView />
         </Container>
     </>
 }
