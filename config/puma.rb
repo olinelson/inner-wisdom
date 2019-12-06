@@ -21,18 +21,7 @@ environment ENV.fetch("RAILS_ENV") { "production" }
 
 before_fork do
   require 'puma_worker_killer'
-  PumaWorkerKiller.config do |config|
-    config.ram           = 512 # mb
-    config.frequency     = 5    # seconds
-    config.percent_usage = 0.98
-    config.rolling_restart_frequency = 12 * 3600 # 12 hours in seconds, or 12.hours if using Rails
-    config.reaper_status_logs = true # setting this to false will not log lines like:
-    # PumaWorkerKiller: Consuming 54.34765625 mb with master and 2 workers.
-
-    config.pre_term = -> (worker) { puts "Worker #{worker.inspect} being killed" }
-  end
-
-  PumaWorkerKiller.start# Default is every 6 hours
+  PumaWorkerKiller.enable_rolling_restart(8 * 3600)
 end
 # Specifies the number of `workers` to boot in clustered mode.
 # Workers are forked webserver processes. If using threads and workers together
@@ -40,14 +29,14 @@ end
 # Workers do not work on JRuby or Windows (both of which do not support
 # processes).
 #
-workers ENV.fetch("WEB_CONCURRENCY") { 2 }
+# workers ENV.fetch("WEB_CONCURRENCY") { 2 }
 
 # Use the `preload_app!` method when specifying a `workers` number.
 # This directive tells Puma to first boot the application and load code
 # before forking the application. This takes advantage of Copy On Write
 # process behavior so workers use less memory.
 #
-preload_app!
+# preload_app!
 
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart
