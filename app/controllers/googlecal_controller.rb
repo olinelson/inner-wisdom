@@ -419,9 +419,29 @@ end
     end
 
     def deleteEvent
+        event = params["event"]
+
+        if event["calendar"]["id"] === current_user.google_calendar_email
+                cal = @@personalCal
+        end
+
+        if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
+            cal = @@appointmentsCal
+        end
+
+        if event["calendar"]["id"] === ENV["CONSULTS_CALENDAR_ID"]
+            cal = @@consultsCal
+        end
+        
+        foundEvent = cal.find_event_by_id(event["id"]).first
+
+        foundEvent.delete
+        
+        render json: {deletedEvent: foundEvent}
+    end
+
+    def deleteEventRepeats
          event = params["event"]
-         deleteFutureReps = params["deleteFutureReps"]
-         deleteAllReps = params["deleteFutureReps"]
 
         if event["calendar"]["id"] === current_user.google_calendar_email
                 cal = @@personalCal
@@ -439,30 +459,12 @@ end
 
         foundEvent = results.first
 
-        # delete future reps
-        if foundEvent.raw["recurringEventId"]
-            if deleteFutureReps
-
-                start = DateTime.parse(foundEvent.start_time)
-                twoYearsAhead = start >> 24
-                futureEvents = cal.find_events_in_range(start, twoYearsAhead, options = {max_results: 2500})
-                futureReps = futureEvents.select{ |e| e.raw["recurringEventId"] === foundEvent.raw["recurringEventId"]}
-                futureReps.each {|r| r.delete}
-                 return
-            end
-
-            if deleteAllReps
                 allEvents = eventsInDateWindow(cal)
-                repeats = allEvents.select{ |e| e.raw["recurringEventId"] === foundEvent.raw["recurringEventId"]}
+                repeats = allEvents.select{ |e| e.raw["recurringEventId"] === foundEvent.raw["recurringEventId"] && foundEvent.start_time < e.start_time }
                 repeats.each {|r| r.delete}
-                return
-            end
 
-            
-        end
+                render json: {deletedEvents: repeats}
 
-        foundEvent.delete
-        render json: {deletedEvent: foundEvent}
     end
 
 

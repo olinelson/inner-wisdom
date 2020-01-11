@@ -32,6 +32,7 @@ Rails.application.routes.draw do
   post '/api/v1/events/cancel'=> 'googlecal#cancelEvent'  
   post '/api/v1/events/create'=> 'googlecal#createEvent'  
   post '/api/v1/events/delete'=> 'googlecal#deleteEvent'  
+  post '/api/v1/events/delete_event_repeats'=> 'googlecal#deleteEventRepeats'  
   post '/api/v1/events/update'=> 'googlecal#updateEvent'  
 
  
