@@ -213,6 +213,8 @@ GEM
     rails_12factor (0.0.3)
       rails_serve_static_assets
       rails_stdout_logging
+    rails_autoscale_agent (0.7.0)
+      activesupport (>= 3.2)
     rails_serve_static_assets (0.0.5)
     rails_stdout_logging (0.0.5)
     railties (5.2.4.1)
@@ -326,6 +328,7 @@ DEPENDENCIES
   puma_worker_killer
   rails (~> 5.2.3)
   rails_12factor
+  rails_autoscale_agent
   rake (~> 12.3, >= 12.3.3)
   rb-fsevent (~> 0.10.3)
   rdoc (~> 6.2)
