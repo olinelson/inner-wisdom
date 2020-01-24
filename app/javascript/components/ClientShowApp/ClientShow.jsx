@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Container, Label, Button, Modal, Form, Tab } from "semantic-ui-react";
+import {
+  Container,
+  Label,
+  Button,
+  Modal,
+  Form,
+  Tab,
+  Dropdown
+} from "semantic-ui-react";
 import AdminAppointmentHistoryTable from "./AdminAppointmentHistoryTable";
 import InvoiceItemList from "./InvoiceItemList";
 import InvoiceList from "./InvoiceList";
@@ -168,9 +176,10 @@ function ClientShow() {
     "Pacific/Port_Moresby",
     "Pacific/Tongatapu"
   ];
+  let i = 0;
   const time_zones = time_zones_array
     .map(t => {
-      return { key: t, value: t, text: t };
+      return { key: i++, value: t, text: t };
     })
     .sort((a, b) => {
       a.key - b.key;
@@ -302,7 +311,7 @@ function ClientShow() {
             key: "cancel",
             content: "Cancel",
             basic: true,
-            onClick: () => setUser(props.user)
+            onClick: () => setUser(user)
           },
           {
             key: "save",
@@ -398,13 +407,27 @@ function ClientShow() {
                 }
               />
 
-              <Form.Select
+              <Form.Field>
+                <label>Time Zone</label>
+                <Dropdown
+                  fluid
+                  search
+                  selection
+                  value={user.time_zone || ""}
+                  label='Time Zone'
+                  placeholder='Australia/Sydney'
+                  options={time_zones}
+                  onChange={(e, d) => setUser({ ...user, time_zone: d.value })}
+                />
+              </Form.Field>
+
+              {/* <Form.Select
                 value={user.time_zone || ""}
                 label='Time Zone'
                 placeholder='Australia/Sydney'
                 options={time_zones}
                 onChange={e => setUser({ ...user, time_zone: e.target.value })}
-              />
+              /> */}
             </Form>
           </div>
         }
