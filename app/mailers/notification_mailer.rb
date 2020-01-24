@@ -2,7 +2,7 @@ class NotificationMailer < ApplicationMailer
     
     
 
-    def prettyTime(time_zone)
+    def prettyTime(time_zone = "Australia/Sydney")
         begin
             if @event["start_time"]
                 return DateTime.parse(@event["start_time"]).in_time_zone(time_zone).strftime("%A, %d %b %Y %l:%M %p") + " till " + DateTime.parse(@event["end_time"]).in_time_zone(time_zone).strftime(" %l:%M %p")
@@ -13,7 +13,7 @@ class NotificationMailer < ApplicationMailer
             end
 
             if @event["start"]["dateTime"]
-                return DateTime.parse(@event["start"]["dateTime"]).in_time_zone(time_zone).strftime("%A, %d %b %Y %l:%M %p") + " till " + DateTime.parse(@event["end"]["dateTime"]).in_time_zone("Sydney").strftime(" %l:%M %p")  
+                return DateTime.parse(@event["start"]["dateTime"]).in_time_zone(time_zone).strftime("%A, %d %b %Y %l:%M %p") + " till " + DateTime.parse(@event["end"]["dateTime"]).in_time_zone(time_zone).strftime(" %l:%M %p")  
             end
         rescue
             return "Invalid Date"
@@ -33,7 +33,7 @@ class NotificationMailer < ApplicationMailer
     def admin_appointment_cancelation(user,event)
         @user = user
         @event = JSON.parse(event)
-        @time =  prettyTime(@user.time_zone)
+        @time =  prettyTime()
 
         mail(to: ENV["EMAIL_ADDRESS"], subject: 'Appointment Canceled')
     end
@@ -43,7 +43,7 @@ class NotificationMailer < ApplicationMailer
         @event = JSON.parse(event)
 
         @time =  prettyTime(@user.time_zone)
-
+     
         mail(to: @user.email, subject: 'Booking Confirmation')
     end
 
@@ -58,7 +58,7 @@ class NotificationMailer < ApplicationMailer
     def admin_appointment_confirmation(user, event)
         @user = user
         @event = JSON.parse(event)
-        @time =  prettyTime(@user.time_zone)
+        @time =  prettyTime()
 
         mail(to: ENV["EMAIL_ADDRESS"], subject: 'Booking Confirmation')
     end
@@ -66,7 +66,7 @@ class NotificationMailer < ApplicationMailer
     def admin_consult_confirmation(user, event)
         @user = user
         @event = JSON.parse(event)
-        @time =  prettyTime(@user.time_zone)
+        @time =  prettyTime()
         mail(to: ENV["EMAIL_ADDRESS"], subject: 'Booking Confirmation')
 
     end
