@@ -55,6 +55,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # POST /resource
   def create
+    
     params.permit(:sendWelcomeEmail, :createdByAdmin)
 
     if params["user"]["createdByAdmin"]

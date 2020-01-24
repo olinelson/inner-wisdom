@@ -77,6 +77,17 @@
 <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
 <% end %>
 
+<h4 class="ui header">
+  <i aria-hidden="true" class="time icon"></i>
+  <div class="content">Time Zone</div>
+</h4>
+
+ <div class="field">
+ <%time_zones = ActiveSupport::TimeZone.all.map{|t| t.tzinfo.name}.sort%>
+<%= f.select :time_zone,time_zones %>
+</div>
+
+
 <div class="field">
   <%= f.label "new password" %> <i>(leave blank if you don't want to change it)</i><br />
   <%= f.password_field :password, autocomplete: "new-password" %>

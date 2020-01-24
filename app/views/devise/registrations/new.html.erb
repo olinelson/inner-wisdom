@@ -60,7 +60,7 @@
 
   <div class="field">
     <%= f.label :state %><br />
-    <%= f.select :state, [ 'NSW', 'QLD', 'VIC', 'SA', 'WA', 'TAS', 'ACT', 'NT' ], :prompt => 'Select One' %>
+    <%= f.select :state, [ 'NSW', 'QLD', 'VIC', 'SA', 'WA', 'TAS', 'ACT', 'NT' ], :prompt => 'Select One', :className=> 'ui' %>
   </div>
 
 
@@ -69,7 +69,28 @@
     <%= f.label :post_code %><br />
     <%= f.number_field :post_code, autofocus: true, placeholder: "2000" %>
   </div>
+
+  
 </div>
+
+<h4 class="ui header">
+  <i aria-hidden="true" class="time icon"></i>
+  <div class="content">Time Zone</div>
+</h4>
+
+ <div class="field">
+ <%time_zones = ActiveSupport::TimeZone.all.map{|t| t.tzinfo.name}.sort%>
+<%= f.select :time_zone,time_zones , :selected => time_zones.find{|t| t.include?('Sydney')}%>
+</div>
+
+
+
+  
+
+
+  
+
+
 
 <h4 class="ui header">
   <i aria-hidden="true" class="medkit icon"></i>
@@ -109,6 +130,12 @@
   <%= f.password_field :password_confirmation, required: true, autocomplete: "new-password" %>
 </div>
 
+
+
+
+
+
+  <%# <%= f.submit %> %>
 
 <div class="ui checkbox">
   <input type="checkbox" required />

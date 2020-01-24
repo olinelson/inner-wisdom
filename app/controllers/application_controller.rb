@@ -15,7 +15,8 @@ class ApplicationController < ActionController::Base
       :phone_number,
       :medicare_number,
       :email,
-      :occupation
+      :occupation,
+      :time_zone
       
 
       ])
@@ -32,7 +33,8 @@ class ApplicationController < ActionController::Base
       :post_code,
       :phone_number,
       :approved,
-      :occupation
+      :occupation,
+      :time_zone
       ])
 
   end
