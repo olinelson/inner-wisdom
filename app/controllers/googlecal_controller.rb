@@ -402,6 +402,7 @@ end
         begin
         event = cal.create_event do |e|
             e.title = title
+            e.sendNotifications= true
             e.start_time = newEvent["start_time"]
             e.end_time = newEvent["end_time"]
             e.location= newEvent["location"]
