@@ -42,12 +42,10 @@ class NotificationMailer < ApplicationMailer
         _event = JSON.parse(event)
         @user = user
         @event = event
-        @description = _event.description
+        @description = _event["description"]
 
         @time =  prettyTime(@user.time_zone)
 
-
-        puts(_event)
      
         mail(to: @user.email, subject: 'Booking Confirmation')
     end
