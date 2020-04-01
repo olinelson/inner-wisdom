@@ -143,6 +143,17 @@ class GooglecalController < ApplicationController
         cal.find_future_events(options = {max_results: maxResults, expand_recurring_events: true })
     end
 
+    def descriptionGenerator(skype, phone, telehealth, user)
+        puts('generating location', skype, phone, telehealth)
+        if skype === "true"
+            return "This appointment will be conducted through Skype. Sue's Skype Username is live:susanjeanmct"
+        elsif phone === "true"
+            return "This appointment will be conducted as a phone call. Sue will call #{user.first_name} on #{user.phone_number}"
+        elsif telehealth === "true"
+            return "This appointment will be conducted through Telehealth at https://innerwisdompsychology.coviu.com/room/@susanstephenson"
+        end
+    end
+
 
     def bookEvent
 
@@ -163,12 +174,24 @@ class GooglecalController < ApplicationController
         rescue
             skype = false
         end
+
+        begin
+        phone = event["extended_properties"]["private"]["phone"] || false
+        rescue
+            phone = false
+        end
+
+        begin
+        telehealth = event["extended_properties"]["private"]["telehealth"] || false
+        rescue
+            telehealth = false
+        end
         
         cal = nil
 
 
         if event["calendar"]["id"] === ENV["APPOINTMENTS_CALENDAR_ID"]
-             newTitle = skype === "true" || skype === true ? fullName + " | skype session confirmed" : fullName + " | session confirmed"
+             newTitle = fullName + " | session confirmed"
             cal = @@appointmentsCal
 
             
@@ -184,10 +207,13 @@ class GooglecalController < ApplicationController
            
             e.title = newTitle
             e.color_id = 2
-            e.location= skype === "true" || skype === true ? "Skype Appointment" : "13/10 Short St Thornleigh NSW 2120 Australia"
+            e.description = descriptionGenerator(skype, phone, telehealth, current_user)
+            # e.location = !skype && !phone && !telehealth ? ENV["PRACTICE_ADDRESS"]
                   
            
             e.extended_properties["private"]["skype"] = skype
+            e.extended_properties["private"]["phone"] = phone
+            e.extended_properties["private"]["telehealth"] = telehealth
              end
 
              
@@ -210,7 +236,6 @@ class GooglecalController < ApplicationController
             {'email' => user.email, 'displayName' => fullName, 'responseStatus' => 'accepted'}]    
             e.title = newTitle
             e.color_id = 2
-            # e.location= "609 W 135 St New York, New York"
             end
 
             dateString =  DateTime.parse(editedEvent.start_time)
@@ -315,7 +340,9 @@ def editGoogleCalEvent(cal:, event:, attendees: [], inGracePeriod: true, recurre
                 'paid' => event["extended_properties"]["private"]["paid"],
                  'stripe_id' => event["extended_properties"]["private"]["stripe_id"],
                  'cancelation' => inGracePeriod === false ? "true" : "false",
-                 'skype' => event["extended_properties"]["private"]["skype"] || false
+                 'skype' => event["extended_properties"]["private"]["skype"] || false,
+                 'phone' => event["extended_properties"]["private"]["phone"] || false,
+                 'telehealth' => event["extended_properties"]["private"]["telehealth"] || false
                 }}
             rescue
                 e.extended_properties = {'private' => {
@@ -407,7 +434,7 @@ end
             e.reminders =  { "useDefault": false }
             e.attendees= attendees
             e.recurrence = recurrence ? {freq: recurrence["freq"], count: 50} : nil
-            e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => "", 'skype' => newEvent["extended_properties"]["private"]["skype"] || false}}
+            e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => "", 'skype' => newEvent["extended_properties"]["private"]["skype"] || true, 'telehealth' => newEvent["extended_properties"]["private"]["telehealth"] || false, 'phone' => newEvent["extended_properties"]["private"]["phone"] || false}}
         end
 
         
@@ -519,7 +546,7 @@ end
             foundItems = cal.find_events_by_extended_properties({ 'private' => {'stripe_id' => item["id"]} })
 
             foundItems.each do |item|
-                item.extended_properties = {'private' => {'paid' => false, 'stripe_id' => "", 'skype' => item.extended_properties = {'private' => {'paid' => false, 'stripe_id' => "", 'skype' => item.extended_properties["private"]["skype"] || false}}}}
+                item.extended_properties = {'private' => {'paid' => false, 'stripe_id' => "", 'skype' => item.extended_properties = {'private' => {'paid' => false, 'stripe_id' => "", 'skype' => item.extended_properties["private"]["skype"] || false, 'phone' => item.extended_properties["private"]["phone"] || false, 'telehealth' => item.extended_properties["private"]["telehealth"] || false}}}}
                 item.save
             end
         end
