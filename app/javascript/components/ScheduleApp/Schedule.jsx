@@ -732,13 +732,13 @@ function Schedule (props) {
   }
 
   const generateEventTitleWithMedium = (event) => {
-    if (selectedEvent.extended_properties.private.skype === 'true') {
+    if (selectedEvent.extended_properties && selectedEvent.extended_properties.private.skype === 'true') {
       return `${event.title} | Skype Call`
     }
-    if (selectedEvent.extended_properties.private.phone === 'true') {
+    if (selectedEvent.extended_properties && selectedEvent.extended_properties.private.phone === 'true') {
       return `${event.title} | Phone Call`
     }
-    if (selectedEvent.extended_properties.private.telehealth === 'true') {
+    if (selectedEvent.extended_properties && selectedEvent.extended_properties.private.telehealth === 'true') {
       return `${event.title} | Telehealth`
     }
     return event.title
