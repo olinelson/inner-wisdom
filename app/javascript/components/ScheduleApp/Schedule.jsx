@@ -474,7 +474,7 @@ function Schedule (props) {
         start_time: e.start,
         end_time: e.end,
         personal: false,
-        extended_properties: { private: { skype: 'true', phone: 'false', telehealth: 'false', paid: 'false' } }
+        extended_properties: { private: { skype: 'false', phone: 'false', telehealth: 'true', paid: 'false' } }
       })
     }
   }

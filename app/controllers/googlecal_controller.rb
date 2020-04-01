@@ -434,7 +434,7 @@ end
             e.reminders =  { "useDefault": false }
             e.attendees= attendees
             e.recurrence = recurrence ? {freq: recurrence["freq"], count: 50} : nil
-            e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => "", 'skype' => newEvent["extended_properties"]["private"]["skype"] || true, 'telehealth' => newEvent["extended_properties"]["private"]["telehealth"] || false, 'phone' => newEvent["extended_properties"]["private"]["phone"] || false}}
+            e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => "", 'skype' => newEvent["extended_properties"]["private"]["skype"] || false, 'telehealth' => newEvent["extended_properties"]["private"]["telehealth"] || true, 'phone' => newEvent["extended_properties"]["private"]["phone"] || false}}
         end
 
         
