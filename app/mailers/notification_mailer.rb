@@ -45,6 +45,9 @@ class NotificationMailer < ApplicationMailer
         @description = _event.description
 
         @time =  prettyTime(@user.time_zone)
+
+
+        puts(_event)
      
         mail(to: @user.email, subject: 'Booking Confirmation')
     end
