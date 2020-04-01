@@ -2,7 +2,7 @@
   <p>Hi, <%= @user.first_name %></p>
   <p>This is confirmation of your appointment at:</p>
   <p><%=@time%></p>
-   <p><%=@event.description%></p>
+   <p><%=@description%></p>
   <br/>
   <p>If you need to reschedule or cancel your appointment go to <a target="_blank" href="<%=ENV["BASE_URL"]%>/users/sign_in">your appointments</a>.
 </html>

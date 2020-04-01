@@ -39,8 +39,10 @@ class NotificationMailer < ApplicationMailer
     end
 
     def user_appointment_confirmation(user, event)
+        _event = JSON.parse(event)
         @user = user
-        @event = JSON.parse(event)
+        @event = event
+        @description = _event.description
 
         @time =  prettyTime(@user.time_zone)
      
