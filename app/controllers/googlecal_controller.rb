@@ -423,11 +423,40 @@ end
 
 
     def createGoogleEvent(cal:, newEvent:, title:, attendees: [], recurrence: nil)
+        
         begin
+            begin
+            skype = newEvent["extended_properties"]["private"]["skype"] || false
+            rescue
+            skype = false
+            end
+
+            begin
+            phone = newEvent["extended_properties"]["private"]["phone"] || false
+            rescue
+            phone = false
+            end
+
+            begin
+            telehealth = newEvent["extended_properties"]["private"]["telehealth"] || false
+            rescue
+            telehealth = false
+            end
+
+            description = ""
+            if attendees.length > 0 
+            _user = User.find_by({email: attendees[0]["email"]})
+
+            description = descriptionGenerator(skype, phone, telehealth, _user )
+            end
+
+            
+
         event = cal.create_event do |e|
             e.title = title
             e.start_time = newEvent["start_time"]
             e.end_time = newEvent["end_time"]
+            e.description = description
             e.location= newEvent["location"]
             e.reminders =  { "useDefault": false }
             e.attendees= attendees
@@ -435,6 +464,7 @@ end
             e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => "", 'skype' => newEvent["extended_properties"]["private"]["skype"] || false, 'telehealth' => newEvent["extended_properties"]["private"]["telehealth"] || true, 'phone' => newEvent["extended_properties"]["private"]["phone"] || false}}
         end
 
+        
         if attendees.length > 0
             user = User.find_by({email: attendees[0]["email"]})
 
