@@ -144,13 +144,12 @@ class GooglecalController < ApplicationController
     end
 
     def descriptionGenerator(skype, phone, telehealth, user)
-        puts('generating location', skype, phone, telehealth)
         if skype === "true"
             return "This appointment will be conducted through Skype. Sue's Skype Username is live:susanjeanmct"
         elsif phone === "true"
             return "This appointment will be conducted as a phone call. Sue will call #{user.first_name} on #{user.phone_number}"
         elsif telehealth === "true"
-            return "This appointment will be conducted through Telehealth at https://innerwisdompsychology.coviu.com/room/@susanstephenson"
+            return "This appointment will be conducted through Telehealth at https://innerwisdompsychology.coviu.com/room/@susanstephenson .To join the meeting, click the link or copy/paste it into your browser search bar, then select 'Join As Guest'"
         end
     end
 
@@ -159,7 +158,6 @@ class GooglecalController < ApplicationController
 
         user = current_user
         event = params["event"]
-
 
         if DateTime.parse(event["start_time"]).past?
             puts 'event in past'

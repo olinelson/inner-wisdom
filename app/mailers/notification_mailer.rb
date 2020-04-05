@@ -1,7 +1,4 @@
 class NotificationMailer < ApplicationMailer
-    
-    
-
     def prettyTime(time_zone = "Australia/Sydney")
         begin
             if @event["start_time"]
@@ -39,14 +36,12 @@ class NotificationMailer < ApplicationMailer
     end
 
     def user_appointment_confirmation(user, event)
-        _event = JSON.parse(event)
         @user = user
-        @event = event
-        @description = _event["description"]
+        @event = JSON.parse(event)
+        @description = @event["description"]
 
         @time =  prettyTime(@user.time_zone)
 
-     
         mail(to: @user.email, subject: 'Booking Confirmation')
     end
 
