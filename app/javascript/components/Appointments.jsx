@@ -329,6 +329,36 @@ function Appointments (props) {
     return null
   }
 
+  const maybeShowSkypeOrTelehealthButton = event => {
+    if (
+      event.extended_properties &&
+      event.extended_properties.private &&
+      event.extended_properties.private.telehealth === 'true'
+    ) {
+      return {
+        key: 'openTelehealth',
+        content: 'Start Telehealth Appointment',
+        primary: true,
+        onClick: () => window.open('https://innerwisdompsychology.coviu.com/room/@susanstephenson', '_blank')
+      }
+    }
+
+    if (
+      event.extended_properties &&
+      event.extended_properties.private &&
+      event.extended_properties.private.skype === 'true'
+    ) {
+      return {
+        key: 'openSkype',
+        content: 'Start Skype Appointment',
+        primary: true,
+        onClick: () => window.open('skype:susanjmct?call', '_blank')
+      }
+    }
+
+    return null
+  }
+
   const showSelectedEventModal = () => {
     if (!selectedEvent) return null
 
@@ -392,6 +422,7 @@ function Appointments (props) {
             </ModalContent>
           }
           actions={[
+            maybeShowSkypeOrTelehealthButton(selectedEvent),
             maybeShowCancelButtons(selectedEvent),
             {
               key: 'Close',
@@ -562,7 +593,15 @@ function Appointments (props) {
                 </small>
               </ModalContent>
             }
-            actions={['Close']}
+            actions={[
+              maybeShowSkypeOrTelehealthButton(confirmation.event),
+              maybeShowCancelButtons(confirmation.event),
+              {
+                key: 'Close',
+                content: 'Close',
+                onClick: () => setConfirmation(null)
+              }
+            ]}
           />
         )
       }
