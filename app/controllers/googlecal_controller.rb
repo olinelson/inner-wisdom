@@ -215,7 +215,7 @@ class GooglecalController < ApplicationController
              end
 
              
-             jsonEvent = editedEvent.to_json
+            jsonEvent = editedEvent.to_json
             NotificationMailer.user_appointment_confirmation(user, jsonEvent).deliver_later
             NotificationMailer.admin_appointment_confirmation(user, jsonEvent).deliver_later
         
@@ -435,6 +435,16 @@ end
             e.extended_properties = {'private' => {'paid' => false, 'stripe_id' => "", 'skype' => newEvent["extended_properties"]["private"]["skype"] || false, 'telehealth' => newEvent["extended_properties"]["private"]["telehealth"] || true, 'phone' => newEvent["extended_properties"]["private"]["phone"] || false}}
         end
 
+        if attendees.length > 0
+            user = User.find_by({email: attendees[0]["email"]})
+
+            jsonEvent = event.to_json
+
+            NotificationMailer.user_appointment_confirmation(user, jsonEvent).deliver_later
+            NotificationMailer.admin_appointment_confirmation(user, jsonEvent).deliver_later
+        end
+
+       
         
         render json: {newEvent: event} and return
          rescue
